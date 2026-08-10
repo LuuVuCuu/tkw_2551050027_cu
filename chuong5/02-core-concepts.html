@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="Core concepts Tailwind v4 — giá trị tuỳ chỉnh [ ]/( ), biến thể (variant), group &amp; peer, has-/before-after/data-*, dark mode, @apply/@utility/!, chỉ thị &amp; theme variables.">
+  <title>Core concepts — Chương 5</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <!-- Tailwind v4 — bản trình duyệt (biên dịch class ngay trong browser). Chỉ dùng để học/prototype. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- Tuỳ biến CSS-first của v4: token thương hiệu + bật dark bằng class .dark -->
+  <style type="text/tailwindcss">
+    @theme {
+      --color-brand: #04AA6D;
+    }
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- ===== Breadcrumb ===== -->
+  <nav class="mx-auto max-w-4xl px-4 pt-4 text-sm text-gray-500">
+    <a class="hover:text-[#1D559F]" href="../index.html">Môn học</a>
+    <span class="mx-1">›</span>
+    <a class="hover:text-[#1D559F]" href="index.html">Chương 5</a>
+    <span class="mx-1">›</span>
+    <span class="text-gray-700">Core concepts</span>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="mt-3 bg-linear-to-br from-[#1D559F] to-violet-600 text-white">
+    <div class="mx-auto max-w-4xl px-4 py-10">
+      <h1 class="text-3xl font-bold">Core concepts — biến thể, dark mode, tuỳ biến</h1>
+      <p class="mt-2 text-white/80">Những khái niệm lõi giúp bạn dùng Tailwind v4 thành thạo: <strong>giá trị tuỳ chỉnh</strong>, <strong>variant trạng thái</strong>, <strong>group/peer</strong>, <strong>dark mode</strong> và cách <strong>tuỳ biến</strong> bằng chỉ thị CSS-first.</p>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-4xl px-4 py-8">
+
+    <!-- 1 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">1</span>Giá trị tuỳ chỉnh &amp; ba "lối thoát"
+      </h2>
+      <p class="mb-3">Luôn <strong>ưu tiên utility có sẵn</strong> (theo thang thiết kế). Khi cần một giá trị nằm <em>ngoài</em> thang, Tailwind v4 cho ba "lối thoát" (escape hatch):</p>
+      <ul class="mb-3 list-disc space-y-1 pl-5 text-sm">
+        <li><strong>Giá trị tuỳ ý</strong> <code class="rounded bg-gray-200 px-1">[value]</code> — vd <code class="rounded bg-gray-200 px-1">top-[117px]</code>, <code class="rounded bg-gray-200 px-1">bg-[#316ff6]</code>, <code class="rounded bg-gray-200 px-1">grid-cols-[1fr_500px_2fr]</code>. Dấu gạch dưới <code class="rounded bg-gray-200 px-1">_</code> = <em>khoảng trắng</em>.</li>
+        <li><strong>Thuộc tính không có utility</strong> <code class="rounded bg-gray-200 px-1">[prop:value]</code> — vd <code class="rounded bg-gray-200 px-1">[mask-type:luminance]</code>.</li>
+        <li><strong>Biến CSS</strong> <code class="rounded bg-gray-200 px-1">(--var)</code> = rút gọn của <code class="rounded bg-gray-200 px-1">var(--var)</code> — vd <code class="rounded bg-gray-200 px-1">bg-(--brand)</code>. Có thể gợi ý kiểu: <code class="rounded bg-gray-200 px-1">text-(length:--x)</code>.</li>
+      </ul>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả</div>
+        <div class="p-4">
+          <div class="w-[250px] rounded-lg bg-[#316ff6] p-4 text-white">
+            Hộp rộng đúng <strong>w-[250px]</strong>, nền <strong>bg-[#316ff6]</strong> — màu &amp; kích thước nằm ngoài bảng mặc định.
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- utility có sẵn dùng TRƯỚC; chỉ "thoát" khi cần --&gt;</span>
+<span class="text-gray-400 italic">&lt;!-- [value]: dấu _ = khoảng trắng --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"top-[117px] bg-[#316ff6] grid-cols-[1fr_500px_2fr]"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- [prop:value]: thuộc tính không có utility --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"[mask-type:luminance]"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- (--var): đọc biến CSS = var(--var); gợi ý kiểu bằng (length:--x) --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"bg-(--brand) text-(length:--x)"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Mẹo</p>
+        <p>Chỉ dùng <code class="rounded bg-emerald-100 px-1">[ ]</code> / <code class="rounded bg-emerald-100 px-1">( )</code> khi giá trị thật sự <strong>nằm ngoài thang thiết kế</strong>. Lạm dụng "magic number" làm mất tính nhất quán — thứ chính là điểm mạnh của Tailwind.</p>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">2</span>Biến thể trạng thái (variant)
+      </h2>
+      <p class="mb-3">Biến thể áp một utility <em>chỉ trong một trạng thái</em>, cú pháp <code class="rounded bg-gray-200 px-1">variant:class</code>. Có thể <strong>xếp chồng</strong> nhiều biến thể (đọc từ phải sang trái) và dùng <strong>biến thể tuỳ ý</strong> để nhắm phần tử con.</p>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- xếp chồng: chỉ áp khi dark + màn hình md + đang hover --&gt;</span>
+<span class="text-sky-300">&lt;button</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"dark:md:hover:bg-blue-700"</span><span class="text-sky-300">&gt;&lt;/button&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- biến thể tuỳ ý: nhắm mọi &lt;p&gt; con bằng &amp; --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"[&amp;_p]:mt-4"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span></code></pre>
+
+      <div class="overflow-x-auto rounded-xl border border-gray-200">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-gray-100 text-gray-700">
+            <tr><th class="p-3">Nhóm biến thể</th><th class="p-3">Ví dụ</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr><td class="p-3 font-medium">Pseudo-class</td><td class="p-3"><code>hover</code> · <code>focus</code> · <code>focus-visible</code> · <code>active</code> · <code>visited</code> · <code>target</code></td></tr>
+            <tr><td class="p-3 font-medium">Trạng thái form</td><td class="p-3"><code>disabled</code> · <code>checked</code> · <code>required</code> · <code>valid</code> · <code>invalid</code> · <code>read-only</code></td></tr>
+            <tr><td class="p-3 font-medium">Vị trí con</td><td class="p-3"><code>first</code> · <code>last</code> · <code>odd</code> · <code>even</code> · <code>only</code> · <code>empty</code></td></tr>
+            <tr><td class="p-3 font-medium">Pseudo-element</td><td class="p-3"><code>before</code> · <code>after</code> · <code>placeholder</code> · <code>file</code> · <code>marker</code> · <code>selection</code></td></tr>
+            <tr><td class="p-3 font-medium">Media / tính năng</td><td class="p-3"><code>dark</code> · <code>motion-safe</code> · <code>motion-reduce</code> · <code>print</code> · <code>supports-[…]</code></td></tr>
+            <tr><td class="p-3 font-medium">Thuộc tính</td><td class="p-3"><code>aria-checked</code> · <code>data-[size=large]</code> · <code>rtl</code> · <code>ltr</code> · <code>open</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — di chuột &amp; bấm Tab tới nút</div>
+        <div class="p-4">
+          <button class="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-300 focus:outline-none">Hover / Focus tôi</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">3</span>Group &amp; Peer
+      </h2>
+      <p class="mb-3"><code class="rounded bg-gray-200 px-1">group</code> + <code class="rounded bg-gray-200 px-1">group-hover:*</code>: <strong>con</strong> đổi kiểu theo trạng thái của <strong>CHA</strong> mang class <code>group</code>. <code class="rounded bg-gray-200 px-1">peer</code> + <code class="rounded bg-gray-200 px-1">peer-checked:*</code>: một phần tử đổi kiểu theo <strong>anh em đứng TRƯỚC</strong> mang class <code>peer</code>.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả</div>
+        <div class="space-y-4 p-4">
+          <!-- group: di chuột vào cả hộp, tiêu đề con đổi màu -->
+          <div class="group cursor-pointer rounded-lg border border-gray-200 p-4 hover:bg-gray-100">
+            <h1 class="text-lg font-bold group-hover:text-red-500">Di chuột vào cả hộp</h1>
+            <p class="text-sm text-gray-500">Tiêu đề đổi màu theo trạng thái hover của CHA (.group).</p>
+          </div>
+          <!-- peer: input đứng trước, thông báo đứng sau -->
+          <div class="flex flex-wrap items-center gap-2">
+            <input id="peer-cb" type="checkbox" class="peer size-4">
+            <label for="peer-cb" class="text-sm">Tích vào ô này</label>
+            <p class="hidden text-sm font-semibold text-emerald-600 peer-checked:block">Đã chọn!</p>
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- group: con nghe theo CHA --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"group"</span><span class="text-sky-300">&gt;</span>
+  <span class="text-sky-300">&lt;h1</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"group-hover:text-red-500"</span><span class="text-sky-300">&gt;</span>Tiêu đề<span class="text-sky-300">&lt;/h1&gt;</span>
+<span class="text-sky-300">&lt;/div&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- peer: nghe theo anh em ĐỨNG TRƯỚC --&gt;</span>
+<span class="text-sky-300">&lt;input</span> <span class="text-orange-300">type</span>=<span class="text-emerald-300">"checkbox"</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"peer"</span><span class="text-sky-300">&gt;</span>
+<span class="text-sky-300">&lt;p</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"hidden peer-checked:block"</span><span class="text-sky-300">&gt;</span>Đã chọn!<span class="text-sky-300">&lt;/p&gt;</span></code></pre>
+    </section>
+
+    <!-- 4 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">4</span>Variant hiện đại: has- / before-after / data-*
+      </h2>
+      <ul class="mb-3 list-disc space-y-1 pl-5 text-sm">
+        <li><code class="rounded bg-gray-200 px-1">has-checked:*</code> — dựa trên <code>:has()</code>, cho <strong>CHA đổi kiểu theo CON</strong> (ngược chiều với group).</li>
+        <li><code class="rounded bg-gray-200 px-1">before:</code> / <code class="rounded bg-gray-200 px-1">after:</code> — tạo pseudo-element, <strong>bắt buộc</strong> có <code>content-[...]</code>.</li>
+        <li><code class="rounded bg-gray-200 px-1">data-*</code> — biến thể theo thuộc tính <code>data-*</code>, thường điều khiển bằng JS.</li>
+      </ul>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — tích ô để cả thẻ đổi kiểu</div>
+        <div class="space-y-4 p-4">
+          <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 p-3 has-checked:bg-indigo-50 has-checked:ring-2 has-checked:ring-indigo-500">
+            <input type="checkbox" class="size-4"> Ghi nhớ đăng nhập
+          </label>
+          <p><a href="#" class="font-semibold text-brand underline after:content-['_↗']">Xem thêm</a></p>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- :has() — CHA đổi kiểu khi CON được tích --&gt;</span>
+<span class="text-sky-300">&lt;label</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"has-checked:bg-indigo-50 has-checked:ring-indigo-500"</span><span class="text-sky-300">&gt;</span>
+  <span class="text-sky-300">&lt;input</span> <span class="text-orange-300">type</span>=<span class="text-emerald-300">"checkbox"</span><span class="text-sky-300">&gt;</span> Ghi nhớ đăng nhập
+<span class="text-sky-300">&lt;/label&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- before/after cần content-[...] --&gt;</span>
+<span class="text-sky-300">&lt;a</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"after:content-['_↗']"</span><span class="text-sky-300">&gt;</span>Xem thêm<span class="text-sky-300">&lt;/a&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- data-* điều khiển bằng JS: đổi thuộc tính là đổi kiểu --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">data-active</span>=<span class="text-emerald-300">"true"</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"opacity-50 data-[active=true]:opacity-100"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-sky-500 bg-sky-50 p-3 text-sm">
+        <p class="font-semibold text-sky-800">Ghi nhớ chiều tác động</p>
+        <p><strong>group-*</strong>: con nghe CHA · <strong>peer-*</strong>: nghe anh em trước · <strong>has-*</strong>: CHA nghe CON. Ba biến thể phủ gần hết nhu cầu "đổi kiểu theo ngữ cảnh" mà không cần JS.</p>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">5</span>Dark mode
+      </h2>
+      <p class="mb-3">Mỗi utility có một cặp <code class="rounded bg-gray-200 px-1">dark:</code> để khai báo kiểu cho chế độ tối, vd <code class="rounded bg-gray-200 px-1">bg-white dark:bg-gray-900 text-gray-900 dark:text-white</code>. Có <strong>2 chiến lược</strong>:</p>
+      <ul class="mb-3 list-disc space-y-1 pl-5 text-sm">
+        <li><strong>Theo hệ điều hành</strong> (mặc định): dựa trên <code>prefers-color-scheme</code> — người dùng chỉnh sáng/tối ở OS.</li>
+        <li><strong>Bật/tắt bằng tay</strong>: khai báo <code>@custom-variant dark (&amp;:where(.dark, .dark *))</code> rồi thêm class <code>.dark</code> lên một tổ tiên (thường là <code>&lt;html&gt;</code>).</li>
+      </ul>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — thẻ dưới nằm trong &lt;div class="dark"&gt;</div>
+        <div class="p-4">
+          <div class="dark">
+            <div class="rounded-lg border border-gray-200 bg-white p-4 text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-white">
+              <p class="font-semibold">Thẻ này đã áp kiểu tối</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Nền tối, chữ sáng — các class <code>dark:</code> kích hoạt nhờ class <code>.dark</code> bọc ngoài (trang đã khai báo custom-variant sẵn).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">/* v4: bật dark bằng class thay cho tuỳ chọn darkMode:'class' của v3 */</span>
+<span class="text-sky-300">@custom-variant</span> dark (<span class="text-orange-300">&amp;:where(.dark, .dark *)</span>);
+
+<span class="text-gray-400 italic">&lt;!-- mỗi utility có cặp dark: --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"bg-white dark:bg-gray-900 text-gray-900 dark:text-white"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-amber-500 bg-amber-50 p-3 text-sm">
+        <p class="font-semibold text-amber-800">Lưu ý</p>
+        <p>Đặt đoạn JS đọc <code class="rounded bg-amber-100 px-1">localStorage</code> và gắn class <code>.dark</code> <strong>ngay trong <code>&lt;head&gt;</code></strong> (trước khi body render) để tránh <em>nháy sáng</em> (FOUC). Tailwind v4 đã bỏ tuỳ chọn <code>darkMode:'class'</code> — thay bằng <code>@custom-variant</code> ở trên.</p>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">6</span>Tuỳ biến nâng cao: @apply, @utility, !
+      </h2>
+      <ul class="mb-3 list-disc space-y-1 pl-5 text-sm">
+        <li><code class="rounded bg-gray-200 px-1">@apply</code> — nhồi nhiều utility vào MỘT class CSS (gom pattern lặp lại thành component).</li>
+        <li><code class="rounded bg-gray-200 px-1">@utility</code> — tạo <strong>utility mới</strong> (thay cách viết plugin cũ của v3).</li>
+        <li><code class="rounded bg-gray-200 px-1">!</code> — đánh dấu <code>!important</code>, đặt ở <strong>CUỐI</strong> class: <code>bg-red-500!</code> (v3 dùng tiền tố <code>!bg-red-500</code>).</li>
+      </ul>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">/* @apply — gom utility thành một class CSS */</span>
+<span class="text-sky-300">.btn</span> {
+  <span class="text-orange-300">@apply</span> <span class="text-emerald-300">rounded-lg bg-sky-500 px-4 py-2 text-white</span>;
+}
+
+<span class="text-gray-400 italic">/* @utility — tạo utility MỚI dùng được như class Tailwind */</span>
+<span class="text-sky-300">@utility</span> btn-lg {
+  <span class="text-orange-300">padding</span>: <span class="text-emerald-300">1rem 2rem</span>;
+  <span class="text-orange-300">font-size</span>: <span class="text-emerald-300">1.25rem</span>;
+}</code></pre>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- ! = !important, đặt CUỐI class (v3 là tiền tố !bg-red-500) --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"bg-red-500!"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+        <p class="font-semibold text-violet-800">Chuẩn nghề</p>
+        <p>Dùng <code>@apply</code> có chừng mực — chỉ cho pattern thật sự lặp lại. Với dự án component (React/Vue) nên tách thành component thay vì gom class, giữ HTML là "nguồn sự thật" duy nhất về kiểu.</p>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">7</span>Chỉ thị &amp; theme variables
+      </h2>
+      <p class="mb-3">Tailwind v4 cấu hình bằng CSS. Dưới đây là các <strong>chỉ thị/hàm</strong> hay dùng:</p>
+
+      <div class="overflow-x-auto rounded-xl border border-gray-200">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-gray-100 text-gray-700">
+            <tr><th class="p-3">Chỉ thị / hàm</th><th class="p-3">Công dụng</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr><td class="p-3"><code>@import "tailwindcss";</code></td><td class="p-3">Nạp Tailwind — thay 3 lệnh <code>@tailwind</code> của v3.</td></tr>
+            <tr><td class="p-3"><code>@theme { … }</code></td><td class="p-3">Khai báo token thiết kế → <strong>tự sinh utility</strong>.</td></tr>
+            <tr><td class="p-3"><code>@apply</code></td><td class="p-3">Dùng utility bên trong một class CSS thường.</td></tr>
+            <tr><td class="p-3"><code>@utility</code></td><td class="p-3">Định nghĩa utility mới (thay plugin cũ).</td></tr>
+            <tr><td class="p-3"><code>@variant</code> / <code>@custom-variant</code></td><td class="p-3">Áp / định nghĩa biến thể (vd <code>dark</code>).</td></tr>
+            <tr><td class="p-3"><code>--spacing(n)</code> / <code>--alpha(c / 50%)</code></td><td class="p-3">Hàm tính khoảng cách / pha độ mờ của màu.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="mt-4 mb-2">Các <strong>nhóm theme variable</strong> chính (khai báo trong <code>@theme</code>, mỗi nhóm tự sinh utility tương ứng):</p>
+      <ul class="list-disc space-y-1 pl-5 text-sm">
+        <li><code class="rounded bg-gray-200 px-1">--color-*</code> → <code>bg-</code>/<code>text-</code>/<code>border-</code>/<code>ring-</code></li>
+        <li><code class="rounded bg-gray-200 px-1">--font-*</code> / <code class="rounded bg-gray-200 px-1">--text-*</code> / <code class="rounded bg-gray-200 px-1">--font-weight-*</code></li>
+        <li><code class="rounded bg-gray-200 px-1">--spacing</code> — MỘT biến gốc cho <code>p-</code>/<code>m-</code>/<code>w-</code>/<code>gap-</code></li>
+        <li><code class="rounded bg-gray-200 px-1">--radius-*</code> / <code class="rounded bg-gray-200 px-1">--shadow-*</code></li>
+        <li><code class="rounded bg-gray-200 px-1">--breakpoint-*</code> / <code class="rounded bg-gray-200 px-1">--container-*</code></li>
+        <li><code class="rounded bg-gray-200 px-1">--ease-*</code> / <code class="rounded bg-gray-200 px-1">--animate-*</code></li>
+      </ul>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Vì sao chỉ MỘT biến --spacing?</p>
+        <p>Từ một biến gốc, Tailwind suy ra toàn bộ thang <code>p-*</code>, <code>m-*</code>, <code>w-*</code>, <code>gap-*</code>… nên hệ khoảng cách luôn nhất quán. Đổi một biến là đổi cả hệ — đây là sức mạnh của cấu hình CSS-first trong v4.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer điều hướng ===== -->
+  <footer class="mx-auto mt-6 flex max-w-4xl flex-wrap justify-between gap-2 border-t border-gray-200 px-4 py-6">
+    <a class="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-100" href="01-tong-quan-tailwind.html">← 5.1 Tổng quan</a>
+    <a class="rounded-lg bg-[#1D559F] px-4 py-2 text-sm text-white hover:bg-[#17457f]" href="03-co-ban-mau-spacing.html">5.2 Cơ bản →</a>
+  </footer>
+
+</body>
+</html>

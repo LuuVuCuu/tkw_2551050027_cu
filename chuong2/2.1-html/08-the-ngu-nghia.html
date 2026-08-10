@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.1.8 — HTML SEMANTIC · Thẻ ngữ nghĩa (bản toàn diện)
+  ------------------------------------------------------------
+  Thẻ ngữ nghĩa (semantic elements) mô tả RÕ NGHĨA nội dung
+  bên trong cho cả trình duyệt lẫn lập trình viên. Bài này đi
+  từ cơ bản → nâng cao, tham khảo theo W3Schools:
+    1) Ngữ nghĩa là gì & vì sao cần   7) figure/figcaption · time · mark
+    2) header & footer                8) details & summary (đóng/mở)
+    3) nav (vùng điều hướng)          9) meter & progress
+    4) main (nội dung chính)         10) Sơ đồ bố cục trang hoàn chỉnh
+    5) section vs article            11) Bảng đối chiếu div.class → thẻ
+    6) aside (nội dung phụ)
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.1.8 · HTML — Thẻ ngữ nghĩa (Semantic)</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* 1) so sánh semantic vs non-semantic — nhãn màu */
+    .d-tag {
+      display: inline-block; font-family: "Cascadia Code", Consolas, monospace;
+      font-size: .8rem; font-weight: 700; padding: 2px 9px; border-radius: 6px;
+    }
+    .d-tag.sem { background: #d8f3e6; color: #04643f; border: 1px solid #9fe0c2; }
+    .d-tag.non { background: #fde7ee; color: #a8123e; border: 1px solid #f6b6c8; }
+
+    /* khung "thẻ minh hoạ": viền nét đứt + nhãn tên thẻ ở góc */
+    .d-elem {
+      position: relative; border: 2px dashed #93c5fd; background: #f3f8ff;
+      border-radius: 8px; padding: 26px 14px 14px; margin: 10px 0;
+    }
+    .d-elem::before {
+      content: attr(data-tag); position: absolute; top: -1px; left: -1px;
+      background: #1D559F; color: #fff; font-family: "Cascadia Code", Consolas, monospace;
+      font-size: .72rem; font-weight: 700; padding: 2px 9px; border-radius: 8px 0 8px 0;
+    }
+    .d-elem.green::before  { background: #04AA6D; }
+    .d-elem.green  { border-color: #9fe0c2; background: #f1fbf6; }
+    .d-elem.purple::before { background: #6c5ce7; }
+    .d-elem.purple { border-color: #c4b5fd; background: #f6f4ff; }
+    .d-elem.amber::before  { background: #d9a406; }
+    .d-elem.amber  { border-color: #ffe39a; background: #fffbf0; }
+
+    /* 7) figure / figcaption */
+    .d-figure { margin: 0; border: 1px solid #e3e8f0; border-radius: 10px; padding: 10px; background: #fff; max-width: 340px; }
+    .d-figimg { width: 100%; height: 140px; border-radius: 8px;
+                background: linear-gradient(135deg, #1D559F, #6c5ce7); display: grid; place-items: center;
+                color: #fff; font-weight: 700; letter-spacing: 1px; }
+    .d-figure figcaption { color: #5b6472; font-size: .85rem; text-align: center; margin-top: 8px; }
+    mark.d-mk { background: #fff2a8; padding: 0 3px; border-radius: 3px; }
+
+    /* 9) thanh meter & progress to, dễ nhìn */
+    .d-bars meter, .d-bars progress { width: 100%; height: 20px; display: block; margin: 4px 0 14px; }
+    .d-bars label { font-weight: 600; font-size: .9rem; }
+
+    /* 10) SƠ ĐỒ BỐ CỤC TRANG ngữ nghĩa — vẽ khung bằng CSS Grid */
+    .d-layout {
+      display: grid; gap: 10px;
+      grid-template-columns: 2fr 1fr;
+      grid-template-areas:
+        "header header"
+        "nav    nav"
+        "main   aside"
+        "footer footer";
+      font-weight: 700; color: #fff; text-align: center;
+    }
+    .d-layout > div { padding: 16px 12px; border-radius: 8px; }
+    .d-layout .lo-header { grid-area: header; background: #1D559F; }
+    .d-layout .lo-nav    { grid-area: nav;    background: #16407a; }
+    .d-layout .lo-main   { grid-area: main;   background: #04AA6D; min-height: 120px;
+                           display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+    .d-layout .lo-main .lo-sub { background: rgba(255,255,255,.22); border-radius: 6px; padding: 8px; font-size: .85rem; }
+    .d-layout .lo-aside  { grid-area: aside;  background: #6c5ce7; }
+    .d-layout .lo-footer { grid-area: footer; background: #334155; }
+    .d-layout small { display: block; font-weight: 400; opacity: .85; font-size: .72rem; margin-top: 4px; }
+    @media (max-width: 560px) {
+      .d-layout { grid-template-columns: 1fr;
+        grid-template-areas: "header" "nav" "main" "aside" "footer"; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.1 HTML</a><span>›</span>
+        Thẻ ngữ nghĩa
+      </nav>
+      <h1>Thẻ ngữ nghĩa <code style="color:#fff;background:rgba(255,255,255,.18)">&lt;header&gt; &lt;nav&gt; &lt;main&gt; …</code></h1>
+      <p class="sub">Thẻ ngữ nghĩa (semantic) mô tả rõ <em>ý nghĩa</em> của nội dung cho trình duyệt,
+         máy tìm kiếm và trình đọc màn hình — thay cho hàng loạt <code>&lt;div&gt;</code> vô danh. Đi từ khái niệm
+         tới sơ đồ bố cục một trang web hoàn chỉnh.</p>
+      <div class="chips">
+        <span class="chip solid">2.1.8</span>
+        <span class="chip solid">HTML5 Semantic</span>
+        <span class="chip solid">Cơ bản → Nâng cao</span>
+        <span class="chip solid">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Ngữ nghĩa là gì &amp; vì sao cần</a></li>
+        <li><a href="#s2">header &amp; footer</a></li>
+        <li><a href="#s3">nav — vùng điều hướng</a></li>
+        <li><a href="#s4">main — nội dung chính</a></li>
+        <li><a href="#s5">section vs article</a></li>
+        <li><a href="#s6">aside — nội dung phụ</a></li>
+        <li><a href="#s7">figure · time · mark</a></li>
+        <li><a href="#s8">details &amp; summary</a></li>
+        <li><a href="#s9">meter &amp; progress</a></li>
+        <li><a href="#s10">Sơ đồ bố cục trang</a></li>
+        <li><a href="#s11">Đối chiếu div.class → thẻ</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. NGỮ NGHĨA LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Ngữ nghĩa là gì &amp; vì sao cần <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Một thẻ <strong>ngữ nghĩa</strong> (semantic) cho biết <em>nội dung bên trong nó là gì</em>.
+         Ví dụ <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;article&gt;</code> nói rõ vai trò;
+         còn <code>&lt;div&gt;</code>, <code>&lt;span&gt;</code> là thẻ <strong>vô nghĩa</strong> (non-semantic) — chỉ là cái hộp trắng.</p>
+
+      <div class="demo">
+        <div class="demo-bar">So sánh trực quan</div>
+        <div class="demo-body">
+          <p><span class="d-tag sem">semantic</span> — nói rõ vai trò:</p>
+          <p style="margin:4px 0 16px">
+            <code>&lt;header&gt;</code> <code>&lt;nav&gt;</code> <code>&lt;main&gt;</code>
+            <code>&lt;section&gt;</code> <code>&lt;article&gt;</code> <code>&lt;aside&gt;</code>
+            <code>&lt;footer&gt;</code> <code>&lt;figure&gt;</code> <code>&lt;time&gt;</code>
+          </p>
+          <p><span class="d-tag non">non-semantic</span> — không nói gì về nội dung:</p>
+          <p style="margin:4px 0 0"><code>&lt;div&gt;</code> <code>&lt;span&gt;</code></p>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Ba lợi ích chính</strong> khi dùng thẻ ngữ nghĩa thay cho <code>&lt;div&gt;</code> hàng loạt:</p>
+        <p>① <strong>SEO</strong> — máy tìm kiếm hiểu đâu là tiêu đề, điều hướng, nội dung chính nên xếp hạng tốt hơn.<br>
+           ② <strong>Khả năng tiếp cận (accessibility)</strong> — trình đọc màn hình cho phép người khiếm thị nhảy
+           thẳng tới <code>&lt;nav&gt;</code> hay <code>&lt;main&gt;</code> qua "landmark".<br>
+           ③ <strong>Dễ đọc &amp; bảo trì mã</strong> — nhìn thẻ là biết khối đó để làm gì, không cần dò từng <code>class</code>.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Cùng một bố cục: viết bằng div vô nghĩa vs viết bằng thẻ ngữ nghĩa</caption>
+        <thead><tr><th>Cách viết</th><th>Mã</th></tr></thead>
+        <tbody>
+          <tr><td>Non-semantic <span class="d-tag non">khó hiểu</span></td>
+              <td><code>&lt;div class="header"&gt; … &lt;/div&gt;</code><br><code>&lt;div class="nav"&gt; … &lt;/div&gt;</code></td></tr>
+          <tr><td>Semantic <span class="d-tag sem">rõ nghĩa</span></td>
+              <td><code>&lt;header&gt; … &lt;/header&gt;</code><br><code>&lt;nav&gt; … &lt;/nav&gt;</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip"><p><strong>Quy tắc vàng:</strong> luôn chọn thẻ ngữ nghĩa phù hợp <em>trước</em>;
+        chỉ dùng <code>&lt;div&gt;</code>/<code>&lt;span&gt;</code> khi không có thẻ nào diễn tả đúng (thường là để gom nhóm thuần kỹ thuật).</p></div>
+    </section>
+
+    <!-- ==========  2. HEADER & FOOTER  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> <code>&lt;header&gt;</code> và <code>&lt;footer&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>&lt;header&gt;</code> chứa phần <strong>đầu</strong> (logo, tiêu đề, ô tìm kiếm, điều hướng chính);
+         <code>&lt;footer&gt;</code> chứa phần <strong>chân</strong> (bản quyền, liên hệ, liên kết phụ). Một trang có thể có
+         nhiều <code>&lt;header&gt;</code>/<code>&lt;footer&gt;</code> — mỗi <code>&lt;article&gt;</code> hay <code>&lt;section&gt;</code> cũng có thể có riêng.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="d-elem" data-tag="&lt;header&gt;">
+            <strong>Tạp chí Lập trình</strong> · Khoa CNTT
+          </div>
+          <div class="d-elem amber" data-tag="&lt;footer&gt;">
+            © 2026 OU · Liên hệ · Điều khoản
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Vai trò</caption>
+        <thead><tr><th>Thẻ</th><th>Đặt ở đâu &amp; chứa gì</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;header&gt;</code></td><td>Đầu trang/đầu khối: logo, tiêu đề <code>&lt;h1&gt;</code>, slogan, điều hướng.</td></tr>
+          <tr><td><code>&lt;footer&gt;</code></td><td>Chân trang/cuối khối: bản quyền, tác giả, ngày, sitemap, liên hệ.</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="k">&lt;header&gt;</span>
+  <span class="k">&lt;h1&gt;</span>Tạp chí Lập trình<span class="k">&lt;/h1&gt;</span>
+  <span class="k">&lt;p&gt;</span>Cập nhật công nghệ mỗi ngày<span class="k">&lt;/p&gt;</span>
+<span class="k">&lt;/header&gt;</span>
+
+<span class="k">&lt;footer&gt;</span>
+  <span class="k">&lt;p&gt;</span>© 2026 OU. Mọi quyền được bảo lưu.<span class="k">&lt;/p&gt;</span>
+<span class="k">&lt;/footer&gt;</span></code></pre>
+
+      <div class="callout warn"><p>Đừng nhầm: <code>&lt;header&gt;</code> là <em>vùng đầu nội dung</em>, khác với
+        <code>&lt;head&gt;</code> (vùng siêu dữ liệu trong <code>&lt;html&gt;</code>, không hiển thị).</p></div>
+    </section>
+
+    <!-- ==========  3. NAV  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> <code>&lt;nav&gt;</code> — vùng điều hướng <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>&lt;nav&gt;</code> bao quanh một <strong>nhóm liên kết điều hướng chính</strong> (menu trang, menu phần).
+         Trình đọc màn hình coi đây là "landmark", cho phép người dùng nhảy nhanh tới menu.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="d-elem green" data-tag="&lt;nav&gt;">
+            <a href="#s3">Trang chủ</a> ·
+            <a href="#s3">Giới thiệu</a> ·
+            <a href="#s3">Bài viết</a> ·
+            <a href="#s3">Liên hệ</a>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;nav&gt;</span>
+  <span class="k">&lt;a</span> <span class="k">href</span>=<span class="s">"/"</span><span class="k">&gt;</span>Trang chủ<span class="k">&lt;/a&gt;</span>
+  <span class="k">&lt;a</span> <span class="k">href</span>=<span class="s">"/gioi-thieu"</span><span class="k">&gt;</span>Giới thiệu<span class="k">&lt;/a&gt;</span>
+  <span class="k">&lt;a</span> <span class="k">href</span>=<span class="s">"/lien-he"</span><span class="k">&gt;</span>Liên hệ<span class="k">&lt;/a&gt;</span>
+<span class="k">&lt;/nav&gt;</span></code></pre>
+
+      <div class="callout info"><p><strong>Không cần</strong> bọc <em>mọi</em> liên kết trong <code>&lt;nav&gt;</code> — chỉ dùng cho
+        các <em>khối điều hướng quan trọng</em>. Vài liên kết lẻ trong đoạn văn thì để <code>&lt;a&gt;</code> bình thường.
+        Nếu có nhiều <code>&lt;nav&gt;</code>, đặt nhãn phân biệt: <code>&lt;nav aria-label="Chính"&gt;</code>.</p></div>
+    </section>
+
+    <!-- ==========  4. MAIN  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> <code>&lt;main&gt;</code> — nội dung chính <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>&lt;main&gt;</code> bao <strong>nội dung trung tâm, độc nhất</strong> của trang —
+         phần khác biệt giữa trang này với trang khác. <strong>Chỉ được dùng đúng MỘT</strong> <code>&lt;main&gt;</code>
+         hiển thị trên mỗi trang, và không đặt nó bên trong <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;aside&gt;</code> hay <code>&lt;footer&gt;</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="d-elem green" data-tag="&lt;main&gt;">
+            <h3 style="margin-top:0">Bài viết: Học HTML ngữ nghĩa</h3>
+            <p style="margin:0">Đây là nội dung chính, riêng cho trang này — không lặp lại ở các trang khác
+               như menu hay chân trang.</p>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;body&gt;</span>
+  <span class="k">&lt;header&gt;</span>…<span class="k">&lt;/header&gt;</span>
+  <span class="k">&lt;nav&gt;</span>…<span class="k">&lt;/nav&gt;</span>
+  <span class="k">&lt;main&gt;</span>            <span class="c">&lt;!-- DUY NHẤT một &lt;main&gt; --&gt;</span>
+    <span class="c">&lt;!-- nội dung trung tâm của trang --&gt;</span>
+  <span class="k">&lt;/main&gt;</span>
+  <span class="k">&lt;footer&gt;</span>…<span class="k">&lt;/footer&gt;</span>
+<span class="k">&lt;/body&gt;</span></code></pre>
+
+      <div class="callout danger"><p><strong>Sai thường gặp:</strong> đặt 2 thẻ <code>&lt;main&gt;</code> hiển thị cùng lúc, hoặc lồng
+        <code>&lt;main&gt;</code> vào trong <code>&lt;article&gt;</code>/<code>&lt;aside&gt;</code>. Đây là lỗi cấu trúc, gây nhầm cho trình đọc màn hình.</p></div>
+    </section>
+
+    <!-- ==========  5. SECTION vs ARTICLE  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> <code>&lt;section&gt;</code> vs <code>&lt;article&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Cả hai đều gom nhóm nội dung, nhưng khác về <strong>tính độc lập</strong>:
+         <code>&lt;article&gt;</code> là khối <em>tự đứng được một mình</em> (đem đi nơi khác vẫn có nghĩa);
+         <code>&lt;section&gt;</code> là một <em>phần chủ đề</em> bên trong một tài liệu lớn hơn.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · article chứa nhiều section</div>
+        <div class="demo-body">
+          <div class="d-elem purple" data-tag="&lt;article&gt;">
+            <h3 style="margin:0 0 8px">Hướng dẫn nấu phở</h3>
+            <div class="d-elem" data-tag="&lt;section&gt;" style="margin:6px 0"><strong>Nguyên liệu</strong> — xương, bánh phở, gia vị…</div>
+            <div class="d-elem" data-tag="&lt;section&gt;" style="margin:6px 0"><strong>Các bước</strong> — ninh xương, chần bánh, chan nước…</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Mẹo phân biệt nhanh:</strong></p>
+        <p>• Dùng <code>&lt;article&gt;</code> nếu nội dung <strong>chia sẻ/đăng lại riêng lẻ vẫn có nghĩa</strong>:
+           một bài blog, một tin tức, một bình luận, một thẻ sản phẩm.<br>
+           • Dùng <code>&lt;section&gt;</code> để <strong>chia tài liệu thành các phần theo chủ đề</strong>, thường mỗi phần
+           có một tiêu đề <code>&lt;h2&gt;</code>/<code>&lt;h3&gt;</code>: "Giới thiệu", "Tính năng", "Liên hệ".</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Khi nào dùng cái nào</caption>
+        <thead><tr><th>Tình huống</th><th>Thẻ nên dùng</th></tr></thead>
+        <tbody>
+          <tr><td>Bài blog, tin tức, bình luận, card sản phẩm (tự đứng được)</td><td><code>&lt;article&gt;</code></td></tr>
+          <tr><td>Một phần chủ đề trong trang (có tiêu đề riêng)</td><td><code>&lt;section&gt;</code></td></tr>
+          <tr><td>Chỉ gom nhóm để tạo kiểu, không có ý nghĩa chủ đề</td><td><code>&lt;div&gt;</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="k">&lt;article&gt;</span>
+  <span class="k">&lt;h2&gt;</span>Hướng dẫn nấu phở<span class="k">&lt;/h2&gt;</span>
+  <span class="k">&lt;section&gt;</span><span class="k">&lt;h3&gt;</span>Nguyên liệu<span class="k">&lt;/h3&gt;</span>…<span class="k">&lt;/section&gt;</span>
+  <span class="k">&lt;section&gt;</span><span class="k">&lt;h3&gt;</span>Các bước<span class="k">&lt;/h3&gt;</span>…<span class="k">&lt;/section&gt;</span>
+<span class="k">&lt;/article&gt;</span></code></pre>
+
+      <div class="callout tip"><p>Cả hai có thể lồng nhau: một <code>&lt;section&gt;</code> "Bài mới nhất" chứa nhiều
+        <code>&lt;article&gt;</code> (mỗi bài một thẻ), và mỗi <code>&lt;article&gt;</code> lại có thể chia thành các <code>&lt;section&gt;</code> con.</p></div>
+    </section>
+
+    <!-- ==========  6. ASIDE  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> <code>&lt;aside&gt;</code> — nội dung phụ / sidebar <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>&lt;aside&gt;</code> chứa nội dung <strong>liên quan gián tiếp</strong> tới phần chính:
+         thanh bên (sidebar), bài liên quan, ghi chú lề, quảng cáo, định nghĩa thuật ngữ. Bỏ nó đi thì
+         nội dung chính vẫn trọn nghĩa.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · main + aside cạnh nhau</div>
+        <div class="demo-body" style="display:grid; grid-template-columns:2fr 1fr; gap:10px">
+          <div class="d-elem green" data-tag="&lt;main&gt;" style="margin:0">
+            <p style="margin:0">Nội dung chính của bài viết nằm ở cột rộng bên trái.</p>
+          </div>
+          <div class="d-elem purple" data-tag="&lt;aside&gt;" style="margin:0">
+            <strong>Bài liên quan</strong>
+            <ul style="margin:6px 0 0; padding-left:18px; font-size:.9rem">
+              <li>CSS cơ bản</li>
+              <li>Form HTML</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;main&gt;</span>
+  <span class="k">&lt;article&gt;</span>…bài viết chính…<span class="k">&lt;/article&gt;</span>
+<span class="k">&lt;/main&gt;</span>
+<span class="k">&lt;aside&gt;</span>
+  <span class="k">&lt;h3&gt;</span>Bài liên quan<span class="k">&lt;/h3&gt;</span>
+  <span class="k">&lt;ul&gt;</span><span class="k">&lt;li&gt;</span>…<span class="k">&lt;/li&gt;</span><span class="k">&lt;/ul&gt;</span>
+<span class="k">&lt;/aside&gt;</span></code></pre>
+
+      <div class="callout info"><p>Để xếp <code>&lt;main&gt;</code> và <code>&lt;aside&gt;</code> thành 2 cột, ta dùng CSS Flexbox/Grid
+        (xem mục 10) — bản thân thẻ ngữ nghĩa <em>không</em> tự dàn cột.</p></div>
+    </section>
+
+    <!-- ==========  7. FIGURE · TIME · MARK  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> <code>&lt;figure&gt;</code> · <code>&lt;time&gt;</code> · <code>&lt;mark&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Nhóm thẻ ngữ nghĩa <strong>cấp dòng/khối nhỏ</strong> hay gặp:
+         <code>&lt;figure&gt;</code> + <code>&lt;figcaption&gt;</code> cho minh hoạ có chú thích,
+         <code>&lt;time&gt;</code> cho mốc thời gian máy đọc được, <code>&lt;mark&gt;</code> để tô nổi (highlight).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <figure class="d-figure">
+            <div class="d-figimg">HÌNH MINH HOẠ</div>
+            <figcaption>Hình 1. Sơ đồ bố cục một trang web ngữ nghĩa.</figcaption>
+          </figure>
+          <p style="margin-top:16px">Bài đăng ngày
+            <time datetime="2026-06-27">27/06/2026</time>.
+            Từ khoá quan trọng: <mark class="d-mk">thẻ ngữ nghĩa</mark> giúp SEO tốt hơn.</p>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Vai trò &amp; thuộc tính quan trọng</caption>
+        <thead><tr><th>Thẻ</th><th>Dùng để</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;figure&gt;</code></td><td>Bọc hình ảnh/biểu đồ/đoạn mã <em>kèm chú thích</em>, có thể tách rời khỏi mạch văn.</td></tr>
+          <tr><td><code>&lt;figcaption&gt;</code></td><td>Chú thích cho <code>&lt;figure&gt;</code> (đặt đầu hoặc cuối thẻ).</td></tr>
+          <tr><td><code>&lt;time datetime="…"&gt;</code></td><td>Mốc thời gian; thuộc tính <code>datetime</code> ghi định dạng máy đọc được (<code>2026-06-27</code>).</td></tr>
+          <tr><td><code>&lt;mark&gt;</code></td><td>Tô nổi/đánh dấu phần văn bản đáng chú ý (mặc định nền vàng).</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="k">&lt;figure&gt;</span>
+  <span class="k">&lt;img</span> <span class="k">src</span>=<span class="s">"so-do.png"</span> <span class="k">alt</span>=<span class="s">"Sơ đồ bố cục"</span><span class="k">&gt;</span>
+  <span class="k">&lt;figcaption&gt;</span>Hình 1. Sơ đồ bố cục.<span class="k">&lt;/figcaption&gt;</span>
+<span class="k">&lt;/figure&gt;</span>
+
+Đăng ngày <span class="k">&lt;time</span> <span class="k">datetime</span>=<span class="s">"2026-06-27"</span><span class="k">&gt;</span>27/06/2026<span class="k">&lt;/time&gt;</span>.
+Từ khoá: <span class="k">&lt;mark&gt;</span>ngữ nghĩa<span class="k">&lt;/mark&gt;</span>.</code></pre>
+    </section>
+
+    <!-- ==========  8. DETAILS & SUMMARY  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> <code>&lt;details&gt;</code> &amp; <code>&lt;summary&gt;</code> <span class="tag-adv">Tương tác</span></h2>
+      <p class="lead">Tạo khối <strong>đóng/mở (accordion)</strong> mà <strong>không cần JavaScript</strong>:
+         người dùng bấm vào <code>&lt;summary&gt;</code> để xổ ra/thu gọn nội dung trong <code>&lt;details&gt;</code>.
+         Thêm thuộc tính <code>open</code> để mặc định mở sẵn.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · bấm để mở/đóng (thử ngay)</div>
+        <div class="demo-body">
+          <details style="border:1px solid #e3e8f0; border-radius:8px; padding:8px 12px; margin-bottom:10px">
+            <summary style="cursor:pointer; font-weight:600; color:#1D559F">Thẻ ngữ nghĩa là gì?</summary>
+            <p style="margin:8px 0 0">Là thẻ HTML mô tả rõ ý nghĩa của nội dung, ví dụ <code>&lt;nav&gt;</code> cho vùng điều hướng.</p>
+          </details>
+          <details open style="border:1px solid #e3e8f0; border-radius:8px; padding:8px 12px">
+            <summary style="cursor:pointer; font-weight:600; color:#1D559F">Khối này mặc định mở (có thuộc tính <code>open</code>)</summary>
+            <p style="margin:8px 0 0">Bạn vẫn có thể bấm vào tiêu đề để thu gọn lại.</p>
+          </details>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;details&gt;</span>
+  <span class="k">&lt;summary&gt;</span>Thẻ ngữ nghĩa là gì?<span class="k">&lt;/summary&gt;</span>
+  <span class="k">&lt;p&gt;</span>Là thẻ mô tả rõ ý nghĩa nội dung…<span class="k">&lt;/p&gt;</span>
+<span class="k">&lt;/details&gt;</span>
+
+<span class="k">&lt;details</span> <span class="k">open</span><span class="k">&gt;</span>          <span class="c">&lt;!-- open = mở sẵn --&gt;</span>
+  <span class="k">&lt;summary&gt;</span>Mục mở sẵn<span class="k">&lt;/summary&gt;</span>
+  <span class="k">&lt;p&gt;</span>…<span class="k">&lt;/p&gt;</span>
+<span class="k">&lt;/details&gt;</span></code></pre>
+
+      <div class="callout tip"><p>Rất hợp để làm <strong>FAQ (câu hỏi thường gặp)</strong>, phần "Xem thêm", hay ghi chú phụ —
+        gọn, dễ tiếp cận và chạy được ngay cả khi tắt JavaScript.</p></div>
+    </section>
+
+    <!-- ==========  9. METER & PROGRESS  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> <code>&lt;meter&gt;</code> &amp; <code>&lt;progress&gt;</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Hai thẻ vẽ <strong>thanh đo</strong>: <code>&lt;meter&gt;</code> biểu diễn một <em>giá trị trong một khoảng đã biết</em>
+         (mức pin, điểm số, dung lượng); <code>&lt;progress&gt;</code> biểu diễn <em>tiến độ hoàn thành</em> của một tác vụ.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body d-bars">
+          <label>Điểm môn học: 8.5 / 10</label>
+          <meter min="0" max="10" low="4" high="8" optimum="10" value="8.5"></meter>
+
+          <label>Dung lượng ổ đĩa đã dùng: 70%</label>
+          <meter min="0" max="100" low="50" high="85" optimum="20" value="70"></meter>
+
+          <label>Tiến độ tải tệp: 65%</label>
+          <progress max="100" value="65"></progress>
+
+          <label>Đang xử lý (không rõ tiến độ)</label>
+          <progress></progress>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Phân biệt</caption>
+        <thead><tr><th>Thẻ</th><th>Dùng cho</th><th>Thuộc tính chính</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;meter&gt;</code></td><td>Một số đo <em>cố định</em> trong khoảng (pin, điểm, mức dùng).</td>
+              <td><code>min max value low high optimum</code></td></tr>
+          <tr><td><code>&lt;progress&gt;</code></td><td>Tiến độ một việc <em>đang chạy</em> (tải, cài đặt). Bỏ <code>value</code> → thanh "không xác định".</td>
+              <td><code>max value</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">&lt;!-- meter: số đo trong khoảng đã biết --&gt;</span>
+<span class="k">&lt;meter</span> <span class="k">min</span>=<span class="s">"0"</span> <span class="k">max</span>=<span class="s">"10"</span> <span class="k">value</span>=<span class="s">"8.5"</span><span class="k">&gt;</span>8.5/10<span class="k">&lt;/meter&gt;</span>
+
+<span class="c">&lt;!-- progress: tiến độ hoàn thành --&gt;</span>
+<span class="k">&lt;progress</span> <span class="k">max</span>=<span class="s">"100"</span> <span class="k">value</span>=<span class="s">"65"</span><span class="k">&gt;</span>65%<span class="k">&lt;/progress&gt;</span></code></pre>
+
+      <div class="callout warn"><p>Đừng dùng <code>&lt;meter&gt;</code> cho tiến độ và ngược lại. Quy tắc: <em>số đo tĩnh</em> →
+        <code>meter</code>; <em>việc đang chạy</em> → <code>progress</code>.</p></div>
+    </section>
+
+    <!-- ==========  10. SƠ ĐỒ BỐ CỤC TRANG  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Sơ đồ bố cục trang ngữ nghĩa hoàn chỉnh <span class="tag-adv">Thực hành</span></h2>
+      <p class="lead">Ghép tất cả lại: một trang chuẩn gồm <code>&lt;header&gt;</code> → <code>&lt;nav&gt;</code> →
+         <code>&lt;main&gt;</code> (chứa <code>&lt;section&gt;</code>/<code>&lt;article&gt;</code> + <code>&lt;aside&gt;</code>) → <code>&lt;footer&gt;</code>.
+         Dưới đây dùng <strong>CSS Grid</strong> để vẽ khung trực quan các vùng này.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Sơ đồ bố cục (mỗi ô = một thẻ ngữ nghĩa)</div>
+        <div class="demo-body">
+          <div class="d-layout">
+            <div class="lo-header">&lt;header&gt;<small>logo · tiêu đề trang</small></div>
+            <div class="lo-nav">&lt;nav&gt;<small>menu điều hướng chính</small></div>
+            <div class="lo-main">
+              &lt;main&gt;
+              <div class="lo-sub">&lt;section&gt; / &lt;article&gt; — nội dung chính</div>
+            </div>
+            <div class="lo-aside">&lt;aside&gt;<small>sidebar · bài liên quan</small></div>
+            <div class="lo-footer">&lt;footer&gt;<small>bản quyền · liên hệ</small></div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;body&gt;</span>
+  <span class="k">&lt;header&gt;</span><span class="c">…logo, tiêu đề…</span><span class="k">&lt;/header&gt;</span>
+  <span class="k">&lt;nav&gt;</span><span class="c">…menu chính…</span><span class="k">&lt;/nav&gt;</span>
+
+  <span class="k">&lt;main&gt;</span>
+    <span class="k">&lt;article&gt;</span>
+      <span class="k">&lt;section&gt;</span><span class="c">…nội dung chính…</span><span class="k">&lt;/section&gt;</span>
+    <span class="k">&lt;/article&gt;</span>
+    <span class="k">&lt;aside&gt;</span><span class="c">…bài liên quan, sidebar…</span><span class="k">&lt;/aside&gt;</span>
+  <span class="k">&lt;/main&gt;</span>
+
+  <span class="k">&lt;footer&gt;</span><span class="c">…bản quyền, liên hệ…</span><span class="k">&lt;/footer&gt;</span>
+<span class="k">&lt;/body&gt;</span></code></pre>
+
+      <pre class="code"><code><span class="c">/* Dàn 2 cột main + aside bằng CSS Grid */</span>
+main { <span class="k">display</span>: <span class="v">grid</span>;
+       <span class="k">grid-template-columns</span>: <span class="v">2fr 1fr</span>;
+       <span class="k">gap</span>: <span class="v">16px</span>; }</code></pre>
+
+      <div class="callout tip"><p><strong>Thực hành:</strong> hãy thử thu nhỏ cửa sổ trình duyệt — ở màn hình hẹp,
+        sơ đồ trên tự xếp các vùng thành <em>một cột dọc</em> nhờ <code>@media</code> trong phần CSS của bài.</p></div>
+    </section>
+
+    <!-- ==========  11. BẢNG ĐỐI CHIẾU  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Đối chiếu: <code>div.class</code> cũ → thẻ ngữ nghĩa <span class="tag-base">Tổng kết</span></h2>
+      <p class="lead">Trước HTML5, lập trình viên gắn ý nghĩa qua <code>class</code> trên <code>&lt;div&gt;</code>.
+         Ngày nay hãy thay bằng thẻ ngữ nghĩa tương ứng — gọn hơn, máy hiểu được, và dễ bảo trì.</p>
+
+      <table class="syntax">
+        <caption>Bảng quy đổi nhanh</caption>
+        <thead><tr><th>Trước đây (non-semantic)</th><th>Nay dùng thẻ ngữ nghĩa</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;div class="header"&gt;</code></td><td><code>&lt;header&gt;</code></td><td>Vùng đầu trang/khối</td></tr>
+          <tr><td><code>&lt;div class="nav"&gt;</code> · <code>menu</code></td><td><code>&lt;nav&gt;</code></td><td>Vùng điều hướng</td></tr>
+          <tr><td><code>&lt;div class="content"&gt;</code> · <code>main</code></td><td><code>&lt;main&gt;</code></td><td>Nội dung chính (duy nhất)</td></tr>
+          <tr><td><code>&lt;div class="post"&gt;</code> · <code>article</code></td><td><code>&lt;article&gt;</code></td><td>Khối nội dung độc lập</td></tr>
+          <tr><td><code>&lt;div class="section"&gt;</code></td><td><code>&lt;section&gt;</code></td><td>Một phần theo chủ đề</td></tr>
+          <tr><td><code>&lt;div class="sidebar"&gt;</code> · <code>aside</code></td><td><code>&lt;aside&gt;</code></td><td>Nội dung phụ/bên lề</td></tr>
+          <tr><td><code>&lt;div class="footer"&gt;</code></td><td><code>&lt;footer&gt;</code></td><td>Vùng chân trang/khối</td></tr>
+          <tr><td><code>&lt;div class="figure"&gt;</code> + caption</td><td><code>&lt;figure&gt;</code>+<code>&lt;figcaption&gt;</code></td><td>Hình kèm chú thích</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info"><p><strong>Ghi nhớ cuối bài:</strong> chọn thẻ theo <em>ý nghĩa của nội dung</em>, không theo
+        hình thức hiển thị. Việc tạo kiểu (màu, cột, khoảng cách) là phần việc của CSS — học tiếp ở mục <a href="../index.html">2.2 CSS</a>.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="07-form.html"><small>← Bài trước</small>2.1.8 · Form</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="09-da-phuong-tien.html"><small>Bài tiếp →</small>2.1.9 · Đa phương tiện</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

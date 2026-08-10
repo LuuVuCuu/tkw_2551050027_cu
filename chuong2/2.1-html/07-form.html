@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.1.8 — HTML FORMS · Biểu mẫu (bản toàn diện)
+  ------------------------------------------------------------
+  Form là cách website THU THẬP dữ liệu từ người dùng: đăng
+  nhập, đăng ký, tìm kiếm, khảo sát... Bài này đi từ cơ bản
+  → nâng cao, tham khảo theo W3Schools:
+    1)  <form> là gì (action, method)
+    2)  <input type=text> + <label>
+    3)  Các input dạng text (password/email/number/tel/url/search)
+    4)  radio & checkbox
+    5)  <select>/<option>/<optgroup> & <datalist>
+    6)  <textarea>
+    7)  Các loại nút (submit/reset/button/<button>)
+    8)  Input HTML5 (date/time/color/range/file...)
+    9)  Bảng thuộc tính input
+    10) <fieldset>/<legend>
+    11) Form ĐẸP bằng CSS (thực hành)
+    12) Validation cơ bản (required/pattern/:invalid)
+    13) Tổng kết & lưu ý
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  Mỗi <form> đặt action="#" để bấm Gửi không rời trang.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.1.8 · Form — Biểu mẫu HTML</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* khoảng cách giữa các trường trong demo cho thoáng */
+    .d-field { margin: 0 0 12px; }
+    .d-field label { display: block; font-weight: 600; margin-bottom: 4px; color: #16407a; }
+    .d-inline label { display: inline; font-weight: 400; margin: 0 14px 0 4px; }
+
+    /* nhãn cùng dòng với ô (cho input nhỏ) */
+    .d-row2 { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+
+    /* ---- (11) FORM ĐẸP — .d-form ---- */
+    .d-form {
+      max-width: 460px;
+      background: #fbfdff;
+      border: 1px solid #e3e8f0;
+      border-radius: 14px;
+      padding: 22px;
+    }
+    .d-form label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #16407a;
+      font-size: .92rem;
+    }
+    .d-form input[type=text],
+    .d-form input[type=email],
+    .d-form input[type=password],
+    .d-form select,
+    .d-form textarea {
+      width: 100%;                       /* ô rộng hết khung form */
+      padding: 11px 13px;
+      margin-bottom: 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      font-size: .95rem;
+      font-family: inherit;
+      background: #fff;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .d-form textarea { resize: vertical; min-height: 90px; }
+    .d-form input:focus,
+    .d-form select:focus,
+    .d-form textarea:focus {
+      outline: none;
+      border-color: #1D559F;             /* viền xanh khi đang nhập */
+      box-shadow: 0 0 0 3px rgba(29,85,159,.15);
+    }
+    .d-form .d-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 9px;
+      background: #04AA6D;               /* nút xanh lá nổi bật */
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .d-form .d-btn:hover { background: #038a58; }
+
+    /* ---- (12) VALIDATION — tô màu trạng thái hợp lệ ---- */
+    .d-valid input {
+      width: 100%; padding: 10px 12px; margin-bottom: 4px;
+      border: 1px solid #cbd5e1; border-radius: 9px;
+      font-size: .95rem; font-family: inherit;
+    }
+    .d-valid input:focus { outline: none; box-shadow: 0 0 0 3px rgba(29,85,159,.15); }
+    .d-valid input:required:valid   { border-color: #04AA6D; background: #f3fcf8; }
+    .d-valid input:required:invalid { border-color: #E63946; background: #fdf2f3; }
+    .d-valid .hint { font-size: .8rem; color: #5b6472; margin: 0 0 14px; }
+    .d-valid .d-btn {
+      padding: 10px 20px; border: none; border-radius: 9px;
+      background: #1D559F; color: #fff; font-weight: 700; cursor: pointer;
+    }
+
+    /* nút trong các demo nhỏ */
+    .d-mini-btn {
+      padding: 9px 18px; border-radius: 8px; border: 1px solid #cbd5e1;
+      background: #fff; font-weight: 600; cursor: pointer; font-family: inherit;
+      margin-right: 6px;
+    }
+    .d-mini-btn.go     { background: #04AA6D; color: #fff; border-color: transparent; }
+    .d-mini-btn.clear  { background: #f1f5f9; }
+    .d-mini-btn.plain  { background: #1D559F; color: #fff; border-color: transparent; }
+
+    /* lưới demo cho nhóm input HTML5 */
+    .d-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; }
+    @media (max-width: 600px) { .d-grid2 { grid-template-columns: 1fr; } }
+    .d-grid2 label { display: block; font-size: .82rem; margin-bottom: 3px; }
+    .d-grid2 input, .d-grid2 select {
+      width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1;
+      border-radius: 8px; font-family: inherit; font-size: .92rem;
+    }
+
+    /* fieldset đẹp hơn cho demo */
+    .d-fs { border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px 16px; }
+    .d-fs legend { font-weight: 700; color: #1D559F; padding: 0 8px; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.1 HTML</a><span>›</span>
+        Form
+      </nav>
+      <h1>Biểu mẫu HTML — thẻ <code style="color:#fff;background:rgba(255,255,255,.18)">&lt;form&gt;</code></h1>
+      <p class="sub">Form là nơi website thu thập dữ liệu từ người dùng: ô nhập, lựa chọn, nút bấm.
+         Bài này đi từ <code style="color:#fff;background:rgba(255,255,255,.18)">&lt;input&gt;</code> cơ bản đến các loại
+         input HTML5, thuộc tính, định dạng đẹp bằng CSS và kiểm tra hợp lệ (validation).</p>
+      <div class="chips">
+        <span class="chip solid">2.1.8</span>
+        <span class="chip solid">HTML cơ bản</span>
+        <span class="chip solid">Cơ bản → Nâng cao</span>
+        <span class="chip solid">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">&lt;form&gt; là gì (action, method)</a></li>
+        <li><a href="#s2">input text &amp; &lt;label&gt;</a></li>
+        <li><a href="#s3">Các input dạng text</a></li>
+        <li><a href="#s4">radio &amp; checkbox</a></li>
+        <li><a href="#s5">select, optgroup &amp; datalist</a></li>
+        <li><a href="#s6">&lt;textarea&gt;</a></li>
+        <li><a href="#s7">Các loại nút bấm</a></li>
+        <li><a href="#s8">Input HTML5 (date, color, range...)</a></li>
+        <li><a href="#s9">Bảng thuộc tính input</a></li>
+        <li><a href="#s10">&lt;fieldset&gt; &amp; &lt;legend&gt;</a></li>
+        <li><a href="#s11">Form đẹp bằng CSS</a></li>
+        <li><a href="#s12">Kiểm tra hợp lệ (validation)</a></li>
+        <li><a href="#s13">Tổng kết &amp; lưu ý</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. FORM LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Thẻ &lt;form&gt; là gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Thẻ <code>&lt;form&gt;</code> là <strong>vùng chứa</strong> các phần tử nhập liệu (input, select,
+         textarea, nút...). Khi người dùng bấm <em>Gửi</em>, trình duyệt gom dữ liệu các trường rồi gửi tới máy chủ
+         được chỉ định ở <code>action</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Một form tối giản</div>
+        <div class="demo-body">
+          <form action="#" method="get">
+            <div class="d-field">
+              <label for="d1-name">Họ tên</label>
+              <input type="text" id="d1-name" name="hoten" placeholder="Nguyễn Văn A">
+            </div>
+            <button type="submit" class="d-mini-btn go">Gửi</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>action</strong> — địa chỉ (URL) trang/script xử lý dữ liệu khi gửi. Để trống hoặc <code>action="#"</code>
+           thì gửi về chính trang hiện tại (ta dùng cách này để demo offline, không rời trang).</p>
+        <p><strong>method</strong> — cách gửi dữ liệu: <code>get</code> (dữ liệu gắn vào URL, dùng cho tìm kiếm,
+           không nhạy cảm) hoặc <code>post</code> (dữ liệu ẩn trong thân request, dùng cho mật khẩu, dữ liệu lớn).</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Vài thuộc tính của thẻ &lt;form&gt;</caption>
+        <thead><tr><th>Thuộc tính</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>action</code></td><td>URL nơi nhận &amp; xử lý dữ liệu.</td></tr>
+          <tr><td><code>method</code></td><td><code>get</code> hoặc <code>post</code> — cách truyền dữ liệu.</td></tr>
+          <tr><td><code>name</code></td><td>Tên của form (để JavaScript tham chiếu).</td></tr>
+          <tr><td><code>target</code></td><td>Mở kết quả ở đâu: <code>_self</code> (mặc định), <code>_blank</code> (tab mới)...</td></tr>
+          <tr><td><code>autocomplete</code></td><td><code>on/off</code> — bật/tắt gợi ý tự điền của trình duyệt.</td></tr>
+          <tr><td><code>novalidate</code></td><td>Tắt kiểm tra hợp lệ tự động khi gửi.</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="k">&lt;form</span> <span class="k">action</span>=<span class="s">"/dang-ky"</span> <span class="k">method</span>=<span class="s">"post"</span><span class="k">&gt;</span>
+  <span class="c">&lt;!-- các ô nhập đặt bên trong --&gt;</span>
+  <span class="k">&lt;input</span> <span class="k">type</span>=<span class="s">"text"</span> <span class="k">name</span>=<span class="s">"hoten"</span><span class="k">&gt;</span>
+  <span class="k">&lt;button</span> <span class="k">type</span>=<span class="s">"submit"</span><span class="k">&gt;</span>Gửi<span class="k">&lt;/button&gt;</span>
+<span class="k">&lt;/form&gt;</span></code></pre>
+
+      <div class="callout info"><p>Dữ liệu chỉ được gửi đúng nếu mỗi trường có thuộc tính <code>name</code>.
+        Trường thiếu <code>name</code> sẽ bị bỏ qua khi gửi đi.</p></div>
+    </section>
+
+    <!-- ==========  2. INPUT TEXT & LABEL  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> &lt;input type="text"&gt; và &lt;label&gt; <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Ô nhập văn bản một dòng là phần tử cơ bản nhất. Luôn đi kèm một <code>&lt;label&gt;</code>
+         (nhãn) để người dùng biết ô đó nhập gì — và <strong>liên kết</strong> nhãn với ô qua cặp <code>for</code>/<code>id</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Nhãn liên kết với ô — bấm vào chữ cũng focus được ô</div>
+        <div class="demo-body">
+          <form action="#">
+            <div class="d-field">
+              <label for="d2-user">Tên đăng nhập</label>
+              <input type="text" id="d2-user" name="username" placeholder="vd: khoavo">
+            </div>
+            <div class="d-field">
+              <label for="d2-city">Thành phố</label>
+              <input type="text" id="d2-city" name="city" value="Hồ Chí Minh">
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">&lt;!-- for của label TRÙNG với id của input --&gt;</span>
+<span class="k">&lt;label</span> <span class="k">for</span>=<span class="s">"user"</span><span class="k">&gt;</span>Tên đăng nhập<span class="k">&lt;/label&gt;</span>
+<span class="k">&lt;input</span> <span class="k">type</span>=<span class="s">"text"</span> <span class="k">id</span>=<span class="s">"user"</span> <span class="k">name</span>=<span class="s">"username"</span><span class="k">&gt;</span></code></pre>
+
+      <div class="note">
+        <p><code>id</code> phải là <strong>duy nhất</strong> trong trang; <code>for</code> của label trỏ đúng vào <code>id</code> đó.</p>
+        <p><code>value</code> = giá trị có sẵn trong ô; <code>placeholder</code> = chữ gợi ý mờ, biến mất khi gõ.</p>
+      </div>
+
+      <div class="callout tip"><p><strong>Vì sao phải dùng label?</strong> Bấm vào chữ nhãn sẽ tự focus vào ô tương ứng
+        (vùng bấm rộng hơn, tiện trên điện thoại) và trình đọc màn hình đọc đúng tên ô cho người khiếm thị.</p></div>
+    </section>
+
+    <!-- ==========  3. CÁC INPUT DẠNG TEXT  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Các input dạng văn bản khác <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Ngoài <code>text</code>, HTML5 còn nhiều <code>type</code> "họ hàng" cũng là ô gõ chữ nhưng có
+         ý nghĩa &amp; bàn phím riêng (trên điện thoại bàn phím tự đổi cho phù hợp).</p>
+
+      <div class="demo">
+        <div class="demo-bar">password · email · number · tel · url · search</div>
+        <div class="demo-body">
+          <form action="#">
+            <div class="d-field">
+              <label for="d3-pw">Mật khẩu (password — che ký tự)</label>
+              <input type="password" id="d3-pw" name="pw" placeholder="••••••">
+            </div>
+            <div class="d-field">
+              <label for="d3-mail">Email (email)</label>
+              <input type="email" id="d3-mail" name="mail" placeholder="ban@vidu.com">
+            </div>
+            <div class="d-field">
+              <label for="d3-num">Số lượng (number)</label>
+              <input type="number" id="d3-num" name="qty" min="1" max="10" value="1">
+            </div>
+            <div class="d-field">
+              <label for="d3-tel">Điện thoại (tel)</label>
+              <input type="tel" id="d3-tel" name="tel" placeholder="09xx xxx xxx">
+            </div>
+            <div class="d-field">
+              <label for="d3-url">Website (url)</label>
+              <input type="url" id="d3-url" name="url" placeholder="https://...">
+            </div>
+            <div class="d-field">
+              <label for="d3-search">Tìm kiếm (search)</label>
+              <input type="search" id="d3-search" name="q" placeholder="Gõ từ khoá...">
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Các input họ "văn bản"</caption>
+        <thead><tr><th>type</th><th>Dùng cho</th><th>Đặc điểm</th></tr></thead>
+        <tbody>
+          <tr><td><code>text</code></td><td>Văn bản tự do 1 dòng</td><td>Mặc định, không kiểm tra gì.</td></tr>
+          <tr><td><code>password</code></td><td>Mật khẩu</td><td>Hiển thị dạng chấm/sao che ký tự.</td></tr>
+          <tr><td><code>email</code></td><td>Địa chỉ email</td><td>Trình duyệt tự kiểm tra phải có dạng <code>a@b</code>.</td></tr>
+          <tr><td><code>number</code></td><td>Số</td><td>Có nút tăng/giảm; kèm <code>min</code>/<code>max</code>/<code>step</code>.</td></tr>
+          <tr><td><code>tel</code></td><td>Số điện thoại</td><td>Trên di động hiện bàn phím số.</td></tr>
+          <tr><td><code>url</code></td><td>Địa chỉ web</td><td>Kiểm tra phải có dạng URL hợp lệ.</td></tr>
+          <tr><td><code>search</code></td><td>Ô tìm kiếm</td><td>Một số trình duyệt thêm nút xoá (✕).</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info"><p>Các <code>type</code> này giúp <strong>trải nghiệm tốt hơn</strong> (bàn phím phù hợp, kiểm tra sơ bộ)
+        nhưng <strong>không thay thế</strong> việc kiểm tra ở máy chủ — xem mục 12 &amp; 13.</p></div>
+    </section>
+
+    <!-- ==========  4. RADIO & CHECKBOX  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Radio (chọn 1) &amp; Checkbox (chọn nhiều) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><strong>Radio</strong> = nút tròn, chỉ chọn được <em>một</em> trong nhóm.
+         <strong>Checkbox</strong> = ô vuông, chọn được <em>nhiều</em> cùng lúc (hoặc không chọn cái nào).</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">radio — cùng name = "gioitinh" → chỉ chọn 1</div>
+          <div class="demo-body">
+            <form action="#" class="d-inline">
+              <p style="margin-top:0;font-weight:600;color:#16407a">Giới tính:</p>
+              <input type="radio" id="d4-nam" name="gioitinh" value="nam" checked>
+              <label for="d4-nam">Nam</label>
+              <input type="radio" id="d4-nu" name="gioitinh" value="nu">
+              <label for="d4-nu">Nữ</label>
+              <input type="radio" id="d4-khac" name="gioitinh" value="khac">
+              <label for="d4-khac">Khác</label>
+            </form>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">checkbox — chọn được nhiều</div>
+          <div class="demo-body">
+            <form action="#" class="d-inline">
+              <p style="margin-top:0;font-weight:600;color:#16407a">Sở thích:</p>
+              <input type="checkbox" id="d4-doc" name="sothich" value="doc" checked>
+              <label for="d4-doc">Đọc sách</label>
+              <input type="checkbox" id="d4-code" name="sothich" value="code">
+              <label for="d4-code">Lập trình</label>
+              <input type="checkbox" id="d4-game" name="sothich" value="game">
+              <label for="d4-game">Chơi game</label>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">&lt;!-- RADIO: name GIỐNG NHAU thì trình duyệt mới gom thành 1 nhóm chọn 1 --&gt;</span>
+<span class="k">&lt;input</span> <span class="k">type</span>=<span class="s">"radio"</span> <span class="k">name</span>=<span class="s">"gioitinh"</span> <span class="k">value</span>=<span class="s">"nam"</span> <span class="k">checked</span><span class="k">&gt;</span> Nam
+<span class="k">&lt;input</span> <span class="k">type</span>=<span class="s">"radio"</span> <span class="k">name</span>=<span class="s">"gioitinh"</span> <span class="k">value</span>=<span class="s">"nu"</span><span class="k">&gt;</span> Nữ
+
+<span class="c">&lt;!-- CHECKBOX: chọn nhiều — thường dùng cùng name (mảng giá trị) --&gt;</span>
+<span class="k">&lt;input</span> <span class="k">type</span>=<span class="s">"checkbox"</span> <span class="k">name</span>=<span class="s">"sothich"</span> <span class="k">value</span>=<span class="s">"doc"</span><span class="k">&gt;</span> Đọc sách</code></pre>
+
+      <div class="callout warn"><p><strong>Lỗi hay gặp:</strong> các radio đặt <code>name</code> <em>khác nhau</em> → người dùng có thể
+        chọn được nhiều nút cùng lúc. Muốn chọn 1 trong nhóm thì <strong>tất cả phải chung một <code>name</code></strong>.
+        Dùng <code>checked</code> để chọn sẵn một mục.</p></div>
+    </section>
+
+    <!-- ==========  5. SELECT / DATALIST  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> &lt;select&gt;, &lt;optgroup&gt; &amp; &lt;datalist&gt; <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>&lt;select&gt;</code> tạo danh sách thả xuống (dropdown); mỗi mục là một <code>&lt;option&gt;</code>;
+         có thể nhóm các mục bằng <code>&lt;optgroup&gt;</code>. <code>&lt;datalist&gt;</code> thì gợi ý <em>nhưng vẫn cho gõ tự do</em>.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">select + optgroup — chỉ chọn trong danh sách</div>
+          <div class="demo-body">
+            <form action="#">
+              <div class="d-field">
+                <label for="d5-city">Chọn tỉnh / thành</label>
+                <select id="d5-city" name="city">
+                  <optgroup label="Miền Bắc">
+                    <option value="hanoi">Hà Nội</option>
+                    <option value="haiphong">Hải Phòng</option>
+                  </optgroup>
+                  <optgroup label="Miền Nam">
+                    <option value="hcm" selected>TP. Hồ Chí Minh</option>
+                    <option value="cantho">Cần Thơ</option>
+                  </optgroup>
+                </select>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">datalist — gợi ý nhưng vẫn gõ tự do được</div>
+          <div class="demo-body">
+            <form action="#">
+              <div class="d-field">
+                <label for="d5-browser">Trình duyệt yêu thích</label>
+                <input list="d5-browsers" id="d5-browser" name="browser" placeholder="Gõ hoặc chọn...">
+                <datalist id="d5-browsers">
+                  <option value="Chrome"></option>
+                  <option value="Firefox"></option>
+                  <option value="Safari"></option>
+                  <option value="Edge"></option>
+                </datalist>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;select</span> <span class="k">name</span>=<span class="s">"city"</span><span class="k">&gt;</span>
+  <span class="k">&lt;optgroup</span> <span class="k">label</span>=<span class="s">"Miền Bắc"</span><span class="k">&gt;</span>
+    <span class="k">&lt;option</span> <span class="k">value</span>=<span class="s">"hanoi"</span><span class="k">&gt;</span>Hà Nội<span class="k">&lt;/option&gt;</span>
+  <span class="k">&lt;/optgroup&gt;</span>
+  <span class="k">&lt;option</span> <span class="k">value</span>=<span class="s">"hcm"</span> <span class="k">selected</span><span class="k">&gt;</span>TP.HCM<span class="k">&lt;/option&gt;</span> <span class="c">&lt;!-- selected = chọn sẵn --&gt;</span>
+<span class="k">&lt;/select&gt;</span>
+
+<span class="c">&lt;!-- datalist: input vẫn gõ tự do, chỉ thêm gợi ý --&gt;</span>
+<span class="k">&lt;input</span> <span class="k">list</span>=<span class="s">"ds"</span><span class="k">&gt;</span>
+<span class="k">&lt;datalist</span> <span class="k">id</span>=<span class="s">"ds"</span><span class="k">&gt;&lt;option</span> <span class="k">value</span>=<span class="s">"Chrome"</span><span class="k">&gt;&lt;/datalist&gt;</span></code></pre>
+
+      <table class="syntax">
+        <thead><tr><th>Khác biệt</th><th>&lt;select&gt;</th><th>&lt;datalist&gt;</th></tr></thead>
+        <tbody>
+          <tr><td>Nhập tự do?</td><td>Không — chỉ chọn có sẵn</td><td>Có — gõ giá trị bất kỳ</td></tr>
+          <tr><td>Bắt buộc chọn?</td><td>Có thể (kèm <code>required</code>)</td><td>Chỉ là gợi ý</td></tr>
+          <tr><td>Phần tử mục</td><td><code>&lt;option&gt;</code> (có nội dung)</td><td><code>&lt;option value&gt;</code> (rỗng)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  6. TEXTAREA  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> &lt;textarea&gt; — ô văn bản nhiều dòng <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Khi cần nhập <strong>nhiều dòng</strong> (lời nhắn, ghi chú, mô tả), dùng <code>&lt;textarea&gt;</code>.
+         Kích thước ban đầu đặt qua <code>rows</code> (số dòng) và <code>cols</code> (số cột ký tự).</p>
+
+      <div class="demo">
+        <div class="demo-bar">textarea rows="4" — kéo góc dưới-phải để đổi cỡ</div>
+        <div class="demo-body">
+          <form action="#">
+            <div class="d-field">
+              <label for="d6-msg">Lời nhắn</label>
+              <textarea id="d6-msg" name="message" rows="4" cols="40"
+                        placeholder="Nhập nội dung của bạn ở đây...">Nội dung có sẵn nằm GIỮA hai thẻ textarea.</textarea>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">&lt;!-- textarea KHÔNG dùng value; nội dung nằm GIỮA hai thẻ --&gt;</span>
+<span class="k">&lt;textarea</span> <span class="k">name</span>=<span class="s">"message"</span> <span class="k">rows</span>=<span class="s">"4"</span> <span class="k">cols</span>=<span class="s">"40"</span><span class="k">&gt;</span>Nội dung mặc định<span class="k">&lt;/textarea&gt;</span></code></pre>
+
+      <div class="callout info"><p>Khác với <code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code> là thẻ <strong>có nội dung</strong>
+        (có thẻ đóng). Trong CSS có thể dùng <code>resize: vertical</code> để chỉ cho kéo cao, không cho kéo ngang.</p></div>
+    </section>
+
+    <!-- ==========  7. CÁC LOẠI NÚT  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Các loại nút bấm <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Có hai cách tạo nút: <code>&lt;input type="..."&gt;</code> và thẻ <code>&lt;button&gt;</code>.
+         Điều quan trọng là <strong>thuộc tính <code>type</code></strong> quyết định nút làm gì.</p>
+
+      <div class="demo">
+        <div class="demo-bar">submit · reset · button</div>
+        <div class="demo-body">
+          <form action="#">
+            <div class="d-field">
+              <label for="d7-name">Tên</label>
+              <input type="text" id="d7-name" name="name" value="Thử gõ rồi bấm Reset">
+            </div>
+            <button type="submit" class="d-mini-btn go">Gửi (submit)</button>
+            <button type="reset"  class="d-mini-btn clear">Xoá form (reset)</button>
+            <button type="button" class="d-mini-btn plain"
+                    onclick="alert('Nút thường — chỉ chạy JavaScript, không gửi form');">Nút thường (button)</button>
+          </form>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Phân biệt theo thuộc tính type</caption>
+        <thead><tr><th>type</th><th>Tác dụng khi bấm</th></tr></thead>
+        <tbody>
+          <tr><td><code>submit</code></td><td><strong>Gửi</strong> form đến <code>action</code>. Là mặc định của <code>&lt;button&gt;</code>.</td></tr>
+          <tr><td><code>reset</code></td><td><strong>Đặt lại</strong> mọi trường về giá trị ban đầu.</td></tr>
+          <tr><td><code>button</code></td><td>Không làm gì sẵn — thường gắn JavaScript (<code>onclick</code>) để xử lý.</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">&lt;!-- Hai cách viết, cùng kết quả: --&gt;</span>
+<span class="k">&lt;button</span> <span class="k">type</span>=<span class="s">"submit"</span><span class="k">&gt;</span>Gửi<span class="k">&lt;/button&gt;</span>     <span class="c">&lt;!-- &lt;button&gt; chứa được HTML/icon bên trong --&gt;</span>
+<span class="k">&lt;input</span> <span class="k">type</span>=<span class="s">"submit"</span> <span class="k">value</span>=<span class="s">"Gửi"</span><span class="k">&gt;</span>  <span class="c">&lt;!-- &lt;input&gt; chỉ nhận chữ ở value --&gt;</span></code></pre>
+
+      <div class="callout warn"><p><strong>Bẫy thường gặp:</strong> <code>&lt;button&gt;</code> đặt trong form mà <em>không ghi</em> <code>type</code>
+        thì mặc định là <code>submit</code> → bấm sẽ vô tình gửi form. Nếu chỉ muốn chạy JS, hãy ghi rõ <code>type="button"</code>.</p></div>
+    </section>
+
+    <!-- ==========  8. INPUT HTML5  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Các loại input HTML5 <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">HTML5 bổ sung nhiều loại input thông minh: chọn ngày/giờ, màu, thanh trượt, tải tệp...
+         Trình duyệt tự hiện giao diện phù hợp (lịch, bảng màu...) nên đỡ phải viết JavaScript.</p>
+
+      <div class="demo">
+        <div class="demo-bar">date · time · datetime-local · month · week · color · range · file</div>
+        <div class="demo-body">
+          <form action="#">
+            <div class="d-grid2">
+              <div><label>date (ngày)</label><input type="date" name="d"></div>
+              <div><label>time (giờ)</label><input type="time" name="t"></div>
+              <div><label>datetime-local</label><input type="datetime-local" name="dt"></div>
+              <div><label>month (tháng)</label><input type="month" name="m"></div>
+              <div><label>week (tuần)</label><input type="week" name="w"></div>
+              <div><label>color (màu)</label><input type="color" name="c" value="#1D559F"></div>
+              <div><label>range (thanh trượt 0–100)</label><input type="range" name="r" min="0" max="100" value="50"></div>
+              <div><label>file (tải tệp)</label><input type="file" name="f"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Các input HTML5 thường dùng</caption>
+        <thead><tr><th>type</th><th>Dùng cho</th></tr></thead>
+        <tbody>
+          <tr><td><code>date</code></td><td>Chọn ngày (hiện lịch).</td></tr>
+          <tr><td><code>time</code></td><td>Chọn giờ:phút.</td></tr>
+          <tr><td><code>datetime-local</code></td><td>Chọn cả ngày &amp; giờ (giờ máy người dùng).</td></tr>
+          <tr><td><code>month</code> / <code>week</code></td><td>Chọn tháng / tuần trong năm.</td></tr>
+          <tr><td><code>color</code></td><td>Chọn màu qua bảng màu, trả về mã <code>#rrggbb</code>.</td></tr>
+          <tr><td><code>range</code></td><td>Thanh trượt; kèm <code>min</code>/<code>max</code>/<code>step</code>.</td></tr>
+          <tr><td><code>file</code></td><td>Chọn tệp tải lên; <code>multiple</code> để chọn nhiều tệp; <code>accept</code> để lọc loại tệp.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info"><p>Giao diện các input này <strong>khác nhau giữa các trình duyệt</strong> và hệ điều hành.
+        Nếu trình duyệt quá cũ không hỗ trợ một <code>type</code>, nó tự lùi về ô <code>text</code> bình thường.</p></div>
+    </section>
+
+    <!-- ==========  9. THUỘC TÍNH INPUT  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Bảng thuộc tính của &lt;input&gt; <span class="tag-base">Tham chiếu</span></h2>
+      <p class="lead">Một <code>&lt;input&gt;</code> có thể đính kèm nhiều thuộc tính để điều khiển hành vi, giá trị,
+         và ràng buộc nhập liệu. Đây là bảng tra cứu nhanh các thuộc tính hay dùng nhất.</p>
+
+      <table class="syntax">
+        <caption>Thuộc tính &lt;input&gt; (theo W3Schools)</caption>
+        <thead><tr><th>Thuộc tính</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>name</code></td><td>Tên trường khi gửi dữ liệu (bắt buộc nếu muốn gửi).</td></tr>
+          <tr><td><code>value</code></td><td>Giá trị (mặc định) của ô.</td></tr>
+          <tr><td><code>placeholder</code></td><td>Chữ gợi ý mờ, biến mất khi gõ.</td></tr>
+          <tr><td><code>required</code></td><td>Bắt buộc nhập; bỏ trống không gửi được form.</td></tr>
+          <tr><td><code>readonly</code></td><td>Chỉ đọc — thấy &amp; gửi được nhưng không sửa được.</td></tr>
+          <tr><td><code>disabled</code></td><td>Vô hiệu hoá — xám đi, <strong>không</strong> gửi giá trị.</td></tr>
+          <tr><td><code>maxlength</code></td><td>Số ký tự tối đa được nhập.</td></tr>
+          <tr><td><code>min</code> / <code>max</code> / <code>step</code></td><td>Giá trị nhỏ nhất / lớn nhất / bước nhảy (cho number, range, date).</td></tr>
+          <tr><td><code>pattern</code></td><td>Biểu thức chính quy (regex) để kiểm tra định dạng.</td></tr>
+          <tr><td><code>autofocus</code></td><td>Tự đặt con trỏ vào ô này khi tải trang.</td></tr>
+          <tr><td><code>autocomplete</code></td><td><code>on/off</code> — bật/tắt gợi ý tự điền.</td></tr>
+          <tr><td><code>multiple</code></td><td>Cho phép nhiều giá trị (email nhiều địa chỉ, file nhiều tệp).</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">So sánh readonly vs disabled</div>
+        <div class="demo-body">
+          <form action="#" class="d-row2">
+            <span><label style="font-weight:600;color:#16407a">readonly: </label>
+              <input type="text" value="Đọc-được-không-sửa" readonly></span>
+            <span><label style="font-weight:600;color:#16407a">disabled: </label>
+              <input type="text" value="Bị-vô-hiệu" disabled></span>
+          </form>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;input</span> <span class="k">type</span>=<span class="s">"text"</span>   <span class="k">name</span>=<span class="s">"ten"</span> <span class="k">required</span> <span class="k">maxlength</span>=<span class="s">"50"</span> <span class="k">autofocus</span><span class="k">&gt;</span>
+<span class="k">&lt;input</span> <span class="k">type</span>=<span class="s">"number"</span> <span class="k">name</span>=<span class="s">"tuoi"</span> <span class="k">min</span>=<span class="s">"1"</span> <span class="k">max</span>=<span class="s">"120"</span> <span class="k">step</span>=<span class="s">"1"</span><span class="k">&gt;</span>
+<span class="k">&lt;input</span> <span class="k">type</span>=<span class="s">"text"</span>   <span class="k">name</span>=<span class="s">"ma"</span> <span class="k">pattern</span>=<span class="s">"[A-Z]{2}[0-9]{3}"</span> <span class="k">placeholder</span>=<span class="s">"VD: AB123"</span><span class="k">&gt;</span></code></pre>
+
+      <div class="callout warn"><p><code>disabled</code> và <code>readonly</code> trông gần giống nhau nhưng khác bản chất:
+        ô <code>disabled</code> <strong>không gửi</strong> dữ liệu đi, còn ô <code>readonly</code> <strong>vẫn gửi</strong>.</p></div>
+    </section>
+
+    <!-- ==========  10. FIELDSET & LEGEND  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Nhóm trường: &lt;fieldset&gt; &amp; &lt;legend&gt; <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Khi form dài, hãy <strong>nhóm</strong> các trường liên quan vào <code>&lt;fieldset&gt;</code> và đặt
+         tiêu đề nhóm bằng <code>&lt;legend&gt;</code>. Trình duyệt tự vẽ khung viền bao quanh nhóm.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Form chia thành 2 nhóm rõ ràng</div>
+        <div class="demo-body">
+          <form action="#">
+            <fieldset class="d-fs" style="margin-bottom:14px">
+              <legend>Thông tin cá nhân</legend>
+              <div class="d-field"><label for="d10-name">Họ tên</label>
+                <input type="text" id="d10-name" name="name" placeholder="Nguyễn Văn A"></div>
+              <div class="d-field"><label for="d10-mail">Email</label>
+                <input type="email" id="d10-mail" name="mail" placeholder="ban@vidu.com"></div>
+            </fieldset>
+            <fieldset class="d-fs">
+              <legend>Tài khoản</legend>
+              <div class="d-field"><label for="d10-user">Tên đăng nhập</label>
+                <input type="text" id="d10-user" name="user" placeholder="username"></div>
+              <div class="d-field"><label for="d10-pw">Mật khẩu</label>
+                <input type="password" id="d10-pw" name="pw" placeholder="••••••"></div>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;fieldset&gt;</span>
+  <span class="k">&lt;legend&gt;</span>Thông tin cá nhân<span class="k">&lt;/legend&gt;</span>
+  <span class="k">&lt;label&gt;</span>Họ tên<span class="k">&lt;/label&gt;</span> <span class="k">&lt;input</span> <span class="k">type</span>=<span class="s">"text"</span> <span class="k">name</span>=<span class="s">"name"</span><span class="k">&gt;</span>
+<span class="k">&lt;/fieldset&gt;</span></code></pre>
+
+      <div class="callout tip"><p>Nhóm trường không chỉ đẹp mà còn <strong>tốt cho khả năng truy cập</strong>:
+        trình đọc màn hình đọc <code>&lt;legend&gt;</code> như tiêu đề của cả nhóm, giúp người dùng định hướng tốt hơn.</p></div>
+    </section>
+
+    <!-- ==========  11. FORM ĐẸP BẰNG CSS  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Định dạng form đẹp bằng CSS <span class="tag-adv">Thực hành</span></h2>
+      <p class="lead">Form mặc định khá thô. Bài thực hành: dùng class <code>.d-form</code> để ô nhập <strong>rộng hết khung</strong>,
+         có padding, bo góc, hiệu ứng <code>:focus</code>, và một nút bấm nổi bật.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Form đăng nhập đã được CSS hoá</div>
+        <div class="demo-body">
+          <form action="#" class="d-form">
+            <label for="d11-mail">Email</label>
+            <input type="email" id="d11-mail" name="mail" placeholder="ban@vidu.com">
+
+            <label for="d11-pw">Mật khẩu</label>
+            <input type="password" id="d11-pw" name="pw" placeholder="Nhập mật khẩu">
+
+            <label for="d11-note">Ghi chú</label>
+            <textarea id="d11-note" name="note" placeholder="Tuỳ chọn..."></textarea>
+
+            <button type="submit" class="d-btn">Đăng nhập</button>
+          </form>
+        </div>
+      </div>
+
+      <pre class="code"><code>.d-form <span class="k">input</span>,
+.d-form <span class="k">textarea</span> {
+  <span class="k">width</span>: <span class="v">100%</span>;            <span class="c">/* ô trải hết bề ngang form */</span>
+  <span class="k">padding</span>: <span class="v">11px 13px</span>;
+  <span class="k">border</span>: <span class="v">1px solid #cbd5e1</span>;
+  <span class="k">border-radius</span>: <span class="v">9px</span>;     <span class="c">/* bo góc mềm mại */</span>
+  <span class="k">margin-bottom</span>: <span class="v">16px</span>;
+}
+.d-form <span class="k">input</span>:focus {       <span class="c">/* khi đang nhập: viền xanh + quầng sáng */</span>
+  <span class="k">border-color</span>: <span class="v">#1D559F</span>;
+  <span class="k">box-shadow</span>: <span class="v">0 0 0 3px rgba(29,85,159,.15)</span>;
+  <span class="k">outline</span>: <span class="v">none</span>;
+}
+.d-form .d-btn {              <span class="c">/* nút nổi bật, rộng hết khung */</span>
+  <span class="k">width</span>: <span class="v">100%</span>; <span class="k">background</span>: <span class="v">#04AA6D</span>; <span class="k">color</span>: <span class="v">#fff</span>;
+  <span class="k">border</span>: <span class="v">none</span>; <span class="k">border-radius</span>: <span class="v">9px</span>; <span class="k">padding</span>: <span class="v">12px</span>;
+}</code></pre>
+
+      <div class="callout tip"><p>Mẹo: dùng <code>:focus</code> kèm <code>box-shadow</code> tạo "quầng sáng" để người dùng
+        biết rõ đang nhập ở ô nào. Đừng bỏ hẳn <code>outline</code> mà không thay bằng dấu hiệu khác — sẽ khó dùng bằng bàn phím.</p></div>
+    </section>
+
+    <!-- ==========  12. VALIDATION  ========== -->
+    <section class="block" id="s12">
+      <h2><span class="num">12</span> Kiểm tra hợp lệ (validation) <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">HTML5 kiểm tra dữ liệu <strong>ngay tại trình duyệt</strong> trước khi gửi: dùng <code>required</code>,
+         <code>type="email"</code>, <code>pattern</code>... CSS bắt được trạng thái qua <code>:valid</code> / <code>:invalid</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Gõ thử — ô đổi màu xanh (hợp lệ) / đỏ (chưa hợp lệ)</div>
+        <div class="demo-body">
+          <form action="#" class="d-valid">
+            <div>
+              <label style="display:block;font-weight:600;color:#16407a;margin-bottom:4px">Email (bắt buộc, đúng dạng)</label>
+              <input type="email" name="mail" required placeholder="ban@vidu.com">
+              <p class="hint">Phải có dạng <code>ten@mien.com</code>.</p>
+            </div>
+            <div>
+              <label style="display:block;font-weight:600;color:#16407a;margin-bottom:4px">Mã số (2 chữ HOA + 3 số)</label>
+              <input type="text" name="ma" required pattern="[A-Z]{2}[0-9]{3}" placeholder="VD: AB123">
+              <p class="hint">Mẫu <code>pattern="[A-Z]{2}[0-9]{3}"</code> — ví dụ <code>AB123</code>.</p>
+            </div>
+            <button type="submit" class="d-btn">Kiểm tra &amp; gửi</button>
+          </form>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">&lt;!-- HTML: ràng buộc ngay trong thẻ --&gt;</span>
+<span class="k">&lt;input</span> <span class="k">type</span>=<span class="s">"email"</span> <span class="k">required</span><span class="k">&gt;</span>
+<span class="k">&lt;input</span> <span class="k">type</span>=<span class="s">"text"</span> <span class="k">required</span> <span class="k">pattern</span>=<span class="s">"[A-Z]{2}[0-9]{3}"</span><span class="k">&gt;</span>
+
+<span class="c">/* CSS: tô màu theo trạng thái hợp lệ */</span>
+<span class="k">input</span>:required:valid   { <span class="k">border-color</span>: <span class="v">#04AA6D</span>; } <span class="c">/* xanh khi đúng */</span>
+<span class="k">input</span>:required:invalid { <span class="k">border-color</span>: <span class="v">#E63946</span>; } <span class="c">/* đỏ khi sai  */</span></code></pre>
+
+      <div class="note">
+        <p><strong>:required</strong> — chọn ô có thuộc tính <code>required</code>.
+           <strong>:valid / :invalid</strong> — chọn ô đang hợp lệ / chưa hợp lệ.</p>
+        <p>Khi bấm Gửi mà còn ô chưa hợp lệ, trình duyệt <strong>chặn lại</strong> và hiện thông báo lỗi mặc định ngay tại ô đó.</p>
+      </div>
+
+      <div class="callout warn"><p>Mẹo trải nghiệm: chỉ nên tô đỏ <em>sau khi</em> người dùng đã chạm vào ô
+        (ví dụ thêm <code>:focus</code> hoặc dùng JS), tránh tô đỏ ngay khi form vừa mở còn trống.</p></div>
+    </section>
+
+    <!-- ==========  13. TỔNG KẾT & LƯU Ý  ========== -->
+    <section class="block" id="s13">
+      <h2><span class="num">13</span> Tổng kết &amp; những điều phải nhớ <span class="tag-base">Tổng kết</span></h2>
+      <p class="lead">Ba điều cốt lõi khi làm việc với form.</p>
+
+      <div class="callout tip"><p><strong>1. Luôn gắn label với input.</strong> Dùng cặp <code>for</code>/<code>id</code> (hoặc bọc
+        input trong label) để bấm vào chữ cũng chọn được ô — tốt cho di động &amp; người khiếm thị.</p></div>
+
+      <div class="callout danger"><p><strong>2. Validation phía client CHỈ là hỗ trợ.</strong> <code>required</code>, <code>pattern</code>,
+        <code>type="email"</code>... giúp trải nghiệm tốt hơn nhưng <em>người dùng có thể tắt JS / sửa HTML / gửi thẳng request</em>.
+        Vì vậy <strong>luôn phải kiểm tra lại dữ liệu ở phía máy chủ (server)</strong> — đây là tuyến phòng thủ thật.</p></div>
+
+      <div class="callout info"><p><strong>3. Nhớ <code>name</code> &amp; chọn đúng <code>method</code>.</strong> Không có <code>name</code>
+        thì dữ liệu không được gửi. Dùng <code>get</code> cho tìm kiếm/lọc; dùng <code>post</code> cho mật khẩu, dữ liệu lớn,
+        thao tác thay đổi dữ liệu.</p></div>
+
+      <table class="syntax">
+        <caption>Bảng tra nhanh các phần tử form</caption>
+        <thead><tr><th>Phần tử</th><th>Dùng để</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;input&gt;</code></td><td>Ô nhập đủ loại (text, password, number, date, file...).</td></tr>
+          <tr><td><code>&lt;label&gt;</code></td><td>Nhãn mô tả cho một ô nhập.</td></tr>
+          <tr><td><code>&lt;select&gt;</code> / <code>&lt;option&gt;</code></td><td>Danh sách thả xuống.</td></tr>
+          <tr><td><code>&lt;textarea&gt;</code></td><td>Ô văn bản nhiều dòng.</td></tr>
+          <tr><td><code>&lt;button&gt;</code></td><td>Nút bấm (submit/reset/button).</td></tr>
+          <tr><td><code>&lt;fieldset&gt;</code> / <code>&lt;legend&gt;</code></td><td>Nhóm các trường &amp; đặt tiêu đề nhóm.</td></tr>
+          <tr><td><code>&lt;datalist&gt;</code></td><td>Gợi ý cho ô nhập tự do.</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="06-bang.html"><small>← Bài trước</small>2.1.7 · Bảng</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="08-the-ngu-nghia.html"><small>Bài tiếp →</small>2.1.x · Thẻ ngữ nghĩa</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

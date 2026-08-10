@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.1.1 — CẤU TRÚC TÀI LIỆU HTML (bản tham khảo toàn diện)
+  ------------------------------------------------------------
+  Bài học nền tảng cho cả chương: từ "HTML là gì" đến cách viết
+  một trang chuẩn (DOCTYPE, html lang, head, body), các thẻ
+  trong <head>, comment, entities, ký hiệu/emoji, màu sắc và
+  bộ ký tự UTF-8. Đi từ cơ bản → nâng cao, tham khảo W3Schools:
+     1) HTML là gì + cú pháp        7) HTML Entities
+     2) Cấu trúc tài liệu chuẩn     8) Symbols & Emoji
+     3) DOCTYPE & thuộc tính lang   9) Màu sắc HTML/CSS
+     4) Phần <head> & thẻ con      10) Bộ ký tự UTF-8 & whitespace
+     5) Thẻ <meta> chi tiết        11) Mẹo & lỗi thường gặp
+     6) Chú thích HTML
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng class khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Bài học toàn diện về cấu trúc tài liệu HTML: DOCTYPE, html lang, head, body, meta, entities, màu sắc và UTF-8.">
+  <title>2.1.1 · Cấu trúc tài liệu HTML</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* 2) sơ đồ cây cấu trúc tài liệu */
+    .d-tree {
+      font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+      background: #0f172a; color: #e6edf3; border-radius: 10px;
+      padding: 16px 18px; font-size: .9rem; line-height: 1.9; overflow: auto;
+    }
+    .d-tree .doc { color: #ffa657; }
+    .d-tree .htm { color: #79c0ff; }
+    .d-tree .hd  { color: #7ee787; }
+    .d-tree .bd  { color: #d2a8ff; }
+    .d-tree .cmt { color: #7d8aa3; font-style: italic; }
+
+    /* sơ đồ head/body bằng các hộp lồng nhau */
+    .d-skel { border: 2px solid #1D559F; border-radius: 10px; overflow: hidden; }
+    .d-skel .d-bar {
+      background: #1D559F; color: #fff; padding: 6px 12px;
+      font-weight: 700; font-size: .85rem; letter-spacing: .3px;
+    }
+    .d-skel .d-pad { padding: 12px; }
+    .d-part {
+      border: 2px dashed #6c5ce7; border-radius: 8px; margin: 8px 0; overflow: hidden;
+    }
+    .d-part > .d-h {
+      background: #ede9fe; color: #4c1d95; padding: 5px 12px;
+      font-weight: 700; font-size: .82rem;
+    }
+    .d-part > .d-c { padding: 8px 12px; font-size: .9rem; color: #5b6472; }
+    .d-part.body  { border-color: #04AA6D; }
+    .d-part.body > .d-h { background: #d1fae5; color: #065f46; }
+
+    /* 7) bảng entity: ô "kết quả" hiển thị ký tự thật to */
+    .d-ent { font-size: 1.25rem; font-weight: 700; color: #1D559F; }
+
+    /* 8) emoji to */
+    .d-emoji { font-size: 1.5rem; }
+
+    /* 9) màu sắc — các ô màu */
+    .d-swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+    .d-swatch {
+      width: 120px; border: 1px solid #e3e8f0; border-radius: 8px; overflow: hidden;
+      font-size: .78rem; box-shadow: 0 2px 8px rgba(20,40,80,.06);
+    }
+    .d-swatch .d-fill { height: 56px; }
+    .d-swatch .d-lbl  { padding: 6px 8px; background: #fff; text-align: center; }
+    .d-swatch .d-lbl code { white-space: nowrap; font-size: .72rem; }
+
+    .d-c-aliceblue   { background: aliceblue; }
+    .d-c-tomato      { background: tomato; }
+    .d-c-steelblue   { background: steelblue; }
+    .d-c-rebecca     { background: rebeccapurple; }
+    .d-c-hex1        { background: #1D559F; }
+    .d-c-hex2        { background: #04AA6D; }
+    .d-c-hex3        { background: #FFC107; }
+    .d-c-hexshort    { background: #f09; }      /* dạng rút gọn #RGB = #ff0099 */
+    .d-c-rgb         { background: rgb(230, 57, 70); }
+    .d-c-rgba        { background: rgba(29, 85, 159, .45); }
+    .d-c-hsl         { background: hsl(150, 95%, 35%); }
+    .d-c-hsla        { background: hsla(265, 67%, 65%, .5); }
+
+    /* dải gradient HSL để thấy "vòng màu" của hue */
+    .d-hue {
+      height: 26px; border-radius: 6px; margin: 10px 0 4px;
+      background: linear-gradient(to right,
+        hsl(0,90%,50%), hsl(60,90%,50%), hsl(120,90%,50%),
+        hsl(180,90%,50%), hsl(240,90%,50%), hsl(300,90%,50%), hsl(360,90%,50%));
+    }
+
+    /* 10) demo whitespace collapse */
+    .d-ws {
+      background: #f1f5f9; border: 1px solid #e3e8f0; border-radius: 8px;
+      padding: 12px 14px; margin: 4px 0;
+    }
+    .d-pre {
+      background: #f1f5f9; border: 1px solid #e3e8f0; border-radius: 8px;
+      padding: 12px 14px; margin: 4px 0; white-space: pre; font-family: "Cascadia Code", Consolas, monospace;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.1 HTML</a><span>›</span>
+        Cấu trúc tài liệu
+      </nav>
+      <h1>Cấu trúc tài liệu HTML</h1>
+      <p class="sub">Viên gạch đầu tiên của mọi trang web: HTML là gì, một tài liệu chuẩn gồm những gì
+         (<code style="color:#fff;background:rgba(255,255,255,.18)">DOCTYPE</code> ·
+         <code style="color:#fff;background:rgba(255,255,255,.18)">html</code> ·
+         <code style="color:#fff;background:rgba(255,255,255,.18)">head</code> ·
+         <code style="color:#fff;background:rgba(255,255,255,.18)">body</code>),
+         các thẻ trong <code style="color:#fff;background:rgba(255,255,255,.18)">&lt;head&gt;</code>, chú thích, thực thể,
+         ký hiệu/emoji, màu sắc và bộ ký tự UTF-8.</p>
+      <div class="chips">
+        <span class="chip solid">2.1.1</span>
+        <span class="chip">HTML cơ bản</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">HTML là gì &amp; cú pháp cơ bản</a></li>
+        <li><a href="#s2">Cấu trúc tài liệu chuẩn</a></li>
+        <li><a href="#s3">DOCTYPE &amp; thuộc tính lang</a></li>
+        <li><a href="#s4">Phần &lt;head&gt; &amp; các thẻ con</a></li>
+        <li><a href="#s5">Thẻ &lt;meta&gt; chi tiết</a></li>
+        <li><a href="#s6">Chú thích trong HTML</a></li>
+        <li><a href="#s7">HTML Entities (thực thể)</a></li>
+        <li><a href="#s8">Symbols &amp; Emoji</a></li>
+        <li><a href="#s9">Màu sắc trong HTML/CSS</a></li>
+        <li><a href="#s10">Bộ ký tự UTF-8 &amp; whitespace</a></li>
+        <li><a href="#s11">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. HTML LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> HTML là gì &amp; cú pháp cơ bản <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><strong>HTML</strong> (HyperText Markup Language) là ngôn ngữ <em>đánh dấu</em> chuẩn để xây dựng trang web.
+         Nó không phải ngôn ngữ lập trình — nó dùng các <strong>thẻ</strong> để mô tả ý nghĩa và cấu trúc nội dung
+         (đây là tiêu đề, kia là đoạn văn, đó là liên kết…). Trình duyệt đọc HTML rồi vẽ ra trang bạn nhìn thấy.</p>
+
+      <h3>Phần tử (element) — đơn vị cơ bản</h3>
+      <p>Một <strong>phần tử</strong> thường gồm: thẻ mở, nội dung, và thẻ đóng.</p>
+      <pre class="code"><code><span class="k">&lt;p&gt;</span>Đây là một đoạn văn.<span class="k">&lt;/p&gt;</span>
+   │              │                │
+ thẻ mở        nội dung         thẻ đóng</code></pre>
+
+      <table class="syntax">
+        <caption>Các khái niệm cốt lõi</caption>
+        <thead><tr><th>Thuật ngữ</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td>Thẻ (tag)</td><td>Từ khoá đặt trong dấu <code>&lt;</code> &lt;…&gt; <code>&gt;</code>, ví dụ <code>&lt;p&gt;</code> (mở), <code>&lt;/p&gt;</code> (đóng).</td></tr>
+          <tr><td>Phần tử (element)</td><td>Trọn bộ: <code>&lt;p&gt;…&lt;/p&gt;</code> gồm thẻ mở + nội dung + thẻ đóng.</td></tr>
+          <tr><td>Thuộc tính (attribute)</td><td>Thông tin thêm đặt trong thẻ mở: <code>&lt;a href="..."&gt;</code> (học kỹ ở bài 2.1.2).</td></tr>
+          <tr><td>Thẻ rỗng (void)</td><td>Không có thẻ đóng, không nội dung: <code>&lt;br&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;hr&gt;</code>, <code>&lt;meta&gt;</code>.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Trang HTML tối thiểu — "Hello World"</h3>
+      <pre class="code"><code><span class="k">&lt;!DOCTYPE html&gt;</span>
+<span class="k">&lt;html</span> <span class="v">lang</span>=<span class="s">"vi"</span><span class="k">&gt;</span>
+<span class="k">&lt;head&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">charset</span>=<span class="s">"UTF-8"</span><span class="k">&gt;</span>
+  <span class="k">&lt;title&gt;</span>Trang đầu tiên<span class="k">&lt;/title&gt;</span>
+<span class="k">&lt;/head&gt;</span>
+<span class="k">&lt;body&gt;</span>
+  <span class="k">&lt;h1&gt;</span>Hello World!<span class="k">&lt;/h1&gt;</span>
+  <span class="k">&lt;p&gt;</span>Đây là trang web đầu tiên của tôi.<span class="k">&lt;/p&gt;</span>
+<span class="k">&lt;/body&gt;</span>
+<span class="k">&lt;/html&gt;</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả khi mở trên trình duyệt</div>
+        <div class="demo-body">
+          <h1 style="margin:0 0 6px;color:#1a1f29;font-size:1.6rem">Hello World!</h1>
+          <p style="margin:0">Đây là trang web đầu tiên của tôi.</p>
+        </div>
+      </div>
+
+      <div class="callout tip"><p><strong>Mẹo.</strong> HTML <em>không phân biệt hoa–thường</em> ở tên thẻ
+        (<code>&lt;P&gt;</code> = <code>&lt;p&gt;</code>), nhưng quy ước hiện đại là <strong>viết thường toàn bộ</strong> cho dễ đọc và nhất quán.</p></div>
+    </section>
+
+    <!-- ==========  2. CẤU TRÚC TÀI LIỆU CHUẨN  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Cấu trúc tài liệu chuẩn <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Mọi trang HTML5 đều có cùng một bộ khung gồm 4 phần. Hãy ghi nhớ sơ đồ cây này — nó lặp lại ở <em>mọi</em> file.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Sơ đồ cây cấu trúc</div>
+        <div class="demo-body">
+          <div class="d-tree"><span class="cmt">&lt;!-- Khai báo phiên bản, KHÔNG phải thẻ --&gt;</span>
+<span class="doc">&lt;!DOCTYPE html&gt;</span>
+<span class="htm">&lt;html lang="vi"&gt;</span>          <span class="cmt">← phần tử gốc, bọc cả trang</span>
+│
+├── <span class="hd">&lt;head&gt;</span>               <span class="cmt">← thông tin (metadata): không hiển thị</span>
+│     ├── &lt;meta charset&gt;
+│     ├── &lt;meta viewport&gt;
+│     └── &lt;title&gt;…&lt;/title&gt;
+│   <span class="hd">&lt;/head&gt;</span>
+│
+└── <span class="bd">&lt;body&gt;</span>               <span class="cmt">← nội dung HIỂN THỊ cho người dùng</span>
+      ├── &lt;h1&gt;…&lt;/h1&gt;
+      ├── &lt;p&gt;…&lt;/p&gt;
+      └── …
+    <span class="bd">&lt;/body&gt;</span>
+<span class="htm">&lt;/html&gt;</span></div>
+        </div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-bar">Hình dung: head ẩn · body hiển thị</div>
+        <div class="demo-body">
+          <div class="d-skel">
+            <div class="d-bar">&lt;html lang="vi"&gt;</div>
+            <div class="d-pad">
+              <div class="d-part">
+                <div class="d-h">&lt;head&gt; — siêu dữ liệu (KHÔNG nhìn thấy trên trang)</div>
+                <div class="d-c">charset · viewport · title · meta · link CSS · favicon …</div>
+              </div>
+              <div class="d-part body">
+                <div class="d-h">&lt;body&gt; — nội dung hiển thị</div>
+                <div class="d-c">tiêu đề, đoạn văn, ảnh, liên kết, bảng, form … (tất cả những gì người dùng thấy)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>4 thành phần của khung tài liệu</caption>
+        <thead><tr><th>Thành phần</th><th>Vai trò</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;!DOCTYPE html&gt;</code></td><td>Khai báo đây là tài liệu HTML5. Đặt ở <strong>dòng đầu tiên</strong>.</td></tr>
+          <tr><td><code>&lt;html&gt;</code></td><td>Phần tử <strong>gốc</strong>, bao toàn bộ trang. Nên có thuộc tính <code>lang</code>.</td></tr>
+          <tr><td><code>&lt;head&gt;</code></td><td>Chứa <strong>metadata</strong>: tiêu đề, charset, mô tả, liên kết CSS… Không hiển thị trực tiếp.</td></tr>
+          <tr><td><code>&lt;body&gt;</code></td><td>Chứa <strong>toàn bộ nội dung</strong> hiển thị: chữ, ảnh, liên kết, bảng, form…</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info"><p><strong>Lồng thẻ đúng thứ tự.</strong> Thẻ mở sau phải đóng trước:
+        <code>&lt;p&gt;&lt;strong&gt;…&lt;/strong&gt;&lt;/p&gt;</code> đúng,
+        còn <code>&lt;p&gt;&lt;strong&gt;…&lt;/p&gt;&lt;/strong&gt;</code> là <strong>sai</strong> (chéo nhau).</p></div>
+    </section>
+
+    <!-- ==========  3. DOCTYPE & LANG  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Khai báo <code>&lt;!DOCTYPE&gt;</code> &amp; thuộc tính <code>lang</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>&lt;!DOCTYPE&gt;</code> không phải một thẻ HTML — nó là một <strong>chỉ thị</strong> cho trình duyệt biết
+         tài liệu được viết theo phiên bản HTML nào, để render đúng (chế độ "standards mode").</p>
+
+      <pre class="code"><code><span class="c">&lt;!-- HTML5: ngắn gọn, không phân biệt hoa thường --&gt;</span>
+<span class="k">&lt;!DOCTYPE html&gt;</span>
+
+<span class="c">&lt;!-- HTML4.01 (cũ) — dài và phức tạp, KHÔNG dùng nữa --&gt;</span>
+<span class="k">&lt;!DOCTYPE</span> HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"<span class="k">&gt;</span></code></pre>
+
+      <table class="syntax">
+        <thead><tr><th>Lưu ý</th><th>Giải thích</th></tr></thead>
+        <tbody>
+          <tr><td>Vị trí</td><td>Phải đứng <strong>đầu tiên</strong>, trước cả <code>&lt;html&gt;</code>; không có gì (kể cả khoảng trắng) đứng trước.</td></tr>
+          <tr><td>Bắt buộc?</td><td>Có. Thiếu nó, trình duyệt vào "quirks mode" — render kiểu cũ, dễ lệch bố cục.</td></tr>
+          <tr><td>Hoa/thường</td><td>Không phân biệt: <code>&lt;!doctype html&gt;</code> cũng hợp lệ.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Thuộc tính <code>lang</code> trên thẻ <code>&lt;html&gt;</code></h3>
+      <p>Khai báo ngôn ngữ chính của trang. Quan trọng cho <strong>SEO</strong>, <strong>trình đọc màn hình</strong>
+         (đọc đúng giọng) và công cụ dịch tự động.</p>
+      <pre class="code"><code><span class="k">&lt;html</span> <span class="v">lang</span>=<span class="s">"vi"</span><span class="k">&gt;</span>   <span class="c">/* tiếng Việt */</span>
+<span class="k">&lt;html</span> <span class="v">lang</span>=<span class="s">"en"</span><span class="k">&gt;</span>   <span class="c">/* tiếng Anh */</span>
+<span class="k">&lt;html</span> <span class="v">lang</span>=<span class="s">"en-US"</span><span class="k">&gt;</span> <span class="c">/* tiếng Anh - Mỹ (mã ngôn ngữ-vùng) */</span></code></pre>
+      <div class="callout tip"><p>Với trang tiếng Việt luôn đặt <code>lang="vi"</code> và <code>&lt;meta charset="UTF-8"&gt;</code> —
+        đó là bộ đôi đảm bảo dấu tiếng Việt hiển thị đúng và máy hiểu đúng ngôn ngữ.</p></div>
+    </section>
+
+    <!-- ==========  4. PHẦN HEAD  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Phần <code>&lt;head&gt;</code> &amp; các thẻ con <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>&lt;head&gt;</code> là "hồ sơ" của trang: chứa thông tin về tài liệu chứ <strong>không hiển thị</strong> trong vùng nội dung
+         (trừ <code>&lt;title&gt;</code> hiện trên thanh tab). Dưới đây là các thẻ con thường gặp.</p>
+
+      <table class="syntax">
+        <caption>Các thẻ có thể đặt trong &lt;head&gt;</caption>
+        <thead><tr><th>Thẻ</th><th>Công dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;title&gt;</code></td><td>Tiêu đề trang — hiện trên <strong>tab trình duyệt</strong>, kết quả tìm kiếm và khi lưu bookmark. Bắt buộc nên có.</td></tr>
+          <tr><td><code>&lt;meta charset&gt;</code></td><td>Khai báo bộ ký tự (luôn dùng <code>UTF-8</code>).</td></tr>
+          <tr><td><code>&lt;meta name="viewport"&gt;</code></td><td>Điều khiển hiển thị trên di động (responsive).</td></tr>
+          <tr><td><code>&lt;meta name="description"&gt;</code></td><td>Mô tả ngắn của trang — Google thường hiện làm đoạn tóm tắt.</td></tr>
+          <tr><td><code>&lt;link&gt;</code></td><td>Liên kết tài nguyên ngoài: file CSS, favicon, font…</td></tr>
+          <tr><td><code>&lt;style&gt;</code></td><td>Viết CSS nội tuyến ngay trong trang.</td></tr>
+          <tr><td><code>&lt;script&gt;</code></td><td>Nhúng/JavaScript (có thể đặt ở head hoặc cuối body).</td></tr>
+          <tr><td><code>&lt;base&gt;</code></td><td>Đặt URL gốc mặc định cho mọi liên kết tương đối trong trang.</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="k">&lt;head&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">charset</span>=<span class="s">"UTF-8"</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"viewport"</span> <span class="v">content</span>=<span class="s">"width=device-width, initial-scale=1.0"</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"description"</span> <span class="v">content</span>=<span class="s">"Nhập môn phát triển web"</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"author"</span> <span class="v">content</span>=<span class="s">"Khoa Vo"</span><span class="k">&gt;</span>
+  <span class="k">&lt;title&gt;</span>Trang của tôi<span class="k">&lt;/title&gt;</span>
+  <span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"icon"</span> <span class="v">href</span>=<span class="s">"favicon.svg"</span><span class="k">&gt;</span>
+  <span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"stylesheet"</span> <span class="v">href</span>=<span class="s">"style.css"</span><span class="k">&gt;</span>
+<span class="k">&lt;/head&gt;</span></code></pre>
+
+      <h3>Thẻ <code>&lt;base&gt;</code> — URL gốc <span class="tag-adv">Nâng cao</span></h3>
+      <p>Đặt một URL/đích mặc định cho <em>tất cả</em> liên kết tương đối. Chỉ được dùng <strong>một</strong> thẻ <code>&lt;base&gt;</code> mỗi trang.</p>
+      <pre class="code"><code><span class="k">&lt;base</span> <span class="v">href</span>=<span class="s">"https://example.com/images/"</span> <span class="v">target</span>=<span class="s">"_blank"</span><span class="k">&gt;</span>
+<span class="c">&lt;!-- Sau khai báo trên: --&gt;</span>
+<span class="k">&lt;img</span> <span class="v">src</span>=<span class="s">"logo.png"</span><span class="k">&gt;</span>   <span class="c">→ thực chất tải https://example.com/images/logo.png</span></code></pre>
+      <div class="callout warn"><p><code>&lt;base&gt;</code> ảnh hưởng <strong>mọi</strong> liên kết tương đối trong trang nên dễ gây bất ngờ.
+        Hầu hết dự án không cần — chỉ dùng khi thật sự hiểu hệ quả.</p></div>
+    </section>
+
+    <!-- ==========  5. META CHI TIẾT  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Thẻ <code>&lt;meta&gt;</code> chi tiết <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>&lt;meta&gt;</code> là thẻ rỗng cung cấp <strong>siêu dữ liệu</strong> về trang. Có nhiều "vai trò" tuỳ thuộc tính bên trong.</p>
+
+      <table class="syntax">
+        <caption>Các thẻ meta thường dùng</caption>
+        <thead><tr><th>Mục đích</th><th>Cú pháp</th></tr></thead>
+        <tbody>
+          <tr><td>Bộ ký tự</td><td><code>&lt;meta charset="UTF-8"&gt;</code></td></tr>
+          <tr><td>Responsive (di động)</td><td><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code></td></tr>
+          <tr><td>Mô tả (SEO)</td><td><code>&lt;meta name="description" content="..."&gt;</code></td></tr>
+          <tr><td>Từ khoá</td><td><code>&lt;meta name="keywords" content="html, css, web"&gt;</code></td></tr>
+          <tr><td>Tác giả</td><td><code>&lt;meta name="author" content="Tên tác giả"&gt;</code></td></tr>
+          <tr><td>Tự refresh / chuyển trang</td><td><code>&lt;meta http-equiv="refresh" content="30"&gt;</code> (làm mới sau 30 giây)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>5.1 — <code>charset="UTF-8"</code></h3>
+      <p>Cho trình duyệt biết file được mã hoá bằng UTF-8 — bộ ký tự bao trùm gần như mọi ngôn ngữ, bao gồm <strong>tiếng Việt có dấu</strong>.
+         Đặt nó <em>càng sớm càng tốt</em> trong <code>&lt;head&gt;</code>.</p>
+
+      <h3>5.2 — <code>viewport</code></h3>
+      <p>Bắt buộc cho trang responsive: ép trang rộng đúng bằng chiều ngang thiết bị thay vì "thu nhỏ cả trang desktop". Học kỹ ở mục <strong>2.3 Responsive</strong>.</p>
+
+      <h3>5.3 — <code>description</code> &amp; <code>keywords</code> (SEO)</h3>
+      <p><code>description</code> là đoạn tóm tắt Google hay hiển thị dưới tiêu đề kết quả tìm kiếm; viết hấp dẫn, ~150 ký tự.
+         <code>keywords</code> ngày nay gần như không còn tác dụng SEO nhưng vẫn hay được dạy để biết.</p>
+
+      <h3>5.4 — <code>http-equiv="refresh"</code> <span class="tag-adv">Nâng cao</span></h3>
+      <pre class="code"><code><span class="c">&lt;!-- Tự làm mới trang sau 30 giây --&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">http-equiv</span>=<span class="s">"refresh"</span> <span class="v">content</span>=<span class="s">"30"</span><span class="k">&gt;</span>
+
+<span class="c">&lt;!-- Sau 5 giây tự chuyển sang trang khác --&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">http-equiv</span>=<span class="s">"refresh"</span> <span class="v">content</span>=<span class="s">"5; url=https://example.com"</span><span class="k">&gt;</span></code></pre>
+      <div class="callout warn"><p>Tránh lạm dụng auto-refresh: gây khó chịu và ảnh hưởng trải nghiệm/khả năng truy cập. Hiếm khi cần trong thực tế.</p></div>
+    </section>
+
+    <!-- ==========  6. CHÚ THÍCH  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Chú thích trong HTML <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Chú thích (comment) là ghi chú dành cho <strong>người viết code</strong>; trình duyệt <em>bỏ qua</em>, không hiển thị.
+         Dùng để giải thích, đánh dấu khu vực, hoặc tạm tắt một đoạn mã.</p>
+
+      <pre class="code"><code><span class="c">&lt;!-- Đây là một chú thích, trình duyệt không hiển thị --&gt;</span>
+
+<span class="c">&lt;!-- Tạm tắt đoạn mã để gỡ lỗi:
+&lt;p&gt;Đoạn này đang bị ẩn&lt;/p&gt;
+--&gt;</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả — chỉ thấy dòng KHÔNG nằm trong comment</div>
+        <div class="demo-body">
+          <!-- Dòng này bị ẩn, bạn không thấy nó trên trang -->
+          <p style="margin:0">Đoạn văn này hiển thị bình thường.</p>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <thead><tr><th>Quy tắc</th><th>Giải thích</th></tr></thead>
+        <tbody>
+          <tr><td>Cú pháp</td><td>Mở bằng <code>&lt;!--</code> và đóng bằng <code>--&gt;</code>.</td></tr>
+          <tr><td>Nhiều dòng</td><td>Một comment có thể trải nhiều dòng.</td></tr>
+          <tr><td><strong>Không lồng nhau</strong></td><td>Không đặt một comment bên trong comment khác — dấu <code>--&gt;</code> đầu tiên sẽ đóng sớm, gây lỗi.</td></tr>
+          <tr><td>Hiển thị?</td><td>Không hiển thị trên trang, nhưng <strong>vẫn nằm trong mã nguồn</strong> (ai cũng xem được). Đừng để thông tin nhạy cảm.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout danger"><p><strong>Sai — comment lồng nhau:</strong>
+        <code>&lt;!-- ngoài &lt;!-- trong --&gt; vẫn ngoài --&gt;</code> Dấu <code>--&gt;</code> ở giữa đã đóng comment, phần còn lại lọt ra ngoài thành text.</p></div>
+    </section>
+
+    <!-- ==========  7. ENTITIES  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> HTML Entities (thực thể) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Một vài ký tự có <strong>ý nghĩa đặc biệt</strong> trong HTML (như <code>&lt;</code> mở thẻ). Muốn <em>hiển thị</em> chính ký tự đó,
+         ta dùng <strong>thực thể</strong>: bắt đầu bằng <code>&amp;</code>, kết thúc bằng <code>;</code>.</p>
+
+      <table class="syntax">
+        <caption>Các thực thể thông dụng (theo W3Schools)</caption>
+        <thead><tr><th>Ký tự</th><th>Mã tên (entity name)</th><th>Mã số</th><th>Kết quả</th></tr></thead>
+        <tbody>
+          <tr><td>Khoảng trắng không ngắt</td><td><code>&amp;nbsp;</code></td><td><code>&amp;#160;</code></td><td class="d-ent">[&nbsp;]</td></tr>
+          <tr><td>Nhỏ hơn</td><td><code>&amp;lt;</code></td><td><code>&amp;#60;</code></td><td class="d-ent">&lt;</td></tr>
+          <tr><td>Lớn hơn</td><td><code>&amp;gt;</code></td><td><code>&amp;#62;</code></td><td class="d-ent">&gt;</td></tr>
+          <tr><td>Và (ampersand)</td><td><code>&amp;amp;</code></td><td><code>&amp;#38;</code></td><td class="d-ent">&amp;</td></tr>
+          <tr><td>Nháy kép</td><td><code>&amp;quot;</code></td><td><code>&amp;#34;</code></td><td class="d-ent">&quot;</td></tr>
+          <tr><td>Nháy đơn</td><td><code>&amp;apos;</code></td><td><code>&amp;#39;</code></td><td class="d-ent">&apos;</td></tr>
+          <tr><td>Bản quyền</td><td><code>&amp;copy;</code></td><td><code>&amp;#169;</code></td><td class="d-ent">&copy;</td></tr>
+          <tr><td>Đăng ký nhãn hiệu</td><td><code>&amp;reg;</code></td><td><code>&amp;#174;</code></td><td class="d-ent">&reg;</td></tr>
+          <tr><td>Euro</td><td><code>&amp;euro;</code></td><td><code>&amp;#8364;</code></td><td class="d-ent">&euro;</td></tr>
+          <tr><td>Nhân (×)</td><td><code>&amp;times;</code></td><td><code>&amp;#215;</code></td><td class="d-ent">&times;</td></tr>
+          <tr><td>Chia (÷)</td><td><code>&amp;divide;</code></td><td><code>&amp;#247;</code></td><td class="d-ent">&divide;</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Ví dụ: hiển thị chính đoạn mã HTML</div>
+        <div class="demo-body">
+          <p style="margin:0">Để in ra <code>&lt;p&gt;Xin chào&lt;/p&gt;</code> như văn bản, ta gõ:
+             <code>&amp;lt;p&amp;gt;Xin chào&amp;lt;/p&amp;gt;</code></p>
+        </div>
+      </div>
+
+      <div class="callout warn"><p><strong>Ba ký tự phải nhớ:</strong> <code>&amp;lt;</code> cho <code>&lt;</code>,
+        <code>&amp;gt;</code> cho <code>&gt;</code>, và <code>&amp;amp;</code> cho <code>&amp;</code>.
+        Quên escape dấu <code>&amp;</code> hay <code>&lt;</code> là lỗi rất phổ biến.</p></div>
+    </section>
+
+    <!-- ==========  8. SYMBOLS & EMOJI  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Symbols &amp; Emoji <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Ngoài entity, mọi ký tự Unicode đều gọi được bằng <strong>mã số</strong>: <code>&amp;#nnn;</code> (thập phân) hoặc <code>&amp;#xhhh;</code> (thập lục phân).
+         Nhờ đó hiển thị được ký hiệu toán học, mũi tên, nốt nhạc, và cả emoji.</p>
+
+      <table class="syntax">
+        <caption>Ký hiệu &amp; emoji qua mã số</caption>
+        <thead><tr><th>Mô tả</th><th>Mã</th><th>Kết quả</th></tr></thead>
+        <tbody>
+          <tr><td>Mũi tên phải →</td><td><code>&amp;#8594;</code> hoặc <code>&amp;rarr;</code></td><td class="d-ent">&#8594;</td></tr>
+          <tr><td>Trái tim ♥</td><td><code>&amp;#9829;</code></td><td class="d-ent">&#9829;</td></tr>
+          <tr><td>Nốt nhạc ♫</td><td><code>&amp;#9835;</code></td><td class="d-ent">&#9835;</td></tr>
+          <tr><td>Vô cực ∞</td><td><code>&amp;#8734;</code> hoặc <code>&amp;infin;</code></td><td class="d-ent">&#8734;</td></tr>
+          <tr><td>Pi π</td><td><code>&amp;#960;</code> hoặc <code>&amp;pi;</code></td><td class="d-ent">&#960;</td></tr>
+          <tr><td>Mặt cười 😀</td><td><code>&amp;#128512;</code></td><td class="d-emoji">&#128512;</td></tr>
+          <tr><td>Quả tim ❤️</td><td><code>&amp;#10084;</code></td><td class="d-emoji">&#10084;</td></tr>
+          <tr><td>Quả địa cầu 🌍</td><td><code>&amp;#127757;</code></td><td class="d-emoji">&#127757;</td></tr>
+          <tr><td>Tên lửa 🚀</td><td><code>&amp;#128640;</code></td><td class="d-emoji">&#128640;</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info"><p>Emoji thực chất là <strong>ký tự Unicode</strong>. Nếu file đã là <code>UTF-8</code>,
+        bạn có thể dán thẳng emoji vào HTML mà không cần mã số. Mã số <code>&amp;#nnn;</code> hữu ích khi không gõ được ký tự đó trực tiếp.</p></div>
+    </section>
+
+    <!-- ==========  9. MÀU SẮC  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Màu sắc trong HTML/CSS <span class="tag-base">Cơ bản → Nâng cao</span></h2>
+      <p class="lead">Có nhiều cách viết một màu. Bốn cách phổ biến: <strong>tên màu</strong>, <strong>HEX</strong>, <strong>RGB/RGBA</strong>, <strong>HSL/HSLA</strong>.
+         Tất cả đều có thể dùng cho <code>color</code>, <code>background-color</code>, <code>border</code>…</p>
+
+      <h3>9.1 — Tên màu (color names)</h3>
+      <p>HTML hỗ trợ <strong>140 tên màu chuẩn</strong> như <code>red</code>, <code>tomato</code>, <code>steelblue</code>, <code>rebeccapurple</code>…</p>
+      <div class="demo">
+        <div class="demo-bar">Một vài tên màu</div>
+        <div class="demo-body">
+          <div class="d-swatches">
+            <div class="d-swatch"><div class="d-fill d-c-aliceblue"></div><div class="d-lbl"><code>aliceblue</code></div></div>
+            <div class="d-swatch"><div class="d-fill d-c-tomato"></div><div class="d-lbl"><code>tomato</code></div></div>
+            <div class="d-swatch"><div class="d-fill d-c-steelblue"></div><div class="d-lbl"><code>steelblue</code></div></div>
+            <div class="d-swatch"><div class="d-fill d-c-rebecca"></div><div class="d-lbl"><code>rebeccapurple</code></div></div>
+          </div>
+        </div>
+      </div>
+
+      <h3>9.2 — HEX <code>#RRGGBB</code></h3>
+      <p>Mã thập lục phân: mỗi cặp 2 chữ số (00–ff) cho Đỏ, Lục, Lam. <code>#000000</code> = đen, <code>#ffffff</code> = trắng.
+         Dạng rút gọn <code>#RGB</code> (vd <code>#f09</code> = <code>#ff0099</code>).</p>
+      <div class="demo">
+        <div class="demo-bar">Màu HEX</div>
+        <div class="demo-body">
+          <div class="d-swatches">
+            <div class="d-swatch"><div class="d-fill d-c-hex1"></div><div class="d-lbl"><code>#1D559F</code></div></div>
+            <div class="d-swatch"><div class="d-fill d-c-hex2"></div><div class="d-lbl"><code>#04AA6D</code></div></div>
+            <div class="d-swatch"><div class="d-fill d-c-hex3"></div><div class="d-lbl"><code>#FFC107</code></div></div>
+            <div class="d-swatch"><div class="d-fill d-c-hexshort"></div><div class="d-lbl"><code>#f09</code> = #ff0099</div></div>
+          </div>
+        </div>
+      </div>
+
+      <h3>9.3 — RGB &amp; RGBA</h3>
+      <p><code>rgb(đỏ, lục, lam)</code> với mỗi kênh 0–255. <code>rgba()</code> thêm kênh <strong>alpha</strong> (độ mờ) từ 0 (trong suốt) đến 1 (đặc).</p>
+      <div class="demo">
+        <div class="demo-bar">RGB &amp; RGBA (alpha = độ mờ)</div>
+        <div class="demo-body">
+          <div class="d-swatches">
+            <div class="d-swatch"><div class="d-fill d-c-rgb"></div><div class="d-lbl"><code>rgb(230,57,70)</code></div></div>
+            <div class="d-swatch"><div class="d-fill d-c-rgba"></div><div class="d-lbl"><code>rgba(29,85,159,.45)</code></div></div>
+          </div>
+        </div>
+      </div>
+
+      <h3>9.4 — HSL &amp; HSLA <span class="tag-adv">Nâng cao</span></h3>
+      <p><code>hsl(hue, saturation, lightness)</code> trực quan hơn:
+         <strong>Hue</strong> (0–360°, vị trí trên vòng màu), <strong>Saturation</strong> (0–100%, độ tươi),
+         <strong>Lightness</strong> (0–100%, độ sáng). <code>hsla()</code> thêm alpha.</p>
+      <div class="demo">
+        <div class="demo-bar">Vòng màu Hue (0° → 360°) &amp; ví dụ HSL/HSLA</div>
+        <div class="demo-body">
+          <div class="d-hue"></div>
+          <p class="muted" style="margin:0 0 10px;font-size:.85rem">↑ Hue chạy đỏ → vàng → lục → lơ → lam → tím → đỏ</p>
+          <div class="d-swatches">
+            <div class="d-swatch"><div class="d-fill d-c-hsl"></div><div class="d-lbl"><code>hsl(150,95%,35%)</code></div></div>
+            <div class="d-swatch"><div class="d-fill d-c-hsla"></div><div class="d-lbl"><code>hsla(265,67%,65%,.5)</code></div></div>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>So sánh nhanh 4 cách viết màu</caption>
+        <thead><tr><th>Cách</th><th>Cú pháp</th><th>Khi nào dùng</th></tr></thead>
+        <tbody>
+          <tr><td>Tên màu</td><td><code>color: tomato;</code></td><td>Nhanh, dễ nhớ — cho prototype, ví dụ.</td></tr>
+          <tr><td>HEX</td><td><code>color: #1D559F;</code></td><td>Phổ biến nhất; copy từ design tool (Figma…).</td></tr>
+          <tr><td>RGB/RGBA</td><td><code>color: rgba(0,0,0,.5);</code></td><td>Khi cần <strong>độ mờ</strong> (alpha).</td></tr>
+          <tr><td>HSL/HSLA</td><td><code>color: hsl(210,70%,40%);</code></td><td>Khi cần <strong>chỉnh sắc độ/độ sáng</strong> trực quan (tạo bảng màu, theme).</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  10. UTF-8 & WHITESPACE  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Bộ ký tự UTF-8 &amp; khoảng trắng <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Trình duyệt cần biết file dùng <strong>bộ mã ký tự</strong> nào để dịch byte thành chữ. HTML5 mặc định khuyên dùng <code>UTF-8</code> —
+         bộ mã bao trùm hầu hết ngôn ngữ trên thế giới, gồm tiếng Việt và emoji.</p>
+
+      <table class="syntax">
+        <thead><tr><th>Khái niệm</th><th>Giải thích</th></tr></thead>
+        <tbody>
+          <tr><td>Character set</td><td>Tập hợp ký tự + mã số tương ứng. ASCII (cũ) chỉ 128 ký tự; Unicode chứa hơn 140.000.</td></tr>
+          <tr><td>UTF-8</td><td>Cách mã hoá Unicode hiệu quả, tương thích ngược ASCII — <strong>mặc định nên dùng</strong>.</td></tr>
+          <tr><td>Khai báo</td><td><code>&lt;meta charset="UTF-8"&gt;</code> đặt sớm trong <code>&lt;head&gt;</code>.</td></tr>
+          <tr><td>Thiếu charset?</td><td>Dấu tiếng Việt dễ thành ký tự lạ "ã, Ä‘…" (mojibake).</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Whitespace collapse — gộp khoảng trắng</h3>
+      <p>Theo mặc định, HTML <strong>gộp mọi chuỗi khoảng trắng</strong> (dấu cách, tab, xuống dòng) liên tiếp thành <em>một</em> khoảng trắng duy nhất.
+         Vì vậy gõ nhiều dấu cách hay nhiều dòng trống đều như nhau.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">Nguồn HTML (nhiều khoảng trắng)</div>
+          <div class="demo-body">
+            <pre class="code" style="margin:0"><code>&lt;p&gt;Xin      chào
+       các      bạn&lt;/p&gt;</code></pre>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">Kết quả render (đã gộp)</div>
+          <div class="demo-body">
+            <div class="d-ws">Xin      chào
+       các      bạn</div>
+            <p class="muted" style="margin:8px 0 0;font-size:.85rem">→ Chỉ còn một khoảng trắng giữa các từ.</p>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <thead><tr><th>Cách giữ khoảng trắng / xuống dòng</th><th>Công cụ</th></tr></thead>
+        <tbody>
+          <tr><td>Giữ nguyên định dạng (cả khoảng trắng &amp; xuống dòng)</td><td>thẻ <code>&lt;pre&gt;</code> hoặc CSS <code>white-space: pre;</code></td></tr>
+          <tr><td>Ép một khoảng trắng cứng (không gộp, không ngắt dòng)</td><td>thực thể <code>&amp;nbsp;</code></td></tr>
+          <tr><td>Xuống dòng thủ công</td><td>thẻ rỗng <code>&lt;br&gt;</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar"><code>&lt;pre&gt;</code> — giữ NGUYÊN khoảng trắng &amp; xuống dòng</div>
+        <div class="demo-body">
+          <div class="d-pre">Dòng 1
+    Dòng 2 (thụt 4 dấu cách)
+Khoảng     trắng     được     giữ</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  11. MẸO & LỖI  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout tip"><p><strong>Mẹo 1.</strong> Khung tối thiểu cần nhớ thuộc lòng:
+        <code>&lt;!DOCTYPE html&gt;</code> → <code>&lt;html lang&gt;</code> → <code>&lt;head&gt;</code> (charset + viewport + title) → <code>&lt;body&gt;</code>.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> Quên <code>&lt;meta charset="UTF-8"&gt;</code> hoặc đặt nó quá muộn → tiếng Việt hiển thị sai dấu.
+        Luôn đặt charset là dòng đầu trong <code>&lt;head&gt;</code>.</p></div>
+      <div class="callout danger"><p><strong>Lỗi 3.</strong> Lồng thẻ chéo (<code>&lt;b&gt;&lt;i&gt;…&lt;/b&gt;&lt;/i&gt;</code>) hoặc đóng thiếu thẻ
+        → bố cục vỡ khó lường. Đóng thẻ theo thứ tự ngược với khi mở.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 4.</strong> Viết thẳng dấu <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code> trong nội dung text
+        → trình duyệt tưởng là thẻ. Dùng thực thể <code>&amp;lt;</code> <code>&amp;gt;</code> <code>&amp;amp;</code>.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> <code>&lt;head&gt;</code> = thông tin (ẩn), <code>&lt;body&gt;</code> = nội dung (hiện);
+        comment để giải thích chứ không giấu được bí mật; UTF-8 cho mọi ngôn ngữ; và HTML luôn gộp khoảng trắng dư.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="02-the-thuoc-tinh.html"><small>Bài tiếp →</small>2.1.2 · Thẻ &amp; thuộc tính</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

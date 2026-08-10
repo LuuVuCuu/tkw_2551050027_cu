@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.3.4 — CSS FLEXBOX cho RESPONSIVE (bản toàn diện)
+  ------------------------------------------------------------
+  Flexbox là mô hình bố cục MỘT CHIỀU, là công cụ chủ lực để
+  dàn trang co giãn theo màn hình. Bài đi từ cơ bản → nâng cao,
+  tham khảo W3Schools "CSS Flexbox" + "Responsive Web Design",
+  NHẤN MẠNH ứng dụng RESPONSIVE:
+    1) display:flex — container & item, hai trục
+    2) flex-direction + responsive (row → column)
+    3) flex-wrap — chìa khoá responsive (tự xuống hàng)
+    4) justify-content (trục chính)
+    5) align-items / align-content + gap (trục phụ)
+    6) flex-grow / shrink / basis + shorthand flex
+    7) THỰC HÀNH: hàng thẻ (cards) responsive
+    8) THỰC HÀNH: navbar responsive
+    9) Căn giữa hoàn hảo theo cả 2 chiều
+   10) Bảng tra: thuộc tính container vs item
+   11) Mẹo responsive với Flexbox
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.3.4 · Flexbox cho Responsive</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* khung container flex dùng chung để quan sát */
+    .d-flex {
+      display: flex;
+      gap: 10px;
+      border: 2px dashed #1D559F;
+      border-radius: 8px;
+      padding: 10px;
+      background: #fafcff;
+    }
+    /* item flex dùng chung */
+    .d-flex > .d-item {
+      background: #1D559F; color: #fff;
+      padding: 14px 20px; border-radius: 6px;
+      font-weight: 700; text-align: center;
+    }
+    .d-flex > .d-item:nth-child(even) { background: #6c5ce7; }
+    .d-flex > .d-item:nth-child(3n)   { background: #04AA6D; }
+
+    /* item cao thấp khác nhau để thấy rõ trục phụ */
+    .d-uneven > .d-item:nth-child(1) { padding-top: 8px;  padding-bottom: 8px;  }
+    .d-uneven > .d-item:nth-child(2) { padding-top: 30px; padding-bottom: 30px; }
+    .d-uneven > .d-item:nth-child(3) { padding-top: 18px; padding-bottom: 18px; }
+
+    /* 1) hai trục */
+    .d-axis-row    { display: flex; flex-direction: row; }
+    .d-axis-col    { display: flex; flex-direction: column; }
+
+    /* 2) flex-direction responsive: row → column khi hẹp */
+    .d-dir-resp { display: flex; flex-direction: row; }
+    @media (max-width: 560px) {
+      .d-dir-resp { flex-direction: column; }   /* màn nhỏ → xếp dọc */
+    }
+
+    /* 3) flex-wrap */
+    .d-wrap   { flex-wrap: wrap;   }
+    .d-nowrap { flex-wrap: nowrap; }
+    .d-wrap > .d-item, .d-nowrap > .d-item { min-width: 120px; }
+
+    /* 4) justify-content — các biến thể */
+    .d-jc { display: flex; gap: 8px; margin: 8px 0; }
+    .d-jc > .d-item { padding: 10px 16px; }
+    .d-jc-start   { justify-content: flex-start;    }
+    .d-jc-center  { justify-content: center;        }
+    .d-jc-end     { justify-content: flex-end;      }
+    .d-jc-between { justify-content: space-between;  }
+    .d-jc-around  { justify-content: space-around;  }
+    .d-jc-evenly  { justify-content: space-evenly;  }
+
+    /* 5) align-items */
+    .d-ai { display: flex; gap: 8px; min-height: 110px; }
+    .d-ai-stretch { align-items: stretch;    }
+    .d-ai-start   { align-items: flex-start;  }
+    .d-ai-center  { align-items: center;      }
+    .d-ai-end     { align-items: flex-end;    }
+    .d-ai > .d-item { display: flex; align-items: center; }
+
+    /* align-content (nhiều hàng) */
+    .d-ac { display: flex; flex-wrap: wrap; gap: 8px; min-height: 180px; align-content: space-between; }
+    .d-ac > .d-item { width: 90px; }
+
+    /* gap minh hoạ */
+    .d-gap { display: flex; flex-wrap: wrap; gap: 16px; }
+    .d-gap > .d-item { width: 80px; }
+
+    /* 6) flex-grow / shrink / basis */
+    .d-grow { display: flex; gap: 8px; }
+    .d-grow > .d-item { flex-grow: 1; }            /* mọi item chia đều */
+    .d-grow > .d-g2   { flex-grow: 2; background: #E63946; }  /* lấy gấp đôi */
+
+    .d-basis { display: flex; gap: 8px; }
+    .d-basis > .b1 { flex: 1 1 0;     }            /* co giãn từ 0 → chia đều */
+    .d-basis > .b2 { flex: 2 1 0;     background: #E63946; } /* gấp đôi phần dư */
+    .d-basis > .b3 { flex: 0 0 120px; background: #04AA6D; } /* cố định 120px */
+
+    /* 7) THỰC HÀNH cards responsive */
+    .d-cards { display: flex; flex-wrap: wrap; gap: 16px; }
+    .d-card {
+      flex: 1 1 250px;                  /* CHÌA KHOÁ: lớn lên, co lại, rộng tối thiểu 250px */
+      background: #fff; border: 1px solid #e3e8f0; border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(20,40,80,.06); overflow: hidden;
+    }
+    .d-card .d-card-img { height: 90px; background: linear-gradient(135deg,#1D559F,#6c5ce7); }
+    .d-card:nth-child(2) .d-card-img { background: linear-gradient(135deg,#04AA6D,#1D559F); }
+    .d-card:nth-child(3) .d-card-img { background: linear-gradient(135deg,#6c5ce7,#E63946); }
+    .d-card:nth-child(4) .d-card-img { background: linear-gradient(135deg,#FFC107,#04AA6D); }
+    .d-card .d-card-body { padding: 12px 14px; }
+    .d-card h4 { margin: 0 0 6px; color: #1D559F; font-size: 1rem; }
+    .d-card p  { margin: 0; color: #5b6472; font-size: .86rem; }
+
+    /* 8) THỰC HÀNH navbar responsive */
+    .d-navbar {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px;
+      background: #16407a; border-radius: 10px; padding: 10px 16px;
+    }
+    .d-navbar .d-brand { font-weight: 800; color: #fff; font-size: 1.05rem; margin-right: auto; }
+    .d-navbar a {
+      color: #dbe6f7; text-decoration: none; padding: 6px 10px;
+      border-radius: 6px; font-size: .9rem; font-weight: 600;
+    }
+    .d-navbar a:hover { background: rgba(255,255,255,.14); color: #fff; }
+    .d-navbar .d-cta { background: #04AA6D; color: #fff; }
+
+    /* 9) căn giữa hoàn hảo */
+    .d-center {
+      display: flex; justify-content: center; align-items: center;
+      min-height: 160px;
+      background: linear-gradient(135deg,#eaf1fb,#ede9fe);
+      border: 2px dashed #1D559F; border-radius: 10px;
+    }
+    .d-center .d-badge {
+      background: #1D559F; color: #fff; font-weight: 700;
+      padding: 16px 26px; border-radius: 10px; text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.3 Responsive</a><span>›</span>
+        Flexbox
+      </nav>
+      <h1>Flexbox cho <code style="color:#fff;background:rgba(255,255,255,.18)">Responsive</code></h1>
+      <p class="sub">Flexbox là mô hình bố cục một chiều mạnh mẽ nhất để dàn trang co giãn theo màn hình.
+         Từ <code>display:flex</code> cơ bản đến <code>flex-wrap</code>, <code>flex: 1 1 250px</code> — kỹ thuật
+         giúp giao diện tự sắp xếp lại mà cần rất ít media query.</p>
+      <div class="chips">
+        <span class="chip solid">2.3.4</span>
+        <span class="chip">Responsive</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">display:flex — container, item, hai trục</a></li>
+        <li><a href="#s2">flex-direction + responsive</a></li>
+        <li><a href="#s3">flex-wrap — chìa khoá responsive</a></li>
+        <li><a href="#s4">justify-content (trục chính)</a></li>
+        <li><a href="#s5">align-items, align-content &amp; gap</a></li>
+        <li><a href="#s6">flex-grow / shrink / basis</a></li>
+        <li><a href="#s7">Thực hành: hàng thẻ responsive</a></li>
+        <li><a href="#s8">Thực hành: navbar responsive</a></li>
+        <li><a href="#s9">Căn giữa hoàn hảo 2 chiều</a></li>
+        <li><a href="#s10">Bảng tra: container vs item</a></li>
+        <li><a href="#s11">Mẹo responsive với Flexbox</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. DISPLAY:FLEX  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> <code>display:flex</code> — container, item &amp; hai trục <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Đặt <code>display:flex</code> cho một phần tử cha (<strong>flex container</strong>) thì mọi con trực tiếp
+         của nó trở thành <strong>flex item</strong> và được xếp theo một <em>đường thẳng</em>. Flexbox là bố cục
+         <strong>một chiều</strong>: hoặc theo hàng, hoặc theo cột.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · cha có display:flex → 3 con xếp thành hàng</div>
+        <div class="demo-body">
+          <div class="d-flex">
+            <div class="d-item">item 1</div>
+            <div class="d-item">item 2</div>
+            <div class="d-item">item 3</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* CHA: chỉ cần 1 dòng để kích hoạt Flexbox */</span>
+.container { <span class="k">display</span>: <span class="v">flex</span>; }
+<span class="c">/* CON trực tiếp tự động trở thành flex item, không cần khai báo gì thêm */</span></code></pre>
+
+      <div class="note">
+        <p><strong>Trục chính (main axis)</strong> — hướng các item được xếp ra, mặc định là <em>ngang</em> (trái → phải).
+           <code>justify-content</code> căn item theo trục này.</p>
+        <p><strong>Trục phụ (cross axis)</strong> — vuông góc với trục chính, mặc định là <em>dọc</em>.
+           <code>align-items</code> căn item theo trục này. Khi đổi <code>flex-direction:column</code>, hai trục
+           <u>hoán đổi</u> vai trò.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-bar">Hai trục đổi vai trò theo flex-direction</div>
+        <div class="demo-body split">
+          <div>
+            <p class="muted">▸ <code>row</code> — trục chính nằm ngang:</p>
+            <div class="d-flex d-axis-row">
+              <div class="d-item">1</div><div class="d-item">2</div><div class="d-item">3</div>
+            </div>
+          </div>
+          <div>
+            <p class="muted">▸ <code>column</code> — trục chính nằm dọc:</p>
+            <div class="d-flex d-axis-col">
+              <div class="d-item">1</div><div class="d-item">2</div><div class="d-item">3</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Thuật ngữ Flexbox cần nhớ</caption>
+        <thead><tr><th>Thuật ngữ</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>flex container</code></td><td>Phần tử cha đặt <code>display:flex</code>.</td></tr>
+          <tr><td><code>flex item</code></td><td>Mỗi con <strong>trực tiếp</strong> của container.</td></tr>
+          <tr><td>main axis</td><td>Trục chính — hướng xếp item (theo <code>flex-direction</code>).</td></tr>
+          <tr><td>cross axis</td><td>Trục phụ — vuông góc với trục chính.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  2. FLEX-DIRECTION  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> <code>flex-direction</code> + responsive <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>flex-direction</code> quyết định hướng của trục chính: <code>row</code> (ngang, mặc định) hay
+         <code>column</code> (dọc). Đây là <strong>mẹo responsive kinh điển</strong>: màn hình rộng xếp <em>ngang</em>,
+         màn hình hẹp (điện thoại) xếp <em>dọc</em>.</p>
+
+      <table class="syntax">
+        <caption>Các giá trị của flex-direction</caption>
+        <thead><tr><th>Giá trị</th><th>Hướng xếp item</th></tr></thead>
+        <tbody>
+          <tr><td><code>row</code> <em>(mặc định)</em></td><td>Theo hàng, từ trái sang phải.</td></tr>
+          <tr><td><code>row-reverse</code></td><td>Theo hàng, từ phải sang trái.</td></tr>
+          <tr><td><code>column</code></td><td>Theo cột, từ trên xuống dưới.</td></tr>
+          <tr><td><code>column-reverse</code></td><td>Theo cột, từ dưới lên trên.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Responsive: row trên màn rộng → column trên màn hẹp</h3>
+      <p class="lead">Khối dưới đây xếp <strong>ngang</strong> bình thường, nhưng khi khung &lt; 560px sẽ tự chuyển sang
+         xếp <strong>dọc</strong>. Hãy thu hẹp cửa sổ trình duyệt để thấy.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Thu nhỏ trình duyệt &lt; 560px → các khối xếp dọc</div>
+        <div class="demo-body">
+          <div class="d-flex d-dir-resp">
+            <div class="d-item">Trang chủ</div>
+            <div class="d-item">Sản phẩm</div>
+            <div class="d-item">Liên hệ</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.menu { <span class="k">display</span>: <span class="v">flex</span>;
+        <span class="k">flex-direction</span>: <span class="v">row</span>; }     <span class="c">/* mặc định: xếp ngang */</span>
+
+<span class="k">@media</span> (max-width: <span class="v">560px</span>) {
+  .menu { <span class="k">flex-direction</span>: <span class="v">column</span>; } <span class="c">/* màn nhỏ: xếp dọc */</span>
+}</code></pre>
+
+      <div class="callout tip"><p>Chỉ cần <strong>một thuộc tính</strong> đổi trong media query là cả khối tự sắp xếp lại —
+        đây là sức mạnh của Flexbox cho responsive: ít CSS, không cần đụng tới HTML.</p></div>
+    </section>
+
+    <!-- ==========  3. FLEX-WRAP  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> <code>flex-wrap</code> — chìa khoá responsive <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Mặc định flex item <strong>không xuống hàng</strong> (<code>nowrap</code>) — chúng cố ép vào một dòng và bị
+         bóp nhỏ lại. Đặt <code>flex-wrap:wrap</code> cho phép item <strong>tự xuống hàng</strong> khi không đủ chỗ.
+         Đây chính là <strong>cốt lõi của bố cục responsive</strong> bằng Flexbox.</p>
+
+      <div class="demo">
+        <div class="demo-bar">nowrap — item bị bóp lại, KHÔNG xuống hàng</div>
+        <div class="demo-body">
+          <div class="d-flex d-nowrap">
+            <div class="d-item">item 1</div><div class="d-item">item 2</div>
+            <div class="d-item">item 3</div><div class="d-item">item 4</div>
+            <div class="d-item">item 5</div><div class="d-item">item 6</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-bar">wrap — hết chỗ thì TỰ XUỐNG HÀNG (responsive)</div>
+        <div class="demo-body">
+          <div class="d-flex d-wrap">
+            <div class="d-item">item 1</div><div class="d-item">item 2</div>
+            <div class="d-item">item 3</div><div class="d-item">item 4</div>
+            <div class="d-item">item 5</div><div class="d-item">item 6</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Các giá trị của flex-wrap</caption>
+        <thead><tr><th>Giá trị</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>nowrap</code> <em>(mặc định)</em></td><td>Tất cả item ép vào một dòng, có thể bị co nhỏ.</td></tr>
+          <tr><td><code>wrap</code></td><td>Item tràn sẽ xuống hàng mới — <strong>nền tảng responsive</strong>.</td></tr>
+          <tr><td><code>wrap-reverse</code></td><td>Xuống hàng nhưng các hàng xếp ngược (dưới lên).</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code>.grid { <span class="k">display</span>: <span class="v">flex</span>;
+        <span class="k">flex-wrap</span>: <span class="v">wrap</span>;   <span class="c">/* hết chỗ thì xuống hàng */</span>
+        <span class="k">gap</span>: <span class="v">16px</span>; }</code></pre>
+
+      <div class="callout info"><p>Viết tắt <code>flex-flow</code> gộp cả hai: <code>flex-flow: row wrap;</code> tương đương
+        <code>flex-direction: row; flex-wrap: wrap;</code>.</p></div>
+    </section>
+
+    <!-- ==========  4. JUSTIFY-CONTENT  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> <code>justify-content</code> — căn theo trục chính <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Khi tổng bề rộng item nhỏ hơn container, <code>justify-content</code> quyết định
+         <strong>phân bố khoảng trống dư</strong> theo trục chính (mặc định là chiều ngang).</p>
+
+      <div class="demo">
+        <div class="demo-bar">So sánh 6 giá trị justify-content</div>
+        <div class="demo-body">
+          <p class="muted"><code>flex-start</code> (mặc định) — dồn về đầu:</p>
+          <div class="d-flex d-jc d-jc-start"><div class="d-item">A</div><div class="d-item">B</div><div class="d-item">C</div></div>
+
+          <p class="muted" style="margin-top:12px"><code>center</code> — dồn vào giữa:</p>
+          <div class="d-flex d-jc d-jc-center"><div class="d-item">A</div><div class="d-item">B</div><div class="d-item">C</div></div>
+
+          <p class="muted" style="margin-top:12px"><code>flex-end</code> — dồn về cuối:</p>
+          <div class="d-flex d-jc d-jc-end"><div class="d-item">A</div><div class="d-item">B</div><div class="d-item">C</div></div>
+
+          <p class="muted" style="margin-top:12px"><code>space-between</code> — hai mép sát biên, khoảng cách đều ở giữa:</p>
+          <div class="d-flex d-jc d-jc-between"><div class="d-item">A</div><div class="d-item">B</div><div class="d-item">C</div></div>
+
+          <p class="muted" style="margin-top:12px"><code>space-around</code> — mỗi item có khoảng đệm bằng nhau hai bên:</p>
+          <div class="d-flex d-jc d-jc-around"><div class="d-item">A</div><div class="d-item">B</div><div class="d-item">C</div></div>
+
+          <p class="muted" style="margin-top:12px"><code>space-evenly</code> — mọi khe (kể cả hai mép) bằng nhau:</p>
+          <div class="d-flex d-jc d-jc-evenly"><div class="d-item">A</div><div class="d-item">B</div><div class="d-item">C</div></div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Giá trị justify-content (trục chính)</caption>
+        <thead><tr><th>Giá trị</th><th>Phân bố</th></tr></thead>
+        <tbody>
+          <tr><td><code>flex-start</code></td><td>Dồn về đầu trục chính (mặc định).</td></tr>
+          <tr><td><code>center</code></td><td>Dồn vào giữa.</td></tr>
+          <tr><td><code>flex-end</code></td><td>Dồn về cuối.</td></tr>
+          <tr><td><code>space-between</code></td><td>Item đầu/cuối sát biên, khoảng cách giữa bằng nhau.</td></tr>
+          <tr><td><code>space-around</code></td><td>Khoảng đệm quanh mỗi item bằng nhau.</td></tr>
+          <tr><td><code>space-evenly</code></td><td>Mọi khoảng cách (cả hai mép) đều bằng nhau.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  5. ALIGN-ITEMS / ALIGN-CONTENT / GAP  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> <code>align-items</code>, <code>align-content</code> &amp; <code>gap</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>align-items</code> căn item theo <strong>trục phụ</strong> (vuông góc trục chính). Khi item cao thấp
+         khác nhau, thuộc tính này quyết định chúng dóng theo đỉnh, giữa, đáy hay kéo giãn bằng nhau.</p>
+
+      <div class="demo">
+        <div class="demo-bar">align-items với item cao thấp khác nhau</div>
+        <div class="demo-body">
+          <p class="muted"><code>stretch</code> (mặc định) — kéo giãn bằng chiều cao container:</p>
+          <div class="d-flex d-ai d-ai-stretch"><div class="d-item">A</div><div class="d-item">B</div><div class="d-item">C</div></div>
+
+          <p class="muted" style="margin-top:12px"><code>flex-start</code> · <code>center</code> · <code>flex-end</code>:</p>
+          <div class="split">
+            <div class="d-flex d-ai d-ai-start d-uneven"><div class="d-item">start</div><div class="d-item">cao</div><div class="d-item">C</div></div>
+            <div class="d-flex d-ai d-ai-center d-uneven"><div class="d-item">center</div><div class="d-item">cao</div><div class="d-item">C</div></div>
+          </div>
+          <div class="d-flex d-ai d-ai-end d-uneven" style="margin-top:8px"><div class="d-item">end</div><div class="d-item">cao</div><div class="d-item">C</div></div>
+        </div>
+      </div>
+
+      <h3>align-content — căn nhiều hàng (chỉ khi wrap)</h3>
+      <p class="lead">Khi item xuống nhiều hàng, <code>align-content</code> phân bố các <em>hàng</em> theo trục phụ
+         (tương tự <code>justify-content</code> nhưng theo chiều dọc của cả nhóm hàng).</p>
+      <div class="demo">
+        <div class="demo-bar">align-content: space-between · container cao 180px, item wrap</div>
+        <div class="demo-body">
+          <div class="d-flex d-ac">
+            <div class="d-item">1</div><div class="d-item">2</div><div class="d-item">3</div>
+            <div class="d-item">4</div><div class="d-item">5</div><div class="d-item">6</div>
+            <div class="d-item">7</div><div class="d-item">8</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>gap — khoảng cách giữa các item</h3>
+      <p class="lead"><code>gap</code> tạo khoảng cách <strong>giữa</strong> các item (và giữa các hàng khi wrap) mà không cần
+         margin lằng nhằng — sạch và hiện đại.</p>
+      <div class="demo">
+        <div class="demo-bar">gap: 16px (cả khoảng cách hàng khi xuống dòng)</div>
+        <div class="demo-body">
+          <div class="d-flex d-gap">
+            <div class="d-item">1</div><div class="d-item">2</div><div class="d-item">3</div>
+            <div class="d-item">4</div><div class="d-item">5</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.box { <span class="k">display</span>: <span class="v">flex</span>;
+       <span class="k">align-items</span>: <span class="v">center</span>;   <span class="c">/* trục phụ: căn giữa theo chiều cao */</span>
+       <span class="k">gap</span>: <span class="v">16px</span>;            <span class="c">/* khoảng cách đều giữa item & hàng */</span> }</code></pre>
+
+      <div class="callout info"><p><strong>align-items vs align-content:</strong> <code>align-items</code> căn từng item trong
+        <em>một hàng</em>; <code>align-content</code> căn vị trí của <em>nhiều hàng</em> (chỉ có tác dụng khi đã
+        <code>wrap</code> và container còn dư chiều cao).</p></div>
+    </section>
+
+    <!-- ==========  6. FLEX-GROW / SHRINK / BASIS  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> <code>flex-grow</code> / <code>flex-shrink</code> / <code>flex-basis</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Ba thuộc tính đặt trên <strong>item</strong> điều khiển cách item co giãn để lấp khoảng trống.
+         Viết gọn cả ba bằng shorthand <code>flex</code>.</p>
+
+      <table class="syntax">
+        <caption>Ba thuộc tính co giãn của flex item</caption>
+        <thead><tr><th>Thuộc tính</th><th>Ý nghĩa</th><th>Mặc định</th></tr></thead>
+        <tbody>
+          <tr><td><code>flex-grow</code></td><td>Tỷ lệ <strong>lớn lên</strong> để chia phần trống dư.</td><td><code>0</code> (không giãn)</td></tr>
+          <tr><td><code>flex-shrink</code></td><td>Tỷ lệ <strong>co lại</strong> khi thiếu chỗ.</td><td><code>1</code> (cho co)</td></tr>
+          <tr><td><code>flex-basis</code></td><td>Kích thước <strong>khởi điểm</strong> trước khi co/giãn.</td><td><code>auto</code></td></tr>
+          <tr><td><code>flex</code></td><td>Viết gọn: <code>flex: grow shrink basis</code>.</td><td><code>0 1 auto</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">flex-grow — item lấp đầy khoảng trống; item đỏ flex-grow:2 lấy gấp đôi</div>
+        <div class="demo-body">
+          <div class="d-flex d-grow">
+            <div class="d-item">grow: 1</div>
+            <div class="d-item d-g2">grow: 2</div>
+            <div class="d-item">grow: 1</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-bar">shorthand flex · b1=flex:1 · b2=flex:2 · b3=flex:0 0 120px (cố định)</div>
+        <div class="demo-body">
+          <div class="d-flex d-basis">
+            <div class="d-item b1">flex: 1 1 0</div>
+            <div class="d-item b2">flex: 2 1 0</div>
+            <div class="d-item b3">flex: 0 0 120px</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* shorthand flex: grow | shrink | basis */</span>
+.item-a { <span class="k">flex</span>: <span class="v">1</span>; }          <span class="c">/* = 1 1 0  → chia đều phần trống */</span>
+.item-b { <span class="k">flex</span>: <span class="v">2 1 0</span>; }      <span class="c">/* lấy gấp đôi phần dư */</span>
+.item-c { <span class="k">flex</span>: <span class="v">0 0 120px</span>; } <span class="c">/* cố định 120px, không co không giãn */</span>
+.item-d { <span class="k">flex</span>: <span class="v">1 1 250px</span>; } <span class="c">/* giãn được, co được, rộng tối thiểu 250px */</span></code></pre>
+
+      <div class="callout tip"><p><code>flex: 1 1 250px</code> là công thức <strong>vàng cho card responsive</strong>: mỗi thẻ rộng
+        khoảng 250px, tự giãn lấp chỗ trống, và tự xuống hàng khi hẹp — xem ngay mục kế tiếp.</p></div>
+    </section>
+
+    <!-- ==========  7. THỰC HÀNH CARDS  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Thực hành: hàng thẻ (cards) responsive <span class="tag-adv">Thực hành</span></h2>
+      <p class="lead">Kết hợp <code>flex-wrap:wrap</code> + <code>flex: 1 1 250px</code> tạo một hàng thẻ <strong>tự đáp ứng</strong>:
+         màn rộng 4 thẻ/hàng, màn vừa 2–3 thẻ, điện thoại 1 thẻ — <u>không cần media query nào</u>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Thu nhỏ trình duyệt → số thẻ trên mỗi hàng tự thay đổi</div>
+        <div class="demo-body">
+          <div class="d-cards">
+            <article class="d-card">
+              <div class="d-card-img"></div>
+              <div class="d-card-body"><h4>Thẻ A</h4><p>Tự giãn rộng khi còn chỗ, co lại khi hẹp.</p></div>
+            </article>
+            <article class="d-card">
+              <div class="d-card-img"></div>
+              <div class="d-card-body"><h4>Thẻ B</h4><p>Rộng tối thiểu 250px nhờ flex-basis.</p></div>
+            </article>
+            <article class="d-card">
+              <div class="d-card-img"></div>
+              <div class="d-card-body"><h4>Thẻ C</h4><p>Xuống hàng tự động khi không đủ chỗ.</p></div>
+            </article>
+            <article class="d-card">
+              <div class="d-card-img"></div>
+              <div class="d-card-body"><h4>Thẻ D</h4><p>Bố cục responsive chỉ với 3 dòng CSS.</p></div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.cards { <span class="k">display</span>: <span class="v">flex</span>;
+         <span class="k">flex-wrap</span>: <span class="v">wrap</span>;     <span class="c">/* cho phép xuống hàng */</span>
+         <span class="k">gap</span>: <span class="v">16px</span>; }
+
+.card  { <span class="k">flex</span>: <span class="v">1 1 250px</span>; }  <span class="c">/* giãn · co · rộng tối thiểu 250px */</span></code></pre>
+
+      <div class="callout tip"><p>Toàn bộ hành vi responsive đến từ <strong>một dòng</strong> <code>flex: 1 1 250px</code>:
+        <code>basis 250px</code> đặt bề rộng mong muốn, <code>grow 1</code> cho giãn lấp chỗ, <code>flex-wrap</code> cho xuống hàng.
+        Đổi 250px → 200px sẽ có nhiều cột hơn.</p></div>
+    </section>
+
+    <!-- ==========  8. THỰC HÀNH NAVBAR  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Thực hành: navbar responsive <span class="tag-adv">Thực hành</span></h2>
+      <p class="lead">Thanh điều hướng là ứng dụng Flexbox phổ biến nhất: logo bên trái, menu bên phải. Dùng
+         <code>margin-right:auto</code> đẩy menu sang phải, và <code>flex-wrap:wrap</code> cho menu tự xuống hàng khi hẹp.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Logo trái · menu phải · tự xuống hàng khi không đủ chỗ</div>
+        <div class="demo-body">
+          <nav class="d-navbar">
+            <span class="d-brand">WebDesign</span>
+            <a href="#s8">Trang chủ</a>
+            <a href="#s8">Khoá học</a>
+            <a href="#s8">Bài viết</a>
+            <a href="#s8">Liên hệ</a>
+            <a href="#s8" class="d-cta">Đăng ký</a>
+          </nav>
+        </div>
+      </div>
+
+      <pre class="code"><code>.navbar { <span class="k">display</span>: <span class="v">flex</span>;
+          <span class="k">flex-wrap</span>: <span class="v">wrap</span>;       <span class="c">/* menu xuống hàng khi hẹp */</span>
+          <span class="k">align-items</span>: <span class="v">center</span>;
+          <span class="k">gap</span>: <span class="v">6px 16px</span>; }
+
+.navbar .brand { <span class="k">margin-right</span>: <span class="v">auto</span>; } <span class="c">/* đẩy phần còn lại sang phải */</span></code></pre>
+
+      <div class="callout info"><p><strong>Mẹo:</strong> <code>margin-right:auto</code> (hoặc <code>margin-left:auto</code>) trên một item
+        "ăn" hết khoảng trống còn lại, đẩy các item sau dạt về phía đối diện — cực tiện để tách logo và menu.</p></div>
+    </section>
+
+    <!-- ==========  9. CĂN GIỮA HOÀN HẢO  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Căn giữa hoàn hảo theo cả 2 chiều <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Bài toán kinh điển "căn giữa một hộp cả ngang lẫn dọc" từng rất khó, nay chỉ cần
+         <strong>2 dòng</strong> với Flexbox: <code>justify-content:center</code> (ngang) +
+         <code>align-items:center</code> (dọc).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Hộp xanh nằm chính giữa theo cả hai chiều</div>
+        <div class="demo-body">
+          <div class="d-center">
+            <div class="d-badge">Căn giữa<br>hoàn hảo ✓</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.parent {
+  <span class="k">display</span>: <span class="v">flex</span>;
+  <span class="k">justify-content</span>: <span class="v">center</span>; <span class="c">/* căn giữa theo trục chính (ngang) */</span>
+  <span class="k">align-items</span>: <span class="v">center</span>;     <span class="c">/* căn giữa theo trục phụ (dọc) */</span>
+  <span class="k">min-height</span>: <span class="v">160px</span>;        <span class="c">/* cần có chiều cao để căn dọc thấy rõ */</span>
+}</code></pre>
+
+      <div class="callout tip"><p>Để căn giữa giữa <strong>màn hình</strong>, đặt container cao bằng cả viewport:
+        <code>min-height: 100vh</code> rồi cũng <code>justify-content:center; align-items:center;</code> — mọi nội dung
+        bên trong sẽ nằm chính giữa trang.</p></div>
+    </section>
+
+    <!-- ==========  10. BẢNG TRA CONTAINER vs ITEM  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Bảng tra: thuộc tính container vs item <span class="tag-base">Tổng kết</span></h2>
+      <p class="lead">Flexbox chia thuộc tính thành hai nhóm: đặt trên <strong>container</strong> (cha) và đặt trên
+         <strong>item</strong> (con). Nhớ đúng nhóm là không bao giờ nhầm.</p>
+
+      <table class="syntax">
+        <caption>Thuộc tính đặt trên flex CONTAINER (cha)</caption>
+        <thead><tr><th>Thuộc tính</th><th>Tác dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>display: flex</code></td><td>Kích hoạt Flexbox cho các con.</td></tr>
+          <tr><td><code>flex-direction</code></td><td>Hướng trục chính: row / column.</td></tr>
+          <tr><td><code>flex-wrap</code></td><td>Cho item xuống hàng (wrap) — responsive.</td></tr>
+          <tr><td><code>flex-flow</code></td><td>Viết gọn direction + wrap.</td></tr>
+          <tr><td><code>justify-content</code></td><td>Căn item theo trục chính.</td></tr>
+          <tr><td><code>align-items</code></td><td>Căn item theo trục phụ (một hàng).</td></tr>
+          <tr><td><code>align-content</code></td><td>Căn nhiều hàng theo trục phụ (khi wrap).</td></tr>
+          <tr><td><code>gap</code></td><td>Khoảng cách giữa item và giữa các hàng.</td></tr>
+        </tbody>
+      </table>
+
+      <table class="syntax">
+        <caption>Thuộc tính đặt trên flex ITEM (con)</caption>
+        <thead><tr><th>Thuộc tính</th><th>Tác dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>flex-grow</code></td><td>Tỷ lệ giãn lấp khoảng trống dư.</td></tr>
+          <tr><td><code>flex-shrink</code></td><td>Tỷ lệ co lại khi thiếu chỗ.</td></tr>
+          <tr><td><code>flex-basis</code></td><td>Kích thước khởi điểm của item.</td></tr>
+          <tr><td><code>flex</code></td><td>Viết gọn grow / shrink / basis.</td></tr>
+          <tr><td><code>align-self</code></td><td>Ghi đè align-items cho riêng item này.</td></tr>
+          <tr><td><code>order</code></td><td>Đổi thứ tự hiển thị (mặc định 0).</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  11. MẸO RESPONSIVE  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Mẹo responsive với Flexbox <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout tip"><p><strong>Mẹo 1 — Thay nhiều media query.</strong> Cặp <code>flex-wrap:wrap</code> +
+        <code>flex-basis</code> (hoặc <code>flex: 1 1 250px</code>) tự cho item xuống hàng theo bề rộng màn hình.
+        Một dòng này thay được hàng loạt breakpoint thủ công.</p></div>
+      <div class="callout warn"><p><strong>Mẹo 2 — Tránh item bị bẹp.</strong> Khi <code>nowrap</code>, item có thể bị co tới mức méo nội dung.
+        Đặt <code>min-width</code> (hoặc <code>flex-basis</code> đủ lớn) để giữ kích thước tối thiểu, hoặc bật
+        <code>flex-wrap:wrap</code> cho xuống hàng.</p></div>
+      <div class="callout info"><p><strong>Mẹo 3 — row → column trên mobile.</strong> Trong media query nhỏ, chỉ cần
+        <code>flex-direction: column</code> là biến menu/khối ngang thành dọc cho dễ chạm trên điện thoại.</p></div>
+      <div class="callout danger"><p><strong>Lưu ý — Flexbox là 1 chiều.</strong> Cần dóng hàng <em>và</em> cột thành lưới đều
+        thật sự 2 chiều thì <strong>Grid</strong> phù hợp hơn (xem bài tiếp). Flexbox mạnh nhất cho navbar, hàng thẻ,
+        căn giữa, và sắp xếp theo một trục.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="02-don-vi.html"><small>← Bài trước</small>2.3.3 · Đơn vị</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="04-grid.html"><small>Bài tiếp →</small>2.3.5 · Grid</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

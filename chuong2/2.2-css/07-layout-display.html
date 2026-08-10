@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.2.8 — CSS LAYOUT · thuộc tính DISPLAY (bản toàn diện)
+  ------------------------------------------------------------
+  display là thuộc tính QUAN TRỌNG NHẤT để dàn trang. Bài này
+  đi từ cơ bản → nâng cao, tham khảo theo W3Schools:
+    1) Block vs Inline       6) inline-block nâng cao (gap)
+    2) Bảng giá trị display  7) Layout bằng display:table
+    3) block/inline/ib       8) flex & grid (giới thiệu)
+    4) Ghi đè display        9) Bố cục nhiều cột (multi-column)
+    5) none vs hidden       10) Mẹo & lỗi thường gặp
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.2.8 · Layout — thuộc tính display</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* khối hộp dùng chung để quan sát block/inline/inline-block */
+    .d-box {
+      border: 2px dashed #1D559F; background: #eaf1fb; color: #16407a;
+      padding: 8px; margin: 4px; width: 130px; height: 48px;
+      text-align: center; font-weight: 600;
+    }
+
+    /* 1) block vs inline */
+    .d-blk   { display: block;  background: #dbeafe; border: 1px solid #93c5fd; padding: 8px; margin: 4px 0; }
+    .d-inl   { display: inline; background: #fde68a; border: 1px solid #f59e0b; padding: 2px 6px; }
+
+    /* 3) ba giá trị kinh điển */
+    .as-block        { display: block; }
+    .as-inline       { display: inline;       background: #fde68a; }
+    .as-inline-block { display: inline-block;  background: #bbf7d0; }
+
+    /* 4) ghi đè display mặc định — menu ngang từ <li> */
+    .d-nav { list-style: none; margin: 0; padding: 0; background: #16407a; border-radius: 8px; overflow: hidden; }
+    .d-nav li { display: inline-block; }            /* mặc định <li> là block → ép thành 1 hàng */
+    .d-nav a  { display: block; color: #fff; text-decoration: none; padding: 12px 18px; }
+    .d-nav a:hover { background: #1D559F; }
+    .d-span-block span { display: block; background: #ede9fe; border: 1px solid #c4b5fd; padding: 4px 8px; margin: 3px 0; }
+
+    /* 5) none vs hidden */
+    .d-row { background: #f1f5f9; padding: 10px; border-radius: 8px; }
+    .d-chip { display: inline-block; background: #1D559F; color: #fff; padding: 8px 14px; border-radius: 6px; margin: 2px; }
+    .d-chip.gone { display: none; }
+    .d-chip.ghost { visibility: hidden; }
+    /* công tắc bật/tắt thuần CSS */
+    #d-toggle { display: none; }
+    .d-target { display: inline-block; background: #04AA6D; color: #fff; padding: 8px 14px; border-radius: 6px; margin: 2px; }
+    #d-toggle:checked ~ .d-stage .d-target { display: none; }
+    .d-switch { display: inline-block; cursor: pointer; background: #FFC107; color: #16407a;
+                font-weight: 700; padding: 8px 14px; border-radius: 6px; user-select: none; }
+
+    /* 6) inline-block: khoảng trắng & vertical-align */
+    .d-gap span { display: inline-block; width: 70px; height: 50px; background: #c7d2fe; text-align: center; line-height: 50px; }
+    .d-nogap { font-size: 0; }                      /* mẹo khử khoảng trắng: cha font-size:0 ... */
+    .d-nogap span { font-size: 14px; }              /* ... con đặt lại font-size */
+    .d-valign span { display: inline-block; width: 70px; background: #fbcfe8; text-align: center; }
+    .d-valign .top    { vertical-align: top;    height: 70px; }
+    .d-valign .middle { vertical-align: middle; height: 50px; }
+    .d-valign .bottom { vertical-align: bottom; height: 30px; }
+
+    /* 7) layout bằng display:table — 3 cột bằng chiều cao */
+    .d-table { display: table; width: 100%; border-spacing: 10px; }
+    .d-trow  { display: table-row; }
+    .d-cell  { display: table-cell; background: #1D559F; color: #fff; padding: 14px; border-radius: 6px; vertical-align: middle; }
+    .d-cell.alt { background: #04AA6D; }
+
+    /* 8) flex & grid giới thiệu */
+    .d-flex { display: flex; gap: 10px; }
+    .d-flex > div { flex: 1; background: #6c5ce7; color: #fff; padding: 14px; border-radius: 6px; text-align: center; }
+    .d-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .d-grid > div { background: #0ea5e9; color: #fff; padding: 14px; border-radius: 6px; text-align: center; }
+
+    /* 9) multi-column */
+    .d-multicol { column-count: 3; column-gap: 28px; column-rule: 2px solid #cfd8e6; text-align: justify; }
+    .d-multicol h4 { column-span: all; color: #1D559F; margin: 0 0 8px; }   /* tiêu đề trải hết các cột */
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.2 CSS</a><span>›</span>
+        Layout · display
+      </nav>
+      <h1>Layout với thuộc tính <code style="color:#fff;background:rgba(255,255,255,.18)">display</code></h1>
+      <p class="sub">Thuộc tính quan trọng nhất để dàn trang: quyết định một phần tử là khối,
+         nội tuyến, lưới hay bị ẩn. Đi từ block/inline cơ bản đến display:table, flex/grid và bố cục nhiều cột.</p>
+      <div class="chips">
+        <span class="chip solid">2.2.8</span>
+        <span class="chip">CSS Layout</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Phần tử block vs inline</a></li>
+        <li><a href="#s2">Bảng giá trị display</a></li>
+        <li><a href="#s3">block · inline · inline-block</a></li>
+        <li><a href="#s4">Ghi đè display mặc định</a></li>
+        <li><a href="#s5">none vs visibility:hidden</a></li>
+        <li><a href="#s6">inline-block nâng cao</a></li>
+        <li><a href="#s7">Layout bằng display:table</a></li>
+        <li><a href="#s8">flex &amp; grid (giới thiệu)</a></li>
+        <li><a href="#s9">Bố cục nhiều cột</a></li>
+        <li><a href="#s10">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. BLOCK vs INLINE  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Phần tử block và inline <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Mỗi thẻ HTML có một giá trị <code>display</code> <strong>mặc định</strong>: hoặc
+         <em>block</em> (khối), hoặc <em>inline</em> (nội tuyến). Hiểu khác biệt này là nền tảng của mọi bố cục.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="d-blk">block #1 — chiếm trọn chiều ngang, tự xuống dòng</div>
+          <div class="d-blk">block #2 — luôn bắt đầu trên dòng mới</div>
+          <p>Còn đây là chữ thường với
+             <span class="d-inl">inline A</span> và
+             <span class="d-inl">inline B</span> — chúng nằm <em>cùng dòng</em>, chỉ rộng bằng nội dung.</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>block</strong> → bắt đầu trên dòng mới &amp; kéo giãn hết chiều ngang còn lại
+           (vd <code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code>,
+           <code>&lt;ul&gt;</code>, <code>&lt;li&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;form&gt;</code>).</p>
+        <p><strong>inline</strong> → không xuống dòng, chỉ rộng bằng nội dung, <u>bỏ qua</u> <code>width</code>/<code>height</code>
+           và margin/padding trên–dưới (vd <code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;img&gt;</code>,
+           <code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code>, <code>&lt;b&gt;</code>, <code>&lt;i&gt;</code>).</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Một số thẻ theo display mặc định</caption>
+        <thead><tr><th>Loại</th><th>display mặc định</th><th>Thẻ tiêu biểu</th></tr></thead>
+        <tbody>
+          <tr><td>Khối</td><td><code>block</code></td><td><code>div p h1–h6 ul ol li section article header footer form</code></td></tr>
+          <tr><td>Nội tuyến</td><td><code>inline</code></td><td><code>span a img strong em b i small code label sub sup</code></td></tr>
+          <tr><td>Mục danh sách</td><td><code>list-item</code></td><td><code>li</code> (kèm chấm/số đầu dòng)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  2. BẢNG GIÁ TRỊ DISPLAY  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Các giá trị của display <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Có thể ghi đè display mặc định bằng nhiều giá trị. Dưới đây là những giá trị hay dùng nhất.</p>
+
+      <table class="syntax">
+        <caption>Bảng tra nhanh giá trị display (theo W3Schools)</caption>
+        <thead><tr><th>Giá trị</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>inline</code></td><td>Hiển thị nội tuyến; bỏ qua width/height.</td></tr>
+          <tr><td><code>block</code></td><td>Hiển thị dạng khối; chiếm trọn chiều ngang.</td></tr>
+          <tr><td><code>inline-block</code></td><td>Nằm cùng dòng (như inline) <strong>nhưng</strong> nhận width/height (như block).</td></tr>
+          <tr><td><code>none</code></td><td>Ẩn hoàn toàn — phần tử biến mất, <strong>không</strong> chiếm chỗ.</td></tr>
+          <tr><td><code>flex</code></td><td>Hộp linh hoạt 1 chiều cho phần tử con (xem mục 8 &amp; bài 2.3).</td></tr>
+          <tr><td><code>grid</code></td><td>Lưới 2 chiều cho phần tử con.</td></tr>
+          <tr><td><code>inline-flex</code> / <code>inline-grid</code></td><td>Như flex/grid nhưng bản thân hộp lại nội tuyến.</td></tr>
+          <tr><td><code>table</code>, <code>table-row</code>, <code>table-cell</code></td><td>Mô phỏng hành vi của <code>&lt;table&gt;</code> bằng CSS.</td></tr>
+          <tr><td><code>list-item</code></td><td>Hiển thị như một mục <code>&lt;li&gt;</code>.</td></tr>
+          <tr><td><code>contents</code></td><td>Bỏ chính hộp đi, chỉ giữ lại các con (nâng cao).</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p>Hai giá trị toàn cục dùng được ở mọi thuộc tính: <code>inherit</code> (kế thừa từ cha)
+        và <code>initial</code> (về giá trị gốc).</p></div>
+    </section>
+
+    <!-- ==========  3. BLOCK / INLINE / INLINE-BLOCK  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> block · inline · inline-block <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Bộ ba kinh điển. Cùng một hộp <code>.d-box</code> (đã đặt <code>width:130px; height:48px</code>),
+         hãy quan sát khác biệt khi đổi mỗi giá trị display.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <p class="muted">▸ <code>display:block</code> — mỗi hộp một dòng:</p>
+          <span class="d-box as-block">block A</span>
+          <span class="d-box as-block">block B</span>
+
+          <p class="muted" style="margin-top:14px">▸ <code>display:inline</code> — cùng dòng, <b>nhưng width/height bị bỏ qua</b>:</p>
+          <span class="d-box as-inline">inline A</span>
+          <span class="d-box as-inline">inline B</span>
+
+          <p class="muted" style="margin-top:14px">▸ <code>display:inline-block</code> — cùng dòng <b>VÀ</b> giữ đúng width/height:</p>
+          <span class="d-box as-inline-block">ib A</span>
+          <span class="d-box as-inline-block">ib B</span>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* span vốn là inline → ép sang các kiểu khác để so sánh */</span>
+.as-block        { <span class="k">display</span>: <span class="v">block</span>; }
+.as-inline       { <span class="k">display</span>: <span class="v">inline</span>; }       <span class="c">/* width/height vô hiệu */</span>
+.as-inline-block { <span class="k">display</span>: <span class="v">inline-block</span>; } <span class="c">/* cùng dòng + nhận kích thước */</span></code></pre>
+
+      <div class="callout tip"><p><strong>Khi nào dùng inline-block?</strong> Khi cần xếp nhiều khối <em>cùng một hàng</em>
+        mà vẫn đặt được width/height — ví dụ thẻ sản phẩm, nút, ô thư viện ảnh. Ngày nay Flexbox/Grid thường
+        tiện hơn, nhưng inline-block vẫn rất hữu ích và nhẹ.</p></div>
+    </section>
+
+    <!-- ==========  4. GHI ĐÈ DISPLAY MẶC ĐỊNH  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Ghi đè display mặc định <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Có thể đổi display của bất kỳ thẻ nào. Hai ví dụ kinh điển của W3Schools:
+         biến <code>&lt;li&gt;</code> (vốn block) thành menu ngang, và biến <code>&lt;span&gt;</code> (vốn inline) thành khối.</p>
+
+      <h3>4.1 — Menu ngang: <code>li { display: inline-block }</code></h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <ul class="d-nav">
+            <li><a href="#s4">Trang chủ</a></li>
+            <li><a href="#s4">Giới thiệu</a></li>
+            <li><a href="#s4">Dịch vụ</a></li>
+            <li><a href="#s4">Liên hệ</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>4.2 — Ép <code>span</code> thành khối: <code>span { display: block }</code></h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body d-span-block">
+          <span>Dòng 1 (span nhưng đã thành block)</span>
+          <span>Dòng 2</span>
+          <span>Dòng 3</span>
+        </div>
+      </div>
+      <div class="callout info"><p>Ghi đè display <strong>chỉ đổi cách hiển thị</strong>, không đổi loại thẻ trong DOM.
+        Ví dụ <code>&lt;li&gt;</code> đặt <code>display:inline</code> thì mất luôn chấm đầu dòng vì chấm chỉ xuất hiện ở <code>list-item</code>.</p></div>
+    </section>
+
+    <!-- ==========  5. NONE vs VISIBILITY:HIDDEN  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Ẩn phần tử: <code>display:none</code> vs <code>visibility:hidden</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Hai cách ẩn rất khác nhau ở chỗ <strong>có chừa chỗ trống hay không</strong>.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">display:none — biến mất, KHÔNG chừa chỗ</div>
+          <div class="demo-body d-row">
+            <span class="d-chip">A</span>
+            <span class="d-chip gone">B (ẩn)</span>
+            <span class="d-chip">C dồn sát A</span>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">visibility:hidden — ẩn nhưng GIỮ chỗ</div>
+          <div class="demo-body d-row">
+            <span class="d-chip">A</span>
+            <span class="d-chip ghost">B (ẩn)</span>
+            <span class="d-chip">C cách một ô trống</span>
+          </div>
+        </div>
+      </div>
+
+      <h3>Thử nghiệm: công tắc bật/tắt (thuần CSS) <span class="tag-adv">Tương tác</span></h3>
+      <div class="demo">
+        <div class="demo-bar">Bấm nút để ẩn/hiện hộp xanh</div>
+        <div class="demo-body">
+          <input type="checkbox" id="d-toggle">
+          <label class="d-switch" for="d-toggle">Bật / tắt hộp</label>
+          <div class="d-stage" style="margin-top:10px">
+            <span class="d-chip">Cố định</span>
+            <span class="d-target">Tôi sẽ display:none khi bấm</span>
+            <span class="d-chip">Cố định</span>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <thead><tr><th>Tiêu chí</th><th><code>display:none</code></th><th><code>visibility:hidden</code></th></tr></thead>
+        <tbody>
+          <tr><td>Chừa chỗ trống?</td><td>Không</td><td>Có</td></tr>
+          <tr><td>Còn trong luồng layout?</td><td>Không</td><td>Có</td></tr>
+          <tr><td>Đọc được bởi trình đọc màn hình?</td><td>Không</td><td>Thường là không</td></tr>
+          <tr><td>Dùng khi</td><td>Gỡ hẳn (tab, menu, modal)</td><td>Giữ khung, chỉ làm "tàng hình"</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  6. INLINE-BLOCK NÂNG CAO  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> inline-block nâng cao: khoảng trắng &amp; canh dọc <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Hai phần tử <code>inline-block</code> đặt cạnh nhau bị một <strong>khe hở ~4px</strong> do
+         khoảng trắng/xuống dòng trong HTML. Đây là "bẫy" rất hay gặp.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">Có khe hở (mặc định)</div>
+          <div class="demo-body d-gap" style="background:#f1f5f9">
+            <span>1</span><span>2</span><span>3</span>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">Đã khử khe — cha font-size:0</div>
+          <div class="demo-body d-gap d-nogap" style="background:#f1f5f9">
+            <span>1</span><span>2</span><span>3</span>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Cách khử khe hở giữa các inline-block */</span>
+.cha   { <span class="k">font-size</span>: <span class="v">0</span>; }   <span class="c">/* xoá khoảng trắng */</span>
+.cha &gt; * { <span class="k">font-size</span>: <span class="v">14px</span>; } <span class="c">/* đặt lại cỡ chữ cho con */</span>
+<span class="c">/* Cách khác: viết các thẻ liền nhau, dùng comment, hoặc margin-left âm, hoặc đổi sang Flexbox */</span></code></pre>
+
+      <h3>vertical-align — canh theo chiều dọc</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · top / middle / bottom</div>
+        <div class="demo-body d-valign" style="background:#f1f5f9">
+          <span class="top">top</span>
+          <span class="middle">middle</span>
+          <span class="bottom">bottom</span>
+        </div>
+      </div>
+      <div class="callout warn"><p>Với <code>inline-block</code>, <code>vertical-align</code> mặc định là <code>baseline</code> —
+        khi các hộp cao thấp khác nhau dễ bị lệch. Đặt <code>vertical-align: top</code> thường khắc phục ngay.</p></div>
+    </section>
+
+    <!-- ==========  7. LAYOUT BẰNG DISPLAY:TABLE  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Layout bằng <code>display:table</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Dùng <code>table / table-row / table-cell</code> để tạo các cột <strong>cao bằng nhau</strong>
+         mà không cần thẻ <code>&lt;table&gt;</code>. Kỹ thuật cũ nhưng đôi khi vẫn tiện (và giúp hiểu cơ chế bảng).</p>
+
+      <div class="demo">
+        <div class="demo-bar">3 cột tự cao bằng nhau theo cột dài nhất</div>
+        <div class="demo-body">
+          <div class="d-table">
+            <div class="d-trow">
+              <div class="d-cell">Cột 1 — ngắn.</div>
+              <div class="d-cell alt">Cột 2 — nội dung dài hơn nên kéo chiều cao cả hàng; các ô còn lại tự cao theo.</div>
+              <div class="d-cell">Cột 3 — ngắn.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="callout info"><p>Ngày nay Flexbox (<code>align-items:stretch</code>) hay Grid làm việc "cột bằng nhau" gọn hơn,
+        nhưng <code>display:table</code> chạy tốt trên trình duyệt rất cũ và không cần media query.</p></div>
+    </section>
+
+    <!-- ==========  8. FLEX & GRID GIỚI THIỆU  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> flex &amp; grid — giới thiệu nhanh <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Hai giá trị display hiện đại nhất. Ở đây chỉ "nếm thử"; học sâu ở
+         <a href="08-flexbox-grid-navbar-form.html">bài 2.2.8 (Flex·Grid·Navbar·Form)</a> và mục <a href="../index.html">2.3 Responsive</a>.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">display:flex — xếp 1 chiều (hàng)</div>
+          <div class="demo-body">
+            <div class="d-flex"><div>1</div><div>2</div><div>3</div></div>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">display:grid — lưới 2 chiều</div>
+          <div class="demo-body">
+            <div class="d-grid"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div></div>
+          </div>
+        </div>
+      </div>
+      <table class="syntax">
+        <thead><tr><th>Chọn cái nào?</th><th>Dùng khi</th></tr></thead>
+        <tbody>
+          <tr><td><code>display:flex</code></td><td>Một <strong>dãy</strong> phần tử theo 1 chiều: navbar, hàng nút, card cùng hàng.</td></tr>
+          <tr><td><code>display:grid</code></td><td>Khung <strong>2 chiều</strong> hàng × cột: bố cục cả trang (header/sidebar/main/footer), thư viện ảnh.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  9. BỐ CỤC NHIỀU CỘT  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Bố cục nhiều cột (Multi-column) <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Chia một đoạn văn dài thành nhiều cột như báo/tạp chí — trình duyệt tự cân nội dung.
+         Điều khiển bằng <code>column-count</code>, <code>column-gap</code>, <code>column-rule</code>, <code>column-span</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">3 cột, có đường kẻ ngăn; tiêu đề trải hết các cột</div>
+        <div class="demo-body">
+          <div class="d-multicol">
+            <h4>Lịch sử HTML &amp; CSS</h4>
+            <p>HTML là ngôn ngữ đánh dấu chuẩn để tạo trang web, ra đời năm 1991 bởi Tim Berners-Lee.
+            CSS quy định cách trình bày: màu sắc, phông chữ, bố cục. Bố cục nhiều cột chia nội dung dài
+            thành các cột như báo in, giúp người đọc đỡ mỏi mắt khi dòng quá dài. Trình duyệt tự cân
+            nội dung sang các cột một cách đều đặn. Bạn điều chỉnh số cột bằng <code>column-count</code>,
+            khoảng cách bằng <code>column-gap</code>, thêm đường kẻ giữa các cột bằng <code>column-rule</code>,
+            và cho một phần tử trải ngang hết các cột bằng <code>column-span: all</code>. Đây là cách nhanh
+            để dàn văn bản nhiều cột mà không cần Flexbox hay Grid.</p>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.bao { <span class="k">column-count</span>: <span class="v">3</span>;
+       <span class="k">column-gap</span>: <span class="v">28px</span>;
+       <span class="k">column-rule</span>: <span class="v">2px solid #cfd8e6</span>; }
+.bao h4 { <span class="k">column-span</span>: <span class="v">all</span>; } <span class="c">/* tiêu đề trải hết các cột */</span></code></pre>
+    </section>
+
+    <!-- ==========  10. MẸO & LỖI THƯỜNG GẶP  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout tip"><p><strong>Mẹo 1.</strong> Đặt <code>width</code>/<code>height</code> không ăn? Phần tử đang là
+        <code>inline</code> — đổi sang <code>inline-block</code> hoặc <code>block</code>.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> Khe hở ~4px giữa các <code>inline-block</code> là do khoảng trắng trong HTML,
+        không phải margin. Khử bằng <code>font-size:0</code> ở cha, hoặc chuyển sang <code>display:flex</code>.</p></div>
+      <div class="callout danger"><p><strong>Lỗi 3.</strong> <code>display:none</code> gỡ phần tử khỏi cả trình đọc màn hình.
+        Cần ẩn về mặt nhìn nhưng vẫn cho người khiếm thị đọc → dùng kỹ thuật "visually-hidden", đừng dùng <code>none</code>.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> Dãy 1 chiều → <code>flex</code>; khung 2 chiều → <code>grid</code>;
+        cần cùng hàng + có kích thước → <code>inline-block</code>; ẩn hẳn → <code>none</code>.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="06-overflow-float-position.html"><small>← Bài trước</small>2.2.6 · Overflow · Float · Position</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="08-flexbox-grid-navbar-form.html"><small>Bài tiếp →</small>2.2.8 · Flex · Grid · Navbar · Form</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

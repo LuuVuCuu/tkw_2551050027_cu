@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="320" viewBox="0 0 800 320">
+  <rect width="800" height="320" fill="#0984e3"/>
+  <text x="400" y="150" font-family="Arial" font-size="52" font-weight="bold" fill="#fff" text-anchor="middle">MEDIUM</text>
+  <text x="400" y="210" font-family="Arial" font-size="28" fill="#cfe8ff" text-anchor="middle">601px – 1200px</text>
+</svg>

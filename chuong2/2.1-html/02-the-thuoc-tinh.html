@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.1.2 — THẺ (ELEMENT) & THUỘC TÍNH (ATTRIBUTE) · bản toàn diện
+  ------------------------------------------------------------
+  Đi từ cơ bản → nâng cao, tham khảo theo W3Schools:
+    1) Element là gì            7) title · lang · dir
+    2) Thẻ rỗng (void/empty)    8) contenteditable · hidden · data-*
+    3) Lồng thẻ & quy ước viết  9) Block vs Inline
+    4) Thuộc tính là gì        10) style nội tuyến (CSS cơ bản)
+    5) Thuộc tính toàn cục     11) Mẹo & lỗi thường gặp
+    6) id vs class
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.1.2 · Thẻ &amp; thuộc tính</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* 1) sơ đồ cấu tạo element */
+    .d-anatomy {
+      font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+      font-size: 1.05rem; text-align: center; padding: 26px 10px 30px;
+      background: #f8fafc; border-radius: 10px;
+    }
+    .d-anatomy .part { position: relative; display: inline-block; padding: 4px 2px; }
+    .d-anatomy .tag-open  { color: #1D559F; font-weight: 700; }
+    .d-anatomy .tag-close { color: #E63946; font-weight: 700; }
+    .d-anatomy .content   { color: #04AA6D; font-weight: 700; }
+    .d-anatomy .lbl {
+      position: absolute; top: 130%; left: 50%; transform: translateX(-50%);
+      white-space: nowrap; font-family: "Segoe UI", Arial, sans-serif;
+      font-size: .72rem; color: #5b6472; border-top: 2px solid #cfd8e6; padding-top: 4px;
+    }
+    .d-anatomy .lbl::before {
+      content: ""; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      width: 1px; height: 8px; background: #cfd8e6;
+    }
+
+    /* 2) thẻ rỗng */
+    .d-void { background: #f1f5f9; padding: 14px; border-radius: 8px; }
+    .d-void img { vertical-align: middle; border-radius: 6px; }
+    .d-void hr  { border: none; border-top: 2px dashed #1D559F; margin: 10px 0; }
+
+    /* 4) sơ đồ thuộc tính */
+    .d-attr {
+      font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+      font-size: 1.05rem; text-align: center; padding: 26px 10px 30px; background: #f8fafc; border-radius: 10px;
+    }
+    .d-attr .name  { color: #6c5ce7; font-weight: 700; }
+    .d-attr .eq    { color: #5b6472; }
+    .d-attr .val   { color: #04AA6D; font-weight: 700; }
+    .d-attr .part  { position: relative; display: inline-block; padding: 4px 1px; }
+    .d-attr .lbl {
+      position: absolute; top: 135%; left: 50%; transform: translateX(-50%);
+      white-space: nowrap; font-family: "Segoe UI", Arial, sans-serif;
+      font-size: .72rem; color: #5b6472; border-top: 2px solid #cfd8e6; padding-top: 4px;
+    }
+
+    /* 6) id vs class — tô sáng */
+    .d-cardlist { display: flex; flex-wrap: wrap; gap: 10px; }
+    .d-card {
+      flex: 1; min-width: 130px; padding: 12px; border-radius: 8px; text-align: center;
+      background: #eaf1fb; border: 1px solid #cfe0f5; color: #16407a; font-weight: 600;
+    }
+    .d-card.mon { background: #fde68a; border-color: #f59e0b; color: #7a4a00; } /* dùng chung qua class */
+    #d-special  { background: #04AA6D; border-color: transparent; color: #fff; } /* duy nhất qua id */
+
+    /* 7) tooltip / lang dir */
+    .d-tip { border-bottom: 2px dotted #6c5ce7; cursor: help; }
+    .d-rtl { background: #f1f5f9; padding: 8px 12px; border-radius: 8px; }
+
+    /* 8) data-* + contenteditable */
+    .d-edit {
+      border: 2px dashed #04AA6D; background: #f0fdf4; padding: 12px 14px;
+      border-radius: 8px; outline: none; min-height: 1.6em;
+    }
+    .d-edit:focus { border-style: solid; background: #fff; }
+    .d-data li {
+      background: #eaf1fb; border: 1px solid #cfe0f5; border-radius: 8px;
+      padding: 10px 14px; margin: 6px 0; list-style: none;
+    }
+    .d-data { padding: 0; margin: 0; }
+    .d-data b { color: #1D559F; }
+    .d-data .show { color: #6c5ce7; font-family: monospace; }
+
+    /* 9) block vs inline */
+    .d-blk { display: block; background: #dbeafe; border: 1px solid #93c5fd; padding: 8px; margin: 4px 0; }
+    .d-inl { display: inline; background: #fde68a; border: 1px solid #f59e0b; padding: 2px 6px; }
+
+    /* 10) style nội tuyến — không cần class riêng, dùng inline trong demo */
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.1 HTML</a><span>›</span>
+        Thẻ &amp; thuộc tính
+      </nav>
+      <h1>Thẻ (element) &amp; thuộc tính (attribute)</h1>
+      <p class="sub">Mọi trang web được dựng từ các <em>thẻ</em>: thẻ mở + nội dung + thẻ đóng. Mỗi thẻ có thể
+         mang thêm <em>thuộc tính</em> để mô tả hoặc cấu hình. Bài này đi từ cấu tạo element, thẻ rỗng, cách lồng thẻ
+         đến các thuộc tính toàn cục, id/class, data-* và phân biệt block/inline.</p>
+      <div class="chips">
+        <span class="chip solid">2.1.2</span>
+        <span class="chip">HTML cơ bản</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Element là gì?</a></li>
+        <li><a href="#s2">Thẻ rỗng (empty / void)</a></li>
+        <li><a href="#s3">Lồng thẻ &amp; quy ước viết</a></li>
+        <li><a href="#s4">Thuộc tính là gì?</a></li>
+        <li><a href="#s5">Thuộc tính toàn cục</a></li>
+        <li><a href="#s6">id vs class</a></li>
+        <li><a href="#s7">title · lang · dir</a></li>
+        <li><a href="#s8">contenteditable · hidden · data-*</a></li>
+        <li><a href="#s9">Phần tử block vs inline</a></li>
+        <li><a href="#s10">style nội tuyến (CSS cơ bản)</a></li>
+        <li><a href="#s11">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. ELEMENT LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Element (phần tử) là gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Một <strong>element</strong> (phần tử HTML) gồm ba phần: <em>thẻ mở</em>, <em>nội dung</em> và <em>thẻ đóng</em>.
+         Thẻ đóng chỉ khác thẻ mở ở dấu gạch chéo <code>/</code> trước tên thẻ.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Cấu tạo của một element</div>
+        <div class="demo-body">
+          <div class="d-anatomy">
+            <span class="part"><span class="tag-open">&lt;p&gt;</span><span class="lbl">thẻ mở</span></span><span class="part"><span class="content">Xin chào!</span><span class="lbl">nội dung</span></span><span class="part"><span class="tag-close">&lt;/p&gt;</span><span class="lbl">thẻ đóng</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả khi trình duyệt render</div>
+        <div class="demo-body">
+          <p>Xin chào!</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>Trình duyệt <strong>không hiển thị</strong> bản thân các thẻ — nó đọc thẻ để biết cách trình bày nội dung.
+           Ở ví dụ trên, <code>&lt;p&gt;</code> báo cho trình duyệt biết "Xin chào!" là một đoạn văn (paragraph).</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Ba bộ phận của một element</caption>
+        <thead><tr><th>Bộ phận</th><th>Ví dụ</th><th>Vai trò</th></tr></thead>
+        <tbody>
+          <tr><td>Thẻ mở (start tag)</td><td><code>&lt;p&gt;</code></td><td>Bắt đầu phần tử; là nơi đặt thuộc tính.</td></tr>
+          <tr><td>Nội dung (content)</td><td><code>Xin chào!</code></td><td>Văn bản hoặc các thẻ con bên trong.</td></tr>
+          <tr><td>Thẻ đóng (end tag)</td><td><code>&lt;/p&gt;</code></td><td>Kết thúc phần tử; có dấu <code>/</code>.</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="k">&lt;h1&gt;</span>Tiêu đề chính<span class="k">&lt;/h1&gt;</span>
+<span class="k">&lt;p&gt;</span>Đây là một đoạn văn.<span class="k">&lt;/p&gt;</span>
+<span class="k">&lt;a</span> <span class="k">href</span>=<span class="s">"https://oude.edu.vn"</span><span class="k">&gt;</span>Liên kết<span class="k">&lt;/a&gt;</span></code></pre>
+
+      <div class="callout info"><p>Phân biệt thuật ngữ: <strong>thẻ (tag)</strong> là phần nằm trong <code>&lt; &gt;</code>;
+        <strong>element (phần tử)</strong> là toàn bộ "thẻ mở + nội dung + thẻ đóng". Trong tiếng Việt thường gọi chung là "thẻ".</p></div>
+    </section>
+
+    <!-- ==========  2. THẺ RỖNG  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Thẻ rỗng (empty / void element) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Một số thẻ <strong>không có nội dung</strong> và <strong>không có thẻ đóng</strong> — gọi là thẻ rỗng (void element).
+         Chúng tự "đóng" ngay tại thẻ mở.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · các thẻ rỗng tiêu biểu</div>
+        <div class="demo-body d-void">
+          <p>Dòng một.<br>Dòng hai — vừa xuống dòng bằng <code>&lt;br&gt;</code>.</p>
+          <hr>
+          <p>Phía trên là một đường kẻ ngang <code>&lt;hr&gt;</code>.</p>
+          <img src="../../assets/favicon.svg" width="40" height="40" alt="logo bài học">
+          một ảnh chèn bằng <code>&lt;img&gt;</code>.
+          <p><input type="text" value="ô nhập bằng &lt;input&gt;" size="28"></p>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Các thẻ rỗng thường gặp</caption>
+        <thead><tr><th>Thẻ</th><th>Công dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;br&gt;</code></td><td>Ngắt dòng (line break).</td></tr>
+          <tr><td><code>&lt;hr&gt;</code></td><td>Đường kẻ ngang phân chia nội dung.</td></tr>
+          <tr><td><code>&lt;img&gt;</code></td><td>Chèn hình ảnh (cần thuộc tính <code>src</code>, <code>alt</code>).</td></tr>
+          <tr><td><code>&lt;input&gt;</code></td><td>Ô nhập liệu trong biểu mẫu.</td></tr>
+          <tr><td><code>&lt;meta&gt;</code>, <code>&lt;link&gt;</code></td><td>Khai báo metadata / nạp CSS trong <code>&lt;head&gt;</code>.</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">&lt;!-- Thẻ rỗng: KHÔNG có thẻ đóng --&gt;</span>
+Dòng một<span class="k">&lt;br&gt;</span>Dòng hai
+<span class="k">&lt;hr&gt;</span>
+<span class="k">&lt;img</span> <span class="k">src</span>=<span class="s">"logo.svg"</span> <span class="k">alt</span>=<span class="s">"logo"</span><span class="k">&gt;</span>
+<span class="k">&lt;input</span> <span class="k">type</span>=<span class="s">"text"</span><span class="k">&gt;</span></code></pre>
+
+      <div class="callout info"><p>Trong XHTML cũ, thẻ rỗng phải tự đóng dạng <code>&lt;br /&gt;</code>. Với HTML5 thì
+        <code>&lt;br&gt;</code> và <code>&lt;br /&gt;</code> đều hợp lệ; tài liệu này dùng kiểu HTML5 gọn <code>&lt;br&gt;</code>.</p></div>
+    </section>
+
+    <!-- ==========  3. LỒNG THẺ  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Lồng thẻ &amp; quy ước viết <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Các element có thể <strong>lồng nhau</strong> (nesting). Nguyên tắc vàng: <em>"vào sau, ra trước"</em> —
+         thẻ mở sau cùng phải được đóng trước tiên.</p>
+
+      <h3>3.1 — Lồng đúng vs lồng sai</h3>
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">✓ Lồng ĐÚNG</div>
+          <div class="demo-body">
+            <pre class="code" style="margin:0"><code><span class="k">&lt;p&gt;</span><span class="k">&lt;b&gt;</span><span class="k">&lt;i&gt;</span>chữ<span class="k">&lt;/i&gt;</span><span class="k">&lt;/b&gt;</span><span class="k">&lt;/p&gt;</span></code></pre>
+            <p style="margin:10px 0 0">Kết quả: <b><i>chữ in đậm + nghiêng</i></b></p>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">✗ Lồng SAI (chéo nhau)</div>
+          <div class="demo-body">
+            <pre class="code" style="margin:0"><code><span class="k">&lt;p&gt;</span><span class="k">&lt;b&gt;</span><span class="k">&lt;i&gt;</span>chữ<span class="k">&lt;/b&gt;</span><span class="k">&lt;/i&gt;</span><span class="k">&lt;/p&gt;</span></code></pre>
+            <p style="margin:10px 0 0" class="muted">Đóng <code>&lt;/b&gt;</code> trước <code>&lt;/i&gt;</code> → sai thứ tự, dễ gây lỗi hiển thị.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>3.2 — Hoa hay thường?</h3>
+      <div class="note">
+        <p>HTML <strong>không phân biệt hoa/thường</strong> trong tên thẻ: <code>&lt;P&gt;</code> và <code>&lt;p&gt;</code> cho kết quả như nhau.
+           <strong>Tuy nhiên</strong>, quy ước hiện đại (và W3Schools) khuyến nghị <strong>luôn viết thường</strong> để mã sạch và dễ đọc.</p>
+        <p>Đừng quên thẻ đóng: nhiều trình duyệt vẫn cố "đoán" và đóng giúp, nhưng kết quả có thể không như ý — hãy luôn đóng đầy đủ.</p>
+      </div>
+
+      <table class="syntax">
+        <thead><tr><th>Quy ước</th><th>Nên</th><th>Tránh</th></tr></thead>
+        <tbody>
+          <tr><td>Tên thẻ</td><td><code>&lt;div&gt;</code> (chữ thường)</td><td><code>&lt;DIV&gt;</code></td></tr>
+          <tr><td>Tên thuộc tính</td><td><code>class</code>, <code>href</code></td><td><code>CLASS</code>, <code>HREF</code></td></tr>
+          <tr><td>Giá trị thuộc tính</td><td>luôn bọc nháy <code>"…"</code></td><td>để trống nháy</td></tr>
+          <tr><td>Thẻ đóng</td><td>đóng đầy đủ</td><td>quên đóng</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip"><p><strong>Mẹo lồng thẻ.</strong> Hình dung mỗi cặp thẻ là một cặp ngoặc <code>( )</code>.
+        Cặp mở sau cùng luôn phải đóng đầu tiên — y như toán học. Trình soạn thảo (VS Code) sẽ tô màu cặp khớp giúp bạn.</p></div>
+    </section>
+
+    <!-- ==========  4. THUỘC TÍNH LÀ GÌ  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Thuộc tính (attribute) là gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Thuộc tính cung cấp <strong>thông tin bổ sung</strong> cho element. Chúng luôn nằm ở <strong>thẻ mở</strong>,
+         theo cú pháp <code>tên="giá trị"</code> và cách nhau bằng khoảng trắng.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Cú pháp một thuộc tính</div>
+        <div class="demo-body">
+          <div class="d-attr">
+            <span class="part"><span class="name">href</span><span class="lbl">tên thuộc tính</span></span><span class="eq">=</span><span class="part"><span class="val">"https://oude.edu.vn"</span><span class="lbl">giá trị (trong dấu nháy)</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · vài thuộc tính cốt lõi</div>
+        <div class="demo-body">
+          <p><a href="https://www.w3schools.com" target="_blank" rel="noopener">Liên kết với thuộc tính <code>href</code></a></p>
+          <p><img src="../../assets/favicon.svg" width="48" height="48" alt="logo (đây là thuộc tính alt)" style="vertical-align:middle"> ảnh với <code>src</code>, <code>width</code>, <code>height</code>, <code>alt</code>.</p>
+          <p style="color:#04AA6D; font-weight:600">Đoạn này có thuộc tính <code>style</code> tô màu xanh lá.</p>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Các thuộc tính cốt lõi hay gặp</caption>
+        <thead><tr><th>Thuộc tính</th><th>Dùng cho thẻ</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>href</code></td><td><code>&lt;a&gt;</code>, <code>&lt;link&gt;</code></td><td>Địa chỉ (URL) đích của liên kết.</td></tr>
+          <tr><td><code>src</code></td><td><code>&lt;img&gt;</code>, <code>&lt;script&gt;</code></td><td>Đường dẫn tới tài nguyên (ảnh, mã).</td></tr>
+          <tr><td><code>width</code> / <code>height</code></td><td><code>&lt;img&gt;</code>, <code>&lt;canvas&gt;</code></td><td>Kích thước rộng × cao (pixel).</td></tr>
+          <tr><td><code>alt</code></td><td><code>&lt;img&gt;</code></td><td>Văn bản thay thế khi ảnh lỗi / cho trình đọc màn hình.</td></tr>
+          <tr><td><code>style</code></td><td>mọi thẻ</td><td>Định kiểu CSS ngay trong thẻ (xem mục 10).</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn"><p>Luôn bọc giá trị trong <strong>dấu nháy kép</strong> <code>"…"</code> (hoặc nháy đơn).
+        Bắt buộc khi giá trị có khoảng trắng: <code>title="Học HTML"</code>. Nháy đơn dùng khi bên trong đã có nháy kép.</p></div>
+    </section>
+
+    <!-- ==========  5. THUỘC TÍNH TOÀN CỤC  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Thuộc tính toàn cục (global attributes) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Đây là nhóm thuộc tính dùng được trên <strong>mọi</strong> thẻ HTML, không riêng thẻ nào.
+         Nắm chắc nhóm này là nắm phần lớn thuộc tính bạn cần hằng ngày.</p>
+
+      <table class="syntax">
+        <caption>Bảng tra thuộc tính toàn cục (theo W3Schools)</caption>
+        <thead><tr><th>Thuộc tính</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>Định danh <strong>duy nhất</strong> cho 1 phần tử trong trang.</td></tr>
+          <tr><td><code>class</code></td><td>Gán một / nhiều "nhóm" để CSS &amp; JS chọn (có thể trùng nhau).</td></tr>
+          <tr><td><code>style</code></td><td>CSS nội tuyến áp thẳng cho phần tử.</td></tr>
+          <tr><td><code>title</code></td><td>Văn bản chú giải, hiện tooltip khi rê chuột.</td></tr>
+          <tr><td><code>lang</code></td><td>Ngôn ngữ nội dung, vd <code>lang="vi"</code>, <code>lang="en"</code>.</td></tr>
+          <tr><td><code>dir</code></td><td>Hướng viết: <code>ltr</code> (trái→phải) hoặc <code>rtl</code> (phải→trái).</td></tr>
+          <tr><td><code>hidden</code></td><td>Ẩn phần tử (như chưa có trên trang).</td></tr>
+          <tr><td><code>tabindex</code></td><td>Thứ tự khi nhấn phím <kbd>Tab</kbd> để di chuyển tiêu điểm.</td></tr>
+          <tr><td><code>contenteditable</code></td><td>Cho phép người dùng sửa nội dung trực tiếp (<code>true</code>/<code>false</code>).</td></tr>
+          <tr><td><code>draggable</code></td><td>Cho phép kéo–thả phần tử (<code>true</code>/<code>false</code>).</td></tr>
+          <tr><td><code>spellcheck</code></td><td>Bật/tắt kiểm tra chính tả khi nhập.</td></tr>
+          <tr><td><code>accesskey</code></td><td>Phím tắt kích hoạt phần tử.</td></tr>
+          <tr><td><code>data-*</code></td><td>Thuộc tính tuỳ biến để lưu dữ liệu riêng (xem mục 8).</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info"><p>Ngoài nhóm trên, mỗi thẻ còn có thuộc tính <strong>riêng</strong> của nó
+        (vd <code>&lt;img&gt;</code> có <code>src</code>/<code>alt</code>, <code>&lt;a&gt;</code> có <code>href</code>/<code>target</code>).
+        Mục 4 đã giới thiệu các thuộc tính cốt lõi đó.</p></div>
+    </section>
+
+    <!-- ==========  6. ID vs CLASS  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> <code>id</code> vs <code>class</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Hai thuộc tính được dùng nhiều nhất để "đặt nhãn" cho phần tử nhằm CSS/JS chọn ra.
+         Điểm mấu chốt: <strong>id phải duy nhất, class có thể dùng lại nhiều lần</strong>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · class dùng chung, id duy nhất</div>
+        <div class="demo-body">
+          <div class="d-cardlist">
+            <div class="d-card">Bình thường</div>
+            <div class="d-card mon">class <code>mon</code></div>
+            <div class="d-card mon">class <code>mon</code> (lặp lại)</div>
+            <div class="d-card" id="d-special">id <code>d-special</code></div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* class — dùng được cho nhiều phần tử, chọn bằng dấu chấm */</span>
+.<span class="k">mon</span> { <span class="k">background</span>: <span class="v">#fde68a</span>; }
+
+<span class="c">/* id — chỉ một phần tử, chọn bằng dấu thăng */</span>
+#<span class="k">d-special</span> { <span class="k">background</span>: <span class="v">#04AA6D</span>; <span class="k">color</span>: <span class="v">#fff</span>; }</code></pre>
+
+      <table class="syntax">
+        <thead><tr><th>Tiêu chí</th><th><code>id</code></th><th><code>class</code></th></tr></thead>
+        <tbody>
+          <tr><td>Số lần trong 1 trang</td><td>Duy nhất (1 lần)</td><td>Lặp lại bao nhiêu cũng được</td></tr>
+          <tr><td>Số giá trị trên 1 thẻ</td><td>1</td><td>Nhiều, cách nhau bởi dấu cách</td></tr>
+          <tr><td>Chọn trong CSS</td><td><code>#ten</code></td><td><code>.ten</code></td></tr>
+          <tr><td>Dùng làm neo URL</td><td>Có (<code>trang.html#ten</code>)</td><td>Không</td></tr>
+          <tr><td>Khi nào dùng</td><td>Định danh 1 phần tử cụ thể, neo liên kết, JS</td><td>Tạo kiểu chung cho nhiều phần tử</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip"><p><strong>Quy tắc thực hành.</strong> Mặc định hãy dùng <code>class</code> cho việc tạo kiểu (vì tái sử dụng được).
+        Chỉ dùng <code>id</code> khi thật sự cần một định danh duy nhất — ví dụ điểm neo <code>#lien-he</code> hay phần tử mà JavaScript phải lấy đích danh.</p></div>
+    </section>
+
+    <!-- ==========  7. TITLE · LANG · DIR  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> <code>title</code> · <code>lang</code> · <code>dir</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Ba thuộc tính toàn cục liên quan tới <em>chú giải</em> và <em>ngôn ngữ</em>. Tuy nhỏ nhưng rất quan trọng cho
+         khả năng truy cập (accessibility) và SEO.</p>
+
+      <h3>7.1 — <code>title</code>: chú giải dạng tooltip</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · rê chuột để thấy tooltip</div>
+        <div class="demo-body">
+          <p>Rê chuột lên <span class="d-tip" title="Đây chính là nội dung của thuộc tính title!">cụm chữ gạch chấm này</span>
+             để thấy chú giải hiện ra sau giây lát.</p>
+          <p><abbr title="HyperText Markup Language">HTML</abbr> cũng thường dùng <code>title</code> để giải nghĩa từ viết tắt.</p>
+        </div>
+      </div>
+
+      <h3>7.2 — <code>lang</code> và <code>dir</code>: ngôn ngữ &amp; hướng viết</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · dir="rtl" cho tiếng Ả Rập</div>
+        <div class="demo-body">
+          <p lang="vi">Đoạn tiếng Việt (<code>lang="vi"</code>) — viết từ trái sang phải.</p>
+          <p lang="en">An English sentence (<code>lang="en"</code>).</p>
+          <p class="d-rtl" lang="ar" dir="rtl">مرحبا بكم — đoạn này có <code dir="ltr">dir="rtl"</code> nên căn từ phải sang trái.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;html</span> <span class="k">lang</span>=<span class="s">"vi"</span><span class="k">&gt;</span>            <span class="c">&lt;!-- ngôn ngữ chính của trang --&gt;</span>
+<span class="k">&lt;p</span> <span class="k">lang</span>=<span class="s">"en"</span><span class="k">&gt;</span>Hello<span class="k">&lt;/p&gt;</span>     <span class="c">&lt;!-- đoạn riêng dùng tiếng khác --&gt;</span>
+<span class="k">&lt;p</span> <span class="k">dir</span>=<span class="s">"rtl"</span><span class="k">&gt;</span>…<span class="k">&lt;/p&gt;</span>          <span class="c">&lt;!-- viết phải sang trái --&gt;</span></code></pre>
+
+      <div class="callout info"><p>Khai báo <code>lang</code> ở thẻ <code>&lt;html&gt;</code> giúp trình đọc màn hình phát âm đúng,
+        công cụ dịch nhận diện ngôn ngữ, và bộ máy tìm kiếm xếp hạng tốt hơn. Đây là một thói quen tốt nên có ở mọi trang.</p></div>
+    </section>
+
+    <!-- ==========  8. CONTENTEDITABLE · HIDDEN · DATA-*  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> <code>contenteditable</code> · <code>hidden</code> · <code>data-*</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Ba thuộc tính toàn cục mạnh mẽ cho trang web tương tác hiện đại.</p>
+
+      <h3>8.1 — <code>contenteditable</code>: cho người dùng sửa trực tiếp</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · bấm vào ô rồi gõ thử</div>
+        <div class="demo-body">
+          <div class="d-edit" contenteditable="true">Bấm vào đây và sửa nội dung này thử xem — đây là một vùng có thể chỉnh sửa!</div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;div</span> <span class="k">contenteditable</span>=<span class="s">"true"</span><span class="k">&gt;</span>Nội dung sửa được<span class="k">&lt;/div&gt;</span></code></pre>
+
+      <h3>8.2 — <code>hidden</code>: ẩn phần tử</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · phần tử có hidden không hiển thị</div>
+        <div class="demo-body">
+          <p>Dòng A (luôn hiện).</p>
+          <p hidden>Dòng B — có thuộc tính <code>hidden</code> nên bạn KHÔNG thấy dòng này.</p>
+          <p>Dòng C (luôn hiện) — và giữa A với C không chừa chỗ trống cho B.</p>
+        </div>
+      </div>
+
+      <h3>8.3 — <code>data-*</code>: tự định nghĩa dữ liệu riêng</h3>
+      <p class="lead">Cú pháp <code>data-tên="giá trị"</code> cho phép gắn dữ liệu tuỳ ý vào phần tử mà không ảnh hưởng hiển thị —
+         JavaScript và CSS đọc được. Demo dưới hiển thị lại giá trị data-* bằng <code>::after</code>.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · dữ liệu ẩn trong thuộc tính data-*</div>
+        <div class="demo-body">
+          <ul class="d-data">
+            <li data-gia="25000"><b>Trà sữa</b> — giá lưu trong <span class="show">data-gia="25000"</span></li>
+            <li data-gia="18000"><b>Cà phê</b> — giá lưu trong <span class="show">data-gia="18000"</span></li>
+            <li data-ma="SP-007"><b>Bánh ngọt</b> — mã lưu trong <span class="show">data-ma="SP-007"</span></li>
+          </ul>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;li</span> <span class="k">data-gia</span>=<span class="s">"25000"</span> <span class="k">data-ma</span>=<span class="s">"SP-007"</span><span class="k">&gt;</span>Trà sữa<span class="k">&lt;/li&gt;</span>
+
+<span class="c">// JavaScript đọc lại dễ dàng:</span>
+<span class="c">// el.dataset.gia  → "25000"</span>
+<span class="c">// el.dataset.ma   → "SP-007"</span></code></pre>
+
+      <div class="callout tip"><p><strong>Vì sao có <code>data-*</code>?</strong> Khi cần "đính kèm" dữ liệu vào HTML (giá, id sản phẩm, trạng thái…)
+        mà không có thuộc tính chuẩn nào phù hợp, dùng <code>data-*</code> là cách đúng chuẩn và an toàn. Tên sau <code>data-</code> nên viết thường, dùng gạch nối.</p></div>
+    </section>
+
+    <!-- ==========  9. BLOCK vs INLINE  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Phần tử block vs inline <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Mỗi thẻ có một cách chiếm chỗ <strong>mặc định</strong>: <em>block</em> (khối, tự xuống dòng) hoặc
+         <em>inline</em> (nội tuyến, nằm cùng dòng). Đây là nền tảng để hiểu bố cục ở chương CSS.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · block xuống dòng, inline cùng dòng</div>
+        <div class="demo-body">
+          <div class="d-blk">block #1 — chiếm trọn chiều ngang</div>
+          <div class="d-blk">block #2 — luôn bắt đầu trên dòng mới</div>
+          <p>Còn đây là các phần tử inline:
+             <span class="d-inl">inline A</span>
+             <span class="d-inl">inline B</span>
+             <span class="d-inl">inline C</span> — chúng nằm <em>cùng một dòng</em>.</p>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Phân loại theo cách chiếm chỗ mặc định</caption>
+        <thead><tr><th>Loại</th><th>Hành vi</th><th>Thẻ tiêu biểu</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Block</strong> (khối)</td><td>Bắt đầu dòng mới, kéo hết chiều ngang còn lại.</td>
+              <td><code>div p h1–h6 ul ol li section article header footer form table</code></td></tr>
+          <tr><td><strong>Inline</strong> (nội tuyến)</td><td>Nằm cùng dòng, chỉ rộng bằng nội dung.</td>
+              <td><code>span a img strong em b i code label sub sup</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info"><p>Cách chiếm chỗ này có thể đổi bằng CSS (<code>display</code>) — tìm hiểu sâu ở
+        bài <strong>2.2 · Layout — thuộc tính display</strong>. Ở mức HTML, chỉ cần nhớ "div/p xuống dòng, span/a cùng dòng".</p></div>
+    </section>
+
+    <!-- ==========  10. STYLE NỘI TUYẾN  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Thuộc tính <code>style</code> nội tuyến (CSS cơ bản) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Thuộc tính <code>style</code> cho phép viết CSS <strong>ngay trong thẻ</strong>. Cú pháp:
+         <code>style="thuoc-tinh: giá-trị; thuoc-tinh: giá-trị;"</code> — các khai báo cách nhau bằng dấu chấm phẩy.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · vài thuộc tính CSS thông dụng</div>
+        <div class="demo-body">
+          <p style="color:#E63946;">Đổi màu chữ bằng <code>color</code>.</p>
+          <p style="font-size:26px;">Đổi cỡ chữ bằng <code>font-size</code>.</p>
+          <p style="background:#FFF3CD; padding:8px 12px; border-radius:8px;">Nền vàng bằng <code>background</code>.</p>
+          <p style="color:#fff; background:#1D559F; font-size:18px; padding:10px; border-radius:8px;">Kết hợp nhiều thuộc tính cùng lúc.</p>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Vài thuộc tính CSS làm quen sớm</caption>
+        <thead><tr><th>Thuộc tính</th><th>Tác dụng</th><th>Ví dụ giá trị</th></tr></thead>
+        <tbody>
+          <tr><td><code>color</code></td><td>Màu chữ</td><td><code>red</code>, <code>#1D559F</code></td></tr>
+          <tr><td><code>font-size</code></td><td>Cỡ chữ</td><td><code>16px</code>, <code>1.2em</code></td></tr>
+          <tr><td><code>background</code></td><td>Màu/ảnh nền</td><td><code>#FFF3CD</code>, <code>yellow</code></td></tr>
+          <tr><td><code>padding</code></td><td>Đệm trong</td><td><code>8px 12px</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="k">&lt;p</span> <span class="k">style</span>=<span class="s">"color: #E63946; font-size: 18px; background: #FFF3CD;"</span><span class="k">&gt;</span>
+  Đoạn được tô kiểu nội tuyến
+<span class="k">&lt;/p&gt;</span></code></pre>
+
+      <div class="callout warn"><p><code>style</code> nội tuyến tiện để thử nhanh nhưng <strong>không nên lạm dụng</strong>:
+        khó bảo trì, lặp lại nhiều, lấn át các quy tắc CSS khác. Cách tốt hơn là gom CSS vào file riêng và chọn phần tử bằng <code>class</code>
+        (học ở chương 2.2).</p></div>
+    </section>
+
+    <!-- ==========  11. MẸO & LỖI THƯỜNG GẶP  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout danger"><p><strong>Lỗi 1 — quên thẻ đóng.</strong> <code>&lt;p&gt;Đoạn 1 &lt;p&gt;Đoạn 2</code> dễ làm hiển thị sai.
+        Hãy luôn đóng đầy đủ: <code>&lt;p&gt;Đoạn 1&lt;/p&gt; &lt;p&gt;Đoạn 2&lt;/p&gt;</code> (trừ các thẻ rỗng ở mục 2).</p></div>
+      <div class="callout danger"><p><strong>Lỗi 2 — dùng <code>id</code> trùng nhau.</strong> Hai phần tử cùng <code>id="box"</code> là sai chuẩn:
+        CSS/JS sẽ chỉ nhận phần tử đầu tiên. Cần lặp lại → dùng <code>class</code>.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 3 — nhầm block/inline.</strong> Đặt <code>width</code>/<code>height</code> cho <code>&lt;span&gt;</code> (inline) sẽ không ăn.
+        Muốn có kích thước, đổi <code>display</code> sang <code>inline-block</code> hoặc <code>block</code> (chương 2.2).</p></div>
+      <div class="callout warn"><p><strong>Lỗi 4 — lồng thẻ chéo nhau.</strong> Luôn theo nguyên tắc "vào sau ra trước"; đừng để
+        <code>&lt;b&gt;&lt;i&gt;…&lt;/b&gt;&lt;/i&gt;</code>.</p></div>
+      <div class="callout tip"><p><strong>Mẹo.</strong> Viết thẻ &amp; thuộc tính bằng <em>chữ thường</em>, luôn bọc giá trị trong <code>"…"</code>,
+        ưu tiên <code>class</code> để tạo kiểu, dành <code>id</code> cho định danh duy nhất. Đó là 80% thói quen tốt khi viết HTML.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="01-cau-truc-tai-lieu.html"><small>← Bài trước</small>2.1.1 · Cấu trúc tài liệu</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="03-dinh-dang-van-ban.html"><small>Bài tiếp →</small>2.1.4 · Định dạng văn bản</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

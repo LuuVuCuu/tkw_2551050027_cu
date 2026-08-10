@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  3.1 — TỔNG QUAN JAVASCRIPT
+  ------------------------------------------------------------
+  Bài mở đầu chương lập trình: JavaScript là gì, làm được gì,
+  cách nhúng vào trang, vị trí đặt <script>, defer/async,
+  chương trình đầu tiên và strict mode.
+    1) JavaScript là gì?        5) Vị trí script · defer/async
+    2) JS làm được gì? (demo)   6) Chương trình đầu tiên
+    3) Ba tầng của trang web    7) Cú pháp cơ bản
+    4) Cách nhúng JavaScript    8) Strict mode
+                                9) Mẹo & lỗi thường gặp
+  Khung trang dùng ../assets/lesson.css; CSS + JS minh hoạ của
+  bài đặt ngay trong file (tiền tố .d-) để SV đọc trọn vẹn.
+  Toàn bộ JS demo đặt CUỐI <body> — đúng best practice của bài.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.1 · Tổng quan JavaScript</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+    .d-btn {
+      background: #1D559F; color: #fff; border: none; border-radius: 8px;
+      padding: 9px 16px; font-size: .92rem; font-weight: 600; cursor: pointer;
+      margin: 3px 4px 3px 0; transition: background .15s, transform .1s;
+    }
+    .d-btn:hover { background: #16407a; }
+    .d-btn:active { transform: scale(.97); }
+    .d-btn.green { background: #04AA6D; }  .d-btn.green:hover { background: #03875a; }
+    .d-btn.red   { background: #E63946; }  .d-btn.red:hover   { background: #c02936; }
+
+    .d-field {
+      padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px;
+      font-size: .95rem; margin: 3px 4px 3px 0;
+    }
+    /* khung kết quả kiểu console */
+    .d-out {
+      background: #0f172a; color: #7ee787; border-radius: 10px;
+      font-family: "Cascadia Code", Consolas, monospace; font-size: .88rem;
+      padding: 12px 14px; margin-top: 12px; min-height: 20px; white-space: pre-wrap;
+    }
+
+    /* demo mục 2: 4 khả năng của JS */
+    .d-stage { background: #f1f5f9; border-radius: 10px; padding: 16px; margin-top: 10px; }
+    .d-stage img { width: 90px; height: 90px; vertical-align: middle; border-radius: 10px; }
+    .d-noibat { background: #FFC107; color: #16407a; padding: 2px 8px; border-radius: 6px; font-weight: 700; }
+    #d-loi.d-sai { border: 2px solid #E63946; background: #fdecee; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        3.1 Tổng quan
+      </nav>
+      <h1>Tổng quan JavaScript</h1>
+      <p class="sub">Tầng thứ ba của trang web: sau HTML (cấu trúc) và CSS (trình bày) là JavaScript
+         (hành vi). Bài này trả lời: JS là gì, làm được gì, nhúng vào trang thế nào, và viết
+         chương trình đầu tiên ra sao.</p>
+      <div class="chips">
+        <span class="chip solid">3.1</span>
+        <span class="chip">JavaScript</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">JavaScript là gì?</a></li>
+        <li><a href="#s2">JS làm được gì? (demo)</a></li>
+        <li><a href="#s3">Ba tầng của trang web</a></li>
+        <li><a href="#s4">Cách nhúng JavaScript</a></li>
+        <li><a href="#s5">Vị trí script · defer / async</a></li>
+        <li><a href="#s6">Chương trình đầu tiên</a></li>
+        <li><a href="#s7">Cú pháp cơ bản</a></li>
+        <li><a href="#s8">Strict mode</a></li>
+        <li><a href="#s9">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. JAVASCRIPT LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> JavaScript là gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Ngôn ngữ lập trình <strong>thông dịch</strong>, chạy ngay trong trình duyệt,
+         tạo nên phần "hành vi/tương tác" của trang web.</p>
+
+      <ul>
+        <li>Xuất hiện lần đầu trên trình duyệt <strong>Netscape 2.0 năm 1995</strong> (tên ban đầu <em>LiveScript</em>).</li>
+        <li><strong>Thông dịch</strong> (interpreted): trình duyệt đọc và chạy từng dòng, không cần biên dịch trước.</li>
+        <li>Có khả năng <strong>hướng đối tượng</strong> (object, prototype, class ES6).</li>
+        <li>Ngày nay chạy <strong>cả phía client lẫn phía server</strong> — nhờ nền tảng <strong>Node.js</strong>.</li>
+      </ul>
+
+      <div class="callout info">
+        <p><strong>JavaScript ≠ Java.</strong> Hai ngôn ngữ hoàn toàn khác nhau; cái tên chỉ là
+        "ăn theo" để quảng bá thời 1995. Chuẩn chính thức của JavaScript tên là
+        <strong>ECMAScript</strong> (ES6/ES2015 là mốc hiện đại quan trọng nhất).</p>
+      </div>
+    </section>
+
+    <!-- ==========  2. JS LÀM ĐƯỢC GÌ  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> JS làm được gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Bốn khả năng kinh điển của JavaScript phía client — bấm từng nút để xem
+         trang <em>tự thay đổi</em> mà không cần tải lại.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — 4 khả năng của JavaScript</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-noidung">1 · Đổi nội dung</button>
+          <button class="d-btn green" id="d-btn-thuoctinh">2 · Đổi thuộc tính (src ảnh)</button>
+          <button class="d-btn" style="background:#6c5ce7" id="d-btn-css">3 · Đổi CSS</button>
+
+          <div class="d-stage">
+            <p id="d-cauchao">JavaScript chưa chạm vào đoạn văn này.</p>
+            <img id="d-anh" src="../assets/img-small.svg" alt="Ảnh minh hoạ">
+          </div>
+
+          <p style="margin-bottom:6px"><strong>4 · Kiểm tra (validate) dữ liệu nhập:</strong></p>
+          <input class="d-field" id="d-loi" placeholder="Nhập họ tên rồi bấm Gửi">
+          <button class="d-btn red" id="d-btn-check">Gửi</button>
+          <div class="d-out" id="d-out-check">// kết quả kiểm tra hiện ở đây</div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>JavaScript phía client có thể: <strong>(1)</strong> thay đổi <em>nội dung</em> trang,
+        <strong>(2)</strong> thay đổi <em>thuộc tính</em> các thẻ HTML (ví dụ <code>src</code> của ảnh),
+        <strong>(3)</strong> thay đổi <em>CSS</em>, và <strong>(4)</strong> <em>kiểm tra hợp lệ</em>
+        dữ liệu người dùng nhập trước khi gửi đi. Cả 4 demo trên chỉ dùng vài dòng JS — xem
+        mã ở cuối file này.</p>
+      </div>
+    </section>
+
+    <!-- ==========  3. BA TẦNG  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Ba tầng của trang web <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Nguyên tắc xuyên suốt môn học: tách bạch cấu trúc – trình bày – hành vi.</p>
+
+      <table class="syntax">
+        <thead><tr><th>Tầng</th><th>Ngôn ngữ</th><th>Trả lời câu hỏi</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1 · Cấu trúc</strong></td><td>HTML</td><td>Trang <em>có gì</em>?</td><td><code>&lt;button&gt;Gửi&lt;/button&gt;</code></td></tr>
+          <tr><td><strong>2 · Trình bày</strong></td><td>CSS</td><td>Trông <em>như thế nào</em>?</td><td><code>button { color: red }</code></td></tr>
+          <tr><td><strong>3 · Hành vi</strong></td><td>JavaScript</td><td>Phản ứng <em>ra sao</em> khi tương tác?</td><td><code>btn.addEventListener("click", …)</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip">
+        <p><strong>Hệ quả thực hành:</strong> tách JS ra khỏi HTML (như đã tách CSS ở Chương 2)
+        → dễ bảo trì, tái sử dụng; và <strong>tránh viết <code>onclick=""</code> inline</strong>
+        trong HTML — bài 3.7 sẽ học cách thay bằng <code>addEventListener</code>.</p>
+      </div>
+    </section>
+
+    <!-- ==========  4. CÁCH NHÚNG  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Cách nhúng JavaScript <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Hai cách: viết trực tiếp trong thẻ <code>&lt;script&gt;</code>, hoặc tách ra
+         file <code>.js</code> riêng rồi nạp vào.</p>
+
+      <h3>a) Viết trực tiếp (internal)</h3>
+      <pre class="code"><code><span class="c">&lt;!-- đặt bất kỳ đâu trong tài liệu HTML --&gt;</span>
+&lt;script&gt;
+  <span class="k">let</span> loiChao = <span class="s">"Xin chào JavaScript!"</span>;
+  console.log(loiChao);
+&lt;/script&gt;</code></pre>
+
+      <h3>b) Tách file riêng (external) — cách thường dùng</h3>
+      <pre class="code"><code><span class="c">&lt;!-- script.js là file .js riêng, nạp bằng thuộc tính src --&gt;</span>
+&lt;script src=<span class="s">"script.js"</span>&gt;&lt;/script&gt;</code></pre>
+
+      <div class="note">
+        <p><strong>Vì sao nên tách file?</strong> (1) HTML và JS rạch ròi → dễ đọc, dễ bảo trì;
+        (2) file <code>.js</code> được trình duyệt <strong>cache</strong> → các trang sau nạp
+        nhanh hơn; (3) nhiều trang dùng chung một file JS.</p>
+      </div>
+
+      <div class="callout warn">
+        <p>Thẻ <code>&lt;script src="..."&gt;</code> <strong>không được</strong> viết thêm mã bên
+        trong — đã dùng <code>src</code> thì phần thân thẻ bị bỏ qua. Cần cả hai → dùng hai thẻ
+        <code>&lt;script&gt;</code> riêng.</p>
+      </div>
+    </section>
+
+    <!-- ==========  5. VỊ TRÍ SCRIPT / DEFER / ASYNC  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Vị trí script · <code>defer</code> / <code>async</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Script chạy <em>ngay khi trình duyệt gặp nó</em>. Đặt sai chỗ → JS chạy khi
+         phần tử HTML <strong>chưa tồn tại</strong> → lỗi kinh điển <code>null</code>.</p>
+
+      <pre class="code"><code><span class="c">&lt;!-- ①  SAI (dễ lỗi): script ở &lt;head&gt;, chạy khi &lt;p id="kq"&gt; chưa được tạo --&gt;</span>
+&lt;head&gt;
+  &lt;script&gt;
+    document.getElementById(<span class="s">"kq"</span>).textContent = <span class="s">"Hello"</span>;
+    <span class="c">// ✗ Uncaught TypeError: Cannot set properties of null</span>
+  &lt;/script&gt;
+&lt;/head&gt;
+
+<span class="c">&lt;!-- ②  ĐÚNG cách 1: đặt script ở CUỐI &lt;body&gt; (file này làm vậy) --&gt;</span>
+  ...toàn bộ HTML...
+  &lt;script src=<span class="s">"script.js"</span>&gt;&lt;/script&gt;
+&lt;/body&gt;
+
+<span class="c">&lt;!-- ③  ĐÚNG cách 2: script ở &lt;head&gt; nhưng có defer --&gt;</span>
+&lt;script src=<span class="s">"script.js"</span> <span class="k">defer</span>&gt;&lt;/script&gt;</code></pre>
+
+      <table class="syntax">
+        <caption>So sánh 3 cách nạp file .js</caption>
+        <thead><tr><th>Cách</th><th>Tải file</th><th>Thực thi</th><th>Giữ thứ tự?</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;script src&gt;</code> (thường)</td><td>Dừng phân tích HTML để tải</td><td>Ngay khi tải xong</td><td>Có</td></tr>
+          <tr><td><code>defer</code></td><td><strong>Song song</strong> với HTML</td><td><strong>Sau khi</strong> HTML phân tích xong</td><td><strong>Có</strong></td></tr>
+          <tr><td><code>async</code></td><td>Song song với HTML</td><td>Ngay khi tải xong (có thể ngắt HTML)</td><td>Không</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip">
+        <p><strong>Chuẩn hiện nay:</strong> đặt <code>&lt;script&gt;</code> ở <strong>cuối
+        <code>&lt;body&gt;</code></strong> <em>hoặc</em> dùng <strong><code>defer</code></strong>
+        — cả hai đều bảo đảm DOM sẵn sàng trước khi JS chạy. <code>async</code> chỉ hợp với
+        script độc lập (thống kê, quảng cáo) không đụng tới DOM.</p>
+      </div>
+    </section>
+
+    <!-- ==========  6. CHƯƠNG TRÌNH ĐẦU TIÊN  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Chương trình đầu tiên <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Truyền thống "Hello World" — và làm quen với DevTools Console (phím
+         <kbd>F12</kbd> → tab <em>Console</em>).</p>
+
+      <pre class="code"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=<span class="s">"vi"</span>&gt;
+&lt;head&gt;&lt;meta charset=<span class="s">"UTF-8"</span>&gt;&lt;title&gt;Hello JS&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1 id=<span class="s">"chao"</span>&gt;...&lt;/h1&gt;
+
+  &lt;script&gt;
+    <span class="c">// 1. ghi ra Console (F12) — công cụ debug số 1</span>
+    console.log(<span class="s">"Hello World từ Console!"</span>);
+
+    <span class="c">// 2. ghi thẳng vào trang qua DOM</span>
+    document.getElementById(<span class="s">"chao"</span>).textContent = <span class="s">"Hello World!"</span>;
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — chạy "Hello World" tại chỗ</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-hello">Chạy chương trình đầu tiên</button>
+          <div class="d-out" id="d-out-hello">// bấm nút để chạy — đồng thời mở F12 xem Console</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  7. CÚ PHÁP CƠ BẢN  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Cú pháp cơ bản <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Vài quy tắc nền trước khi vào bài 3.2.</p>
+
+      <table class="syntax">
+        <thead><tr><th>Quy tắc</th><th>Ví dụ / ghi chú</th></tr></thead>
+        <tbody>
+          <tr><td>Mỗi <strong>câu lệnh</strong> kết thúc bằng <code>;</code></td><td><code>let x = 5;</code> — JS có thể tự thêm <code>;</code> nhưng đừng ỷ lại (dễ lỗi khó lường)</td></tr>
+          <tr><td><strong>Phân biệt HOA/thường</strong></td><td><code>hoTen</code> ≠ <code>hoten</code>; <code>getElementById</code> viết sai một chữ hoa là lỗi</td></tr>
+          <tr><td>Chú thích 1 dòng</td><td><code>// giải thích ngắn</code></td></tr>
+          <tr><td>Chú thích nhiều dòng</td><td><code>/* đoạn giải thích dài */</code></td></tr>
+          <tr><td>Khối lệnh</td><td>đặt trong cặp <code>{ }</code> — dùng với <code>if</code>, <code>for</code>, hàm…</td></tr>
+          <tr><td>Quy ước đặt tên</td><td><strong>camelCase</strong>: <code>firstName</code>, <code>totalPrice</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  8. STRICT MODE  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Strict mode <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Một dòng khai báo bật chế độ "nghiêm khắc": JS báo lỗi sớm thay vì im lặng
+         cho qua.</p>
+
+      <pre class="code"><code><span class="s">'use strict'</span>;             <span class="c">// đặt ở dòng ĐẦU file .js (hoặc đầu hàm)</span>
+
+num = 5;                   <span class="c">// ✗ ReferenceError: num is not defined</span>
+                           <span class="c">// (không strict: lặng lẽ tạo BIẾN TOÀN CỤC — nguồn lỗi khó lường)</span>
+<span class="k">let</span> soLuong = 5;           <span class="c">// ✓ khai báo tử tế bằng let/const</span></code></pre>
+
+      <div class="callout tip">
+        <p><strong>Quy ước nghề:</strong> luôn bật <code>'use strict'</code> trong file
+        <code>.js</code> (mã trong <code>module</code> ES6 mặc định đã strict). Nó chặn được
+        lỗi "gán biến chưa khai báo", cấm <code>with</code>, và nhiều bẫy khác.</p>
+      </div>
+    </section>
+
+    <!-- ==========  9. MẸO & LỖI  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout warn"><p><strong>Lỗi 1.</strong> <code>Cannot read properties of null</code>
+        — script chạy trước khi phần tử tồn tại. Sửa: chuyển script xuống <strong>cuối body</strong>
+        hoặc thêm <strong><code>defer</code></strong>.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> Viết sai hoa/thường:
+        <code>getElementByID</code> (sai) vs <code>getElementById</code> (đúng). JS phân biệt
+        hoa thường tuyệt đối.</p></div>
+      <div class="callout tip"><p><strong>Mẹo 1.</strong> Mở <kbd>F12</kbd> → Console là việc
+        <em>đầu tiên</em> khi trang "không chạy": mọi lỗi JS đều hiện ở đó kèm số dòng.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> HTML = có gì · CSS = trông thế nào ·
+        JS = phản ứng ra sao. Tách 3 tầng, script cuối body hoặc <code>defer</code>,
+        luôn <code>'use strict'</code>.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="index.html"><small>← Mục lục</small>Chương 3 · JavaScript</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="02-bien-kieu-du-lieu-toan-tu.html"><small>Bài tiếp →</small>3.2 · Biến · Kiểu dữ liệu · Toán tử</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- ============================================================
+       JS MINH HOẠ CỦA BÀI — đặt cuối <body> (đúng mục 5 vừa học):
+       khi chạy tới đây, toàn bộ phần tử HTML phía trên đã tồn tại.
+       ============================================================ -->
+  <script>
+    'use strict';
+
+    /* ---- Mục 2: bốn khả năng của JavaScript ---- */
+
+    // (1) Đổi NỘI DUNG trang
+    document.getElementById("d-btn-noidung").addEventListener("click", () => {
+      document.getElementById("d-cauchao").innerHTML =
+        'JavaScript vừa <span class="d-noibat">đổi nội dung</span> đoạn văn này lúc bạn bấm nút!';
+    });
+
+    // (2) Đổi THUỘC TÍNH — hoán đổi src của ảnh
+    let anhGoc = true;
+    document.getElementById("d-btn-thuoctinh").addEventListener("click", () => {
+      const anh = document.getElementById("d-anh");
+      anh.src = anhGoc ? "../assets/photo.svg" : "../assets/img-small.svg";
+      anhGoc = !anhGoc;                       // đảo cờ để lần sau đổi ngược lại
+    });
+
+    // (3) Đổi CSS — sửa style trực tiếp (bài 3.8 sẽ học cách hay hơn: classList)
+    let toMau = false;
+    document.getElementById("d-btn-css").addEventListener("click", () => {
+      const doan = document.getElementById("d-cauchao");
+      toMau = !toMau;
+      doan.style.background = toMau ? "#6c5ce7" : "";
+      doan.style.color      = toMau ? "#fff"    : "";
+      doan.style.padding    = toMau ? "8px 12px" : "";
+      doan.style.borderRadius = toMau ? "8px" : "";
+    });
+
+    // (4) VALIDATE dữ liệu nhập: rỗng → báo lỗi + viền đỏ
+    document.getElementById("d-btn-check").addEventListener("click", () => {
+      const o   = document.getElementById("d-loi");
+      const out = document.getElementById("d-out-check");
+      if (o.value.trim() === "") {
+        o.classList.add("d-sai");             // bật class lỗi (trình bày nằm trong CSS)
+        out.textContent = "✗ Họ tên không được để trống!";
+        out.style.color = "#ff7b72";
+      } else {
+        o.classList.remove("d-sai");
+        out.textContent = `✓ Hợp lệ. Xin chào ${o.value.trim()}!`;
+        out.style.color = "#7ee787";
+      }
+    });
+
+    /* ---- Mục 6: Hello World ---- */
+    document.getElementById("d-btn-hello").addEventListener("click", () => {
+      console.log("Hello World từ Console!");          // xem ở DevTools (F12)
+      document.getElementById("d-out-hello").textContent =
+        'Hello World!  (đã ghi thêm "Hello World từ Console!" vào tab Console — mở F12 để xem)';
+    });
+  </script>
+</body>
+</html>

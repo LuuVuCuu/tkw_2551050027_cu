@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  BÀI TẬP TỔNG HỢP CHƯƠNG 3
+  ------------------------------------------------------------
+    1) Danh sách 11 bài tập + gợi ý kỹ thuật
+    2) Lời giải mẫu 1 — Tính chỉ số BMI (chạy được)
+    3) Lời giải mẫu 2 — Đổi tiền tệ (chạy được)
+    4) Lời giải mẫu 3 — To-Do List + localStorage (chạy được)
+    5) Dự án chương — "Góc Cà Phê"
+    6) Mẹo làm bài
+  Ba lời giải theo giáo trình, viết vanilla JS hiện đại:
+  hàm thuần tách khỏi giao diện, validate, event delegation,
+  textContent chống XSS, localStorage.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chương 3 · Bài tập tổng hợp</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI ===== */
+    .d-btn { background:#1D559F; color:#fff; border:none; border-radius:8px;
+             padding:9px 16px; font-size:.92rem; font-weight:600; cursor:pointer;
+             margin:3px 4px 3px 0; }
+    .d-btn:hover { background:#16407a; }
+    .d-btn.green { background:#04AA6D; } .d-btn.green:hover { background:#03875a; }
+    .d-field { padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px;
+               font-size:.95rem; margin:3px 4px 3px 0; }
+    .d-out { background:#0f172a; color:#e6edf3; border-radius:10px;
+             font-family:"Cascadia Code",Consolas,monospace; font-size:.88rem;
+             padding:12px 14px; margin-top:12px; min-height:20px; white-space:pre-wrap; }
+    .d-out .ok { color:#7ee787; } .d-out .bad { color:#ff7b72; }
+
+    /* bài 2: ô lỗi viền đỏ nhấp nháy (đúng đề bài) */
+    .loi { border:2px solid #E63946 !important; animation:nhapnhay .6s ease-in-out 2; }
+    @keyframes nhapnhay { 50% { opacity:.3; } }
+
+    /* bài 5: to-do */
+    .d-tasks { list-style:none; margin:12px 0 0; padding:0; }
+    .d-tasks li { display:flex; align-items:center; gap:10px; background:#fff;
+                  border:1px solid #e3e8f0; border-radius:8px; padding:8px 12px; margin-bottom:6px; }
+    .d-tasks span { flex:1; }
+    .d-tasks span.xong { text-decoration:line-through; opacity:.5; }
+    .d-tasks button { border:none; border-radius:6px; padding:4px 10px; cursor:pointer; font-weight:700; }
+    .d-tasks .ok  { background:#eafaf3; color:#04AA6D; }
+    .d-tasks .del { background:#fdecee; color:#E63946; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        Bài tập tổng hợp
+      </nav>
+      <h1>Bài tập tổng hợp chương 3</h1>
+      <p class="sub">11 bài thực hành của giáo trình + dự án "Góc Cà Phê". Ba bài tiêu biểu có
+         <strong>lời giải chạy được ngay trên trang</strong> kèm code giải thích — các bài còn lại
+         có gợi ý kỹ thuật trỏ về đúng bài học.</p>
+      <div class="chips">
+        <span class="chip solid">Thực hành</span>
+        <span class="chip">Vanilla JS hiện đại</span>
+        <span class="chip">CLO3 · CLO4</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung</h2>
+      <ol>
+        <li><a href="#s1">Danh sách bài tập &amp; gợi ý</a></li>
+        <li><a href="#s2">Giải mẫu 1 — Tính BMI</a></li>
+        <li><a href="#s3">Giải mẫu 2 — Đổi tiền tệ</a></li>
+        <li><a href="#s4">Giải mẫu 3 — To-Do List + localStorage</a></li>
+        <li><a href="#s5">Dự án chương — "Góc Cà Phê"</a></li>
+        <li><a href="#s6">Mẹo làm bài</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. DANH SÁCH BÀI TẬP  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Danh sách bài tập &amp; gợi ý kỹ thuật</h2>
+
+      <table class="syntax">
+        <thead><tr><th>#</th><th>Bài</th><th>Kỹ thuật chính (bài học liên quan)</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Tính chỉ số BMI</strong> — giải mẫu mục 2</td><td>parseFloat, validate, if/else if (3.2, 3.4)</td></tr>
+          <tr><td>2</td><td><strong>Đổi tiền tệ</strong> — giải mẫu mục 3</td><td>object tra cứu, classList viền đỏ (3.6, 3.8)</td></tr>
+          <tr><td>3</td><td>Giải phương trình bậc 2 (jQuery)</td><td>val(), biện luận delta (3.11; bậc 1 vanilla có ở bài 3.8)</td></tr>
+          <tr><td>4</td><td>Trang sản phẩm — gallery ảnh</td><td>đổi <code>src</code> khi click ảnh nhỏ (3.8 mục 5)</td></tr>
+          <tr><td>5</td><td><strong>To-Do List</strong> — giải mẫu mục 4</td><td>createElement, delegation, localStorage (3.8, 3.9)</td></tr>
+          <tr><td>6</td><td>Chữ chạy &amp; quả bóng nảy</td><td>setInterval + đổi vị trí; dừng khi hover (3.8 mục 9; bóng canvas: 3.10)</td></tr>
+          <tr><td>7</td><td>Lịch làm việc (tabs + CRUD)</td><td>validate rỗng, thêm/xoá + confirm (3.7, 3.8)</td></tr>
+          <tr><td>8</td><td>Tabs (jQuery + CSS)</td><td>click tab → show nội dung, addClass active (3.11)</td></tr>
+          <tr><td>9</td><td>Slideshow tự động (jQuery)</td><td>setInterval 3s + fadeOut/fadeIn, lặp vòng (3.8, 3.11)</td></tr>
+          <tr><td>10</td><td>Vẽ hình SVG + chọn màu</td><td>radio chọn hình, setAttribute("fill") (3.10 mục 6)</td></tr>
+          <tr><td>11</td><td><strong>Fetch API</strong> — nạp menu, render DOM</td><td>fetch + async/await + try/catch + map (3.12 có demo hoàn chỉnh)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  2. BMI  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Giải mẫu 1 — Tính chỉ số BMI</h2>
+      <p class="lead">Lấy giá trị bằng <code>parseFloat</code>, <strong>validate</strong> trước khi
+         tính, phân loại bằng chuỗi <code>if</code>, xuất bằng <code>textContent</code> (an toàn).
+         Hàm phân loại tách riêng — hàm thuần đúng chuẩn bài 3.5.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Chạy thử — BMI = kg / (m × m)</div>
+        <div class="demo-body">
+          <input class="d-field" id="bmi-kg" type="number" placeholder="Cân nặng (kg)" style="width:140px">
+          <input class="d-field" id="bmi-m" type="number" step="0.01" placeholder="Chiều cao (m)" style="width:140px">
+          <button class="d-btn" id="bmi-btn">Tính BMI</button>
+          <div class="d-out" id="bmi-kq">// thử 60kg · 1.65m — hoặc bỏ trống để xem validate</div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">const</span> phanLoai = (bmi) =&gt; {          <span class="c">// hàm THUẦN: nhận số, trả chuỗi</span>
+  <span class="k">if</span> (bmi &lt; 18.5) <span class="k">return</span> <span class="s">"Thiếu cân"</span>;
+  <span class="k">if</span> (bmi &lt; 25)   <span class="k">return</span> <span class="s">"Bình thường"</span>;
+  <span class="k">if</span> (bmi &lt; 30)   <span class="k">return</span> <span class="s">"Thừa cân"</span>;
+  <span class="k">return</span> <span class="s">"Béo phì"</span>;
+};
+
+btn.addEventListener(<span class="s">"click"</span>, () =&gt; {
+  <span class="k">const</span> kg = parseFloat(oKg.value);
+  <span class="k">const</span> m  = parseFloat(oM.value);
+  <span class="k">if</span> (isNaN(kg) || isNaN(m) || kg &lt;= 0 || m &lt;= 0) {   <span class="c">// validate</span>
+    out.textContent = <span class="s">"Vui lòng nhập cân nặng và chiều cao hợp lệ (&gt; 0)."</span>;
+    <span class="k">return</span>;                                            <span class="c">// thoát sớm</span>
+  }
+  <span class="k">const</span> bmi = kg / (m * m);
+  out.textContent = `BMI = ${bmi.toFixed(1)} → ${phanLoai(bmi)}`;
+});</code></pre>
+    </section>
+
+    <!-- ==========  3. ĐỔI TIỀN  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Giải mẫu 2 — Đổi tiền tệ</h2>
+      <p class="lead">Tỉ giá lưu trong <strong>object tra cứu</strong> (key = mã tiền). Ô rỗng /
+         không hợp lệ → bật class <code>loi</code> (viền đỏ <em>nhấp nháy</em> — trình bày nằm
+         trong CSS, đúng nguyên tắc 3 tầng); gõ lại thì tự gỡ lỗi.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Chạy thử — VNĐ → USD / EUR / AUD</div>
+        <div class="demo-body">
+          <input class="d-field" id="dt-vnd" type="number" placeholder="Số tiền VNĐ" style="width:160px">
+          <select class="d-field" id="dt-loai">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="AUD">AUD</option>
+          </select>
+          <button class="d-btn" id="dt-btn">Đổi</button>
+          <div class="d-out" id="dt-kq">// bấm Đổi khi ô rỗng để xem viền đỏ nhấp nháy</div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* CSS của hiệu ứng lỗi: */</span>
+.loi { <span class="k">border</span>: <span class="v">2px solid red</span>; <span class="k">animation</span>: <span class="v">nhapnhay .6s ease-in-out 2</span>; }
+@keyframes nhapnhay { 50% { <span class="k">opacity</span>: <span class="v">.3</span>; } }
+
+<span class="c">// 1 VNĐ = ... (tỉ giá minh hoạ)</span>
+<span class="k">const</span> tiGia = { USD: 1 / 25000, EUR: 1 / 27000, AUD: 1 / 16500 };
+
+btn.addEventListener(<span class="s">"click"</span>, () =&gt; {
+  <span class="k">const</span> vnd = parseFloat(oVnd.value);
+  <span class="k">if</span> (oVnd.value.trim() === <span class="s">""</span> || isNaN(vnd) || vnd &lt; 0) {
+    oVnd.classList.add(<span class="s">"loi"</span>);                 <span class="c">// bật viền đỏ</span>
+    kq.textContent = <span class="s">"Vui lòng nhập số tiền hợp lệ."</span>;
+    <span class="k">return</span>;
+  }
+  oVnd.classList.remove(<span class="s">"loi"</span>);
+  <span class="k">const</span> ma = document.getElementById(<span class="s">"loaiTien"</span>).value;
+  kq.textContent = `${vnd.toLocaleString(<span class="s">"vi-VN"</span>)} VNĐ = ${(vnd * tiGia[ma]).toFixed(2)} ${ma}`;
+});
+
+oVnd.addEventListener(<span class="s">"input"</span>, () =&gt; oVnd.classList.remove(<span class="s">"loi"</span>));</code></pre>
+    </section>
+
+    <!-- ==========  4. TO-DO  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Giải mẫu 3 — To-Do List + localStorage <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Đủ combo kỹ thuật chương 3: <code>createElement</code> + <code>textContent</code>
+         (chống XSS), <strong>event delegation</strong> (một listener cho cả danh sách),
+         Enter để thêm nhanh, <code>confirm</code> khi xoá — và bản nâng cao của giáo trình:
+         <strong>lưu <code>localStorage</code></strong>, F5 không mất việc.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Chạy thử — thêm việc, đánh dấu ✓, xoá ✕, rồi F5 xem còn không</div>
+        <div class="demo-body">
+          <input class="d-field" id="td-viec" placeholder="Việc cần làm…" size="30">
+          <button class="d-btn green" id="td-them">+ Thêm</button>
+          <ul class="d-tasks" id="td-ds"></ul>
+          <div class="d-out" id="td-log">// dữ liệu đồng bộ vào localStorage["bt-todos"] sau mỗi thao tác</div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">// ---- dữ liệu là MẢNG OBJECT, DOM chỉ là "ảnh chụp" của dữ liệu ----</span>
+<span class="k">let</span> todos = JSON.parse(localStorage.getItem(<span class="s">"bt-todos"</span>)) || [];
+
+<span class="k">const</span> luu = () =&gt; localStorage.setItem(<span class="s">"bt-todos"</span>, JSON.stringify(todos));
+
+<span class="k">function</span> render() {                       <span class="c">// vẽ lại toàn bộ danh sách từ mảng</span>
+  ds.innerHTML = <span class="s">""</span>;
+  todos.forEach((viec) =&gt; {
+    <span class="k">const</span> li = document.createElement(<span class="s">"li"</span>);
+    li.innerHTML = `&lt;span&gt;&lt;/span&gt;&lt;button class="ok"&gt;✓&lt;/button&gt;&lt;button class="del"&gt;✕&lt;/button&gt;`;
+    li.querySelector(<span class="s">"span"</span>).textContent = viec.noiDung;  <span class="c">// chống XSS</span>
+    li.querySelector(<span class="s">"span"</span>).classList.toggle(<span class="s">"xong"</span>, viec.xong);
+    ds.appendChild(li);
+  });
+}
+
+<span class="c">// event delegation: MỘT listener xử lý mọi nút ✓ / ✕</span>
+ds.addEventListener(<span class="s">"click"</span>, (e) =&gt; {
+  <span class="k">const</span> li = e.target.closest(<span class="s">"li"</span>);
+  <span class="k">if</span> (!li) <span class="k">return</span>;
+  <span class="k">const</span> i = [...ds.children].indexOf(li);     <span class="c">// vị trí trong mảng</span>
+  <span class="k">if</span> (e.target.classList.contains(<span class="s">"ok"</span>))  todos[i].xong = !todos[i].xong;
+  <span class="k">if</span> (e.target.classList.contains(<span class="s">"del"</span>) &amp;&amp; confirm(<span class="s">"Xoá việc này?"</span>))
+    todos.splice(i, 1);
+  luu(); render();                              <span class="c">// mọi thay đổi: lưu + vẽ lại</span>
+});</code></pre>
+
+      <div class="callout tip">
+        <p><strong>Tư duy đáng giá nhất bài này:</strong> thao tác trên <em>mảng dữ liệu</em> rồi
+        render lại, thay vì "mò mẫm" sửa từng thẻ DOM. Đây chính là tư duy state → view của
+        React/Vue sau này (bài 3.13).</p>
+      </div>
+    </section>
+
+    <!-- ==========  5. GÓC CÀ PHÊ  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Dự án chương — "Góc Cà Phê" <span class="tag-adv">Dự án</span></h2>
+      <p class="lead">Thêm tương tác cho trang tĩnh đã dựng ở Chương 2 — checklist 5 hạng mục:</p>
+
+      <table class="syntax">
+        <thead><tr><th>Hạng mục</th><th>Kỹ thuật</th><th>Xem lại</th></tr></thead>
+        <tbody>
+          <tr><td>Menu mobile (nút ☰)</td><td><code>classList.toggle("open")</code> + CSS transition</td><td>3.8 mục 4, 10</td></tr>
+          <tr><td>Slider ảnh</td><td><code>setInterval</code> đổi ảnh, Play/Stop</td><td>3.8 mục 9</td></tr>
+          <tr><td>Kiểm tra form liên hệ</td><td><code>submit</code> + <code>preventDefault</code> + báo lỗi từng ô</td><td>3.7, giải mẫu 2</td></tr>
+          <tr><td>Bộ đếm giỏ hàng</td><td>biến đếm + <code>localStorage</code></td><td>3.9, giải mẫu 3</td></tr>
+          <tr><td>Nạp danh sách món</td><td><code>fetch("menu.json")</code> + <code>map</code> render</td><td>3.12 (demo sẵn!)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  6. MẸO LÀM BÀI  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Mẹo làm bài</h2>
+      <div class="callout tip"><p><strong>Quy trình 4 bước cho mọi bài:</strong>
+        ① dựng HTML tối thiểu → ② viết <em>hàm thuần</em> xử lý (tính toán, không đụng DOM) →
+        ③ nối vào giao diện bằng <code>addEventListener</code> → ④ validate + thông báo lỗi đẹp.</p></div>
+      <div class="callout warn"><p><strong>Ba lỗi chấm bài gặp nhiều nhất:</strong>
+        quên <code>parseFloat</code> với <code>input.value</code> (cộng chuỗi!);
+        script đặt ở <code>&lt;head&gt;</code> không <code>defer</code> (null);
+        gắn sự kiện từng phần tử động thay vì delegation.</p></div>
+      <div class="callout info"><p><strong>Dùng AI có trách nhiệm (CLO4):</strong> được hỏi AI để
+        <em>giải thích, gợi ý hướng, review code</em>; không nộp code không hiểu — bạn phải chịu
+        trách nhiệm từng dòng mình giao.</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="13-json-fetch-async.html"><small>← Bài trước</small>3.12 · JSON · fetch · async/await</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="index.html"><small>Hoàn thành</small>Về mục lục chương 3</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- ===== JS LỜI GIẢI (cuối body) ===== -->
+  <script>
+    'use strict';
+
+    /* ============ GIẢI MẪU 1 — BMI ============ */
+    const phanLoai = (bmi) => {                 // hàm thuần: nhận số, trả chuỗi
+      if (bmi < 18.5) return "Thiếu cân";
+      if (bmi < 25)   return "Bình thường";
+      if (bmi < 30)   return "Thừa cân";
+      return "Béo phì";
+    };
+    document.getElementById("bmi-btn").addEventListener("click", () => {
+      const kg  = parseFloat(document.getElementById("bmi-kg").value);
+      const m   = parseFloat(document.getElementById("bmi-m").value);
+      const out = document.getElementById("bmi-kq");
+      if (isNaN(kg) || isNaN(m) || kg <= 0 || m <= 0) {       // validate
+        out.innerHTML = '<span class="bad">Vui lòng nhập cân nặng và chiều cao hợp lệ (> 0).</span>';
+        return;
+      }
+      const bmi = kg / (m * m);
+      out.innerHTML = `BMI = <span class="ok">${bmi.toFixed(1)}</span> → <span class="ok">${phanLoai(bmi)}</span>`;
+    });
+
+    /* ============ GIẢI MẪU 2 — ĐỔI TIỀN ============ */
+    const tiGia = { USD: 1 / 25000, EUR: 1 / 27000, AUD: 1 / 16500 };  // 1 VNĐ = ...
+    const oVnd = document.getElementById("dt-vnd");
+    document.getElementById("dt-btn").addEventListener("click", () => {
+      const kq  = document.getElementById("dt-kq");
+      const vnd = parseFloat(oVnd.value);
+      if (oVnd.value.trim() === "" || isNaN(vnd) || vnd < 0) {
+        oVnd.classList.add("loi");              // viền đỏ nhấp nháy (CSS lo phần nhìn)
+        kq.innerHTML = '<span class="bad">Vui lòng nhập số tiền hợp lệ.</span>';
+        return;
+      }
+      oVnd.classList.remove("loi");
+      const ma = document.getElementById("dt-loai").value;
+      kq.innerHTML = `${vnd.toLocaleString("vi-VN")} VNĐ = <span class="ok">${(vnd * tiGia[ma]).toFixed(2)} ${ma}</span>`;
+    });
+    oVnd.addEventListener("input", () => oVnd.classList.remove("loi"));  // gõ lại là gỡ lỗi
+
+    /* ============ GIẢI MẪU 3 — TO-DO + LOCALSTORAGE ============ */
+    const dsEl  = document.getElementById("td-ds");
+    const oViec = document.getElementById("td-viec");
+    const tdLog = document.getElementById("td-log");
+
+    // dữ liệu = mảng object; DOM chỉ là "ảnh chụp" của mảng
+    let todos = JSON.parse(localStorage.getItem("bt-todos")) || [];
+
+    const luu = () => {
+      localStorage.setItem("bt-todos", JSON.stringify(todos));
+      tdLog.textContent = `localStorage["bt-todos"] = ${JSON.stringify(todos)}`;
+    };
+
+    function render() {
+      dsEl.innerHTML = "";
+      todos.forEach((viec) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span></span><button class="ok">✓</button><button class="del">✕</button>`;
+        li.querySelector("span").textContent = viec.noiDung;   // textContent → chống XSS
+        li.querySelector("span").classList.toggle("xong", viec.xong);
+        dsEl.appendChild(li);
+      });
+    }
+
+    function themViec() {
+      const noiDung = oViec.value.trim();
+      if (noiDung === "") return;               // bỏ qua khi rỗng
+      todos.push({ noiDung, xong: false });
+      luu(); render();
+      oViec.value = "";
+      oViec.focus();
+    }
+    document.getElementById("td-them").addEventListener("click", themViec);
+    oViec.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") themViec();        // Enter để thêm nhanh
+    });
+
+    // event delegation: MỘT listener cho cả danh sách (việc mới thêm vẫn chạy)
+    dsEl.addEventListener("click", (e) => {
+      const li = e.target.closest("li");
+      if (!li) return;
+      const i = [...dsEl.children].indexOf(li); // li này ứng với todos[i]
+      if (e.target.classList.contains("ok")) {
+        todos[i].xong = !todos[i].xong;         // gạch ngang + mờ
+      } else if (e.target.classList.contains("del")) {
+        if (!confirm("Xoá việc này?")) return;
+        todos.splice(i, 1);                     // gỡ khỏi mảng
+      } else {
+        return;
+      }
+      luu(); render();                          // mọi thay đổi: lưu + vẽ lại
+    });
+
+    render();                                   // vẽ dữ liệu đã lưu từ lần trước (nếu có)
+    if (todos.length) tdLog.textContent =
+      `Đã khôi phục ${todos.length} việc từ localStorage — đúng gợi ý nâng cao của giáo trình!`;
+  </script>
+</body>
+</html>

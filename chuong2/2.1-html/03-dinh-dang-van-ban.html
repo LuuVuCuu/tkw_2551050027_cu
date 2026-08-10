@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.1.4 — HTML · ĐỊNH DẠNG VĂN BẢN (bản toàn diện)
+  ------------------------------------------------------------
+  Định dạng văn bản là nhóm thẻ dùng nhiều nhất khi viết nội
+  dung trang. Bài này đi từ cơ bản → nâng cao, tham khảo theo
+  W3Schools ("HTML Text Formatting" + "Quotation and Citation"):
+    1) Tiêu đề h1–h6            7) Nhóm trích dẫn & ngữ nghĩa
+    2) Đoạn, br, hr, pre        8) Ký tự đặc biệt & entities
+    3) div (block) & span       9) Định dạng code/kĩ thuật
+    4) b/strong · i/em         10) Bảng tổng hợp định dạng
+    5) mark/small/del/ins/u/s  11) Mẹo: ngữ nghĩa vs hình thức
+    6) sup & sub
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.1.4 · HTML — Định dạng văn bản</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* 1) thang tiêu đề — thu nhỏ lại để xem trọn 6 mức trong demo */
+    .d-headings h1, .d-headings h2, .d-headings h3,
+    .d-headings h4, .d-headings h5, .d-headings h6 {
+      margin: 4px 0; color: #16407a; font-family: inherit;
+    }
+    .d-headings h1 { font-size: 2.0rem; }
+    .d-headings h2 { font-size: 1.6rem; }
+    .d-headings h3 { font-size: 1.3rem; }
+    .d-headings h4 { font-size: 1.1rem; }
+    .d-headings h5 { font-size: 0.95rem; }
+    .d-headings h6 { font-size: 0.8rem; }
+
+    /* 2) pre/hr minh hoạ */
+    .d-pre {
+      background: #0f172a; color: #e6edf3; border-radius: 8px;
+      padding: 12px 14px; overflow: auto; margin: 0;
+    }
+    .d-hr { border: none; border-top: 3px solid #1D559F; border-radius: 3px; margin: 12px 0; }
+
+    /* 3) div block & span inline */
+    .d-div  { display: block;  background: #dbeafe; border: 1px solid #93c5fd; padding: 8px; margin: 4px 0; }
+    .d-span { background: #fde68a; border: 1px solid #f59e0b; padding: 1px 6px; border-radius: 4px; }
+
+    /* 7) trích dẫn */
+    .d-quote { padding: 6px 0; }
+    .d-quote address { font-style: normal; line-height: 1.5; }
+
+    /* tiện ích: ô minh hoạ nhỏ trên nền nhạt */
+    .d-stage { background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px 14px; }
+
+    /* nhãn nhỏ kiểu "vs" cho cặp so sánh */
+    .d-vs { color: #5b6472; font-weight: 700; font-size: .8rem; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.1 HTML</a><span>›</span>
+        Định dạng văn bản
+      </nav>
+      <h1>Định dạng văn bản trong HTML</h1>
+      <p class="sub">Nhóm thẻ dùng nhiều nhất khi viết nội dung: tiêu đề, đoạn văn, nhấn mạnh, trích dẫn,
+         ký tự đặc biệt và thẻ kĩ thuật. Đi từ cơ bản đến các thẻ ngữ nghĩa nâng cao, ưu tiên khả năng tiếp cận &amp; SEO.</p>
+      <div class="chips">
+        <span class="chip solid">2.1.4</span>
+        <span class="chip">HTML cơ bản</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Tiêu đề h1–h6</a></li>
+        <li><a href="#s2">Đoạn · br · hr · pre</a></li>
+        <li><a href="#s3">div (block) &amp; span (inline)</a></li>
+        <li><a href="#s4">b/strong · i/em</a></li>
+        <li><a href="#s5">mark · small · del · ins · u · s</a></li>
+        <li><a href="#s6">sup &amp; sub (chỉ số trên/dưới)</a></li>
+        <li><a href="#s7">Nhóm trích dẫn &amp; ngữ nghĩa</a></li>
+        <li><a href="#s8">Ký tự đặc biệt &amp; entities</a></li>
+        <li><a href="#s9">Định dạng code/kĩ thuật</a></li>
+        <li><a href="#s10">Bảng tổng hợp định dạng</a></li>
+        <li><a href="#s11">Mẹo: ngữ nghĩa vs hình thức</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. TIÊU ĐỀ H1–H6  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Tiêu đề <code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">HTML có 6 mức tiêu đề. <code>&lt;h1&gt;</code> quan trọng nhất (đề mục lớn nhất),
+         <code>&lt;h6&gt;</code> nhỏ nhất. Tiêu đề tạo nên <strong>cấu trúc nội dung</strong> của trang.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · 6 mức tiêu đề</div>
+        <div class="demo-body d-headings">
+          <h1>h1 — Tiêu đề cấp 1</h1>
+          <h2>h2 — Tiêu đề cấp 2</h2>
+          <h3>h3 — Tiêu đề cấp 3</h3>
+          <h4>h4 — Tiêu đề cấp 4</h4>
+          <h5>h5 — Tiêu đề cấp 5</h5>
+          <h6>h6 — Tiêu đề cấp 6</h6>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>Mỗi trang nên có <strong>đúng một</strong> <code>&lt;h1&gt;</code> (chủ đề chính), rồi dùng
+           <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>… cho các mục con theo thứ tự, <u>không nhảy cấp</u>
+           (ví dụ đừng nhảy thẳng từ h2 xuống h4).</p>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;h1&gt;</span>Tiêu đề trang<span class="k">&lt;/h1&gt;</span>
+<span class="k">&lt;h2&gt;</span>Mục lớn<span class="k">&lt;/h2&gt;</span>
+  <span class="k">&lt;h3&gt;</span>Mục con<span class="k">&lt;/h3&gt;</span></code></pre>
+
+      <div class="callout warn"><p><strong>Đừng dùng tiêu đề để phóng to chữ!</strong> Tiêu đề mang ý nghĩa
+        <em>cấu trúc</em> chứ không phải kiểu chữ. Muốn chữ to/đậm thuần trang trí thì dùng CSS
+        (<code>font-size</code>, <code>font-weight</code>), không lạm dụng <code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code>.</p></div>
+
+      <div class="callout info"><p><strong>SEO &amp; khả năng tiếp cận:</strong> công cụ tìm kiếm và trình đọc màn hình
+        dựa vào tiêu đề để hiểu bố cục trang và tạo "dàn ý" cho người dùng. Tiêu đề rõ ràng giúp trang dễ tìm thấy hơn.</p></div>
+    </section>
+
+    <!-- ==========  2. ĐOẠN · BR · HR · PRE  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Đoạn văn, ngắt dòng, kẻ ngang &amp; văn bản tiền định dạng <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Bốn thẻ nền tảng để dựng văn bản: <code>&lt;p&gt;</code> (đoạn), <code>&lt;br&gt;</code> (xuống dòng),
+         <code>&lt;hr&gt;</code> (đường kẻ ngang ngăn chủ đề) và <code>&lt;pre&gt;</code> (giữ nguyên khoảng trắng).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <p>Đây là một đoạn văn. Trình duyệt tự gộp nhiều khoảng trắng thành một và tự xuống dòng theo chiều rộng.</p>
+          <p>Đoạn thứ hai có một dòng đầu<br>và một dòng sau ngắt bằng thẻ <code>&lt;br&gt;</code>.</p>
+          <hr class="d-hr">
+          <p class="muted">Đoạn dưới đường kẻ <code>&lt;hr&gt;</code> ở trên — kẻ ngang ngăn cách hai chủ đề.</p>
+          <p>Văn bản tiền định dạng <code>&lt;pre&gt;</code> — giữ nguyên dấu cách &amp; xuống dòng:</p>
+          <pre class="d-pre">  Tên     Điểm
+  An      9.0
+  Bình    8.5</pre>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Bốn thẻ văn bản nền tảng</caption>
+        <thead><tr><th>Thẻ</th><th>Công dụng</th><th>Đóng thẻ?</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;p&gt;</code></td><td>Một đoạn văn (paragraph). Trình duyệt tự thêm khoảng trắng trên–dưới.</td><td>Có</td></tr>
+          <tr><td><code>&lt;br&gt;</code></td><td>Ngắt xuống dòng <em>trong</em> một đoạn (vd: địa chỉ, thơ).</td><td>Không (thẻ rỗng)</td></tr>
+          <tr><td><code>&lt;hr&gt;</code></td><td>Đường kẻ ngang — đổi chủ đề/ngắt mạch nội dung (ngữ nghĩa).</td><td>Không (thẻ rỗng)</td></tr>
+          <tr><td><code>&lt;pre&gt;</code></td><td>Văn bản tiền định dạng: giữ nguyên dấu cách &amp; xuống dòng, dùng phông đều (monospace).</td><td>Có</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip"><p>Đừng dùng nhiều <code>&lt;br&gt;</code> liên tiếp để tạo khoảng cách giữa các đoạn —
+        hãy dùng <code>&lt;p&gt;</code> riêng và chỉnh khoảng cách bằng CSS (<code>margin</code>).</p></div>
+    </section>
+
+    <!-- ==========  3. DIV & SPAN  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Gom nhóm: <code>&lt;div&gt;</code> (block) &amp; <code>&lt;span&gt;</code> (inline) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Hai thẻ "vô nghĩa" (generic) dùng để <strong>gom nhóm</strong> nội dung và gắn class/CSS.
+         <code>&lt;div&gt;</code> là khối (xuống dòng), <code>&lt;span&gt;</code> là nội tuyến (cùng dòng).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="d-div">&lt;div&gt; khối #1 — chiếm trọn chiều ngang, tự xuống dòng</div>
+          <div class="d-div">&lt;div&gt; khối #2 — luôn bắt đầu trên dòng mới</div>
+          <p>Còn <span class="d-span">&lt;span&gt; A</span> và <span class="d-span">&lt;span&gt; B</span>
+             là nội tuyến — nằm <em>cùng dòng</em> với chữ xung quanh, chỉ rộng bằng nội dung.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">&lt;!-- div: khối, dùng dựng bố cục/khối lớn --&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"the-bai-viet"</span><span class="k">&gt;</span> ... <span class="k">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- span: nội tuyến, dùng tô màu/định dạng 1 đoạn chữ --&gt;</span>
+Giá: <span class="k">&lt;span</span> <span class="v">class</span>=<span class="s">"noi-bat"</span><span class="k">&gt;</span>199.000đ<span class="k">&lt;/span&gt;</span></code></pre>
+
+      <div class="callout info"><p><code>&lt;div&gt;</code>/<code>&lt;span&gt;</code> <strong>không mang ngữ nghĩa</strong>.
+        Nếu nội dung có ý nghĩa rõ ràng (bài viết, mục, điều hướng…), hãy ưu tiên thẻ ngữ nghĩa như
+        <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;nav&gt;</code> (xem bài 2.1.9 — Thẻ ngữ nghĩa).</p></div>
+    </section>
+
+    <!-- ==========  4. B/STRONG · I/EM  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Hình thức vs ngữ nghĩa: <code>&lt;b&gt;</code>/<code>&lt;strong&gt;</code> · <code>&lt;i&gt;</code>/<code>&lt;em&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Trông giống nhau trên màn hình (đậm/nghiêng) nhưng <strong>khác nhau về ngữ nghĩa</strong>.
+         <code>&lt;b&gt;</code>/<code>&lt;i&gt;</code> chỉ là <em>hình thức</em>; <code>&lt;strong&gt;</code>/<code>&lt;em&gt;</code> mang <em>ý nghĩa</em>
+         (quan trọng / nhấn mạnh) mà trình đọc màn hình hiểu được.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">Đậm · b vs strong</div>
+          <div class="demo-body d-stage">
+            <p>Chữ <b>in đậm bằng &lt;b&gt;</b> — chỉ để nổi bật hình thức, không ngụ ý quan trọng.</p>
+            <p>Hãy nhớ <strong>tắt bếp trước khi đi bằng &lt;strong&gt;</strong> — nội dung <em>nghiêm trọng/quan trọng</em>.</p>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">Nghiêng · i vs em</div>
+          <div class="demo-body d-stage">
+            <p>Tên khoa học <i>Panthera tigris bằng &lt;i&gt;</i> — nghiêng kiểu kĩ thuật, không nhấn giọng.</p>
+            <p>Tôi nói <em>không phải mai bằng &lt;em&gt;</em> — <span class="d-vs">em</span> nhấn mạnh, đổi sắc thái câu.</p>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Hình thức vs ngữ nghĩa</caption>
+        <thead><tr><th>Thẻ</th><th>Hiển thị</th><th>Ngữ nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;b&gt;</code></td><td>In đậm</td><td><em>Không</em> mang ý nghĩa — chỉ làm nổi bật về hình thức (vd từ khoá sản phẩm).</td></tr>
+          <tr><td><code>&lt;strong&gt;</code></td><td>In đậm</td><td>Nội dung <strong>quan trọng/nghiêm trọng</strong> — trình đọc màn hình nhấn mạnh.</td></tr>
+          <tr><td><code>&lt;i&gt;</code></td><td>In nghiêng</td><td><em>Không</em> nhấn giọng — giọng khác lệ thường: thuật ngữ, tên loài, tiếng nước ngoài.</td></tr>
+          <tr><td><code>&lt;em&gt;</code></td><td>In nghiêng</td><td><strong>Nhấn mạnh</strong> (emphasis) — thay đổi sắc thái/ý nghĩa câu nói.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip"><p>Quy tắc đơn giản: khi nội dung <strong>thực sự quan trọng/cần nhấn</strong>, dùng
+        <code>&lt;strong&gt;</code>/<code>&lt;em&gt;</code>. Khi chỉ muốn đậm/nghiêng <em>trang trí</em>, dùng CSS hoặc
+        <code>&lt;b&gt;</code>/<code>&lt;i&gt;</code>. Xem thêm mục 11.</p></div>
+    </section>
+
+    <!-- ==========  5. MARK · SMALL · DEL · INS · U · S  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Các thẻ định dạng khác: <code>&lt;mark&gt; &lt;small&gt; &lt;del&gt; &lt;ins&gt; &lt;u&gt; &lt;s&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Nhóm thẻ định dạng còn lại trong "HTML Text Formatting" của W3Schools: tô sáng, chữ nhỏ,
+         văn bản bị xoá/thêm vào, gạch dưới &amp; gạch ngang.</p>
+
+      <table class="syntax">
+        <caption>Thẻ định dạng văn bản bổ sung</caption>
+        <thead><tr><th>Thẻ</th><th>Ý nghĩa</th><th>Hiển thị mặc định</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;mark&gt;</code></td><td>Văn bản được <strong>tô sáng/đánh dấu</strong> (highlight) liên quan.</td><td>Nền vàng</td></tr>
+          <tr><td><code>&lt;small&gt;</code></td><td>Chữ nhỏ — ghi chú phụ, bản quyền, điều khoản nhỏ.</td><td>Cỡ chữ nhỏ hơn</td></tr>
+          <tr><td><code>&lt;del&gt;</code></td><td>Văn bản đã bị <strong>xoá</strong> (deleted) — vd giá cũ.</td><td>Gạch ngang</td></tr>
+          <tr><td><code>&lt;ins&gt;</code></td><td>Văn bản được <strong>chèn thêm</strong> (inserted) — vd giá mới.</td><td>Gạch chân</td></tr>
+          <tr><td><code>&lt;u&gt;</code></td><td>Gạch chân kiểu chú thích (vd lỗi chính tả) — <em>không</em> phải liên kết.</td><td>Gạch chân</td></tr>
+          <tr><td><code>&lt;s&gt;</code></td><td>Nội dung <strong>không còn đúng/không còn phù hợp</strong> (strikethrough).</td><td>Gạch ngang</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <p>Đừng quên <mark>kiểm tra lại bài</mark> trước khi nộp.</p>
+          <p>Sản phẩm A <small>(còn 3 cái trong kho)</small>.</p>
+          <p>Giá: <del>500.000đ</del> <ins>399.000đ</ins> — đang khuyến mãi.</p>
+          <p>Từ <u>sai chính tả</u> được gạch chân chú thích; mặt hàng <s>đã ngừng bán</s>.</p>
+        </div>
+      </div>
+
+      <div class="callout warn"><p>Tránh dùng <code>&lt;u&gt;</code> cho văn bản thường vì người dùng dễ nhầm với
+        <strong>liên kết</strong> (link cũng gạch chân). Muốn gạch chân trang trí, dùng CSS
+        (<code>text-decoration: underline</code>) cho rõ chủ ý.</p></div>
+    </section>
+
+    <!-- ==========  6. SUP & SUB  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Chỉ số trên &amp; dưới: <code>&lt;sup&gt;</code> · <code>&lt;sub&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>&lt;sup&gt;</code> (superscript) đặt chữ <strong>lên cao</strong> &amp; nhỏ lại (số mũ, chú thích),
+         <code>&lt;sub&gt;</code> (subscript) đặt chữ <strong>xuống thấp</strong> (công thức hoá học).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · công thức hoá học &amp; toán học</div>
+        <div class="demo-body">
+          <p><strong>Hoá học (sub):</strong> nước H<sub>2</sub>O, khí CO<sub>2</sub>, axit H<sub>2</sub>SO<sub>4</sub>.</p>
+          <p><strong>Toán học (sup):</strong> diện tích x<sup>2</sup>, lập phương a<sup>3</sup>, công thức E = mc<sup>2</sup>.</p>
+          <p><strong>Khác:</strong> ngày 1<sup>st</sup>, chú thích<sup>[1]</sup>.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code>H<span class="k">&lt;sub&gt;</span>2<span class="k">&lt;/sub&gt;</span>SO<span class="k">&lt;sub&gt;</span>4<span class="k">&lt;/sub&gt;</span>   <span class="c">&lt;!-- H2SO4 --&gt;</span>
+x<span class="k">&lt;sup&gt;</span>2<span class="k">&lt;/sup&gt;</span>            <span class="c">&lt;!-- x bình phương --&gt;</span></code></pre>
+
+      <div class="callout info"><p>Hai thẻ này mang <strong>ngữ nghĩa</strong> (chỉ số trên/dưới thực sự), khác với việc chỉ thu nhỏ
+        &amp; dời vị trí bằng CSS. Trình đọc màn hình &amp; công cụ toán học hiểu đúng ý.</p></div>
+    </section>
+
+    <!-- ==========  7. NHÓM TRÍCH DẪN & NGỮ NGHĨA  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Nhóm trích dẫn &amp; ngữ nghĩa <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Theo W3Schools "Quotation and Citation Elements": các thẻ chuyên cho trích dẫn, viết tắt,
+         địa chỉ, nguồn tham khảo và đảo chiều văn bản.</p>
+
+      <table class="syntax">
+        <caption>Thẻ trích dẫn &amp; ngữ nghĩa</caption>
+        <thead><tr><th>Thẻ</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;blockquote cite&gt;</code></td><td>Trích dẫn <strong>dài</strong> (khối), thường thụt lề; thuộc tính <code>cite</code> ghi URL nguồn.</td></tr>
+          <tr><td><code>&lt;q&gt;</code></td><td>Trích dẫn <strong>ngắn</strong> (nội tuyến); trình duyệt tự thêm dấu ngoặc kép.</td></tr>
+          <tr><td><code>&lt;abbr title&gt;</code></td><td>Từ viết tắt; <code>title</code> hiện chú giải khi rê chuột.</td></tr>
+          <tr><td><code>&lt;address&gt;</code></td><td>Thông tin liên hệ của tác giả/chủ sở hữu (thường in nghiêng).</td></tr>
+          <tr><td><code>&lt;cite&gt;</code></td><td>Tên tác phẩm được trích (sách, phim, bài hát…) — in nghiêng.</td></tr>
+          <tr><td><code>&lt;bdo dir&gt;</code></td><td>Bi-Directional Override — <strong>đảo chiều</strong> hiển thị văn bản (vd <code>dir="rtl"</code>).</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · từng thẻ</div>
+        <div class="demo-body d-quote">
+          <p class="muted">▸ <code>&lt;blockquote&gt;</code> — trích dẫn dài:</p>
+          <blockquote cite="https://www.w3.org/">
+            World Wide Web Consortium (W3C) đặt ra các chuẩn để Web hoạt động lâu dài cho tất cả mọi người.
+          </blockquote>
+
+          <p class="muted" style="margin-top:10px">▸ <code>&lt;q&gt;</code> — trích dẫn ngắn:
+            Tim Berners-Lee từng nói <q>Web dành cho tất cả mọi người</q>.</p>
+
+          <p class="muted">▸ <code>&lt;abbr&gt;</code> — viết tắt (rê chuột để xem):
+            Tổ chức <abbr title="World Health Organization">WHO</abbr> và ngôn ngữ
+            <abbr title="HyperText Markup Language">HTML</abbr>.</p>
+
+          <p class="muted">▸ <code>&lt;cite&gt;</code> — tên tác phẩm:
+            Tranh <cite>Hoa hướng dương</cite> của Van Gogh.</p>
+
+          <p class="muted">▸ <code>&lt;address&gt;</code> — thông tin liên hệ:</p>
+          <address>
+            Khoa CNTT — Trường ĐH Mở TP.HCM<br>
+            Email: <a href="mailto:contact@example.edu">contact@example.edu</a><br>
+            97 Võ Văn Tần, Quận 3, TP.HCM
+          </address>
+
+          <p class="muted" style="margin-top:10px">▸ <code>&lt;bdo dir="rtl"&gt;</code> — đảo chiều:
+            <bdo dir="rtl">Đoạn này hiển thị ngược</bdo>.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;blockquote</span> <span class="v">cite</span>=<span class="s">"https://www.w3.org/"</span><span class="k">&gt;</span>...<span class="k">&lt;/blockquote&gt;</span>
+<span class="k">&lt;abbr</span> <span class="v">title</span>=<span class="s">"HyperText Markup Language"</span><span class="k">&gt;</span>HTML<span class="k">&lt;/abbr&gt;</span>
+<span class="k">&lt;bdo</span> <span class="v">dir</span>=<span class="s">"rtl"</span><span class="k">&gt;</span>Đoạn này hiển thị ngược<span class="k">&lt;/bdo&gt;</span></code></pre>
+
+      <div class="callout info"><p>Thuộc tính <code>cite</code> (trên <code>blockquote</code>/<code>q</code>) <em>không</em> hiển thị trực tiếp —
+        nó dành cho máy móc/công cụ. Muốn người đọc thấy nguồn, hãy thêm <code>&lt;cite&gt;</code> hoặc một liên kết bên dưới trích dẫn.</p></div>
+    </section>
+
+    <!-- ==========  8. KÝ TỰ ĐẶC BIỆT & ENTITIES  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Ký tự đặc biệt &amp; entities <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Một số ký tự là "dành riêng" cho HTML (như <code>&lt;</code> <code>&gt;</code> <code>&amp;</code>)
+         hoặc không có trên bàn phím. Ta gõ chúng qua <strong>HTML entity</strong> dạng
+         <code>&amp;ten;</code> hoặc <code>&amp;#số;</code>.</p>
+
+      <table class="syntax">
+        <caption>Các entity hay dùng trong văn bản</caption>
+        <thead><tr><th>Hiển thị</th><th>Entity (tên)</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td>&lt;</td><td><code>&amp;lt;</code></td><td>Dấu nhỏ hơn (less-than) — bắt buộc escape trong văn bản.</td></tr>
+          <tr><td>&gt;</td><td><code>&amp;gt;</code></td><td>Dấu lớn hơn (greater-than).</td></tr>
+          <tr><td>&amp;</td><td><code>&amp;amp;</code></td><td>Dấu và (ampersand).</td></tr>
+          <tr><td>"</td><td><code>&amp;quot;</code></td><td>Dấu nháy kép.</td></tr>
+          <tr><td>&nbsp;</td><td><code>&amp;nbsp;</code></td><td>Khoảng trắng không ngắt (non-breaking space) — giữ chữ liền nhau.</td></tr>
+          <tr><td>&copy;</td><td><code>&amp;copy;</code></td><td>Bản quyền (copyright).</td></tr>
+          <tr><td>&reg;</td><td><code>&amp;reg;</code></td><td>Đã đăng ký nhãn hiệu (registered).</td></tr>
+          <tr><td>&trade;</td><td><code>&amp;trade;</code></td><td>Nhãn hiệu (trademark).</td></tr>
+          <tr><td>&euro;</td><td><code>&amp;euro;</code></td><td>Ký hiệu tiền Euro.</td></tr>
+          <tr><td>&deg;</td><td><code>&amp;deg;</code></td><td>Độ (degree) — vd nhiệt độ, góc.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <p>&copy; 2026 Trường ĐH Mở &mdash; Mọi quyền được bảo lưu.</p>
+          <p>Nhiệt độ hôm nay 32&deg;C. Sản phẩm OpenLab&trade; &amp; OpenSoft&reg;.</p>
+          <p>Số điện thoại 0901&nbsp;234&nbsp;567 dùng <code>&amp;nbsp;</code> để không bị ngắt giữa chừng.</p>
+          <p>Viết được dấu &lt; và &gt; trong văn bản nhờ <code>&amp;lt;</code> và <code>&amp;gt;</code>.</p>
+        </div>
+      </div>
+
+      <div class="callout danger"><p><strong>Bắt buộc:</strong> để hiện ký tự <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>
+        dưới dạng <em>chữ</em> (không bị hiểu là thẻ), <strong>phải</strong> dùng entity
+        <code>&amp;lt;</code>, <code>&amp;gt;</code>, <code>&amp;amp;</code>. Đây là lý do mọi đoạn code mẫu trong bài đều được "escape".</p></div>
+    </section>
+
+    <!-- ==========  9. ĐỊNH DẠNG CODE/KĨ THUẬT  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Định dạng code/kĩ thuật: <code>&lt;code&gt; &lt;kbd&gt; &lt;samp&gt; &lt;var&gt;</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Nhóm thẻ "Computer Code Elements" của W3Schools — dùng phông đều (monospace) và mang ngữ nghĩa
+         "đoạn mã / phím bấm / kết quả máy / biến".</p>
+
+      <table class="syntax">
+        <caption>Thẻ định dạng kĩ thuật</caption>
+        <thead><tr><th>Thẻ</th><th>Ý nghĩa</th><th>Ví dụ dùng</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;code&gt;</code></td><td>Một đoạn <strong>mã nguồn</strong> (inline).</td><td>Hàm <code>console.log()</code></td></tr>
+          <tr><td><code>&lt;kbd&gt;</code></td><td>Phím người dùng <strong>bấm</strong> trên bàn phím.</td><td>Nhấn <kbd>Ctrl</kbd>+<kbd>S</kbd></td></tr>
+          <tr><td><code>&lt;samp&gt;</code></td><td><strong>Kết quả</strong> mẫu do chương trình in ra (sample output).</td><td><samp>404 Not Found</samp></td></tr>
+          <tr><td><code>&lt;var&gt;</code></td><td>Một <strong>biến</strong> trong lập trình/toán học (variable).</td><td>Diện tích = <var>r</var>² × π</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <p>Để lưu file, nhấn <kbd>Ctrl</kbd> + <kbd>S</kbd> (trên macOS là <kbd>Cmd</kbd> + <kbd>S</kbd>).</p>
+          <p>Gọi hàm <code>document.getElementById("main")</code> để lấy phần tử.</p>
+          <p>Nếu sai địa chỉ, máy chủ trả về <samp>404 Not Found</samp>.</p>
+          <p>Với bán kính <var>r</var>, chu vi đường tròn là 2 × π × <var>r</var>.</p>
+        </div>
+      </div>
+
+      <div class="callout info"><p>Cả 4 thẻ này đều <strong>inline</strong> &amp; dùng monospace. Khi cần hiển thị một
+        <em>khối</em> code nhiều dòng (giữ nguyên xuống dòng), hãy bọc <code>&lt;code&gt;</code> trong
+        <code>&lt;pre&gt;</code> như các ô code đen trong bài.</p></div>
+    </section>
+
+    <!-- ==========  10. BẢNG TỔNG HỢP  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Bảng tổng hợp tất cả thẻ định dạng <span class="tag-adv">Tra cứu</span></h2>
+      <p class="lead">Tổng hợp toàn bộ thẻ định dạng văn bản trong bài, phân loại theo <strong>hình thức</strong> hay
+         <strong>ngữ nghĩa</strong> để dễ tra cứu nhanh.</p>
+
+      <table class="syntax">
+        <caption>Bảng tra nhanh — thẻ định dạng văn bản (theo W3Schools)</caption>
+        <thead><tr><th>Thẻ</th><th>Nhóm</th><th>Loại</th><th>Ý nghĩa ngắn gọn</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;h1&gt;–&lt;h6&gt;</code></td><td>Cấu trúc</td><td>Ngữ nghĩa</td><td>6 mức tiêu đề.</td></tr>
+          <tr><td><code>&lt;p&gt;</code></td><td>Văn bản</td><td>Ngữ nghĩa</td><td>Đoạn văn.</td></tr>
+          <tr><td><code>&lt;br&gt;</code></td><td>Văn bản</td><td>Hình thức</td><td>Ngắt dòng.</td></tr>
+          <tr><td><code>&lt;hr&gt;</code></td><td>Văn bản</td><td>Ngữ nghĩa</td><td>Ngăn chủ đề (kẻ ngang).</td></tr>
+          <tr><td><code>&lt;pre&gt;</code></td><td>Văn bản</td><td>Ngữ nghĩa</td><td>Giữ nguyên khoảng trắng.</td></tr>
+          <tr><td><code>&lt;b&gt;</code></td><td>Nhấn</td><td>Hình thức</td><td>In đậm (không ngụ ý quan trọng).</td></tr>
+          <tr><td><code>&lt;strong&gt;</code></td><td>Nhấn</td><td>Ngữ nghĩa</td><td>Quan trọng/nghiêm trọng.</td></tr>
+          <tr><td><code>&lt;i&gt;</code></td><td>Nhấn</td><td>Hình thức</td><td>In nghiêng (giọng khác lệ).</td></tr>
+          <tr><td><code>&lt;em&gt;</code></td><td>Nhấn</td><td>Ngữ nghĩa</td><td>Nhấn mạnh, đổi sắc thái.</td></tr>
+          <tr><td><code>&lt;mark&gt;</code></td><td>Nhấn</td><td>Ngữ nghĩa</td><td>Tô sáng/đánh dấu.</td></tr>
+          <tr><td><code>&lt;small&gt;</code></td><td>Nhấn</td><td>Ngữ nghĩa</td><td>Chữ nhỏ, ghi chú phụ.</td></tr>
+          <tr><td><code>&lt;del&gt;</code></td><td>Sửa đổi</td><td>Ngữ nghĩa</td><td>Văn bản bị xoá.</td></tr>
+          <tr><td><code>&lt;ins&gt;</code></td><td>Sửa đổi</td><td>Ngữ nghĩa</td><td>Văn bản được chèn thêm.</td></tr>
+          <tr><td><code>&lt;u&gt;</code></td><td>Nhấn</td><td>Hình thức</td><td>Gạch chân chú thích.</td></tr>
+          <tr><td><code>&lt;s&gt;</code></td><td>Nhấn</td><td>Ngữ nghĩa</td><td>Nội dung không còn đúng/phù hợp.</td></tr>
+          <tr><td><code>&lt;sup&gt;</code></td><td>Chỉ số</td><td>Ngữ nghĩa</td><td>Chỉ số trên (số mũ).</td></tr>
+          <tr><td><code>&lt;sub&gt;</code></td><td>Chỉ số</td><td>Ngữ nghĩa</td><td>Chỉ số dưới (hoá học).</td></tr>
+          <tr><td><code>&lt;blockquote&gt;</code></td><td>Trích dẫn</td><td>Ngữ nghĩa</td><td>Trích dẫn dài (khối).</td></tr>
+          <tr><td><code>&lt;q&gt;</code></td><td>Trích dẫn</td><td>Ngữ nghĩa</td><td>Trích dẫn ngắn (inline).</td></tr>
+          <tr><td><code>&lt;abbr&gt;</code></td><td>Trích dẫn</td><td>Ngữ nghĩa</td><td>Từ viết tắt (kèm title).</td></tr>
+          <tr><td><code>&lt;address&gt;</code></td><td>Trích dẫn</td><td>Ngữ nghĩa</td><td>Thông tin liên hệ.</td></tr>
+          <tr><td><code>&lt;cite&gt;</code></td><td>Trích dẫn</td><td>Ngữ nghĩa</td><td>Tên tác phẩm.</td></tr>
+          <tr><td><code>&lt;bdo&gt;</code></td><td>Trích dẫn</td><td>Ngữ nghĩa</td><td>Đảo chiều văn bản.</td></tr>
+          <tr><td><code>&lt;code&gt;</code></td><td>Kĩ thuật</td><td>Ngữ nghĩa</td><td>Đoạn mã nguồn.</td></tr>
+          <tr><td><code>&lt;kbd&gt;</code></td><td>Kĩ thuật</td><td>Ngữ nghĩa</td><td>Phím bấm.</td></tr>
+          <tr><td><code>&lt;samp&gt;</code></td><td>Kĩ thuật</td><td>Ngữ nghĩa</td><td>Kết quả máy in ra.</td></tr>
+          <tr><td><code>&lt;var&gt;</code></td><td>Kĩ thuật</td><td>Ngữ nghĩa</td><td>Biến số.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  11. MẸO: NGỮ NGHĨA VS HÌNH THỨC  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Mẹo: ưu tiên thẻ ngữ nghĩa <span class="tag-base">Tổng kết</span></h2>
+      <p class="lead">Bài học quan trọng nhất: cùng một <em>hình thức</em> (đậm/nghiêng) nhưng thẻ ngữ nghĩa nói cho
+         máy biết <strong>tại sao</strong> — quyết định khả năng tiếp cận &amp; SEO.</p>
+
+      <div class="callout tip"><p><strong>Ưu tiên ngữ nghĩa.</strong> Dùng <code>&lt;strong&gt;</code> thay <code>&lt;b&gt;</code> khi nội dung
+        thật sự quan trọng; dùng <code>&lt;em&gt;</code> thay <code>&lt;i&gt;</code> khi muốn nhấn mạnh. Trình đọc màn hình
+        đọc nhấn giọng đúng chỗ → tốt cho người khiếm thị.</p></div>
+
+      <div class="callout info"><p><strong>SEO.</strong> Công cụ tìm kiếm coi <code>&lt;strong&gt;</code>/<code>&lt;em&gt;</code> và
+        tiêu đề <code>&lt;h1&gt;–&lt;h6&gt;</code> là tín hiệu nội dung quan trọng. Cấu trúc ngữ nghĩa rõ ràng giúp trang dễ được
+        hiểu &amp; xếp hạng hơn.</p></div>
+
+      <div class="callout warn"><p><strong>Trang trí thì để CSS.</strong> Muốn chữ to/đậm/màu thuần thẩm mỹ mà không thêm ý nghĩa,
+        hãy dùng CSS chứ đừng "mượn" tiêu đề hay <code>&lt;strong&gt;</code>. Tách bạch <em>nội dung (HTML)</em> và
+        <em>trình bày (CSS)</em> là nguyên tắc cốt lõi của thiết kế web.</p></div>
+
+      <div class="callout danger"><p><strong>Tránh.</strong> Đừng dùng <code>&lt;h1&gt;</code> chỉ để phóng to chữ, đừng dùng nhiều
+        <code>&lt;br&gt;</code> thay đoạn, và đừng dùng <code>&lt;u&gt;</code> cho văn bản thường (dễ nhầm liên kết).</p></div>
+
+      <div class="note">
+        <p><strong>Ghi nhớ nhanh:</strong> quan trọng → <code>&lt;strong&gt;</code>; nhấn mạnh → <code>&lt;em&gt;</code>;
+           tô sáng → <code>&lt;mark&gt;</code>; trích dẫn → <code>&lt;blockquote&gt;</code>/<code>&lt;q&gt;</code>;
+           code → <code>&lt;code&gt;</code>; còn trang trí thuần → dùng CSS.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="02-the-thuoc-tinh.html"><small>← Bài trước</small>2.1.2 · Thẻ &amp; thuộc tính</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="04-danh-sach.html"><small>Bài tiếp →</small>2.1.5 · Danh sách</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="Trắc nghiệm 30 câu ôn tập Tailwind CSS v4 — utility-first, responsive, dark mode, gradient, animation. Tự chấm điểm ngay trên trang.">
+  <title>Trắc nghiệm 30 câu — Chương 5</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <!-- Tailwind v4 — bản trình duyệt (biên dịch class ngay trong browser). Chỉ dùng để học/prototype. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- Tuỳ biến CSS-first của v4: token thương hiệu + bật dark bằng class .dark -->
+  <style type="text/tailwindcss">
+    @theme {
+      --color-brand: #04AA6D;
+    }
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- Safelist: bảo đảm CDN trình duyệt biên dịch sẵn các class dùng cho phản hồi chấm điểm -->
+  <div class="hidden bg-emerald-100 border-emerald-500 bg-red-100 border-red-500"></div>
+
+  <!-- ===== Breadcrumb ===== -->
+  <nav class="mx-auto max-w-4xl px-4 pt-4 text-sm text-gray-500">
+    <a class="hover:text-[#1D559F]" href="../index.html">Môn học</a>
+    <span class="mx-1">›</span>
+    <a class="hover:text-[#1D559F]" href="index.html">Chương 5</a>
+    <span class="mx-1">›</span>
+    <span class="text-gray-700">Trắc nghiệm</span>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="mt-3 bg-linear-to-br from-[#1D559F] to-violet-600 text-white">
+    <div class="mx-auto max-w-4xl px-4 py-10">
+      <h1 class="text-3xl font-bold">Trắc nghiệm Tailwind CSS (30 câu)</h1>
+      <p class="mt-2 text-white/80">Chọn một đáp án cho mỗi câu rồi bấm <strong>Chấm điểm</strong>. Hệ thống sẽ tô <span class="rounded bg-white/20 px-1">xanh</span> đáp án đúng và <span class="rounded bg-white/20 px-1">đỏ</span> đáp án bạn chọn sai, kèm tổng điểm và phần trăm.</p>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-4xl px-4 py-8">
+
+    <div class="mb-6 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+      <p class="font-semibold text-violet-800">Cách làm bài</p>
+      <p>30 câu hỏi trắc nghiệm 4 lựa chọn (A–D). Bài không giới hạn thời gian — có thể đổi đáp án trước khi chấm. Bấm <strong>Làm lại</strong> để xoá kết quả và thử lần nữa.</p>
+    </div>
+
+    <!-- Nơi JS chèn 30 câu hỏi -->
+    <form id="quizForm"></form>
+
+  </main>
+
+  <!-- ===== Thanh chấm điểm (dính đáy) ===== -->
+  <div class="sticky bottom-0 z-40 border-t border-gray-200 bg-white/95 backdrop-blur">
+    <div class="mx-auto flex max-w-4xl flex-wrap items-center gap-3 px-4 py-3">
+      <button id="btnGrade" type="button" class="rounded-lg bg-[#1D559F] px-5 py-2.5 font-semibold text-white hover:bg-[#17457f]">Chấm điểm</button>
+      <button id="btnReset" type="button" class="rounded-lg border border-gray-300 px-5 py-2.5 font-semibold text-gray-700 hover:bg-gray-100">Làm lại</button>
+      <div id="result" class="ml-auto text-right text-sm font-semibold text-gray-500">Chưa chấm — hãy chọn đáp án rồi bấm “Chấm điểm”.</div>
+    </div>
+  </div>
+
+  <!-- ===== Footer điều hướng ===== -->
+  <footer class="mx-auto mt-6 flex max-w-4xl flex-wrap justify-between gap-2 border-t border-gray-200 px-4 py-6">
+    <a class="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-100" href="08-du-an-bai-tap.html">← Dự án &amp; Bài tập</a>
+    <a class="rounded-lg bg-[#1D559F] px-4 py-2 text-sm text-white hover:bg-[#17457f]" href="index.html">Mục lục Chương 5 →</a>
+  </footer>
+
+  <script>
+    // ===== Dữ liệu câu hỏi (thứ tự lựa chọn A, B, C, D) =====
+    const QUESTIONS = [
+      { q: "Thiết lập nền xanh blue-500?", opts: ["background:blue-500", "bg-blue-500", "background-color:#3B82F6", "color-blue-500"] },
+      { q: "Lớp p-4 nghĩa là?", opts: ["4px", "4rem", "8px", "16px"] },
+      { q: "Chiều rộng tối đa 75% của cha?", opts: ["max-w-3/4", "width-3/4", "w-3/4", "w-75%"] },
+      { q: "Viền đen dày 2px?", opts: ["border-2 border-black", "border-black-2", "border-black-thick", "border-black-500"] },
+      { q: "Khoảng cách giữa các cột (column-gap)?", opts: ["gap-x-4", "col-gap-4", "grid-gap-4", "column-gap-4"] },
+      { q: "Ẩn trên mobile, hiện trên desktop?", opts: ["block md:hidden", "lg:hidden block", "hidden lg:block", "sm:block hidden"] },
+      { q: "Căn giữa DỌC trong flexbox?", opts: ["items-center", "justify-center", "align-middle", "vertical-align"] },
+      { q: "Bo góc input?", opts: ["rounded-lg", "input-border-round", "radius-input", "rounded-input-lg"] },
+      { q: "Full mobile, 50% trên lg?", opts: ["w-100 lg:w-50", "width-full lg:width-1/2", "full-w lg:half-w", "w-full lg:w-1/2"] },
+      { q: "Phóng to khi hover?", opts: ["hover:scale-110", "hover:zoom-110", "hover:transform-scale-110", "scale-hover-110"] },
+      { q: "Lưới 1 cột mobile, 3 cột ≥1024px?", opts: ["grid-cols-1 lg:grid-cols-3", "grid-cols-3 lg:grid-cols-1", "lg:grid-cols-1 grid-cols-3", "grid-1 lg:grid-3"] },
+      { q: "md:flex nghĩa là?", opts: ["Mọi màn hình", "Chỉ khi ≤ md", "Tất cả kích thước", "Khi màn hình ≥ md trở lên"] },
+      { q: "Nút nền xanh, chữ trắng, bo góc?", opts: ["bg-blue text-white rounded", "background-blue text-white", "bg-blue-500 text-white rounded-lg", "bg-blue-500 border-radius"] },
+      { q: "Khoảng cách phần tử con trong flex?", opts: ["space-between", "gap-4", "flex-gap-4", "spacing-4"] },
+      { q: "Thời gian chạy transition?", opts: ["duration-{value}", "speed-{value}", "time-{value}", "animation-time"] },
+      { q: "Kiểm soát timing animation?", opts: ["speed-*", "timing-*", "motion-*", "ease-{value}"] },
+      { q: "Thu nhỏ khi click?", opts: ["active:scale-90 transition-all", "click:shrink-90", "active:compress-90", "click:scale-down"] },
+      { q: "Phóng to ảnh khi hover?", opts: ["hover:zoom-110", "hover:transform-scale-110", "hover:animate-zoom", "hover:scale-110 transition-transform duration-300"] },
+      { q: "Layout 3 cột desktop / 2 tablet / 1 mobile?", opts: ["grid-cols-1 md:grid-cols-2 lg:grid-cols-3", "grid-cols-3 md:grid-cols-2 lg:grid-cols-1", "grid-cols-2 md:grid-cols-1", "grid-3 md:grid-2 lg:grid-1"] },
+      { q: "Khác biệt chính Tailwind vs Bootstrap?", opts: ["Tailwind là UI hoàn chỉnh", "Bootstrap có component sẵn, Tailwind utility-first", "Bootstrap không responsive", "Tailwind cần jQuery"] },
+      { q: "Header dính đỉnh khi cuộn?", opts: ["fixed-top", "sticky top-0 z-50", "position-sticky", "stick-top"] },
+      { q: "Bật chế độ tối cho 1 phần tử?", opts: ["dark-mode", "theme-dark", "dark:bg-gray-900", "@dark bg-gray-900"] },
+      { q: "v4: bóng 'vừa' của v3 (shadow) giờ viết là?", opts: ["shadow-md", "shadow-sm", "shadow-base", "shadow"] },
+      { q: "Chữ gradient cần cặp class nào?", opts: ["bg-clip-text text-transparent", "text-gradient", "gradient-text", "bg-clip-content text-white"] },
+      { q: "Một class đặt cả rộng & cao 24 (vuông)?", opts: ["wh-24", "box-24", "size-24", "square-24"] },
+      { q: "Focus rõ ràng cho input (v4)?", opts: ["focus:outline-none", "focus:ring-2 focus:outline-hidden", "focus:border", "active:ring"] },
+      { q: "Cắt đoạn văn còn đúng 3 dòng?", opts: ["line-3", "clamp-3", "line-clamp-3", "truncate-3"] },
+      { q: "Gradient tuyến tính sang phải (v4)?", opts: ["bg-gradient-to-r", "bg-linear-to-r", "gradient-r", "bg-to-r"] },
+      { q: "Căn khung nội dung vào giữa trang?", opts: ["center", "mx-center", "container mx-auto", "align-center"] },
+      { q: "v4: viết !important cho một class?", opts: ["!bg-red-500", "bg-red-500!", "important:bg-red-500", "bg-red-500 !important"] }
+    ];
+
+    // ===== Đáp án đúng (index 0 = A, 1 = B, 2 = C, 3 = D) =====
+    // 1B 2D 3C 4A 5A 6C 7A 8A 9D 10A 11A 12D 13C 14B 15A 16D 17A 18D 19A 20B 21B 22C 23B 24A 25C 26B 27C 28B 29C 30B
+    const ANSWERS = [1, 3, 2, 0, 0, 2, 0, 0, 3, 0, 0, 3, 2, 1, 0, 3, 0, 3, 0, 1, 1, 2, 1, 0, 2, 1, 2, 1, 2, 1];
+
+    const LETTERS = ["A", "B", "C", "D"];
+    const FEEDBACK_CLASSES = ["bg-emerald-100", "border-emerald-500", "bg-red-100", "border-red-500"];
+
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    // ===== Render 30 câu hỏi =====
+    const form = document.getElementById("quizForm");
+    form.innerHTML = QUESTIONS.map((item, i) => {
+      const options = item.opts.map((opt, j) => `
+          <label data-q="${i}" data-opt="${j}"
+                 class="flex items-start gap-3 block rounded-lg border border-gray-300 p-3 hover:bg-gray-50 cursor-pointer transition-colors">
+            <input type="radio" name="q${i + 1}" value="${j}" class="mt-0.5 accent-[#1D559F]">
+            <span><span class="mr-1 font-semibold text-gray-700">${LETTERS[j]}.</span><code class="text-gray-800">${esc(opt)}</code></span>
+          </label>`).join("");
+
+      return `
+        <fieldset class="mb-6 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+          <p class="mb-3 font-semibold text-gray-900">
+            <span class="mr-2 inline-flex size-7 items-center justify-center rounded-full bg-[#1D559F] align-middle text-sm text-white">${i + 1}</span>${esc(item.q)}
+          </p>
+          <div class="space-y-2">${options}</div>
+        </fieldset>`;
+    }).join("");
+
+    // ===== Chấm điểm =====
+    const resultEl = document.getElementById("result");
+
+    function gradeQuiz() {
+      let score = 0;
+      let answered = 0;
+
+      ANSWERS.forEach((correct, i) => {
+        const labels = form.querySelectorAll(`label[data-q="${i}"]`);
+        labels.forEach(l => l.classList.remove(...FEEDBACK_CLASSES));
+
+        // Tô xanh đáp án đúng
+        const correctLabel = form.querySelector(`label[data-q="${i}"][data-opt="${correct}"]`);
+        if (correctLabel) correctLabel.classList.add("bg-emerald-100", "border-emerald-500");
+
+        // Kiểm tra lựa chọn của người dùng
+        const selected = form.querySelector(`input[name="q${i + 1}"]:checked`);
+        if (selected) {
+          answered++;
+          const chosen = Number(selected.value);
+          if (chosen === correct) {
+            score++;
+          } else {
+            const wrongLabel = form.querySelector(`label[data-q="${i}"][data-opt="${chosen}"]`);
+            if (wrongLabel) wrongLabel.classList.add("bg-red-100", "border-red-500");
+          }
+        }
+      });
+
+      const percent = Math.round((score / ANSWERS.length) * 1000) / 10;
+      const tone = score >= 24 ? "text-emerald-700" : (score >= 15 ? "text-amber-700" : "text-red-700");
+      resultEl.className = `ml-auto text-right text-sm font-semibold ${tone}`;
+      resultEl.innerHTML = `Điểm: <span class="text-lg">${score}/${ANSWERS.length}</span> (${percent}%) · Đã trả lời ${answered}/${ANSWERS.length} câu`;
+
+      const firstFieldset = form.querySelector("fieldset");
+      if (firstFieldset) firstFieldset.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    // ===== Làm lại =====
+    function resetQuiz() {
+      form.reset();
+      form.querySelectorAll("label[data-q]").forEach(l => l.classList.remove(...FEEDBACK_CLASSES));
+      resultEl.className = "ml-auto text-right text-sm font-semibold text-gray-500";
+      resultEl.textContent = "Chưa chấm — hãy chọn đáp án rồi bấm “Chấm điểm”.";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.getElementById("btnGrade").addEventListener("click", gradeQuiz);
+    document.getElementById("btnReset").addEventListener("click", resetQuiz);
+  </script>
+
+</body>
+</html>

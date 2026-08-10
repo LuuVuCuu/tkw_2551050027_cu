@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  1.5 — SEO, META, OPENGRAPH & FAVICON   [BỔ SUNG]
+  ------------------------------------------------------------
+  Bài thực hành của Chương 1: phần <head> quyết định thứ hạng
+  SEO, cách trang hiện khi chia sẻ link, tiêu đề tab và favicon.
+    1) Thẻ <head> và vì sao quan trọng
+    2) Thẻ meta cơ bản (charset, viewport, title, description…)
+    3) OpenGraph & Twitter Card (kèm XEM TRƯỚC thẻ chia sẻ)
+    4) Favicon & icon ứng dụng
+    5) Mẫu <head> HOÀN CHỈNH (copy-paste được)
+    6) SEO on-page nhanh & Core Web Vitals
+  Khung trang dùng ../assets/lesson.css; phần CSS minh hoạ của
+  bài (thẻ xem trước OpenGraph, favicon) đặt trong <style> với
+  tiền tố .d- để sinh viên đọc trọn vẹn.
+  Toàn bộ OFFLINE — không CDN, không font ngoài, không script.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="Bài 1.5 môn Thiết kế Web (INTE03010): thẻ head, meta cơ bản (title/description/canonical/robots), OpenGraph & Twitter Card kèm xem trước thẻ chia sẻ, favicon và checklist SEO on-page, Core Web Vitals.">
+  <title>1.5 · SEO, meta, OpenGraph &amp; favicon — Chương 1</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* --- Thẻ XEM TRƯỚC OpenGraph (mô phỏng thẻ chia sẻ trên MXH) --- */
+    .d-ogcard {
+      max-width: 524px; background: #fff;
+      border: 1px solid #dfe3ea; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 2px 12px rgba(20,40,80,.10); margin: 12px 0;
+    }
+    .d-ogcard .d-img {
+      display: block; width: 100%; height: auto;
+      aspect-ratio: 1200 / 630; object-fit: cover;
+      background: #eef2f8; border-bottom: 1px solid #eceff4;
+    }
+    .d-ogcard .d-meta { padding: 12px 15px 14px; }
+    .d-ogcard .d-dom {
+      font-size: .72rem; letter-spacing: .4px; text-transform: uppercase;
+      color: #8893a4; margin: 0 0 4px;
+    }
+    .d-ogcard .d-tit {
+      font-size: 1.02rem; font-weight: 700; color: #1a1f29;
+      margin: 0 0 5px; line-height: 1.3;
+    }
+    .d-ogcard .d-des { font-size: .86rem; color: #5b6472; margin: 0; line-height: 1.45; }
+
+    /* --- Mô phỏng thanh tab trình duyệt để khoe favicon --- */
+    .d-tabbar {
+      display: inline-flex; align-items: flex-end; gap: 6px;
+      background: #e6ebf2; border: 1px solid #dfe3ea;
+      border-bottom: none; border-radius: 10px 10px 0 0;
+      padding: 8px 10px 0; margin: 12px 0 0;
+    }
+    .d-tab {
+      display: flex; align-items: center; gap: 8px;
+      background: #fff; border-radius: 8px 8px 0 0;
+      padding: 8px 14px; font-size: .86rem; color: #1a1f29;
+      max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      box-shadow: 0 -1px 3px rgba(0,0,0,.06);
+    }
+    .d-tab img { width: 16px; height: 16px; flex: none; }
+    .d-tabpage {
+      background: #fff; border: 1px solid #dfe3ea; border-radius: 0 8px 8px 8px;
+      padding: 12px 16px; font-size: .85rem; color: #5b6472; max-width: 360px;
+    }
+
+    /* --- Hàng favicon ở nhiều kích thước --- */
+    .d-favrow {
+      display: flex; align-items: flex-end; gap: 26px; flex-wrap: wrap;
+      background: #f8fafc; border: 1px solid var(--line, #e3e8f0);
+      border-radius: 12px; padding: 16px 20px; margin: 12px 0;
+    }
+    .d-favrow figure { margin: 0; text-align: center; }
+    .d-favrow img { display: block; margin: 0 auto 6px; border-radius: 5px; }
+    .d-favrow figcaption { font-size: .74rem; color: #5b6472; }
+
+    /* --- Thẻ đo độ dài title/description --- */
+    .d-ruler {
+      font-family: "Cascadia Code", Consolas, monospace; font-size: .82rem;
+      background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 8px;
+      padding: 8px 12px; margin: 8px 0; color: #334155;
+    }
+    .d-ruler .d-cut { background: #ffe0e0; color: #b3257a; text-decoration: line-through; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 1 · Tổng quan Internet</a><span>›</span>
+        SEO &amp; meta
+      </nav>
+      <h1>SEO · thẻ meta · OpenGraph · favicon</h1>
+      <p class="sub">Phần <code>&lt;head&gt;</code> không hiển thị lên trang, nhưng lại quyết định
+         trang của bạn xếp hạng thế nào trên Google, trông ra sao khi được chia sẻ lên
+         Facebook/Zalo/X, hiện tiêu đề gì trên tab trình duyệt và dùng biểu tượng (favicon) nào.
+         Bài này là mẫu <code>&lt;head&gt;</code> chuẩn để copy dùng lại.</p>
+      <div class="chips">
+        <span class="chip solid">1.5</span>
+        <span class="chip">[BỔ SUNG]</span>
+        <span class="chip">SEO</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Thẻ &lt;head&gt; và vì sao quan trọng</a></li>
+        <li><a href="#s2">Thẻ meta cơ bản</a></li>
+        <li><a href="#s3">OpenGraph &amp; Twitter Card</a></li>
+        <li><a href="#s4">Favicon &amp; icon ứng dụng</a></li>
+        <li><a href="#s5">Mẫu &lt;head&gt; hoàn chỉnh</a></li>
+        <li><a href="#s6">SEO on-page &amp; Core Web Vitals</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. THẺ HEAD  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Thẻ <code>&lt;head&gt;</code> và vì sao quan trọng <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Một tài liệu HTML có hai phần: <code>&lt;head&gt;</code> chứa <strong>metadata</strong>
+         (thông tin <em>về</em> trang) và <code>&lt;body&gt;</code> chứa nội dung <em>hiển thị</em>.
+         Người dùng không nhìn thấy <code>&lt;head&gt;</code> trên trang, nhưng trình duyệt và các
+         cỗ máy tìm kiếm thì đọc nó rất kỹ.</p>
+
+      <pre class="code"><code><span class="k">&lt;!DOCTYPE html&gt;</span>
+<span class="k">&lt;html</span> <span class="v">lang</span>=<span class="s">"vi"</span><span class="k">&gt;</span>
+<span class="k">&lt;head&gt;</span>
+  <span class="c">&lt;!-- METADATA: mô tả về trang, KHÔNG hiển thị lên màn hình --&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">charset</span>=<span class="s">"UTF-8"</span><span class="k">&gt;</span>
+  <span class="k">&lt;title&gt;</span>Tiêu đề tab &amp; kết quả tìm kiếm<span class="k">&lt;/title&gt;</span>
+<span class="k">&lt;/head&gt;</span>
+<span class="k">&lt;body&gt;</span>
+  <span class="c">&lt;!-- NỘI DUNG: những gì người dùng thực sự nhìn thấy --&gt;</span>
+  <span class="k">&lt;h1&gt;</span>Xin chào<span class="k">&lt;/h1&gt;</span>
+<span class="k">&lt;/body&gt;</span>
+<span class="k">&lt;/html&gt;</span></code></pre>
+
+      <p>Cùng một nội dung <code>&lt;body&gt;</code>, nhưng phần <code>&lt;head&gt;</code> viết tốt hay dở
+         sẽ quyết định bốn thứ rất cụ thể:</p>
+
+      <table class="syntax">
+        <thead><tr><th>Phần <code>&lt;head&gt;</code> quyết định…</th><th>Người dùng thấy điều đó ở đâu</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Thứ hạng SEO</strong> (Search Engine Optimization)</td><td>Vị trí trang trên trang kết quả của Google, Bing…</td></tr>
+          <tr><td><strong>Cách hiện khi CHIA SẺ link</strong></td><td>Thẻ xem trước (ảnh + tiêu đề + mô tả) khi dán link lên Facebook, Zalo, X</td></tr>
+          <tr><td><strong>Tiêu đề tab trình duyệt</strong></td><td>Chữ trên tab và trong lịch sử / dấu trang (bookmark)</td></tr>
+          <tr><td><strong>Favicon</strong></td><td>Biểu tượng nhỏ cạnh tiêu đề tab, ở dấu trang, màn hình chính điện thoại</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info">
+        <p><strong>Ghi nhớ.</strong> <code>&lt;head&gt;</code> = "hồ sơ" của trang gửi cho máy móc
+        (trình duyệt + công cụ tìm kiếm + mạng xã hội); <code>&lt;body&gt;</code> = nội dung gửi cho
+        con người. Học SEO cơ bản chính là học viết phần "hồ sơ" này cho chuẩn.</p>
+      </div>
+    </section>
+
+    <!-- ==========  2. THẺ META CƠ BẢN  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Thẻ meta cơ bản <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Vài thẻ nền tảng nên có ở <em>mọi</em> trang. Trong đó, <code>&lt;title&gt;</code> và
+         <code>&lt;meta name="description"&gt;</code> là hai thứ Google hiển thị trực tiếp trên trang
+         kết quả tìm kiếm — nên viết cẩn thận nhất.</p>
+
+      <h3>a) Khai báo ngôn ngữ &amp; bộ mã</h3>
+      <pre class="code"><code><span class="k">&lt;html</span> <span class="v">lang</span>=<span class="s">"vi"</span><span class="k">&gt;</span>          <span class="c">&lt;!-- ngôn ngữ trang: giúp SEO & trình đọc màn hình --&gt;</span>
+
+<span class="k">&lt;meta</span> <span class="v">charset</span>=<span class="s">"UTF-8"</span><span class="k">&gt;</span>   <span class="c">&lt;!-- bộ mã: cần cho tiếng Việt có dấu --&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"viewport"</span> <span class="v">content</span>=<span class="s">"width=device-width, initial-scale=1.0"</span><span class="k">&gt;</span>
+                            <span class="c">&lt;!-- viewport: bắt buộc để hiển thị đúng trên điện thoại --&gt;</span></code></pre>
+
+      <h3>b) Tiêu đề &amp; mô tả — thứ Google hiển thị</h3>
+      <pre class="code"><code><span class="c">&lt;!-- title: nên 50–60 ký tự; là dòng xanh, đậm trên Google & là tên tab --&gt;</span>
+<span class="k">&lt;title&gt;</span>Khoá học Thiết kế Web cơ bản | Trường ABC<span class="k">&lt;/title&gt;</span>
+
+<span class="c">&lt;!-- description: ~150–160 ký tự; CHÍNH LÀ đoạn mô tả xám dưới tiêu đề trên Google --&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"description"</span>
+      <span class="v">content</span>=<span class="s">"Học HTML, CSS, JavaScript từ số 0. Lộ trình rõ ràng, nhiều bài thực hành, có chứng chỉ hoàn thành."</span><span class="k">&gt;</span></code></pre>
+
+      <h3>c) Tác giả, lập chỉ mục &amp; địa chỉ chuẩn</h3>
+      <pre class="code"><code><span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"author"</span> <span class="v">content</span>=<span class="s">"Nguyễn Văn A"</span><span class="k">&gt;</span>
+
+<span class="c">&lt;!-- robots: cho phép/không cho công cụ tìm kiếm lập chỉ mục & đi theo liên kết --&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"robots"</span> <span class="v">content</span>=<span class="s">"index, follow"</span><span class="k">&gt;</span>
+   <span class="c">&lt;!-- index   = cho phép đưa trang vào kết quả tìm kiếm (noindex = không) --&gt;</span>
+   <span class="c">&lt;!-- follow  = cho phép đi theo các link trên trang  (nofollow = không) --&gt;</span>
+
+<span class="c">&lt;!-- canonical: khai báo địa chỉ "chính chủ" khi 1 trang có nhiều URL trùng nội dung --&gt;</span>
+<span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"canonical"</span> <span class="v">href</span>=<span class="s">"https://truongabc.edu.vn/khoa-hoc/thiet-ke-web"</span><span class="k">&gt;</span></code></pre>
+
+      <table class="syntax">
+        <caption>Bảng tra nhanh các thẻ meta thường dùng</caption>
+        <thead><tr><th>Thẻ</th><th>Vai trò</th><th>Gợi ý</th></tr></thead>
+        <tbody>
+          <tr><td><code>charset</code></td><td>Bộ mã ký tự</td><td>Luôn là <code>UTF-8</code></td></tr>
+          <tr><td><code>viewport</code></td><td>Hiển thị đúng trên mobile</td><td>Bắt buộc, chép nguyên câu chuẩn</td></tr>
+          <tr><td><code>&lt;title&gt;</code></td><td>Tên tab + dòng tiêu đề trên Google</td><td><strong>50–60 ký tự</strong>, chứa từ khoá chính</td></tr>
+          <tr><td><code>description</code></td><td>Đoạn mô tả dưới tiêu đề trên Google</td><td><strong>150–160 ký tự</strong>, hấp dẫn, đúng nội dung</td></tr>
+          <tr><td><code>robots</code></td><td>Cho phép lập chỉ mục / theo link</td><td><code>index, follow</code> (mặc định nếu bỏ trống)</td></tr>
+          <tr><td><code>canonical</code></td><td>URL "chính chủ" chống trùng lặp</td><td>Trỏ về đúng địa chỉ chuẩn của trang</td></tr>
+          <tr><td><code>keywords</code></td><td class="muted">(cũ) danh sách từ khoá</td><td class="muted"><strong>Đã lỗi thời — Google bỏ qua</strong></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout danger">
+        <p><strong>Đừng dùng <code>&lt;meta name="keywords"&gt;</code> để làm SEO.</strong> Từ năm 2009
+        Google đã tuyên bố <em>không dùng</em> thẻ này để xếp hạng (vì bị nhồi từ khoá spam quá
+        nhiều). Nó không giúp gì và chỉ để lộ chiến lược từ khoá cho đối thủ. Bỏ qua nó.</p>
+      </div>
+
+      <div class="callout warn">
+        <p><strong>Coi chừng bị cắt.</strong> Google chỉ hiển thị khoảng <strong>50–60 ký tự</strong>
+        của tiêu đề và <strong>150–160 ký tự</strong> của mô tả; phần dài hơn bị thay bằng dấu
+        <code>…</code>. Viết dài không sai cú pháp, nhưng phần quan trọng có thể bị "nuốt mất":</p>
+        <p class="d-ruler">Khoá học Thiết kế Web cơ bản | Trường ABC<span class="d-cut"> — lộ trình chi tiết, giảng viên tận tâm, học phí ưu đãi 2026</span></p>
+        <p style="margin-bottom:0">Hãy đặt <strong>từ khoá và ý quan trọng ở đầu</strong>, chi tiết phụ để sau.</p>
+      </div>
+    </section>
+
+    <!-- ==========  3. OPENGRAPH & TWITTER CARD  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> OpenGraph &amp; Twitter Card <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Khi bạn dán một đường link lên Facebook, Zalo, X (Twitter)… các nền tảng này
+         tự sinh một <strong>thẻ xem trước</strong> gồm ảnh, tiêu đề và mô tả. Nội dung thẻ đó lấy
+         từ các thẻ <code>og:</code> (giao thức <strong>OpenGraph</strong> của Facebook) và
+         <code>twitter:</code> — <em>không phải</em> từ <code>&lt;title&gt;</code> thông thường.</p>
+
+      <h3>a) Các thẻ OpenGraph</h3>
+      <pre class="code"><code><span class="c">&lt;!-- OpenGraph: quyết định "thẻ xem trước" khi chia sẻ link --&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">property</span>=<span class="s">"og:title"</span>       <span class="v">content</span>=<span class="s">"Khoá học Thiết kế Web cơ bản"</span><span class="k">&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">property</span>=<span class="s">"og:description"</span> <span class="v">content</span>=<span class="s">"Học HTML, CSS, JS từ số 0 với nhiều bài thực hành."</span><span class="k">&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">property</span>=<span class="s">"og:image"</span>       <span class="v">content</span>=<span class="s">"https://truongabc.edu.vn/anh-chia-se.jpg"</span><span class="k">&gt;</span>
+   <span class="c">&lt;!-- og:image nên 1200×630 px (tỉ lệ ~1.91:1) để hiện đẹp, không bị cắt --&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">property</span>=<span class="s">"og:url"</span>         <span class="v">content</span>=<span class="s">"https://truongabc.edu.vn/thiet-ke-web"</span><span class="k">&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">property</span>=<span class="s">"og:type"</span>        <span class="v">content</span>=<span class="s">"website"</span><span class="k">&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">property</span>=<span class="s">"og:site_name"</span>   <span class="v">content</span>=<span class="s">"Trường ABC"</span><span class="k">&gt;</span></code></pre>
+
+      <h3>b) Twitter Card (X)</h3>
+      <pre class="code"><code><span class="c">&lt;!-- summary_large_image = kiểu thẻ có ảnh lớn nằm trên --&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"twitter:card"</span>        <span class="v">content</span>=<span class="s">"summary_large_image"</span><span class="k">&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"twitter:title"</span>       <span class="v">content</span>=<span class="s">"Khoá học Thiết kế Web cơ bản"</span><span class="k">&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"twitter:description"</span> <span class="v">content</span>=<span class="s">"Học HTML, CSS, JS từ số 0 với nhiều bài thực hành."</span><span class="k">&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"twitter:image"</span>       <span class="v">content</span>=<span class="s">"https://truongabc.edu.vn/anh-chia-se.jpg"</span><span class="k">&gt;</span></code></pre>
+
+      <div class="note">
+        <p>Nếu <strong>thiếu</strong> thẻ <code>og:</code>, mạng xã hội sẽ tự "đoán" — thường lấy đại
+        một tấm ảnh bất kỳ trên trang và cắt <code>&lt;title&gt;</code> làm tiêu đề, kết quả thường
+        xấu và sai ý. Khai báo đủ <code>og:</code> là cách <em>kiểm soát</em> chính xác thẻ chia sẻ.</p>
+      </div>
+
+      <h3>c) Xem trước trực tiếp — thẻ chia sẻ trông thế nào</h3>
+      <p>Dưới đây là <strong>mô phỏng</strong> thẻ xem trước dựng từ đúng các thẻ <code>og:</code> ở trên:
+         ảnh <code>og:image</code> nằm trên, kế đến là tên miền (chữ nhạt), tiêu đề đậm và mô tả.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Xem trước — thẻ chia sẻ trên Facebook / Zalo</div>
+        <div class="demo-body">
+          <div class="d-ogcard">
+            <img class="d-img" src="../assets/photo.svg" alt="Ảnh xem trước OpenGraph (og:image), tỉ lệ 1200×630">
+            <div class="d-meta">
+              <p class="d-dom">truongabc.edu.vn</p>
+              <p class="d-tit">Khoá học Thiết kế Web cơ bản</p>
+              <p class="d-des">Học HTML, CSS, JS từ số 0 với nhiều bài thực hành.</p>
+            </div>
+          </div>
+          <p class="muted" style="margin:6px 0 0; font-size:.85rem">
+            Ảnh trên chính là <code>og:image</code>; dòng nhạt là tên miền lấy từ <code>og:url</code>;
+            tiêu đề đậm là <code>og:title</code>; dòng cuối là <code>og:description</code>.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p><strong>Mẹo.</strong> Dùng ảnh <code>og:image</code> kích thước <strong>1200×630 px</strong>,
+        đặt <code>og:image</code> bằng <strong>URL tuyệt đối</strong> (bắt đầu bằng <code>https://</code>),
+        và sau khi cập nhật hãy dùng công cụ gỡ lỗi (Facebook Sharing Debugger) để xoá cache — vì mạng
+        xã hội thường lưu thẻ cũ khá lâu.</p>
+      </div>
+    </section>
+
+    <!-- ==========  4. FAVICON  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Favicon &amp; icon ứng dụng <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><strong>Favicon</strong> (favorite icon) là biểu tượng nhỏ hiện cạnh tiêu đề trên
+         tab trình duyệt, trong danh sách dấu trang và khi lưu trang ra màn hình chính điện thoại.
+         Nó nhỏ nhưng là "thương hiệu" giúp người dùng nhận ra trang giữa hàng chục tab.</p>
+
+      <pre class="code"><code><span class="c">&lt;!-- Ưu tiên SVG: sắc nét ở mọi kích thước, dung lượng nhỏ --&gt;</span>
+<span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"icon"</span> <span class="v">type</span>=<span class="s">"image/svg+xml"</span> <span class="v">href</span>=<span class="s">"favicon.svg"</span><span class="k">&gt;</span>
+
+<span class="c">&lt;!-- .ico dự phòng cho trình duyệt cũ không đọc được SVG --&gt;</span>
+<span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"icon"</span> <span class="v">type</span>=<span class="s">"image/x-icon"</span> <span class="v">href</span>=<span class="s">"favicon.ico"</span><span class="k">&gt;</span>
+
+<span class="c">&lt;!-- Icon khi thêm vào màn hình chính trên iPhone/iPad (nên 180×180 px) --&gt;</span>
+<span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"apple-touch-icon"</span> <span class="v">href</span>=<span class="s">"apple-touch-icon.png"</span><span class="k">&gt;</span>
+
+<span class="c">&lt;!-- Màu thanh trình duyệt trên mobile (thanh địa chỉ / trình chuyển tab) --&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"theme-color"</span> <span class="v">content</span>=<span class="s">"#1D559F"</span><span class="k">&gt;</span>
+
+<span class="c">&lt;!-- Web App Manifest: gom icon + tên + màu để cài như một ứng dụng (PWA) --&gt;</span>
+<span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"manifest"</span> <span class="v">href</span>=<span class="s">"site.webmanifest"</span><span class="k">&gt;</span></code></pre>
+
+      <h3>Favicon thật của khoá học</h3>
+      <p>Đây chính là <code>../assets/favicon.svg</code> đang dùng cho bộ bài học này, hiển thị ở
+         các kích thước khác nhau — vì là SVG nên phóng to vẫn sắc nét:</p>
+
+      <div class="d-favrow">
+        <figure>
+          <img src="../assets/favicon.svg" alt="favicon 16px" width="16" height="16">
+          <figcaption>16×16 (trên tab)</figcaption>
+        </figure>
+        <figure>
+          <img src="../assets/favicon.svg" alt="favicon 32px" width="32" height="32">
+          <figcaption>32×32 (dấu trang)</figcaption>
+        </figure>
+        <figure>
+          <img src="../assets/favicon.svg" alt="favicon 64px" width="64" height="64">
+          <figcaption>64×64</figcaption>
+        </figure>
+        <figure>
+          <img src="../assets/favicon.svg" alt="favicon 96px" width="96" height="96">
+          <figcaption>96×96 (vẫn nét)</figcaption>
+        </figure>
+      </div>
+
+      <p>Và đây là cảm giác nó xuất hiện trên một tab trình duyệt (favicon + <code>&lt;title&gt;</code>):</p>
+      <div class="d-tabbar">
+        <span class="d-tab"><img src="../assets/favicon.svg" alt="favicon">1.5 · SEO, meta, OpenGraph…</span>
+      </div>
+      <div class="d-tabpage">Biểu tượng bên trái tiêu đề chính là favicon; dòng chữ là nội dung thẻ <code>&lt;title&gt;</code>.</div>
+
+      <div class="callout info">
+        <p><strong>Vì sao ưu tiên SVG?</strong> Một file <code>.svg</code> là đồ hoạ vector: sắc nét ở
+        mọi kích thước và mọi độ phân giải màn hình, dung lượng lại nhỏ. Chỉ cần thêm
+        <code>favicon.ico</code> làm bản dự phòng cho các trình duyệt rất cũ.</p>
+      </div>
+    </section>
+
+    <!-- ==========  5. MẪU HEAD HOÀN CHỈNH  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Mẫu <code>&lt;head&gt;</code> hoàn chỉnh <span class="tag-base">Tổng hợp</span></h2>
+      <p class="lead">Gộp tất cả những gì đã học thành một khối <code>&lt;head&gt;</code> <strong>copy-paste
+         được</strong>. Chỉ cần thay nội dung trong dấu ngoặc kép cho đúng trang của bạn.</p>
+
+      <pre class="code"><code><span class="k">&lt;head&gt;</span>
+  <span class="c">&lt;!-- 1) Nền tảng --&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">charset</span>=<span class="s">"UTF-8"</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"viewport"</span> <span class="v">content</span>=<span class="s">"width=device-width, initial-scale=1.0"</span><span class="k">&gt;</span>
+
+  <span class="c">&lt;!-- 2) SEO cơ bản --&gt;</span>
+  <span class="k">&lt;title&gt;</span>Khoá học Thiết kế Web cơ bản | Trường ABC<span class="k">&lt;/title&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"description"</span> <span class="v">content</span>=<span class="s">"Học HTML, CSS, JavaScript từ số 0 với nhiều bài thực hành và chứng chỉ."</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"author"</span> <span class="v">content</span>=<span class="s">"Nguyễn Văn A"</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"robots"</span> <span class="v">content</span>=<span class="s">"index, follow"</span><span class="k">&gt;</span>
+  <span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"canonical"</span> <span class="v">href</span>=<span class="s">"https://truongabc.edu.vn/thiet-ke-web"</span><span class="k">&gt;</span>
+
+  <span class="c">&lt;!-- 3) OpenGraph (Facebook / Zalo) --&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">property</span>=<span class="s">"og:title"</span>       <span class="v">content</span>=<span class="s">"Khoá học Thiết kế Web cơ bản"</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">property</span>=<span class="s">"og:description"</span> <span class="v">content</span>=<span class="s">"Học HTML, CSS, JS từ số 0 với nhiều bài thực hành."</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">property</span>=<span class="s">"og:image"</span>       <span class="v">content</span>=<span class="s">"https://truongabc.edu.vn/anh-chia-se.jpg"</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">property</span>=<span class="s">"og:url"</span>         <span class="v">content</span>=<span class="s">"https://truongabc.edu.vn/thiet-ke-web"</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">property</span>=<span class="s">"og:type"</span>        <span class="v">content</span>=<span class="s">"website"</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">property</span>=<span class="s">"og:site_name"</span>   <span class="v">content</span>=<span class="s">"Trường ABC"</span><span class="k">&gt;</span>
+
+  <span class="c">&lt;!-- 4) Twitter Card (X) --&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"twitter:card"</span>  <span class="v">content</span>=<span class="s">"summary_large_image"</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"twitter:title"</span> <span class="v">content</span>=<span class="s">"Khoá học Thiết kế Web cơ bản"</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"twitter:image"</span> <span class="v">content</span>=<span class="s">"https://truongabc.edu.vn/anh-chia-se.jpg"</span><span class="k">&gt;</span>
+
+  <span class="c">&lt;!-- 5) Favicon &amp; giao diện --&gt;</span>
+  <span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"icon"</span> <span class="v">type</span>=<span class="s">"image/svg+xml"</span> <span class="v">href</span>=<span class="s">"favicon.svg"</span><span class="k">&gt;</span>
+  <span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"apple-touch-icon"</span> <span class="v">href</span>=<span class="s">"apple-touch-icon.png"</span><span class="k">&gt;</span>
+  <span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"theme-color"</span> <span class="v">content</span>=<span class="s">"#1D559F"</span><span class="k">&gt;</span>
+
+  <span class="c">&lt;!-- 6) CSS của trang --&gt;</span>
+  <span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"stylesheet"</span> <span class="v">href</span>=<span class="s">"style.css"</span><span class="k">&gt;</span>
+<span class="k">&lt;/head&gt;</span></code></pre>
+
+      <div class="callout tip">
+        <p><strong>Checklist best-practice cho <code>&lt;head&gt;</code>:</strong></p>
+        <ul style="margin:6px 0 0">
+          <li><code>charset="UTF-8"</code> và <code>viewport</code> luôn đứng <strong>đầu tiên</strong>.</li>
+          <li><code>&lt;title&gt;</code> 50–60 ký tự, có từ khoá chính; <code>description</code> 150–160 ký tự, hấp dẫn &amp; đúng nội dung.</li>
+          <li>Mỗi trang một <code>&lt;title&gt;</code> và <code>description</code> <strong>riêng</strong> — đừng dùng chung cả site.</li>
+          <li>Đủ bộ <code>og:</code> + <code>twitter:</code>; <code>og:image</code> 1200×630 và dùng URL tuyệt đối.</li>
+          <li>Có favicon (ưu tiên SVG) và <code>theme-color</code>.</li>
+          <li>Đặt <code>&lt;link rel="canonical"&gt;</code> khi trang có thể truy cập bằng nhiều URL.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ==========  6. SEO ON-PAGE & CORE WEB VITALS  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> SEO on-page nhanh &amp; Core Web Vitals <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">SEO không chỉ nằm ở <code>&lt;head&gt;</code>. Cách bạn viết <code>&lt;body&gt;</code>
+         và tốc độ trang cũng ảnh hưởng thứ hạng. Dưới đây là những điểm on-page cần nhớ.</p>
+
+      <h3>a) HTML ngữ nghĩa &amp; cấu trúc</h3>
+      <ul>
+        <li><strong>HTML ngữ nghĩa</strong> (semantic): dùng đúng <code>&lt;header&gt;</code>,
+            <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>,
+            <code>&lt;footer&gt;</code> thay vì <code>&lt;div&gt;</code> khắp nơi — máy tìm kiếm
+            hiểu ý nghĩa từng phần.</li>
+        <li>Đúng <strong>một</strong> <code>&lt;h1&gt;</code> mỗi trang, nêu chủ đề chính.</li>
+        <li>Giữ <strong>thứ tự heading</strong> hợp lý: <code>h1 → h2 → h3</code>, không nhảy cóc
+            (đừng từ <code>h1</code> nhảy thẳng xuống <code>h4</code>).</li>
+        <li>Mọi ảnh có thuộc tính <code>alt</code> mô tả đúng nội dung — vừa cho SEO ảnh, vừa cho
+            trình đọc màn hình.</li>
+      </ul>
+
+      <pre class="code"><code><span class="k">&lt;main&gt;</span>
+  <span class="k">&lt;h1&gt;</span>Khoá học Thiết kế Web cơ bản<span class="k">&lt;/h1&gt;</span>      <span class="c">&lt;!-- duy nhất 1 h1 --&gt;</span>
+  <span class="k">&lt;h2&gt;</span>Nội dung khoá học<span class="k">&lt;/h2&gt;</span>              <span class="c">&lt;!-- không nhảy cóc heading --&gt;</span>
+  <span class="k">&lt;img</span> <span class="v">src</span>=<span class="s">"buoi-1.jpg"</span> <span class="v">alt</span>=<span class="s">"Buổi 1: cấu trúc trang HTML"</span><span class="k">&gt;</span>
+<span class="k">&lt;/main&gt;</span></code></pre>
+
+      <h3>b) Kỹ thuật &amp; tốc độ</h3>
+      <ul>
+        <li><strong>HTTPS</strong>: dùng chứng chỉ bảo mật — là yếu tố xếp hạng và tạo lòng tin.</li>
+        <li><strong>Thân thiện mobile</strong> (mobile-friendly): Google xếp hạng theo bản mobile trước
+            (mobile-first). Thẻ <code>viewport</code> ở mục 2 là điều kiện tối thiểu.</li>
+        <li><strong>Tốc độ — Core Web Vitals</strong>: ba chỉ số Google đo trải nghiệm thực tế:
+          <ul>
+            <li><strong>LCP</strong> (Largest Contentful Paint) — thời gian hiện khối nội dung lớn nhất; <em>nên &lt; 2,5 giây</em>.</li>
+            <li><strong>CLS</strong> (Cumulative Layout Shift) — mức độ bố cục bị "nhảy" khi tải; <em>nên &lt; 0,1</em>.</li>
+            <li><strong>INP</strong> (Interaction to Next Paint) — độ trễ khi người dùng tương tác; <em>nên &lt; 200 ms</em>.</li>
+          </ul>
+        </li>
+        <li><strong><code>sitemap.xml</code></strong>: danh sách các URL của site để công cụ tìm kiếm dò hết.</li>
+        <li><strong><code>robots.txt</code></strong>: chỉ dẫn cho bot được/không được thu thập thư mục nào.</li>
+      </ul>
+
+      <div class="callout info">
+        <p><strong>Đo bằng Lighthouse.</strong> Chrome có sẵn công cụ <em>Lighthouse</em> (F12 → tab
+        <em>Lighthouse</em>) chấm điểm Performance, SEO, Accessibility và báo ngay LCP/CLS/INP kèm gợi ý
+        sửa. Xem hướng dẫn thao tác chi tiết ở bài
+        <a href="02-tra-cuu-internet-web.html">Tra cứu Internet &amp; Web</a>.</p>
+      </div>
+
+      <div class="callout tip">
+        <p><strong>Tóm tắt cả bài.</strong> Viết <code>&lt;head&gt;</code> tử tế (title + description +
+        canonical + robots), khai báo đủ OpenGraph/Twitter để kiểm soát thẻ chia sẻ, thêm favicon,
+        rồi bảo đảm <code>&lt;body&gt;</code> ngữ nghĩa, một <code>h1</code>, ảnh có <code>alt</code>,
+        chạy HTTPS và nhanh trên mobile. Đó là 80% SEO cơ bản.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="index.html"><small>← Mục lục</small>Chương 1 · Tổng quan Internet</a>
+    <a class="home" href="02-tra-cuu-internet-web.html">Bài tiếp: Tra cứu Internet &amp; Web →</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 1 — Tổng quan Internet &amp; công nghệ Web
+  </footer>
+</body>
+</html>

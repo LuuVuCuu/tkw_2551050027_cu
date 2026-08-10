@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.3.3 — ĐƠN VỊ CSS (bản toàn diện)
+  ------------------------------------------------------------
+  Chọn đúng đơn vị là chìa khoá làm web co giãn (responsive).
+  Bài này đi từ cơ bản → nâng cao, tham khảo theo W3Schools
+  ("CSS Units") và các hàm toán hiện đại:
+    1) Đơn vị tuyệt đối: px (pt/cm/in/mm)
+    2) Đơn vị % — theo phần tử cha
+    3) em — theo font-size của chính phần tử
+    4) rem — theo font-size gốc <html>
+    5) Viewport: vw, vh, vmin, vmax
+    6) ch, ex — theo ký tự (nâng cao)
+    7) calc() — trộn đơn vị
+    8) clamp(min, vừa, max) (nâng cao)
+    9) min() & max()
+   10) Bảng so sánh: đơn vị nào cho gì
+   11) Mẹo tổng kết
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng class khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.3.3 · Responsive — Đơn vị CSS</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* thước đo trực quan dùng chung cho nhiều demo */
+    .d-ruler {
+      background: #eaf1fb; border: 1px solid #cfe0f5; color: #16407a;
+      padding: 8px 12px; border-radius: 6px; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .d-track { background: #f1f5f9; border-radius: 8px; padding: 6px; }
+
+    /* 1) đơn vị tuyệt đối px */
+    .d-abs span {
+      display: inline-block; background: #1D559F; color: #fff;
+      border-radius: 6px; padding: 6px 10px; margin: 4px; vertical-align: middle;
+    }
+    .d-w50  { width: 50px; }
+    .d-w100 { width: 100px; }
+    .d-w200 { width: 200px; }
+
+    /* 2) % theo phần tử cha */
+    .d-parent { background: #f1f5f9; border: 1px dashed #94a3b8; padding: 6px; border-radius: 8px; }
+    .d-pct { background: #04AA6D; color: #fff; padding: 8px 12px; border-radius: 6px; }
+    .d-pct.w25  { width: 25%; }
+    .d-pct.w50  { width: 50%; margin-top: 6px; }
+    .d-pct.w100 { width: 100%; margin-top: 6px; }
+
+    /* 3) em — nhân chồng theo cấp cha */
+    .d-em { border: 2px solid #6c5ce7; border-radius: 8px; padding: 8px 12px;
+            font-size: 1.4em; background: #ede9fe; color: #4c3a9e; }
+
+    /* 4) rem vs em so sánh */
+    .d-rem-box, .d-em-box { padding: 8px 12px; border-radius: 6px; margin: 4px 0; }
+    .d-rem-box { background: #e7f7f0; border: 1px solid #b7ebd9; color: #04654a; font-size: 1.5rem; }
+    .d-em-stack { border: 1px solid #f59e0b; border-radius: 8px; }
+    .d-em-stack > div { font-size: 1.2em; background: #fff8e6; padding: 6px 10px; border: 1px dashed #f59e0b; }
+
+    /* 5) viewport units */
+    .d-vp { color: #fff; padding: 10px 12px; border-radius: 8px; font-weight: 600; margin: 6px 0; }
+    .d-vw   { width: 50vw; max-width: 100%; background: #1D559F; }
+    .d-vh   { height: 18vh; background: #04AA6D; display: grid; place-items: center; }
+    .d-vmin { width: 30vmin; height: 30vmin; background: #6c5ce7; display: grid; place-items: center; text-align: center; }
+    .d-vmax { width: 30vmax; max-width: 100%; height: 60px; background: #E63946; display: grid; place-items: center; }
+
+    /* 6) ch, ex */
+    .d-ch { width: 40ch; max-width: 100%; background: #fff3e0; border: 1px solid #ffd699;
+            padding: 8px 12px; border-radius: 6px; font-family: "Cascadia Code", Consolas, monospace; }
+    .d-ex { line-height: 2; }
+    .d-ex .mark { display: inline-block; width: 1ch; height: 1ex; background: #6c5ce7;
+                  vertical-align: baseline; border-radius: 2px; }
+
+    /* 7) calc() */
+    .d-calc-wrap { background: #f1f5f9; border-radius: 8px; padding: 10px; }
+    .d-calc-side { display: inline-block; width: 40px; height: 44px; background: #E63946; color: #fff;
+                   border-radius: 6px; text-align: center; line-height: 44px; vertical-align: top; }
+    .d-calc-main { display: inline-block; width: calc(100% - 56px); height: 44px; background: #1D559F;
+                   color: #fff; border-radius: 6px; text-align: center; line-height: 44px; vertical-align: top; margin-left: 12px; }
+
+    /* 8) clamp() */
+    .d-clamp { font-size: clamp(1.25rem, 5vw, 3rem); color: #6c5ce7; font-weight: 800; margin: 6px 0; line-height: 1.2; }
+    .d-clamp-box { width: clamp(180px, 50%, 420px); background: #ede9fe; border: 1px solid #c4b5fd;
+                   color: #4c3a9e; padding: 10px 12px; border-radius: 8px; font-weight: 600; }
+
+    /* 9) min() & max() */
+    .d-min { width: min(90%, 320px); background: #04AA6D; color: #fff; padding: 8px 12px; border-radius: 6px; font-weight: 600; }
+    .d-max { width: max(50%, 240px); background: #1D559F; color: #fff; padding: 8px 12px; border-radius: 6px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.3 Responsive</a><span>›</span>
+        Đơn vị CSS
+      </nav>
+      <h1>Đơn vị CSS &amp; hàm <code style="color:#fff;background:rgba(255,255,255,.18)">calc / clamp / min / max</code></h1>
+      <p class="sub">Chọn đúng đơn vị là nền tảng của thiết kế co giãn. Đi từ đơn vị tuyệt đối (px)
+         đến tương đối (%, em, rem), đơn vị theo màn hình (vw, vh, vmin, vmax) và các hàm toán hiện đại
+         giúp kích thước tự thích nghi mà vẫn có giới hạn.</p>
+      <div class="chips">
+        <span class="chip solid">2.3.3</span>
+        <span class="chip">Responsive</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Đơn vị tuyệt đối: px</a></li>
+        <li><a href="#s2">Đơn vị % theo phần tử cha</a></li>
+        <li><a href="#s3">em — theo phần tử</a></li>
+        <li><a href="#s4">rem — theo gốc &lt;html&gt;</a></li>
+        <li><a href="#s5">Viewport: vw · vh · vmin · vmax</a></li>
+        <li><a href="#s6">ch &amp; ex — theo ký tự</a></li>
+        <li><a href="#s7">calc() — trộn đơn vị</a></li>
+        <li><a href="#s8">clamp() — co giãn có giới hạn</a></li>
+        <li><a href="#s9">min() &amp; max()</a></li>
+        <li><a href="#s10">Bảng so sánh: đơn vị nào cho gì</a></li>
+        <li><a href="#s11">Mẹo &amp; tổng kết</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. ĐƠN VỊ TUYỆT ĐỐI px  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Đơn vị tuyệt đối: px (và pt, cm, in, mm) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Đơn vị <strong>tuyệt đối</strong> có kích thước cố định, không phụ thuộc phần tử cha hay màn hình.
+         Phổ biến nhất là <code>px</code> (pixel). Trên web, <code>px</code> là đơn vị "ổn định" nhất nên dùng nhiều nhất.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Ba khối cố định 50px · 100px · 200px (không đổi khi co cửa sổ)</div>
+        <div class="demo-body d-abs">
+          <span class="d-w50">50px</span>
+          <span class="d-w100">100px</span>
+          <span class="d-w200">200px</span>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>px</strong> không phải là điểm ảnh vật lý mà là "pixel CSS" được trình duyệt quy đổi.
+           Vì cố định, <code>px</code> phù hợp cho <em>viền (border)</em>, <em>bóng đổ</em>, hình ảnh kích thước biết trước.</p>
+        <p>Các đơn vị tuyệt đối còn lại (<code>cm</code>, <code>mm</code>, <code>in</code>, <code>pt</code>, <code>pc</code>)
+           chủ yếu dành cho <strong>in ấn</strong>, ít dùng trên màn hình.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Các đơn vị tuyệt đối (theo W3Schools)</caption>
+        <thead><tr><th>Đơn vị</th><th>Ý nghĩa</th><th>Quy đổi</th></tr></thead>
+        <tbody>
+          <tr><td><code>px</code></td><td>Pixel — đơn vị màn hình thông dụng nhất</td><td>1px = 1/96 in</td></tr>
+          <tr><td><code>pt</code></td><td>Point — quen thuộc trong in ấn / Word</td><td>1pt = 1/72 in</td></tr>
+          <tr><td><code>pc</code></td><td>Pica</td><td>1pc = 12pt</td></tr>
+          <tr><td><code>in</code></td><td>Inch</td><td>1in = 96px = 2.54cm</td></tr>
+          <tr><td><code>cm</code></td><td>Centimet</td><td>1cm ≈ 37.8px</td></tr>
+          <tr><td><code>mm</code></td><td>Milimet</td><td>1mm = 1/10 cm</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* px: cố định, không co giãn theo cha hay màn hình */</span>
+.vien   { <span class="k">border</span>: <span class="v">1px solid #ccc</span>; }
+.nut    { <span class="k">padding</span>: <span class="v">8px 16px</span>; }
+.tieude { <span class="k">font-size</span>: <span class="v">24px</span>; } <span class="c">/* dùng được, nhưng rem thường tốt hơn (mục 4) */</span></code></pre>
+
+      <div class="callout warn"><p>Đặt <code>font-size</code> bằng <code>px</code> cho chữ thì khi người dùng phóng to cỡ chữ
+        trong trình duyệt, một số bố cục sẽ <strong>không giãn theo</strong>. Vì khả năng truy cập (accessibility),
+        nên ưu tiên <code>rem</code> cho cỡ chữ.</p></div>
+    </section>
+
+    <!-- ==========  2. % THEO PHẦN TỬ CHA  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Đơn vị tương đối <code>%</code> — theo phần tử cha <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Phần trăm tính theo <strong>kích thước phần tử cha</strong>. Với <code>width</code>, <code>%</code> dựa trên
+         chiều rộng của cha; đây là đơn vị "linh hồn" của bố cục co giãn vì hộp con tự thay đổi khi cha thay đổi.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Hộp cha co giãn; con đặt 25% · 50% · 100% chiều rộng cha</div>
+        <div class="demo-body">
+          <div class="d-parent">
+            <div class="d-pct w25">width: 25%</div>
+            <div class="d-pct w50">width: 50%</div>
+            <div class="d-pct w100">width: 100%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Gốc tham chiếu khác nhau tuỳ thuộc tính:</strong> <code>width</code> &amp; <code>padding</code>/<code>margin</code>
+           (cả trái–phải–trên–dưới) tính theo <em>chiều rộng</em> cha; còn <code>height</code> chỉ ăn theo % khi cha có chiều cao xác định.</p>
+      </div>
+
+      <pre class="code"><code>.cha { <span class="k">width</span>: <span class="v">600px</span>; }
+.con { <span class="k">width</span>: <span class="v">50%</span>; }   <span class="c">/* = 300px; cha rộng bao nhiêu, con bằng nửa */</span></code></pre>
+
+      <div class="callout tip"><p><code>%</code> rất hợp cho <strong>bố cục (layout)</strong>: chia cột, ảnh full-width
+        (<code>width:100%</code>), khung nội dung co theo màn hình.</p></div>
+    </section>
+
+    <!-- ==========  3. em  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> <code>em</code> — theo font-size của chính phần tử <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>1em</code> = <strong>font-size hiện hành</strong> của phần tử. Với <code>font-size</code>, <code>em</code> tính
+         theo font-size của <em>cha</em> — nên khi lồng nhiều cấp, cỡ chữ bị <strong>nhân chồng</strong> (cộng dồn).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Mỗi cấp đặt font-size: 1.4em → nhân chồng theo cấp lồng</div>
+        <div class="demo-body">
+          <div class="d-em">Cấp 1 (1.4em)
+            <div class="d-em">Cấp 2 (1.4 × 1.4 = 1.96em)
+              <div class="d-em">Cấp 3 (1.4³ ≈ 2.74em — to dần!)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>Giả sử gốc là 16px. Cấp 1 = 16 × 1.4 = <strong>22.4px</strong>; cấp 2 = 22.4 × 1.4 = <strong>31.4px</strong>;
+           cấp 3 = 31.4 × 1.4 ≈ <strong>44px</strong>. Càng lồng sâu chữ càng phình to — đây là "bẫy" kinh điển của <code>em</code>.</p>
+      </div>
+
+      <pre class="code"><code>.hop { <span class="k">font-size</span>: <span class="v">1.4em</span>; }  <span class="c">/* theo CHA → lồng nhau là nhân chồng */</span>
+.nut { <span class="k">padding</span>: <span class="v">0.5em 1em</span>; } <span class="c">/* padding co theo cỡ chữ của chính nút — rất tiện! */</span></code></pre>
+
+      <div class="callout info"><p><code>em</code> không xấu — nó tuyệt cho <strong>khoảng cách bên trong</strong> (padding/margin của nút,
+        khoảng cách icon–chữ) vì tự co theo cỡ chữ. Chỉ nên cẩn thận khi dùng <code>em</code> cho <em>font-size</em> ở các phần tử lồng nhau.</p></div>
+    </section>
+
+    <!-- ==========  4. rem  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> <code>rem</code> — theo font-size gốc <code>&lt;html&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>rem</code> = "root em": luôn tính theo font-size của phần tử gốc <code>&lt;html&gt;</code>
+         (mặc định 16px), <strong>không</strong> phụ thuộc cha. Vì chỉ có MỘT mốc nên rem ổn định, không nhân chồng.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">rem — ổn định: luôn = 1.5 × 16 = 24px dù lồng đâu</div>
+          <div class="demo-body">
+            <div class="d-rem-box">1.5rem (24px)
+              <div class="d-rem-box">vẫn 1.5rem (24px)</div>
+            </div>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">em — nhân chồng: to dần theo cấp lồng</div>
+          <div class="demo-body d-em-stack">
+            <div>1.2em
+              <div>1.2 × 1.2 em
+                <div>1.2³ em — phình to</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Đặt mốc gốc 1 lần ở html (mặc định đã là 16px) */</span>
+<span class="k">html</span> { <span class="k">font-size</span>: <span class="v">16px</span>; }   <span class="c">/* 1rem = 16px */</span>
+
+<span class="k">h1</span>   { <span class="k">font-size</span>: <span class="v">2rem</span>; }    <span class="c">/* = 32px, ở đâu cũng vậy */</span>
+<span class="k">p</span>    { <span class="k">font-size</span>: <span class="v">1rem</span>; }    <span class="c">/* = 16px */</span></code></pre>
+
+      <table class="syntax">
+        <caption>em vs rem — khác biệt cốt lõi</caption>
+        <thead><tr><th>Tiêu chí</th><th><code>em</code></th><th><code>rem</code></th></tr></thead>
+        <tbody>
+          <tr><td>Gốc tham chiếu</td><td>font-size của <strong>cha</strong></td><td>font-size của <strong>&lt;html&gt;</strong></td></tr>
+          <tr><td>Khi lồng nhiều cấp</td><td>Nhân chồng (cộng dồn)</td><td>Không đổi</td></tr>
+          <tr><td>Dễ đoán kết quả?</td><td>Khó hơn</td><td>Rất dễ</td></tr>
+          <tr><td>Hợp nhất cho</td><td>padding/margin theo cỡ chữ</td><td>font-size toàn trang</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip"><p><strong>Quy tắc vàng:</strong> dùng <code>rem</code> cho <em>font-size</em> để dễ kiểm soát và thân thiện
+        accessibility; dùng <code>em</code> cho <em>khoảng cách bên trong</em> khi muốn nó co theo cỡ chữ của phần tử đó.</p></div>
+    </section>
+
+    <!-- ==========  5. VIEWPORT UNITS  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Viewport: <code>vw · vh · vmin · vmax</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Đơn vị <strong>viewport</strong> tính theo kích thước cửa sổ trình duyệt (vùng nhìn).
+         <code>1vw</code> = 1% chiều rộng, <code>1vh</code> = 1% chiều cao. Đây là cách làm khối co theo màn hình mà không cần media query.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Thay đổi kích thước cửa sổ để thấy các khối co giãn theo</div>
+        <div class="demo-body">
+          <div class="d-vp d-vw">width: 50vw — rộng bằng nửa cửa sổ</div>
+          <div class="d-vp d-vh">height: 18vh — cao theo 18% cửa sổ</div>
+          <div class="d-track" style="margin-top:6px">
+            <div class="d-vp d-vmin">30vmin<br>(cạnh ngắn)</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Bốn đơn vị viewport (theo W3Schools)</caption>
+        <thead><tr><th>Đơn vị</th><th>Tính theo</th><th>1 đơn vị =</th></tr></thead>
+        <tbody>
+          <tr><td><code>vw</code></td><td>Chiều rộng viewport</td><td>1% bề ngang cửa sổ</td></tr>
+          <tr><td><code>vh</code></td><td>Chiều cao viewport</td><td>1% chiều cao cửa sổ</td></tr>
+          <tr><td><code>vmin</code></td><td>Cạnh <strong>ngắn hơn</strong> (rộng/cao)</td><td>1% cạnh ngắn — hợp khối vuông luôn vừa màn hình</td></tr>
+          <tr><td><code>vmax</code></td><td>Cạnh <strong>dài hơn</strong></td><td>1% cạnh dài</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code>.hero  { <span class="k">height</span>: <span class="v">100vh</span>; }            <span class="c">/* khối phủ hết một màn hình */</span>
+.vuong { <span class="k">width</span>: <span class="v">40vmin</span>; <span class="k">height</span>: <span class="v">40vmin</span>; } <span class="c">/* luôn vuông &amp; vừa khung */</span></code></pre>
+
+      <div class="callout warn"><p>Đặt <code>font-size</code> hoàn toàn bằng <code>vw</code> dễ làm chữ <strong>quá nhỏ trên điện thoại</strong>
+        hoặc <strong>quá to trên màn hình rộng</strong>. Khắc phục bằng <code>clamp()</code> để chặn min/max (mục 8).</p></div>
+    </section>
+
+    <!-- ==========  6. ch & ex  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> <code>ch</code> &amp; <code>ex</code> — đơn vị theo ký tự <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>ch</code> = bề rộng ký tự <strong>"0"</strong> của font hiện hành; <code>ex</code> = chiều cao chữ <strong>"x"</strong>.
+         Hữu ích nhất là <code>ch</code> để giới hạn độ dài dòng văn bản theo số ký tự, giúp dễ đọc.</p>
+
+      <div class="demo">
+        <div class="demo-bar">width: 40ch — đoạn văn rộng đúng ~40 ký tự, dễ đọc</div>
+        <div class="demo-body">
+          <p class="d-ch">Mỗi dòng nên dài khoảng 45–75 ký tự để mắt đỡ mỏi. Đặt max-width: 65ch là mẹo điển hình.</p>
+          <p class="d-ex" style="margin-top:10px">Chiều cao ô tím là <span class="mark"></span> đúng <code>1ex</code> (cao bằng chữ "x").</p>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <thead><tr><th>Đơn vị</th><th>Bằng</th><th>Dùng cho</th></tr></thead>
+        <tbody>
+          <tr><td><code>ch</code></td><td>Bề rộng ký tự "0"</td><td>Giới hạn độ dài dòng: <code>max-width: 65ch</code></td></tr>
+          <tr><td><code>ex</code></td><td>Chiều cao chữ "x"</td><td>Canh chỉnh tinh theo phông (hiếm dùng)</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code>.bai-viet { <span class="k">max-width</span>: <span class="v">65ch</span>; } <span class="c">/* dòng văn không quá dài → dễ đọc */</span></code></pre>
+
+      <div class="callout info"><p><code>ch</code> và <code>ex</code> phụ thuộc vào <strong>phông chữ</strong> đang dùng, nên cùng một
+        giá trị có thể cho bề rộng khác nhau giữa các font. Với chữ thường (không monospace), <code>65ch</code> chỉ là ước lượng tương đối.</p></div>
+    </section>
+
+    <!-- ==========  7. calc()  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> <code>calc()</code> — trộn nhiều đơn vị <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>calc()</code> cho phép <strong>tính toán</strong> ngay trong CSS và <strong>trộn các đơn vị khác nhau</strong>
+         (vd <code>%</code> với <code>px</code>) — điều mà bình thường không làm được. Đây là công cụ "keo dán" cực mạnh.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Sidebar cố định 40px + nội dung width: calc(100% - 56px)</div>
+        <div class="demo-body">
+          <div class="d-calc-wrap">
+            <span class="d-calc-side">40px</span>
+            <span class="d-calc-main">calc(100% - 56px) — tự lấp phần còn lại</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>Hỗ trợ 4 phép: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>. <strong>Bắt buộc</strong> có
+           dấu cách quanh <code>+</code> và <code>-</code> (vd <code>calc(100% - 40px)</code>, không viết <code>100%-40px</code>).</p>
+      </div>
+
+      <pre class="code"><code><span class="c">/* nội dung lấp hết bề ngang, trừ đi sidebar cố định 240px */</span>
+.main    { <span class="k">width</span>: <span class="v">calc(100% - 240px)</span>; }
+.cao-full{ <span class="k">height</span>: <span class="v">calc(100vh - 60px)</span>; } <span class="c">/* full màn hình trừ header */</span>
+.gap     { <span class="k">margin-top</span>: <span class="v">calc(1rem + 2vh)</span>; }   <span class="c">/* trộn rem + vh */</span></code></pre>
+
+      <div class="callout tip"><p><code>calc()</code> giải bài toán kinh điển "phần còn lại": một cột cố định bằng px,
+        cột kia <code>calc(100% - …)</code> tự lấp đầy phần trống — không cần tính tay.</p></div>
+    </section>
+
+    <!-- ==========  8. clamp()  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> <code>clamp(min, vừa, max)</code> — co giãn có giới hạn <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>clamp()</code> nhận 3 tham số: <strong>nhỏ nhất</strong>, <strong>giá trị ưa thích</strong> (thường co giãn),
+         <strong>lớn nhất</strong>. Giá trị ưa thích được "kẹp" trong khoảng min–max. Đây là cách làm typography responsive đẹp nhất.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Tiêu đề: clamp(1.25rem, 5vw, 3rem) — co theo cửa sổ nhưng không quá nhỏ/to</div>
+        <div class="demo-body">
+          <p class="d-clamp">Tiêu đề co giãn mượt mà</p>
+          <div class="d-clamp-box">Khối width: clamp(180px, 50%, 420px) — không bao giờ hẹp dưới 180px hay rộng quá 420px.</div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>Cú pháp: <code>clamp(MIN, PREFERRED, MAX)</code>. Với <code>clamp(1.25rem, 5vw, 3rem)</code>: màn hình hẹp → bám 1.25rem;
+           màn hình vừa → theo 5vw; màn hình rất rộng → chặn ở 3rem. Thay được cho cả một media query!</p>
+      </div>
+
+      <pre class="code"><code><span class="c">/* font-size responsive chỉ trong 1 dòng, không cần media query */</span>
+<span class="k">h1</span> { <span class="k">font-size</span>: <span class="v">clamp(1.5rem, 4vw + 1rem, 3rem)</span>; }
+
+<span class="c">/* khối nội dung: không hẹp quá, không rộng quá */</span>
+.khung { <span class="k">width</span>: <span class="v">clamp(320px, 90%, 1080px)</span>; }</code></pre>
+
+      <div class="callout tip"><p><strong>Mẹo hay:</strong> trộn <code>rem + vw</code> trong tham số giữa (vd <code>4vw + 1rem</code>)
+        cho đường co giãn mượt và dễ chịu hơn so với chỉ dùng <code>vw</code>.</p></div>
+    </section>
+
+    <!-- ==========  9. min() & max()  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> <code>min()</code> &amp; <code>max()</code> — chọn giá trị nhỏ / lớn nhất <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>min()</code> chọn giá trị <strong>nhỏ nhất</strong> trong danh sách; <code>max()</code> chọn giá trị
+         <strong>lớn nhất</strong>. Nghe ngược trực giác, nên hãy nhớ qua công dụng thực tế bên dưới.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">width: min(90%, 320px) — như max-width</div>
+          <div class="demo-body">
+            <div class="d-min">min(90%, 320px)</div>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">width: max(50%, 240px) — như min-width</div>
+          <div class="demo-body">
+            <div class="d-max">max(50%, 240px)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Mẹo nhớ:</strong> <code>min(90%, 320px)</code> hoạt động như <em>max-width: 320px</em> (chặn TRÊN, vì luôn lấy số nhỏ hơn);
+           còn <code>max(50%, 240px)</code> hoạt động như <em>min-width: 240px</em> (chặn DƯỚI).</p>
+      </div>
+
+      <table class="syntax">
+        <thead><tr><th>Hàm</th><th>Trả về</th><th>Vai trò thực tế</th></tr></thead>
+        <tbody>
+          <tr><td><code>min(a, b, …)</code></td><td>Giá trị nhỏ nhất</td><td>Giống <code>max-width</code>: chặn trên</td></tr>
+          <tr><td><code>max(a, b, …)</code></td><td>Giá trị lớn nhất</td><td>Giống <code>min-width</code>: chặn dưới</td></tr>
+          <tr><td><code>clamp(a, b, c)</code></td><td>b kẹp giữa a và c</td><td>= <code>max(a, min(b, c))</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code>.khung { <span class="k">width</span>: <span class="v">min(90%, 1080px)</span>; } <span class="c">/* nhỏ trên ĐT, tối đa 1080px trên desktop */</span>
+.nut   { <span class="k">padding</span>: <span class="v">max(8px, 1vw)</span>; }  <span class="c">/* không bao giờ mỏng hơn 8px */</span></code></pre>
+
+      <div class="callout info"><p><code>clamp(a, b, c)</code> thực chất chính là <code>max(a, min(b, c))</code> — hiểu được điều này
+        thì cả ba hàm <code>min/max/clamp</code> trở nên rõ ràng.</p></div>
+    </section>
+
+    <!-- ==========  10. BẢNG SO SÁNH  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Đơn vị nào dùng cho gì? <span class="tag-base">Tổng kết</span></h2>
+      <p class="lead">Không có đơn vị "tốt nhất" tuyệt đối — mỗi nhóm hợp với một mục đích. Bảng tra nhanh dưới đây giúp chọn đúng.</p>
+
+      <table class="syntax">
+        <caption>Bảng tham chiếu: chọn đơn vị theo mục đích</caption>
+        <thead><tr><th>Mục đích</th><th>Nên dùng</th><th>Vì sao</th></tr></thead>
+        <tbody>
+          <tr><td>Cỡ chữ (font-size)</td><td><code>rem</code> (kèm <code>clamp()</code>)</td><td>Ổn định, không nhân chồng, thân thiện accessibility</td></tr>
+          <tr><td>Khoảng cách theo cỡ chữ</td><td><code>em</code></td><td>Padding/margin tự co theo font của chính phần tử</td></tr>
+          <tr><td>Bố cục / chiều rộng cột</td><td><code>%</code>, <code>fr</code> (Grid), <code>vw</code></td><td>Co giãn theo cha hoặc màn hình</td></tr>
+          <tr><td>Viền, bóng, kích thước cố định</td><td><code>px</code></td><td>Cần độ chính xác, không nên co giãn</td></tr>
+          <tr><td>Khối phủ màn hình</td><td><code>vh</code>, <code>vw</code>, <code>vmin</code></td><td>Tính trực tiếp theo cửa sổ</td></tr>
+          <tr><td>Độ dài dòng văn bản</td><td><code>ch</code></td><td>Giới hạn theo số ký tự cho dễ đọc</td></tr>
+          <tr><td>Giá trị có giới hạn</td><td><code>clamp()</code>, <code>min()</code>, <code>max()</code></td><td>Co giãn nhưng vẫn chặn min/max</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info"><p><code>fr</code> là đơn vị riêng của CSS Grid (phần "phân số" của không gian còn lại) — sẽ học kỹ ở
+        <a href="04-grid.html">bài 2.3.5 · Grid</a>.</p></div>
+    </section>
+
+    <!-- ==========  11. MẸO & TỔNG KẾT  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Mẹo &amp; tổng kết <span class="tag-base">Ghi nhớ</span></h2>
+      <div class="callout tip"><p><strong>Mẹo 1 — Font:</strong> dùng <code>rem</code> cho mọi <code>font-size</code> (đặt mốc ở <code>html</code>),
+        bọc thêm <code>clamp()</code> nếu muốn chữ tự co giãn responsive trong giới hạn.</p></div>
+      <div class="callout tip"><p><strong>Mẹo 2 — Layout:</strong> chiều rộng dùng <code>%</code> / <code>fr</code> / <code>vw</code>;
+        kết hợp <code>min()</code> hoặc <code>clamp()</code> để khung không quá hẹp trên điện thoại, không quá rộng trên desktop.</p></div>
+      <div class="callout tip"><p><strong>Mẹo 3 — Khoảng cách:</strong> <code>em</code> cho padding/margin gắn với cỡ chữ;
+        <code>px</code> cho viền/bóng cần sắc nét.</p></div>
+      <div class="callout warn"><p><strong>Tránh:</strong> đặt <code>font-size</code> bằng <code>vw</code> trơ (không có clamp) — chữ sẽ
+        nhỏ xíu trên điện thoại hoặc khổng lồ trên màn hình rộng.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ nhanh:</strong> <code>rem</code> → font · <code>%</code>/<code>fr</code>/<code>vw</code> → layout ·
+        <code>em</code> → spacing · <code>px</code> → viền/bóng · <code>clamp/min/max</code> → giới hạn co giãn.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="01-media-queries.html"><small>← Bài trước</small>2.3.2 · Media Queries</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="03-flexbox.html"><small>Bài tiếp →</small>2.3.4 · Flexbox</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

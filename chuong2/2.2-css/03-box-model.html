@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.2.3 — CSS BOX MODEL (bản toàn diện)
+  ------------------------------------------------------------
+  Mọi phần tử HTML đều là một "chiếc hộp" gồm 4 lớp đồng tâm:
+  nội dung (content) → đệm (padding) → viền (border) → lề (margin).
+  Hiểu Box Model là chìa khoá để căn chỉnh, dàn trang chính xác.
+  Bài đi từ cơ bản → nâng cao, tham khảo theo W3Schools:
+    1) Box model là gì        7) margin:auto căn giữa
+    2) width/height + min/max 8) Margin collapse
+    3) padding                9) box-sizing (content/border)
+    4) border                10) outline + outline-offset
+    5) border-radius         11) box-shadow
+    6) margin                12) Best practice & ghi nhớ
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.2.3 · CSS Box Model — Margin · Padding · Border</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* 1) Sơ đồ box model nhiều lớp màu */
+    .d-bm-margin {
+      background: #fde68a; padding: 26px; border-radius: 8px;
+      display: inline-block; text-align: center; position: relative;
+    }
+    .d-bm-border {
+      background: #f8b4c0; padding: 22px; border-radius: 6px; position: relative;
+    }
+    .d-bm-padding {
+      background: #bbf7d0; padding: 24px; border-radius: 6px; position: relative;
+    }
+    .d-bm-content {
+      background: #93c5fd; color: #16407a; font-weight: 700;
+      padding: 22px 30px; border-radius: 4px;
+    }
+    .d-bm-tag {
+      position: absolute; top: 4px; left: 8px;
+      font-size: .68rem; font-weight: 700; color: #92600c;
+    }
+    .d-bm-border > .d-bm-tag  { color: #a13a4d; }
+    .d-bm-padding > .d-bm-tag { color: #1a7a45; }
+
+    /* 2) width / height + min/max */
+    .d-size {
+      width: 320px; height: 70px;
+      background: #dbeafe; border: 3px solid #1D559F; color: #16407a;
+      padding: 12px 16px; font-weight: 600;
+    }
+    .d-minmax {
+      max-width: 480px; min-width: 160px;
+      background: #ede9fe; border: 2px dashed #6c5ce7; color: #4c3fb5;
+      padding: 12px 16px; font-weight: 600;
+    }
+    .d-actual {
+      width: 200px; padding: 20px; border: 5px solid #04AA6D;
+      background: #d1fae5; color: #065f46; font-weight: 700;
+      box-sizing: content-box;     /* cố ý dùng content-box để minh hoạ phép cộng */
+    }
+
+    /* 3) padding */
+    .d-pad-base {
+      background: #93c5fd; color: #16407a; font-weight: 600;
+      outline: 2px solid #1D559F;
+    }
+    .d-pad-all   { padding: 24px; }
+    .d-pad-sides { padding: 10px 40px; }
+    .d-pad-each  { padding: 8px 16px 28px 48px; }
+    .d-pad-wrap  { background: #f1f5f9; padding: 6px; border-radius: 8px; margin-bottom: 10px; }
+
+    /* 4) border */
+    .d-bd       { display: inline-block; padding: 10px 16px; margin: 4px;
+                  background: #fff; color: #16407a; font-weight: 600; border-radius: 6px; }
+    .d-bd-solid  { border: 3px solid  #1D559F; }
+    .d-bd-dashed { border: 3px dashed #04AA6D; }
+    .d-bd-dotted { border: 3px dotted #6c5ce7; }
+    .d-bd-double { border: 6px double #E63946; }
+    .d-bd-groove { border: 6px groove #FFC107; }
+    .d-bd-mix {
+      background: #fff; padding: 14px 18px; color: #16407a; font-weight: 600;
+      border-top: 4px solid  #1D559F;
+      border-right: 4px dashed #04AA6D;
+      border-bottom: 4px dotted #6c5ce7;
+      border-left: 4px double #E63946;
+    }
+
+    /* 5) border-radius */
+    .d-radius-box {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 110px; height: 110px; margin: 6px;
+      background: #1D559F; color: #fff; font-weight: 700; text-align: center;
+    }
+    .d-r-small  { border-radius: 12px; }
+    .d-r-mixed  { border-radius: 30px 4px 30px 4px; }
+    .d-r-circle { border-radius: 50%; background: #04AA6D; }
+    .d-r-ellipse{ width: 150px; border-radius: 50%; background: #6c5ce7; }
+    .d-r-pill   { width: 150px; height: 54px; border-radius: 999px; background: #E63946; }
+
+    /* 6) margin */
+    .d-mg-wrap { background: #f1f5f9; border-radius: 8px; padding: 1px; }
+    .d-mg {
+      background: #93c5fd; color: #16407a; font-weight: 600;
+      padding: 8px 14px; outline: 1px dashed #1D559F;
+    }
+    .d-mg-all  { margin: 24px; }
+    .d-mg-each { margin: 4px 0 4px 60px; }
+    .d-mg-neg  { margin-top: -16px; background: #fca5a5; color: #7f1d1d; outline-color: #E63946; }
+
+    /* 7) margin:auto */
+    .d-auto-wrap { background: #f1f5f9; border-radius: 8px; padding: 14px; }
+    .d-auto {
+      width: 240px; margin: 0 auto;
+      background: #04AA6D; color: #fff; font-weight: 700;
+      padding: 14px; text-align: center; border-radius: 6px;
+    }
+    .d-noauto {
+      width: 240px;
+      background: #cbd5e1; color: #334155; font-weight: 700;
+      padding: 14px; text-align: center; border-radius: 6px;
+    }
+
+    /* 8) margin collapse */
+    .d-collapse-wrap { background: #f1f5f9; border-radius: 8px; padding: 0 14px; }
+    .d-cl {
+      background: #c7d2fe; color: #312e81; font-weight: 600;
+      padding: 10px 14px; text-align: center; border-radius: 6px;
+      margin: 40px 0;                /* trên & dưới đều 40px */
+    }
+    .d-pad-fix { padding: 1px 14px; background: #fde68a; border-radius: 8px; }
+    .d-pad-fix .d-cl { background: #bbf7d0; color: #14532d; }
+
+    /* 9) box-sizing — QUAN TRỌNG: đặt rõ box-sizing trên chính phần tử .d- */
+    .d-bs {
+      width: 240px; padding: 20px; border: 6px solid;
+      color: #fff; font-weight: 700; margin-bottom: 12px;
+    }
+    .d-content { box-sizing: content-box; background: #E63946; border-color: #a4161a; } /* thực tế = 240+40+12 = 292px */
+    .d-border  { box-sizing: border-box;  background: #04AA6D; border-color: #036b45; } /* thực tế = đúng 240px */
+    .d-ruler {
+      width: 292px; height: 10px;
+      background: repeating-linear-gradient(90deg,#94a3b8 0 1px,transparent 1px 20px);
+      border-left: 1px solid #475569; margin-bottom: 22px; position: relative;
+    }
+    .d-ruler::after { content: "0 ────── 292px"; position: absolute; top: 11px; left: 0;
+                      font-size: .72rem; color: #64748b; }
+
+    /* 10) outline */
+    .d-out {
+      display: inline-block; padding: 12px 18px; margin: 14px;
+      background: #dbeafe; color: #16407a; font-weight: 600;
+      border: 3px solid #1D559F;
+    }
+    .d-out-1 { outline: 3px solid #E63946; }
+    .d-out-2 { outline: 3px dashed #04AA6D; outline-offset: 8px; }
+
+    /* 11) box-shadow */
+    .d-sh {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 140px; height: 90px; margin: 14px 18px;
+      background: #fff; color: #16407a; font-weight: 700;
+      border-radius: 10px; text-align: center;
+    }
+    .d-sh-1 { box-shadow: 0 6px 14px rgba(29,85,159,.35); }
+    .d-sh-2 { box-shadow: 0 0 0 4px #04AA6D, 0 8px 20px rgba(4,170,109,.35); }
+    .d-sh-3 { box-shadow: inset 0 0 14px rgba(230,57,70,.55); border: 1px solid #f7b9c0; }
+    .d-sh-4 { box-shadow: 4px 4px 0 #FFC107, 8px 8px 0 #6c5ce7; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.2 CSS</a><span>›</span>
+        Box Model
+      </nav>
+      <h1>CSS Box Model — <code style="color:#fff;background:rgba(255,255,255,.18)">margin · border · padding · content</code></h1>
+      <p class="sub">Mỗi phần tử HTML là một chiếc hộp gồm 4 lớp đồng tâm. Nắm vững cách 4 lớp này cộng vào
+         kích thước thật là nền tảng để căn lề, tạo khoảng cách và dàn trang chính xác — đi từ cơ bản đến box-sizing, outline và box-shadow.</p>
+      <div class="chips">
+        <span class="chip solid">2.2.3</span>
+        <span class="chip">CSS cơ bản</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Box model là gì?</a></li>
+        <li><a href="#s2">width · height · min/max</a></li>
+        <li><a href="#s3">padding (đệm trong)</a></li>
+        <li><a href="#s4">border (viền)</a></li>
+        <li><a href="#s5">border-radius (bo góc)</a></li>
+        <li><a href="#s6">margin (lề ngoài)</a></li>
+        <li><a href="#s7">margin: auto — căn giữa</a></li>
+        <li><a href="#s8">Margin collapse (gộp lề)</a></li>
+        <li><a href="#s9">box-sizing: content vs border</a></li>
+        <li><a href="#s10">outline + outline-offset</a></li>
+        <li><a href="#s11">box-shadow (đổ bóng)</a></li>
+        <li><a href="#s12">Best practice &amp; ghi nhớ</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. BOX MODEL LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Box Model là gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Trong CSS, <strong>mọi phần tử đều được bao bởi một chiếc hộp hình chữ nhật</strong>. Hộp này
+         gồm 4 lớp lồng vào nhau, tính từ trong ra ngoài: <code>content</code> → <code>padding</code> →
+         <code>border</code> → <code>margin</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Sơ đồ 4 lớp của Box Model</div>
+        <div class="demo-body center">
+          <div class="d-bm-margin">
+            <span class="d-bm-tag">margin (lề ngoài)</span>
+            <div class="d-bm-border">
+              <span class="d-bm-tag">border (viền)</span>
+              <div class="d-bm-padding">
+                <span class="d-bm-tag">padding (đệm)</span>
+                <div class="d-bm-content">content<br><small>(nội dung)</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>content</strong> — vùng chứa nội dung thật (chữ, ảnh…). Kích thước do <code>width</code>/<code>height</code> quyết định.</p>
+        <p><strong>padding</strong> — lớp đệm <em>bên trong</em> viền, đẩy nội dung ra xa viền. Mang màu nền của phần tử.</p>
+        <p><strong>border</strong> — đường viền bao quanh padding và content.</p>
+        <p><strong>margin</strong> — lề <em>bên ngoài</em> viền, tạo khoảng cách với các phần tử khác. Luôn trong suốt.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Bốn lớp của Box Model</caption>
+        <thead><tr><th>Lớp</th><th>Vị trí</th><th>Có nền màu?</th><th>Vai trò</th></tr></thead>
+        <tbody>
+          <tr><td><code>content</code></td><td>Trong cùng</td><td>Có</td><td>Chứa nội dung (chữ/ảnh)</td></tr>
+          <tr><td><code>padding</code></td><td>Quanh content</td><td>Có (nền phần tử)</td><td>Đệm trong, đẩy nội dung khỏi viền</td></tr>
+          <tr><td><code>border</code></td><td>Quanh padding</td><td>Màu riêng</td><td>Đường viền</td></tr>
+          <tr><td><code>margin</code></td><td>Ngoài cùng</td><td>Trong suốt</td><td>Khoảng cách với phần tử khác</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip"><p><strong>Mẹo phân biệt:</strong> padding là "khoảng cách <em>bên trong</em>" (giữa nội dung và viền),
+        còn margin là "khoảng cách <em>bên ngoài</em>" (giữa hộp này và hộp khác). Mở DevTools (F12) → tab
+        <em>Computed</em> sẽ thấy sơ đồ box model y hệt như trên.</p></div>
+    </section>
+
+    <!-- ==========  2. WIDTH / HEIGHT / MIN / MAX  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> width · height · min/max <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Theo Box Model mặc định (<em>content-box</em>), <code>width</code>/<code>height</code> chỉ quy định
+         kích thước của <strong>vùng nội dung</strong>. Kích thước hiển thị thật còn cộng thêm padding và border.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Hộp đặt width:320px; height:70px</div>
+        <div class="demo-body">
+          <div class="d-size">Hộp này rộng 320px, cao 70px (vùng nội dung)</div>
+        </div>
+      </div>
+
+      <h3>Tính chiều rộng <em>thật</em> (content-box)</h3>
+      <div class="demo">
+        <div class="demo-bar">width:200px + padding:20px + border:5px</div>
+        <div class="demo-body">
+          <div class="d-actual">width = 200px</div>
+        </div>
+      </div>
+      <div class="note">
+        <p>Với hộp trên (mặc định <code>content-box</code>), chiều rộng <strong>hiển thị thật</strong> =
+           <code>width</code> + padding trái + padding phải + border trái + border phải:</p>
+        <p class="center"><strong>200 + 20 + 20 + 5 + 5 = 250px</strong></p>
+        <p>Còn tổng không gian chiếm chỗ thì cộng tiếp cả margin trái/phải. Đây là điểm khiến nhiều người mới bị
+           "vỡ layout" — sẽ xử lý gọn ở mục <a href="#s9">box-sizing</a>.</p>
+      </div>
+
+      <h3>min-width/max-width &amp; min-height/max-height</h3>
+      <div class="demo">
+        <div class="demo-bar">max-width:480px — co theo màn hình nhưng không vượt 480px</div>
+        <div class="demo-body">
+          <div class="d-minmax">Hộp này có <code>max-width:480px</code> và <code>min-width:160px</code>.
+            Thử thu hẹp cửa sổ: hộp co lại nhưng không bao giờ hẹp hơn 160px, cũng không rộng quá 480px.</div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Các thuộc tính kích thước</caption>
+        <thead><tr><th>Thuộc tính</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>width</code> / <code>height</code></td><td>Chiều rộng/cao của vùng nội dung.</td></tr>
+          <tr><td><code>max-width</code></td><td>Trần — không cho rộng quá giá trị này (rất hữu ích cho responsive).</td></tr>
+          <tr><td><code>min-width</code></td><td>Sàn — không cho hẹp hơn giá trị này.</td></tr>
+          <tr><td><code>max-height</code> / <code>min-height</code></td><td>Tương tự theo chiều dọc.</td></tr>
+          <tr><td><code>auto</code></td><td>Để trình duyệt tự tính (mặc định).</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p>Đơn vị hay dùng: <code>px</code> (cố định), <code>%</code> (theo phần tử cha),
+        <code>vw/vh</code> (theo khung nhìn), <code>rem/em</code> (theo cỡ chữ). Mẹo ảnh responsive kinh điển:
+        <code>img { max-width: 100%; height: auto; }</code>.</p></div>
+    </section>
+
+    <!-- ==========  3. PADDING  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> padding — đệm trong <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>padding</code> tạo khoảng trống <strong>bên trong</strong> viền, giữa nội dung và border.
+         Có thể đặt cho cả 4 cạnh cùng lúc (shorthand) hoặc từng cạnh riêng.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · so sánh các kiểu padding (viền xanh = mép hộp)</div>
+        <div class="demo-body">
+          <div class="d-pad-wrap"><div class="d-pad-base d-pad-all">padding: 24px (đều 4 cạnh)</div></div>
+          <div class="d-pad-wrap"><div class="d-pad-base d-pad-sides">padding: 10px 40px (dọc 10 · ngang 40)</div></div>
+          <div class="d-pad-wrap"><div class="d-pad-base d-pad-each">padding: 8px 16px 28px 48px (T·R·B·L)</div></div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* shorthand: thứ tự luôn là Trên · Phải · Dưới · Trái (theo chiều kim đồng hồ) */</span>
+<span class="k">padding</span>: <span class="v">24px</span>;                 <span class="c">/* cả 4 cạnh = 24px */</span>
+<span class="k">padding</span>: <span class="v">10px 40px</span>;            <span class="c">/* trên-dưới 10px · trái-phải 40px */</span>
+<span class="k">padding</span>: <span class="v">8px 16px 28px 48px</span>;   <span class="c">/* trên · phải · dưới · trái */</span>
+
+<span class="c">/* hoặc đặt từng cạnh */</span>
+<span class="k">padding-top</span>:    <span class="v">8px</span>;
+<span class="k">padding-right</span>:  <span class="v">16px</span>;
+<span class="k">padding-bottom</span>: <span class="v">28px</span>;
+<span class="k">padding-left</span>:   <span class="v">48px</span>;</code></pre>
+
+      <table class="syntax">
+        <caption>Cú pháp shorthand padding / margin</caption>
+        <thead><tr><th>Số giá trị</th><th>Áp dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>1 giá trị</code></td><td>Cả 4 cạnh giống nhau.</td></tr>
+          <tr><td><code>2 giá trị</code></td><td><em>trên-dưới</em> · <em>trái-phải</em>.</td></tr>
+          <tr><td><code>3 giá trị</code></td><td><em>trên</em> · <em>trái-phải</em> · <em>dưới</em>.</td></tr>
+          <tr><td><code>4 giá trị</code></td><td><em>trên · phải · dưới · trái</em> (theo chiều kim đồng hồ).</td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn"><p>padding nhận màu nền của phần tử và <strong>không bao giờ âm</strong>.
+        Ở chế độ <code>content-box</code> mặc định, thêm padding sẽ làm hộp <em>to ra</em> — nhớ điều này khi tính layout.</p></div>
+    </section>
+
+    <!-- ==========  4. BORDER  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> border — viền <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Viền nằm giữa padding và margin. Một viền có 3 thành phần: <strong>độ dày</strong> (width),
+         <strong>kiểu</strong> (style) và <strong>màu</strong> (color). Gộp cả 3 bằng shorthand <code>border</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Các kiểu border (border-style)</div>
+        <div class="demo-body center">
+          <span class="d-bd d-bd-solid">solid</span>
+          <span class="d-bd d-bd-dashed">dashed</span>
+          <span class="d-bd d-bd-dotted">dotted</span>
+          <span class="d-bd d-bd-double">double</span>
+          <span class="d-bd d-bd-groove">groove</span>
+        </div>
+      </div>
+
+      <h3>Viền từng cạnh khác nhau</h3>
+      <div class="demo">
+        <div class="demo-bar">border-top/right/bottom/left riêng biệt</div>
+        <div class="demo-body">
+          <div class="d-bd-mix">Mỗi cạnh một kiểu &amp; màu viền khác nhau.</div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* shorthand: width · style · color (bắt buộc có style mới hiện viền) */</span>
+<span class="k">border</span>: <span class="v">3px solid #1D559F</span>;
+
+<span class="c">/* hoặc tách 3 thuộc tính */</span>
+<span class="k">border-width</span>: <span class="v">3px</span>;
+<span class="k">border-style</span>: <span class="v">solid</span>;
+<span class="k">border-color</span>: <span class="v">#1D559F</span>;
+
+<span class="c">/* từng cạnh */</span>
+<span class="k">border-top</span>:    <span class="v">4px solid  #1D559F</span>;
+<span class="k">border-right</span>:  <span class="v">4px dashed #04AA6D</span>;
+<span class="k">border-bottom</span>: <span class="v">4px dotted #6c5ce7</span>;
+<span class="k">border-left</span>:   <span class="v">4px double #E63946</span>;</code></pre>
+
+      <table class="syntax">
+        <caption>Giá trị border-style thường dùng</caption>
+        <thead><tr><th>Giá trị</th><th>Mô tả</th></tr></thead>
+        <tbody>
+          <tr><td><code>solid</code></td><td>Đường liền (phổ biến nhất).</td></tr>
+          <tr><td><code>dashed</code></td><td>Đường gạch nét đứt.</td></tr>
+          <tr><td><code>dotted</code></td><td>Đường chấm tròn.</td></tr>
+          <tr><td><code>double</code></td><td>Hai đường liền song song (cần width ≥ 3px).</td></tr>
+          <tr><td><code>groove</code> / <code>ridge</code> / <code>inset</code> / <code>outset</code></td><td>Hiệu ứng nổi/chìm 3D.</td></tr>
+          <tr><td><code>none</code> / <code>hidden</code></td><td>Không viền (mặc định).</td></tr>
+        </tbody>
+      </table>
+      <div class="callout tip"><p>Nếu chỉ đặt <code>border-color</code> mà quên <code>border-style</code> thì <strong>viền sẽ không hiện</strong>,
+        vì <code>border-style</code> mặc định là <code>none</code>. Luôn khai báo style.</p></div>
+    </section>
+
+    <!-- ==========  5. BORDER-RADIUS  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> border-radius — bo góc <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>border-radius</code> bo tròn các góc của hộp. Đặt <code>50%</code> trên hình vuông tạo
+         <strong>hình tròn</strong>; trên hình chữ nhật tạo <strong>elip</strong>; giá trị lớn (vd <code>999px</code>) tạo nút "viên thuốc".</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · các kiểu bo góc</div>
+        <div class="demo-body center">
+          <span class="d-radius-box d-r-small">12px<br>bo nhẹ</span>
+          <span class="d-radius-box d-r-mixed">mỗi góc<br>khác nhau</span>
+          <span class="d-radius-box d-r-circle">50%<br>hình tròn</span>
+          <span class="d-radius-box d-r-ellipse">50%<br>elip</span>
+          <span class="d-radius-box d-r-pill">999px · pill</span>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">border-radius</span>: <span class="v">12px</span>;               <span class="c">/* bo đều 4 góc */</span>
+<span class="k">border-radius</span>: <span class="v">30px 4px 30px 4px</span>;   <span class="c">/* T-trái · T-phải · D-phải · D-trái */</span>
+<span class="k">border-radius</span>: <span class="v">50%</span>;                <span class="c">/* vuông→tròn · chữ nhật→elip */</span>
+<span class="k">border-radius</span>: <span class="v">999px</span>;              <span class="c">/* nút dạng viên thuốc (pill) */</span></code></pre>
+      <div class="callout info"><p>Thứ tự 4 giá trị của <code>border-radius</code> đi theo các <strong>góc</strong>:
+        trên-trái → trên-phải → dưới-phải → dưới-trái. Để bo thành hình tròn hoàn hảo, phần tử phải là hình vuông
+        (cùng width &amp; height).</p></div>
+    </section>
+
+    <!-- ==========  6. MARGIN  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> margin — lề ngoài <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>margin</code> tạo khoảng trống <strong>bên ngoài</strong> viền, đẩy phần tử ra xa các phần tử
+         xung quanh. Cú pháp shorthand giống padding; khác biệt lớn: <strong>margin có thể nhận giá trị âm</strong>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">margin đẩy hộp ra xa mép (nền xám = phần tử cha)</div>
+        <div class="demo-body d-mg-wrap">
+          <div class="d-mg d-mg-all">margin: 24px (đều 4 cạnh)</div>
+          <div class="d-mg d-mg-each">margin: 4px 0 4px 60px (lề trái 60px)</div>
+        </div>
+      </div>
+
+      <h3>margin âm — kéo phần tử chồng lên nhau</h3>
+      <div class="demo">
+        <div class="demo-bar">margin-top: -16px kéo hộp đỏ trùm lên hộp trên</div>
+        <div class="demo-body d-mg-wrap">
+          <div class="d-mg d-mg-all" style="margin-bottom:0">Hộp xanh phía trên</div>
+          <div class="d-mg d-mg-neg d-mg-all">Hộp này có margin-top âm → đè lên</div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">margin</span>: <span class="v">24px</span>;             <span class="c">/* cả 4 cạnh */</span>
+<span class="k">margin</span>: <span class="v">16px auto</span>;        <span class="c">/* dọc 16px · ngang auto (căn giữa, xem mục 7) */</span>
+<span class="k">margin-top</span>: <span class="v">-16px</span>;       <span class="c">/* âm → kéo phần tử lên/đè lên hộp khác */</span>
+<span class="k">margin-bottom</span>: <span class="v">0</span>;</code></pre>
+      <div class="callout warn"><p>Phần tử <code>inline</code> (như <code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>) <strong>bỏ qua</strong>
+        margin trên/dưới — chỉ margin trái/phải có tác dụng. Muốn đầy đủ, đổi sang <code>inline-block</code> hoặc <code>block</code>.</p></div>
+    </section>
+
+    <!-- ==========  7. MARGIN AUTO  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> margin: auto — căn giữa khối <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Kỹ thuật kinh điển: với một phần tử <strong>block đã có width</strong>, đặt
+         <code>margin-left</code> và <code>margin-right</code> bằng <code>auto</code> sẽ chia đều khoảng trống hai bên →
+         hộp <strong>căn giữa theo chiều ngang</strong>.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">KHÔNG có margin:auto → dính trái</div>
+          <div class="demo-body d-auto-wrap">
+            <div class="d-noauto">width:240px</div>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">margin: 0 auto → căn giữa</div>
+          <div class="demo-body d-auto-wrap">
+            <div class="d-auto">margin: 0 auto</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Điều kiện: phần tử là block & có width xác định */</span>
+.hop {
+  <span class="k">width</span>: <span class="v">240px</span>;
+  <span class="k">margin</span>: <span class="v">0 auto</span>;   <span class="c">/* trên-dưới 0 · trái-phải tự chia đều → căn giữa */</span>
+}</code></pre>
+      <div class="callout danger"><p><code>margin:auto</code> <strong>chỉ căn giữa theo chiều NGANG</strong> và chỉ chạy khi phần tử có
+        <code>width</code> (nhỏ hơn cha). Nó <strong>không</strong> căn giữa theo chiều dọc — muốn căn giữa cả hai chiều,
+        hãy dùng Flexbox (<code>justify-content</code> + <code>align-items: center</code>) hoặc Grid.</p></div>
+    </section>
+
+    <!-- ==========  8. MARGIN COLLAPSE  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Margin collapse — gộp lề dọc <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Một "bẫy" rất hay gặp: khi margin <strong>dọc</strong> (trên/dưới) của hai khối liền kề gặp nhau,
+         chúng <strong>không cộng lại</strong> mà <strong>gộp</strong> thành một — lấy giá trị <em>lớn hơn</em>. Hiện tượng này
+         gọi là <em>margin collapse</em> và chỉ xảy ra theo chiều dọc, với các block trong cùng luồng.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Mỗi hộp margin 40px trên &amp; dưới — nhưng khe ở giữa CHỈ 40px (không phải 80px)</div>
+        <div class="demo-body d-collapse-wrap">
+          <div class="d-cl">Hộp A — margin-bottom: 40px</div>
+          <div class="d-cl">Hộp B — margin-top: 40px</div>
+          <div class="d-cl">Hộp C — margin-top: 40px</div>
+        </div>
+      </div>
+      <div class="note">
+        <p>Hộp A có <code>margin-bottom:40px</code>, hộp B có <code>margin-top:40px</code>. Trực giác bảo khe hở =
+           40 + 40 = 80px, nhưng thực tế <strong>chỉ là 40px</strong> — hai lề đã gộp và lấy giá trị lớn hơn.</p>
+      </div>
+
+      <h3>Cách chặn margin collapse</h3>
+      <div class="demo">
+        <div class="demo-bar">Bọc bằng cha có padding/border → lề không còn gộp (khe ở giữa = 80px)</div>
+        <div class="demo-body">
+          <div class="d-pad-fix">
+            <div class="d-cl">Hộp A — bên trong cha có padding</div>
+            <div class="d-cl">Hộp B — khe với A giờ là 80px</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Khi nào margin collapse xảy ra / không xảy ra</caption>
+        <thead><tr><th>Tình huống</th><th>Collapse?</th></tr></thead>
+        <tbody>
+          <tr><td>Hai block anh em xếp dọc</td><td>Có (lấy max)</td></tr>
+          <tr><td>Margin cha &amp; con đầu/cuối</td><td>Có thể gộp ra ngoài cha</td></tr>
+          <tr><td>Margin <em>ngang</em> (trái/phải)</td><td>Không bao giờ</td></tr>
+          <tr><td>Cha có <code>padding</code>/<code>border</code> chen vào</td><td>Không</td></tr>
+          <tr><td>Cha là flex/grid container</td><td>Không</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p>Cách chặn collapse: thêm <code>padding</code> hoặc <code>border</code> cho cha, dùng
+        <code>display:flex</code>/<code>grid</code>, hoặc đơn giản là dùng <code>gap</code> (với flex/grid) thay cho margin.</p></div>
+    </section>
+
+    <!-- ==========  9. BOX-SIZING  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> box-sizing: content-box vs border-box <span class="tag-adv">Quan trọng</span></h2>
+      <p class="lead">Thuộc tính <code>box-sizing</code> quyết định <code>width</code>/<code>height</code> tính cho cái gì.
+         Đây là khái niệm <strong>quan trọng bậc nhất</strong> của Box Model — hiểu sai là vỡ layout.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Cùng đặt width:240px nhưng kích thước THẬT khác nhau</div>
+        <div class="demo-body">
+          <div class="d-ruler"></div>
+          <div class="d-bs d-content">content-box · rộng thật = 240 + 40 + 12 = 292px</div>
+          <div class="d-bs d-border">border-box · rộng thật = đúng 240px</div>
+          <p class="muted">Hai hộp cùng <code>width:240px</code>, cùng <code>padding:20px</code>, cùng <code>border:6px</code>.
+             Hộp đỏ (content-box) phình ra 292px; hộp xanh (border-box) giữ đúng 240px. So với thước phía trên thấy rõ.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* MẶC ĐỊNH: width = chỉ vùng nội dung; padding & border CỘNG THÊM */</span>
+.content { <span class="k">box-sizing</span>: <span class="v">content-box</span>;
+           <span class="k">width</span>: <span class="v">240px</span>; <span class="k">padding</span>: <span class="v">20px</span>; <span class="k">border</span>: <span class="v">6px solid</span>; }
+<span class="c">   → rộng thật = 240 + 20·2 + 6·2 = 292px  (dễ vỡ layout)</span>
+
+<span class="c">/* TỐT HƠN: width = TỔNG cả padding & border; nội dung tự co lại */</span>
+.border  { <span class="k">box-sizing</span>: <span class="v">border-box</span>;
+           <span class="k">width</span>: <span class="v">240px</span>; <span class="k">padding</span>: <span class="v">20px</span>; <span class="k">border</span>: <span class="v">6px solid</span>; }
+<span class="c">   → rộng thật = đúng 240px  (dễ canh, dễ chia cột)</span></code></pre>
+
+      <table class="syntax">
+        <caption>So sánh hai giá trị box-sizing</caption>
+        <thead><tr><th>Tiêu chí</th><th><code>content-box</code> (mặc định)</th><th><code>border-box</code></th></tr></thead>
+        <tbody>
+          <tr><td>width tính cho</td><td>Chỉ vùng nội dung</td><td>Cả content + padding + border</td></tr>
+          <tr><td>Thêm padding/border</td><td>Hộp <strong>to ra</strong></td><td>Hộp <strong>giữ nguyên</strong> kích thước</td></tr>
+          <tr><td>Tính toán layout</td><td>Phải tự cộng tay, dễ sai</td><td>Trực quan, khớp số đặt ra</td></tr>
+          <tr><td>Khuyến nghị</td><td>Hiếm khi dùng</td><td>Dùng cho toàn bộ trang</td></tr>
+        </tbody>
+      </table>
+      <div class="callout danger"><p><strong>QUAN TRỌNG:</strong> Lý do nhiều người đặt <code>width:50%</code> cho 2 cột mà chúng vẫn
+        bị tràn xuống dòng là vì padding/border bị cộng thêm (content-box). Đặt <code>box-sizing:border-box</code> là hết lỗi.
+        Vì vậy gần như mọi project hiện đại đều bật <code>* { box-sizing: border-box }</code> ngay từ đầu.</p></div>
+    </section>
+
+    <!-- ==========  10. OUTLINE  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> outline + outline-offset <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>outline</code> là một đường nét <strong>vẽ bên ngoài border</strong>. Khác border ở hai điểm cốt lõi:
+         outline <strong>không chiếm chỗ</strong> trong layout (không đẩy phần tử khác) và <strong>không nằm trong box model</strong>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">border (xanh) cố định · outline (đỏ/lá) vẽ thêm bên ngoài</div>
+        <div class="demo-body center">
+          <span class="d-out d-out-1">outline đỏ sát viền</span>
+          <span class="d-out d-out-2">outline-offset: 8px (đẩy ra ngoài)</span>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">outline</span>: <span class="v">3px solid #E63946</span>;   <span class="c">/* width · style · color — như border */</span>
+<span class="k">outline-offset</span>: <span class="v">8px</span>;           <span class="c">/* đẩy outline ra xa border một khoảng */</span></code></pre>
+
+      <table class="syntax">
+        <caption>outline so với border</caption>
+        <thead><tr><th>Tiêu chí</th><th><code>border</code></th><th><code>outline</code></th></tr></thead>
+        <tbody>
+          <tr><td>Chiếm chỗ trong box model?</td><td>Có (cộng vào kích thước)</td><td>Không</td></tr>
+          <tr><td>Đặt từng cạnh riêng?</td><td>Được (top/right…)</td><td>Không (luôn cả 4 cạnh)</td></tr>
+          <tr><td>Bo theo border-radius?</td><td>Có</td><td>Hiện đại thì có (đa số trình duyệt)</td></tr>
+          <tr><td>Có <code>offset</code>?</td><td>Không</td><td>Có (<code>outline-offset</code>)</td></tr>
+          <tr><td>Dùng nhiều cho</td><td>Trang trí, khung</td><td>Hiệu ứng <code>:focus</code> (truy cập)</td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn"><p>Đừng tắt outline khi phần tử được focus (<code>outline: none</code>) mà không thay thế gì —
+        người dùng bàn phím sẽ không biết đang ở đâu. Nếu muốn đổi kiểu, hãy thay bằng outline khác đẹp hơn.</p></div>
+    </section>
+
+    <!-- ==========  11. BOX-SHADOW  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> box-shadow — đổ bóng <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>box-shadow</code> đổ bóng cho hộp. Cú pháp:
+         <code>offset-x  offset-y  blur  spread  color</code>. Thêm từ khoá <code>inset</code> để đổ bóng <em>vào trong</em>,
+         và có thể liệt kê <strong>nhiều bóng</strong> cách nhau bởi dấu phẩy.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · các kiểu box-shadow</div>
+        <div class="demo-body center" style="background:#f1f5f9; padding:24px">
+          <span class="d-sh d-sh-1">bóng đổ<br>mềm</span>
+          <span class="d-sh d-sh-2">viền + bóng<br>(2 lớp)</span>
+          <span class="d-sh d-sh-3">inset<br>(bóng trong)</span>
+          <span class="d-sh d-sh-4">nhiều bóng<br>màu (xếp tầng)</span>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* offset-x  offset-y  blur  [spread]  color */</span>
+<span class="k">box-shadow</span>: <span class="v">0 6px 14px rgba(29,85,159,.35)</span>;          <span class="c">/* bóng mềm phía dưới */</span>
+
+<span class="c">/* nhiều bóng: ngăn nhau bởi dấu phẩy (vẽ chồng lớp) */</span>
+<span class="k">box-shadow</span>: <span class="v">0 0 0 4px #04AA6D</span>,                       <span class="c">/* lớp như viền */</span>
+            <span class="v">0 8px 20px rgba(4,170,109,.35)</span>;          <span class="c">/* lớp bóng đổ */</span>
+
+<span class="c">/* inset = bóng đổ vào bên trong hộp */</span>
+<span class="k">box-shadow</span>: <span class="v">inset 0 0 14px rgba(230,57,70,.55)</span>;</code></pre>
+
+      <table class="syntax">
+        <caption>Các tham số của box-shadow</caption>
+        <thead><tr><th>Tham số</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>offset-x</code></td><td>Dịch bóng sang ngang (dương = phải).</td></tr>
+          <tr><td><code>offset-y</code></td><td>Dịch bóng theo dọc (dương = xuống dưới).</td></tr>
+          <tr><td><code>blur</code></td><td>Độ nhoè; càng lớn bóng càng mềm, mờ.</td></tr>
+          <tr><td><code>spread</code></td><td>(Tuỳ chọn) nở rộng/thu nhỏ bóng đều mọi phía.</td></tr>
+          <tr><td><code>color</code></td><td>Màu bóng (nên dùng rgba để có độ trong).</td></tr>
+          <tr><td><code>inset</code></td><td>(Tuỳ chọn) đổ bóng vào trong thay vì ra ngoài.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout tip"><p>Bóng "đẹp &amp; tự nhiên" thường có offset-y nhỏ, blur lớn và màu rgba mờ
+        (vd <code>0 8px 24px rgba(0,0,0,.12)</code>). Giống outline, <code>box-shadow</code> <strong>không chiếm chỗ</strong> layout.</p></div>
+    </section>
+
+    <!-- ==========  12. BEST PRACTICE  ========== -->
+    <section class="block" id="s12">
+      <h2><span class="num">12</span> Best practice &amp; ghi nhớ <span class="tag-base">Tổng kết</span></h2>
+
+      <div class="callout tip"><p><strong>Mẹo 1 — bật border-box toàn cục.</strong> Đặt ngay đầu CSS để mọi kích thước
+        khớp đúng con số bạn đặt, không lo padding/border làm phình hộp:</p></div>
+
+      <pre class="code"><code><span class="c">/* Best practice gần như "bắt buộc" trong mọi project hiện đại */</span>
+* , *::before, *::after {
+  <span class="k">box-sizing</span>: <span class="v">border-box</span>;
+}</code></pre>
+
+      <div class="callout info"><p><strong>Phân biệt margin vs padding.</strong>
+        <code>padding</code> = khoảng cách <em>BÊN TRONG</em> (giữa nội dung và viền), mang màu nền, không âm.
+        <code>margin</code> = khoảng cách <em>BÊN NGOÀI</em> (giữa hộp này và hộp khác), trong suốt, có thể âm và có thể gộp (collapse).</p></div>
+
+      <div class="callout warn"><p><strong>Lỗi hay gặp.</strong> Đặt 2 cột <code>width:50%</code> mà bị tràn dòng → do chưa bật
+        <code>border-box</code> nên padding/border bị cộng thêm. Bật border-box là xong.</p></div>
+
+      <div class="callout danger"><p><strong>Đừng nhầm.</strong> <code>margin:auto</code> chỉ căn giữa <em>ngang</em>, không căn giữa dọc.
+        Khe dọc giữa 2 block bị "thiếu một nửa"? Đó là margin collapse, không phải lỗi của bạn — dùng <code>gap</code> của flex/grid để né.</p></div>
+
+      <table class="syntax">
+        <caption>Bảng ghi nhớ nhanh Box Model</caption>
+        <thead><tr><th>Cần gì</th><th>Dùng</th></tr></thead>
+        <tbody>
+          <tr><td>Đẩy nội dung khỏi viền</td><td><code>padding</code></td></tr>
+          <tr><td>Khoảng cách giữa các hộp</td><td><code>margin</code> (hoặc <code>gap</code> với flex/grid)</td></tr>
+          <tr><td>Vẽ đường viền</td><td><code>border</code> (nhớ có <code>style</code>)</td></tr>
+          <tr><td>Bo góc / hình tròn</td><td><code>border-radius</code> (50% = tròn)</td></tr>
+          <tr><td>Căn giữa khối ngang</td><td><code>margin: 0 auto</code> (cần có width)</td></tr>
+          <tr><td>Kích thước đúng con số đặt ra</td><td><code>box-sizing: border-box</code></td></tr>
+          <tr><td>Khung focus không đẩy layout</td><td><code>outline</code> + <code>outline-offset</code></td></tr>
+          <tr><td>Đổ bóng nổi khối</td><td><code>box-shadow</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="02-selector.html"><small>← Bài trước</small>2.2.2 · Selector</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="04-background-font-text.html"><small>Bài tiếp →</small>2.2.4 · Background · Font · Text</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

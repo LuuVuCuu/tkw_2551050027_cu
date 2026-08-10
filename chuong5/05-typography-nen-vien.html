@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="5.3+ Typography · Nền · Viền trong Tailwind v4 - font/cỡ chữ/độ đậm/leading theo số, canh lề/gạch chân/truncate/line-clamp, nền màu/ảnh/gradient bg-linear-*, bg-clip-text, border/outline/ring/divide và mẫu focus cho form.">
+  <title>Typography · Nền · Viền — Chương 5</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <!-- Tailwind v4 — bản trình duyệt (biên dịch class ngay trong browser). Chỉ dùng để học/prototype. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- Tuỳ biến CSS-first của v4: token thương hiệu + bật dark bằng class .dark -->
+  <style type="text/tailwindcss">
+    @theme {
+      --color-brand: #04AA6D;
+    }
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- ===== Breadcrumb ===== -->
+  <nav class="mx-auto max-w-4xl px-4 pt-4 text-sm text-gray-500">
+    <a class="hover:text-[#1D559F]" href="../index.html">Môn học</a>
+    <span class="mx-1">›</span>
+    <a class="hover:text-[#1D559F]" href="index.html">Chương 5</a>
+    <span class="mx-1">›</span>
+    <span class="text-gray-700">Typography · Nền · Viền</span>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="mt-3 bg-linear-to-br from-[#1D559F] to-violet-600 text-white">
+    <div class="mx-auto max-w-4xl px-4 py-10">
+      <h1 class="text-3xl font-bold">Chữ, Nền &amp; Viền</h1>
+      <p class="mt-2 text-white/80">Ba nhóm class trang trí thường dùng nhất: <strong>typography</strong> (font, cỡ, độ đậm, canh lề), <strong>backgrounds</strong> (màu, ảnh, gradient) và <strong>borders</strong> (bo góc, viền, outline, ring). Bài này bám cú pháp <strong>Tailwind v4</strong> — nhiều class đã đổi tên so với v3.</p>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-4xl px-4 py-8">
+
+    <!-- 1 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">1</span>Typography — font, cỡ chữ, độ đậm
+      </h2>
+      <p class="mb-3">Bộ chữ: <code>font-sans</code> (mặc định), <code>font-serif</code>, <code>font-mono</code>. Cỡ chữ đi từ <code>text-xs</code>, <code>text-sm</code>, <code>text-base</code>, <code>text-lg</code>, <code>text-xl</code> rồi <code>text-2xl</code> → <code>text-9xl</code>. Mỗi cỡ có <em>leading</em> mặc định; muốn ghi kèm chiều cao dòng, dùng cú pháp <code>text-sm/6</code> (cỡ <code>sm</code> + <code>line-height: 1.5rem</code>).</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — cỡ chữ</div>
+        <div class="space-y-1 p-4">
+          <p class="text-xs">text-xs · Cà phê phin</p>
+          <p class="text-sm">text-sm · Cà phê phin</p>
+          <p class="text-base">text-base · Cà phê phin</p>
+          <p class="text-lg">text-lg · Cà phê phin</p>
+          <p class="text-2xl">text-2xl · Cà phê phin</p>
+          <p class="text-4xl">text-4xl · Cà phê phin</p>
+        </div>
+      </div>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — độ đậm · kiểu chữ · giãn chữ</div>
+        <div class="space-y-1 p-4 text-lg">
+          <p class="font-thin">font-thin (100)</p>
+          <p class="font-normal">font-normal (400)</p>
+          <p class="font-semibold">font-semibold (600)</p>
+          <p class="font-black">font-black (900)</p>
+          <p class="italic">italic · nghiêng</p>
+          <p class="font-mono tracking-widest uppercase">tracking-widest</p>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- font-family · cỡ chữ kèm leading · độ đậm · nghiêng · giãn chữ --&gt;</span>
+<span class="text-sky-300">&lt;p</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"font-serif text-2xl font-black italic"</span><span class="text-sky-300">&gt;</span>Góc Cà Phê<span class="text-sky-300">&lt;/p&gt;</span>
+<span class="text-sky-300">&lt;p</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"text-sm/6 tracking-wide antialiased"</span><span class="text-sky-300">&gt;</span>text-sm + line-height 1.5rem<span class="text-sky-300">&lt;/p&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- leading (chiều cao dòng) khai báo theo SỐ --&gt;</span>
+<span class="text-sky-300">&lt;p</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"leading-6"</span><span class="text-sky-300">&gt;</span>...<span class="text-sky-300">&lt;/p&gt;</span>   <span class="text-gray-400 italic">/* 1.5rem  */</span>
+<span class="text-sky-300">&lt;p</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"leading-7"</span><span class="text-sky-300">&gt;</span>...<span class="text-sky-300">&lt;/p&gt;</span>   <span class="text-gray-400 italic">/* 1.75rem */</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+        <p class="font-semibold text-violet-800">Khác biệt v4</p>
+        <p>Các tên chữ <code>leading-tight</code> / <code>leading-snug</code> / <code>leading-normal</code> / <code>leading-relaxed</code> / <code>leading-loose</code> của v3 đã <strong>bị bỏ</strong>. v4 dùng <strong>leading theo số</strong>: <code>leading-6</code>, <code>leading-7</code>, <code>leading-8</code>… (mỗi đơn vị = 0.25rem), hoặc gộp vào cỡ chữ <code>text-lg/8</code>.</p>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">2</span>Typography — canh lề, gạch chân, cắt chữ
+      </h2>
+      <p class="mb-3">Canh lề: <code>text-left</code> / <code>text-center</code> / <code>text-right</code> / <code>text-justify</code>. Gạch: <code>underline</code>, <code>line-through</code>, <code>no-underline</code>, độ dày <code>decoration-2</code>, kiểu <code>decoration-wavy</code>. Chữ hoa/thường: <code>uppercase</code> / <code>lowercase</code> / <code>capitalize</code>. Danh sách: <code>list-disc</code> / <code>list-decimal</code> / <code>list-inside</code> / <code>list-none</code>. Xuống dòng thông minh: <code>text-balance</code>, <code>text-pretty</code>, <code>whitespace-nowrap</code>.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — truncate (1 dòng) &amp; line-clamp-3 (N dòng)</div>
+        <div class="space-y-3 p-4">
+          <p class="truncate rounded bg-gray-50 p-2">truncate · Một dòng duy nhất, phần thừa bị cắt và thêm dấu ba chấm tự động khi nội dung dài quá bề rộng của khung chứa nó nên không thể hiển thị hết.</p>
+          <p class="line-clamp-3 rounded bg-gray-50 p-2">line-clamp-3 · Giới hạn đúng ba dòng rồi thêm dấu ba chấm. Cà phê phin Việt Nam pha bằng phin nhôm, nhỏ giọt chậm, vị đậm và đắng nhẹ; thường uống cùng sữa đặc tạo thành cà phê sữa đá. Đoạn văn này cố ý viết dài để bạn thấy rõ hiệu ứng cắt ở dòng thứ ba, phần còn lại sẽ bị ẩn đi hoàn toàn dù văn bản vẫn còn tiếp tục.</p>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- 1 dòng + … --&gt;</span>
+<span class="text-sky-300">&lt;p</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"truncate"</span><span class="text-sky-300">&gt;</span>văn bản rất dài…<span class="text-sky-300">&lt;/p&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- N dòng + … --&gt;</span>
+<span class="text-sky-300">&lt;p</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"line-clamp-3"</span><span class="text-sky-300">&gt;</span>đoạn văn nhiều dòng…<span class="text-sky-300">&lt;/p&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- gạch chân sóng · canh đều · danh sách --&gt;</span>
+<span class="text-sky-300">&lt;a</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"underline decoration-2 decoration-wavy"</span><span class="text-sky-300">&gt;</span>link<span class="text-sky-300">&lt;/a&gt;</span>
+<span class="text-sky-300">&lt;ul</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"list-disc list-inside"</span><span class="text-sky-300">&gt;</span>…<span class="text-sky-300">&lt;/ul&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+        <p class="font-semibold text-violet-800">Khác biệt v4</p>
+        <p>Class ngắt từ dài của v3 là <code>break-words</code>; v4 đổi thành <code>wrap-break-word</code> (cùng nghĩa <code>overflow-wrap: break-word</code>). Ưu tiên <code>text-pretty</code> cho đoạn văn và <code>text-balance</code> cho tiêu đề để tránh dòng cuối lẻ loi.</p>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">3</span>Backgrounds — màu, ảnh, gradient
+      </h2>
+      <p class="mb-3">Nền màu dùng <code>bg-*</code> theo thang màu (<code>bg-amber-100</code>, <code>bg-sky-500</code>…). Ảnh nền: <code>bg-[url(...)]</code> phối cùng <code>bg-cover</code> / <code>bg-center</code> / <code>bg-no-repeat</code>. Gradient v4: <code>bg-linear-to-r from-* via-* to-*</code>, đổi góc bằng <code>bg-linear-45</code>, hoặc <code>bg-radial</code> / <code>bg-conic</code>; chỉnh điểm dừng bằng <code>from-10%</code>, <code>to-90%</code>.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — gradient · ảnh nền · chữ gradient</div>
+        <div class="space-y-4 p-4">
+          <div class="h-16 rounded-lg bg-linear-to-r from-amber-400 via-orange-500 to-rose-500"></div>
+          <div class="h-32 rounded-lg bg-[url(../assets/photo.svg)] bg-cover bg-center bg-no-repeat"></div>
+          <h3 class="bg-linear-to-r from-sky-500 to-violet-500 bg-clip-text text-center text-4xl font-black text-transparent">Góc Cà Phê</h3>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- dải gradient ngang, có màu giữa & điểm dừng --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"bg-linear-to-r from-amber-400 from-10% via-orange-500 to-rose-500"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- ảnh nền phủ kín, canh giữa, không lặp --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"bg-[url(../assets/photo.svg)] bg-cover bg-center bg-no-repeat"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- CHỮ gradient: tô gradient rồi cắt theo hình chữ --&gt;</span>
+<span class="text-sky-300">&lt;h3</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"bg-linear-to-r from-sky-500 to-violet-500
+           bg-clip-text text-transparent"</span><span class="text-sky-300">&gt;</span>Góc Cà Phê<span class="text-sky-300">&lt;/h3&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Mẹo — chữ gradient</p>
+        <p>Bí quyết chỉ có hai bước: <code>bg-clip-text</code> cắt nền theo đúng hình chữ, còn <code>text-transparent</code> làm chữ trong suốt để lộ gradient bên dưới. Nhớ đặt một cấp cỡ/độ đậm (<code>text-4xl font-black</code>) để chữ đủ dày, gradient mới nổi.</p>
+      </div>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+        <p class="font-semibold text-violet-800">Khác biệt v4</p>
+        <p>Tiền tố gradient <code>bg-gradient-to-*</code> của v3 đã đổi thành <code>bg-linear-*</code> trong v4 (thêm <code>bg-radial</code>, <code>bg-conic</code>). Ví dụ v3 <code>bg-gradient-to-r</code> → v4 <code>bg-linear-to-r</code>.</p>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">4</span>Borders · Outline · Ring · Divide
+      </h2>
+      <p class="mb-3">Bo góc: <code>rounded-xs</code> → <code>rounded-sm</code> / <code>md</code> / <code>lg</code> / <code>xl</code> / <code>2xl</code> / <code>3xl</code> / <code>full</code>. Viền: <code>border</code> (1px), <code>border-2</code>, chỉ trục <code>border-x</code>, kiểu <code>border-dashed</code>; màu <code>border-gray-300</code>, có thể kèm độ mờ <code>border-blue-500/50</code>. <code>divide-y divide-gray-200</code> kẻ đường giữa các con. <code>outline-*</code> và <code>ring-*</code> là hai lớp viền phụ không chiếm chỗ (không đẩy layout).</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — bo góc · viền · outline · ring</div>
+        <div class="flex flex-wrap items-center gap-4 p-4">
+          <span class="rounded-full border-2 border-blue-500 px-4 py-2">rounded-full</span>
+          <span class="rounded-lg border-2 border-dashed border-gray-400 px-4 py-2">border-dashed</span>
+          <span class="rounded-lg px-4 py-2 outline-2 outline-blue-500">outline-2</span>
+          <span class="rounded-lg px-4 py-2 ring-2 ring-indigo-500 ring-offset-2">ring-2 · offset</span>
+        </div>
+      </div>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — divide-y kẻ giữa các con</div>
+        <div class="divide-y divide-gray-200 px-4">
+          <p class="py-2">Cà phê sữa đá</p>
+          <p class="py-2">Bạc xỉu</p>
+          <p class="py-2">Cà phê đen nóng</p>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- viền + bo góc + màu viền kèm độ mờ --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"border-2 border-dashed border-blue-500/50 rounded-lg"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- kẻ đường phân cách GIỮA các phần tử con --&gt;</span>
+<span class="text-sky-300">&lt;ul</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"divide-y divide-gray-200"</span><span class="text-sky-300">&gt;</span> … <span class="text-sky-300">&lt;/ul&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- outline & ring: viền phụ, KHÔNG đẩy layout --&gt;</span>
+<span class="text-sky-300">&lt;button</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"outline-2 outline-blue-500"</span><span class="text-sky-300">&gt;&lt;/button&gt;</span>
+<span class="text-sky-300">&lt;button</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"ring-2 ring-indigo-500 ring-offset-2"</span><span class="text-sky-300">&gt;&lt;/button&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+        <p class="font-semibold text-violet-800">Khác biệt v4</p>
+        <p><code>rounded</code> trần của v3 nay là <code>rounded-sm</code> (và <code>rounded-sm</code> cũ thành <code>rounded-xs</code>). <code>ring</code> trần mặc định <strong>1px</strong> (v3 là 3px) và màu mặc định là <code>currentColor</code> — nên thường ghi rõ độ dày lẫn màu: <code>ring-2 ring-indigo-500</code>. Còn <code>outline-none</code> của v3 đổi thành <code>outline-hidden</code>.</p>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">5</span>Mẫu focus cho form (khả năng truy cập)
+      </h2>
+      <p class="mb-3">Vòng focus giúp người dùng bàn phím biết đang ở ô nào — <strong>đừng xoá hẳn</strong>. Cách chuẩn: ẩn outline mặc định bằng <code>focus:outline-hidden</code> rồi <strong>thay bằng ring rõ ràng</strong> (<code>focus:ring-2</code>). Dùng <code>focus-visible</code> để vòng chỉ hiện khi thao tác bằng bàn phím, không nhấp nháy lúc bấm chuột.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — bấm Tab hoặc nhấp vào ô để thấy vòng focus</div>
+        <div class="flex flex-wrap items-center gap-3 p-4">
+          <input type="text" placeholder="Nhập tên món…"
+                 class="rounded-lg border border-gray-300 px-3 py-2 focus:border-sky-500 focus:outline-hidden focus:ring-2 focus:ring-sky-500">
+          <button type="button"
+                  class="rounded-lg bg-sky-600 px-4 py-2 font-semibold text-white transition hover:bg-sky-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 active:scale-95">Đặt món</button>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- ô nhập: ẩn outline mặc định → thay bằng ring + đổi màu viền --&gt;</span>
+<span class="text-sky-300">&lt;input</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"border border-gray-300 rounded-lg px-3 py-2
+              focus:outline-hidden focus:ring-2 focus:ring-sky-500 focus:border-sky-500"</span><span class="text-sky-300">&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- nút: hover đổi nền · active thu nhỏ · ring chỉ khi dùng bàn phím --&gt;</span>
+<span class="text-sky-300">&lt;button</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"bg-sky-600 hover:bg-sky-700 active:scale-95
+               focus-visible:ring-2 focus-visible:ring-offset-2"</span><span class="text-sky-300">&gt;</span>Đặt món<span class="text-sky-300">&lt;/button&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+        <p class="font-semibold text-violet-800">Chuẩn nghề</p>
+        <p>v3 dùng <code>focus:outline-none</code>; v4 đổi thành <code>focus:outline-hidden</code> — và <strong>luôn</strong> cặp với một <code>focus:ring-*</code> rõ ràng, tuyệt đối không bỏ trống dấu hiệu focus (vi phạm WCAG). Ưu tiên <code>focus-visible</code> để vòng chỉ xuất hiện khi người dùng điều hướng bằng bàn phím, tránh làm phiền người bấm chuột.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer điều hướng ===== -->
+  <footer class="mx-auto mt-6 flex max-w-4xl flex-wrap justify-between gap-2 border-t border-gray-200 px-4 py-6">
+    <a class="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-100" href="04-layout-flex-grid.html">← 5.3 Layout</a>
+    <a class="rounded-lg bg-[#1D559F] px-4 py-2 text-sm text-white hover:bg-[#17457f]" href="06-hieu-ung-filter.html">5.4–5.5 Hiệu ứng →</a>
+  </footer>
+
+</body>
+</html>

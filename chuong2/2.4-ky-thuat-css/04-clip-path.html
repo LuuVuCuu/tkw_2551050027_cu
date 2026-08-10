@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.4.4 — CLIP-PATH & SHAPE-OUTSIDE (bản toàn diện)
+  ------------------------------------------------------------
+  clip-path "cắt" phần hiển thị của một phần tử theo đường biên
+  hình học (chữ nhật, tròn, ellipse, đa giác, đường SVG). Bài
+  này đi từ cơ bản → nâng cao, tham khảo W3Schools / MDN:
+    1) clip-path là gì        7) Animate / transition khi hover
+    2) inset() bo góc round   8) shape-outside (chữ chảy quanh)
+    3) circle()               9) Công cụ trực quan (clippy...)
+    4) ellipse()             10) Bảng cú pháp các hàm hình
+    5) polygon() nhiều hình  11) Mẹo & lỗi thường gặp
+    6) path() (SVG)
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.4.4 · Clip-path · Shape</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* ảnh demo dùng chung: vuông để dễ quan sát đường cắt */
+    .d-img {
+      width: 170px; height: 170px; object-fit: cover;
+      border-radius: 8px; background: #eaf1fb; display: block;
+    }
+    /* nền ô vuông (checkerboard) để thấy rõ phần BỊ CẮT đi trở nên trong suốt */
+    .d-stage {
+      display: inline-block; padding: 6px; border-radius: 10px;
+      background-color: #f1f5f9;
+      background-image:
+        linear-gradient(45deg, #e2e8f0 25%, transparent 25%, transparent 75%, #e2e8f0 75%),
+        linear-gradient(45deg, #e2e8f0 25%, transparent 25%, transparent 75%, #e2e8f0 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+    }
+    .d-grid {
+      display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start;
+    }
+    .d-cap { text-align: center; margin: 6px 0 0; }
+    .d-cap figcaption { font-size: .82rem; color: var(--muted); margin-top: 4px; }
+    figure.d-fig { margin: 0; text-align: center; }
+
+    /* 1) minh hoạ "trước / sau" khi cắt */
+    .d-before { clip-path: none; }
+    .d-after  { clip-path: circle(50%); }
+
+    /* 2) inset() — cắt hình chữ nhật, có thể bo góc round */
+    .d-inset1 { clip-path: inset(20px); }                       /* cắt đều 4 cạnh 20px */
+    .d-inset2 { clip-path: inset(10% 25% 10% 25%); }            /* trên phải dưới trái */
+    .d-inset3 { clip-path: inset(15px round 24px); }            /* bo tròn góc */
+    .d-inset4 { clip-path: inset(0 round 50%); }                /* round 50% = hình tròn */
+
+    /* 3) circle( bán-kính at vị-trí ) */
+    .d-circle1 { clip-path: circle(50%); }                      /* tròn lớn nhất, tâm giữa */
+    .d-circle2 { clip-path: circle(40%); }                      /* nhỏ hơn → có viền trong suốt */
+    .d-circle3 { clip-path: circle(45% at 30% 30%); }           /* dời tâm lên góc trên-trái */
+    .d-circle4 { clip-path: circle(70px at right center); }     /* bán kính px, neo bên phải */
+
+    /* 4) ellipse( rx ry at vị-trí ) */
+    .d-ellipse1 { clip-path: ellipse(50% 35%); }                /* bầu dục nằm ngang */
+    .d-ellipse2 { clip-path: ellipse(35% 50%); }                /* bầu dục đứng */
+    .d-ellipse3 { clip-path: ellipse(45% 30% at 50% 70%); }     /* dời tâm xuống dưới */
+
+    /* 5) polygon() — đa giác tuỳ ý */
+    .d-tri    { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }                  /* tam giác */
+    .d-rhomb  { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }          /* hình thoi */
+    .d-arrow  { clip-path: polygon(0% 20%, 60% 20%, 60% 0%, 100% 50%,
+                                    60% 100%, 60% 80%, 0% 80%); }                   /* mũi tên → */
+    .d-star   { clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%,
+                                    50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }  /* ngôi sao */
+    .d-hex    { clip-path: polygon(25% 0%, 75% 0%, 100% 50%,
+                                    75% 100%, 25% 100%, 0% 50%); }                  /* lục giác */
+    .d-cross  { clip-path: polygon(35% 0%, 65% 0%, 65% 35%, 100% 35%, 100% 65%,
+                                    65% 65%, 65% 100%, 35% 100%, 35% 65%, 0% 65%,
+                                    0% 35%, 35% 35%); }                             /* dấu cộng */
+
+    /* 6) path() — dùng đường SVG. Cần cố định kích thước theo hệ toạ độ path */
+    .d-pathbox { width: 200px; height: 200px; background:
+      linear-gradient(135deg, var(--blue), var(--purple)); border-radius: 8px; }
+    /* trái tim, vẽ trong khung 200x200 */
+    .d-heart {
+      clip-path: path("M100,180 C40,130 10,90 40,55 C65,28 100,55 100,75 \
+                       C100,55 135,28 160,55 C190,90 160,130 100,180 Z");
+    }
+
+    /* 7) Animate / transition khi hover */
+    .d-reveal {
+      transition: clip-path .5s ease;
+      clip-path: inset(0 50% 0 0);            /* lúc đầu lộ nửa trái */
+    }
+    .d-reveal:hover { clip-path: inset(0 0 0 0); }   /* hover → lộ toàn bộ */
+
+    .d-wipe {
+      transition: clip-path .45s ease;
+      clip-path: circle(28% at 50% 50%);      /* lỗ tròn nhỏ */
+    }
+    .d-wipe:hover { clip-path: circle(75% at 50% 50%); }  /* mở rộng vòng tròn */
+
+    .d-poly-anim {
+      transition: clip-path .5s ease;
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);      /* chữ nhật đầy */
+    }
+    .d-poly-anim:hover {
+      clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);    /* co thành hình thoi */
+    }
+
+    /* khung gợi ý hover cho 3 demo trên */
+    .d-hovwrap { position: relative; display: inline-block; }
+    .d-hovwrap::after {
+      content: "di chuột vào"; position: absolute; left: 50%; bottom: 6px;
+      transform: translateX(-50%); font-size: .72rem; color: #fff;
+      background: rgba(15,23,42,.6); padding: 2px 8px; border-radius: 999px;
+      pointer-events: none;
+    }
+    .d-hovwrap:hover::after { opacity: 0; }
+
+    /* 8) shape-outside — chữ chảy quanh hình */
+    .d-flow { overflow: hidden; }   /* bao quanh float */
+    .d-flow .d-floatimg {
+      float: left; width: 180px; height: 180px; object-fit: cover;
+      shape-outside: circle(50%); clip-path: circle(50%);
+      margin: 0 18px 8px 0;
+    }
+    .d-flow-r .d-floatimg2 {
+      float: right; width: 180px; height: 180px; object-fit: cover;
+      shape-outside: polygon(0 0, 100% 0, 100% 100%, 50% 60%, 0 100%);
+      clip-path:    polygon(0 0, 100% 0, 100% 100%, 50% 60%, 0 100%);
+      margin: 0 0 8px 18px;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.4 Kỹ thuật CSS</a><span>›</span>
+        Clip-path · Shape
+      </nav>
+      <h1>Cắt hình với <code style="color:#fff;background:rgba(255,255,255,.18)">clip-path</code> &amp; <code style="color:#fff;background:rgba(255,255,255,.18)">shape-outside</code></h1>
+      <p class="sub">clip-path "cắt" phần hiển thị của phần tử theo một đường biên hình học: chữ nhật bo góc,
+         tròn, bầu dục, đa giác tuỳ ý hay cả đường SVG. Kết hợp transition để tạo hiệu ứng lộ/cắt, và
+         shape-outside để cho văn bản chảy ôm theo hình.</p>
+      <div class="chips">
+        <span class="chip solid">2.4.4</span>
+        <span class="chip">clip-path</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">clip-path là gì</a></li>
+        <li><a href="#s2">inset() — chữ nhật &amp; bo góc</a></li>
+        <li><a href="#s3">circle()</a></li>
+        <li><a href="#s4">ellipse()</a></li>
+        <li><a href="#s5">polygon() — đa giác tuỳ ý</a></li>
+        <li><a href="#s6">path() — đường SVG</a></li>
+        <li><a href="#s7">Animate / transition khi hover</a></li>
+        <li><a href="#s8">shape-outside — chữ chảy quanh hình</a></li>
+        <li><a href="#s9">Công cụ trực quan</a></li>
+        <li><a href="#s10">Bảng cú pháp các hàm hình</a></li>
+        <li><a href="#s11">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. CLIP-PATH LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> clip-path là gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Thuộc tính <code>clip-path</code> định nghĩa một <strong>vùng được cắt (clipping region)</strong>:
+         chỉ phần nằm <em>bên trong</em> đường biên mới hiển thị, phần còn lại bị giấu (trở nên trong suốt). Phần tử
+         vẫn chiếm đúng kích thước như cũ trong layout — ta chỉ thay đổi cái <em>nhìn thấy</em>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Trước &amp; sau khi cắt (nền ô caro = vùng trong suốt)</div>
+        <div class="demo-body">
+          <div class="d-grid">
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-before" src="../../assets/rose.svg" alt="ảnh gốc chưa cắt"></span>
+              <figcaption>Ảnh gốc — <code>clip-path: none</code></figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-after" src="../../assets/rose.svg" alt="ảnh đã cắt tròn"></span>
+              <figcaption>Đã cắt — <code>clip-path: circle(50%)</code></figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>Cú pháp chung: <code>clip-path: &lt;hàm-hình&gt;;</code> với hàm hình là một trong
+           <code>inset()</code>, <code>circle()</code>, <code>ellipse()</code>, <code>polygon()</code>, <code>path()</code>.</p>
+        <p>Toạ độ trong các hàm thường tính theo <strong>hộp tham chiếu</strong> của phần tử: <code>0% 0%</code> là góc
+           trên-trái, <code>100% 100%</code> là góc dưới-phải. Có thể đổi hộp tham chiếu bằng từ khoá
+           <code>border-box</code> / <code>padding-box</code> / <code>content-box</code>.</p>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Cắt ảnh thành hình tròn */</span>
+img { <span class="k">clip-path</span>: <span class="v">circle(50%)</span>; }
+
+<span class="c">/* Đổi hộp tham chiếu sang content-box trước khi cắt */</span>
+.box { <span class="k">clip-path</span>: <span class="v">circle(50%) content-box</span>; }</code></pre>
+
+      <table class="syntax">
+        <caption>Phân biệt clip-path với vài thuộc tính "che/cắt" khác</caption>
+        <thead><tr><th>Thuộc tính</th><th>Cắt theo cái gì?</th><th>Vùng bị bỏ</th></tr></thead>
+        <tbody>
+          <tr><td><code>clip-path</code></td><td>Đường biên hình học (tròn, đa giác, SVG…)</td><td>Trở nên trong suốt hoàn toàn</td></tr>
+          <tr><td><code>overflow:hidden</code></td><td>Hộp chữ nhật của phần tử cha</td><td>Phần con tràn ra ngoài</td></tr>
+          <tr><td><code>mask</code></td><td>Ảnh/gradient theo <strong>độ mờ</strong> (alpha)</td><td>Mờ dần được, không chỉ on/off</td></tr>
+          <tr><td><code>border-radius</code></td><td>Chỉ bo 4 góc</td><td>Bốn góc vuông</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  2. INSET()  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> <code>inset()</code> — cắt chữ nhật, bo góc <code>round</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Hàm <code>inset()</code> cắt một <strong>khung chữ nhật</strong> bằng cách "thụt vào" từ 4 cạnh.
+         Cú pháp giống <code>margin/padding</code>: 1–4 giá trị, theo thứ tự <em>trên · phải · dưới · trái</em>. Thêm
+         từ khoá <code>round</code> để bo góc.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Bốn kiểu inset()</div>
+        <div class="demo-body">
+          <div class="d-grid">
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-inset1" src="../../assets/sky.svg" alt="inset đều"></span>
+              <figcaption><code>inset(20px)</code></figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-inset2" src="../../assets/sky.svg" alt="inset 4 giá trị"></span>
+              <figcaption><code>inset(10% 25% 10% 25%)</code></figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-inset3" src="../../assets/sky.svg" alt="inset bo góc"></span>
+              <figcaption><code>inset(15px round 24px)</code></figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-inset4" src="../../assets/sky.svg" alt="inset round 50% thành tròn"></span>
+              <figcaption><code>inset(0 round 50%)</code> → tròn</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.a { <span class="k">clip-path</span>: <span class="v">inset(20px)</span>; }                 <span class="c">/* thụt đều 4 cạnh 20px */</span>
+.b { <span class="k">clip-path</span>: <span class="v">inset(10% 25% 10% 25%)</span>; }   <span class="c">/* trên phải dưới trái */</span>
+.c { <span class="k">clip-path</span>: <span class="v">inset(15px round 24px)</span>; }     <span class="c">/* bo tròn 4 góc */</span>
+.d { <span class="k">clip-path</span>: <span class="v">inset(0 round 50%)</span>; }        <span class="c">/* round 50% = hình tròn/viên thuốc */</span></code></pre>
+
+      <div class="note">
+        <p><strong>round</strong> nhận tới 8 giá trị giống <code>border-radius</code>
+           (ví dụ <code>inset(10px round 8px 8px 0 0)</code> chỉ bo 2 góc trên).</p>
+      </div>
+      <div class="callout tip"><p><code>inset()</code> rất hợp để tạo "khung cửa sổ" nhìn vào ảnh, hoặc làm hiệu ứng
+        rèm cuốn khi kết hợp transition (xem mục 7).</p></div>
+    </section>
+
+    <!-- ==========  3. CIRCLE()  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> <code>circle()</code> — cắt hình tròn <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Cú pháp: <code>circle( &lt;bán-kính&gt; at &lt;vị-trí&gt; )</code>. Bán kính có thể là
+         <code>%</code> hoặc <code>px</code>; phần <code>at</code> dời <strong>tâm</strong> đường tròn (mặc định là
+         tâm phần tử). Với <code>%</code>, <code>50%</code> cho đường tròn lớn nhất vừa khít.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Bán kính &amp; vị trí tâm khác nhau</div>
+        <div class="demo-body">
+          <div class="d-grid">
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-circle1" src="../../assets/rose.svg" alt="tròn 50%"></span>
+              <figcaption><code>circle(50%)</code></figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-circle2" src="../../assets/rose.svg" alt="tròn 40%"></span>
+              <figcaption><code>circle(40%)</code></figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-circle3" src="../../assets/rose.svg" alt="tròn dời tâm"></span>
+              <figcaption><code>circle(45% at 30% 30%)</code></figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-circle4" src="../../assets/rose.svg" alt="tròn neo phải"></span>
+              <figcaption><code>circle(70px at right center)</code></figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.a { <span class="k">clip-path</span>: <span class="v">circle(50%)</span>; }                  <span class="c">/* tròn lớn nhất, tâm giữa */</span>
+.b { <span class="k">clip-path</span>: <span class="v">circle(40%)</span>; }                  <span class="c">/* nhỏ hơn → có viền trong suốt */</span>
+.c { <span class="k">clip-path</span>: <span class="v">circle(45% at 30% 30%)</span>; }       <span class="c">/* dời tâm lên góc trên-trái */</span>
+.d { <span class="k">clip-path</span>: <span class="v">circle(70px at right center)</span>; }  <span class="c">/* bán kính px, neo bên phải */</span></code></pre>
+
+      <div class="callout info"><p>Có hai từ khoá đặc biệt cho bán kính: <code>closest-side</code> (tới cạnh gần nhất)
+        và <code>farthest-side</code> (tới cạnh xa nhất) — hữu ích khi phần tử không vuông.</p></div>
+    </section>
+
+    <!-- ==========  4. ELLIPSE()  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> <code>ellipse()</code> — cắt bầu dục <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Như <code>circle()</code> nhưng có <strong>hai bán kính</strong>:
+         <code>ellipse( rx ry at &lt;vị-trí&gt; )</code> — bán kính ngang (rx) và bán kính dọc (ry) độc lập.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Ellipse ngang · đứng · dời tâm</div>
+        <div class="demo-body">
+          <div class="d-grid">
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-ellipse1" src="../../assets/sky.svg" alt="ellipse ngang"></span>
+              <figcaption><code>ellipse(50% 35%)</code></figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-ellipse2" src="../../assets/sky.svg" alt="ellipse đứng"></span>
+              <figcaption><code>ellipse(35% 50%)</code></figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-ellipse3" src="../../assets/sky.svg" alt="ellipse dời tâm"></span>
+              <figcaption><code>ellipse(45% 30% at 50% 70%)</code></figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.a { <span class="k">clip-path</span>: <span class="v">ellipse(50% 35%)</span>; }            <span class="c">/* bầu dục nằm ngang */</span>
+.b { <span class="k">clip-path</span>: <span class="v">ellipse(35% 50%)</span>; }            <span class="c">/* bầu dục đứng */</span>
+.c { <span class="k">clip-path</span>: <span class="v">ellipse(45% 30% at 50% 70%)</span>; } <span class="c">/* dời tâm xuống dưới */</span></code></pre>
+
+      <div class="callout tip"><p>Khi <code>rx === ry</code>, <code>ellipse()</code> trở thành <code>circle()</code>.
+        Dùng ellipse khi cần đường cong bất đối xứng, ví dụ tạo "ngọn đồi" hay đáy cong cho banner.</p></div>
+    </section>
+
+    <!-- ==========  5. POLYGON()  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> <code>polygon()</code> — đa giác tuỳ ý <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Mạnh nhất và linh hoạt nhất: liệt kê các <strong>đỉnh</strong> theo cặp toạ độ <code>x y</code>,
+         ngăn cách bằng dấu phẩy. Trình duyệt nối các đỉnh thành một đa giác kín. Từ tam giác, hình thoi, mũi tên đến
+         ngôi sao — tất cả chỉ là một danh sách điểm.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Sáu hình từ polygon()</div>
+        <div class="demo-body">
+          <div class="d-grid">
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-tri" src="../../assets/rose.svg" alt="tam giác"></span>
+              <figcaption>Tam giác</figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-rhomb" src="../../assets/rose.svg" alt="hình thoi"></span>
+              <figcaption>Hình thoi</figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-arrow" src="../../assets/rose.svg" alt="mũi tên"></span>
+              <figcaption>Mũi tên</figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-star" src="../../assets/rose.svg" alt="ngôi sao"></span>
+              <figcaption>Ngôi sao</figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-hex" src="../../assets/rose.svg" alt="lục giác"></span>
+              <figcaption>Lục giác</figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-stage"><img class="d-img d-cross" src="../../assets/rose.svg" alt="dấu cộng"></span>
+              <figcaption>Dấu cộng</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Mỗi cặp "x y" là một đỉnh; trình duyệt nối lại thành đa giác kín */</span>
+.tam-giac { <span class="k">clip-path</span>: <span class="v">polygon(50% 0%, 0% 100%, 100% 100%)</span>; }
+.hinh-thoi{ <span class="k">clip-path</span>: <span class="v">polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)</span>; }
+.luc-giac { <span class="k">clip-path</span>: <span class="v">polygon(25% 0%, 75% 0%, 100% 50%,
+                              75% 100%, 25% 100%, 0% 50%)</span>; }
+.ngoi-sao { <span class="k">clip-path</span>: <span class="v">polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%,
+                              50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)</span>; }</code></pre>
+
+      <div class="callout warn"><p>Đếm cho đủ điểm và đóng kín hình. Ngôi sao 5 cánh cần <strong>10 đỉnh</strong>
+        (5 đỉnh ngoài + 5 đỉnh trong xen kẽ). Nhập tay rất dễ sai — hãy dùng công cụ ở mục 9.</p></div>
+    </section>
+
+    <!-- ==========  6. PATH()  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> <code>path()</code> — cắt theo đường SVG <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Khi cần <strong>đường cong</strong> (Bézier) mà polygon không làm được, dùng
+         <code>path("...")</code> với cú pháp giống thuộc tính <code>d</code> của SVG: <code>M</code> (move),
+         <code>L</code> (line), <code>C</code> (cubic), <code>Z</code> (đóng). Toạ độ tính bằng <strong>px tuyệt đối</strong>,
+         nên cần cố định kích thước phần tử cho khớp.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Hình trái tim cắt bằng path() trong khung 200×200</div>
+        <div class="demo-body">
+          <div class="d-grid">
+            <figure class="d-fig">
+              <span class="d-stage"><div class="d-pathbox d-heart"></div></span>
+              <figcaption><code>clip-path: path("M100,180 C…Z")</code></figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.trai-tim {
+  <span class="k">width</span>: <span class="v">200px</span>; <span class="k">height</span>: <span class="v">200px</span>;   <span class="c">/* path() dùng px tuyệt đối → phải cố định cỡ */</span>
+  <span class="k">clip-path</span>: <span class="v">path("M100,180 C40,130 10,90 40,55
+                    C65,28 100,55 100,75
+                    C100,55 135,28 160,55
+                    C190,90 160,130 100,180 Z")</span>;
+}</code></pre>
+
+      <div class="callout danger"><p><strong>Hạn chế lớn:</strong> <code>path()</code> dùng toạ độ pixel cố định nên
+        <u>không co giãn</u> theo kích thước phần tử. Nếu cần đường cong mà vẫn responsive, hãy dùng SVG
+        <code>&lt;clipPath clipPathUnits="objectBoundingBox"&gt;</code> rồi tham chiếu bằng
+        <code>clip-path: url(#id)</code>.</p></div>
+    </section>
+
+    <!-- ==========  7. ANIMATE / TRANSITION  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Animate &amp; transition <code>clip-path</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>clip-path</code> có thể chuyển động mượt bằng <code>transition</code> hay
+         <code>@keyframes</code> — tạo hiệu ứng <strong>lộ dần / cắt dần</strong>. Điều kiện để mượt: hai trạng thái
+         dùng <em>cùng một hàm hình và cùng số điểm</em> (vd inset → inset, hay polygon 4 điểm → polygon 4 điểm).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Di chuột vào từng ảnh để xem hiệu ứng</div>
+        <div class="demo-body">
+          <div class="d-grid">
+            <figure class="d-fig">
+              <span class="d-hovwrap"><span class="d-stage"><img class="d-img d-reveal" src="../../assets/photo.svg" alt="lộ ngang"></span></span>
+              <figcaption>inset() — lộ từ trái sang</figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-hovwrap"><span class="d-stage"><img class="d-img d-wipe" src="../../assets/photo.svg" alt="mở rộng tròn"></span></span>
+              <figcaption>circle() — mở rộng vòng tròn</figcaption>
+            </figure>
+            <figure class="d-fig">
+              <span class="d-hovwrap"><span class="d-stage"><img class="d-img d-poly-anim" src="../../assets/photo.svg" alt="co thành thoi"></span></span>
+              <figcaption>polygon() — chữ nhật → thoi</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.lo-ngang {
+  <span class="k">clip-path</span>: <span class="v">inset(0 50% 0 0)</span>;        <span class="c">/* ban đầu chỉ lộ nửa trái */</span>
+  <span class="k">transition</span>: <span class="v">clip-path .5s ease</span>;
+}
+.lo-ngang:hover { <span class="k">clip-path</span>: <span class="v">inset(0 0 0 0)</span>; }  <span class="c">/* hover → lộ hết */</span>
+
+<span class="c">/* Polygon phải GIỮ NGUYÊN số điểm ở 2 trạng thái thì mới mượt */</span>
+.morph        { <span class="k">clip-path</span>: <span class="v">polygon(0 0, 100% 0, 100% 100%, 0 100%)</span>; }
+.morph:hover  { <span class="k">clip-path</span>: <span class="v">polygon(50% 0, 100% 50%, 50% 100%, 0 50%)</span>; }</code></pre>
+
+      <div class="callout tip"><p>Hiệu ứng "lộ ảnh khi cuộn trang" thường làm bằng <code>@keyframes</code> đổi
+        <code>clip-path</code> từ <code>inset(0 100% 0 0)</code> (ẩn) sang <code>inset(0 0 0 0)</code> (hiện).</p></div>
+    </section>
+
+    <!-- ==========  8. SHAPE-OUTSIDE  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> <code>shape-outside</code> — chữ chảy quanh hình <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>clip-path</code> chỉ cắt phần <em>nhìn thấy</em>; văn bản bên cạnh vẫn né theo hộp chữ nhật.
+         Muốn các dòng chữ <strong>ôm theo đường cong</strong> của ảnh, dùng <code>shape-outside</code> — nhưng nó
+         <u>chỉ có tác dụng trên phần tử đã <code>float</code></u>. Thường đi cặp với <code>clip-path</code> để vừa
+         cắt vừa cho chữ chảy khớp.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Chữ chảy ôm theo ảnh tròn (float:left)</div>
+        <div class="demo-body d-flow">
+          <img class="d-floatimg" src="../../assets/photo.svg" alt="ảnh tròn">
+          <p>Khi đặt <code>float:left</code> kèm <code>shape-outside: circle(50%)</code>, các dòng văn bản không chỉ
+             chừa một khối chữ nhật mà còn <strong>ôm theo đường tròn</strong> của ảnh. <code>clip-path: circle(50%)</code>
+             cắt ảnh thành hình tròn để khớp với vùng chảy. Càng nhiều chữ, hiệu ứng ôm cong càng rõ. Đây là kỹ thuật
+             hay dùng cho ảnh chân dung trong bài viết, tạp chí để bố cục mềm mại, sinh động hơn so với ảnh vuông
+             truyền thống. Lưu ý đặt cùng giá trị cho cả hai thuộc tính thì vùng chảy và phần ảnh hiển thị mới trùng
+             khít nhau. Khối cha nên có <code>overflow:hidden</code> hoặc thủ thuật clearfix để bao trọn phần tử float.</p>
+        </div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-bar">Chữ chảy quanh đa giác (float:right)</div>
+        <div class="demo-body d-flow d-flow-r">
+          <img class="d-floatimg2" src="../../assets/photo.svg" alt="ảnh đa giác">
+          <p><code>shape-outside</code> nhận đúng những hàm hình như <code>clip-path</code>:
+             <code>circle()</code>, <code>ellipse()</code>, <code>polygon()</code>, <code>inset()</code>, thậm chí một ảnh
+             có kênh alpha. Ở ví dụ này ảnh được float sang phải với một <code>polygon()</code> có cạnh xiên ở đáy, nên
+             các dòng chữ ở mép trái sẽ men theo đường chéo đó. Khi muốn nới khoảng cách giữa chữ và hình, dùng thêm
+             <code>shape-margin</code>. Kỹ thuật này giúp trình bày tạp chí điện tử trông chuyên nghiệp và bớt cứng nhắc
+             hơn so với bố cục khối hộp thông thường mà ta vẫn quen dùng hằng ngày.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* shape-outside CHỈ chạy khi phần tử đã float */</span>
+img {
+  <span class="k">float</span>: <span class="v">left</span>;
+  <span class="k">shape-outside</span>: <span class="v">circle(50%)</span>;   <span class="c">/* chữ ôm theo đường tròn */</span>
+  <span class="k">clip-path</span>:     <span class="v">circle(50%)</span>;   <span class="c">/* cắt ảnh cho khớp vùng chảy */</span>
+  <span class="k">shape-margin</span>: <span class="v">12px</span>;        <span class="c">/* khoảng đệm giữa chữ và hình */</span>
+}</code></pre>
+
+      <div class="callout warn"><p>Không thấy chữ chảy cong? Hãy kiểm tra: (1) phần tử đã <code>float:left/right</code> chưa,
+        (2) <code>shape-outside</code> và <code>clip-path</code> có cùng giá trị không, (3) có đủ văn bản để các dòng
+        chạy qua chiều cao của hình không.</p></div>
+    </section>
+
+    <!-- ==========  9. CÔNG CỤ TRỰC QUAN  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Công cụ tạo clip-path trực quan <span class="tag-base">Tiện ích</span></h2>
+      <p class="lead">Gõ tay toạ độ <code>polygon()</code> rất dễ nhầm. Có các công cụ kéo–thả điểm rồi tự sinh CSS,
+         bạn chỉ việc copy về.</p>
+
+      <table class="syntax">
+        <caption>Một số công cụ phổ biến</caption>
+        <thead><tr><th>Công cụ</th><th>Đặc điểm</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Clippy</strong> (bennettfeely.com/clippy)</td><td>Bộ tạo clip-path kinh điển; có sẵn mẫu ngôi sao, lục giác, mũi tên… kéo điểm là ra CSS.</td></tr>
+          <tr><td><strong>Clippy (bản Việt)</strong> · clippy.fullstack.edu.vn</td><td>Bản dịch/đặt lại của Clippy, giao diện tiếng Việt, tiện cho người mới.</td></tr>
+          <tr><td><strong>CSS clip-path maker</strong> (css-tricks)</td><td>Tạo cả <code>polygon</code>, <code>circle</code>, <code>ellipse</code>, <code>inset</code> và xem trước trên ảnh của bạn.</td></tr>
+          <tr><td><strong>Shape generators</strong> (shape.so, getwaves…)</td><td>Sinh đường cong/sóng dạng SVG <code>path</code> để dùng cho <code>path()</code> hoặc nền.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info"><p>Quy trình gợi ý: chọn hình mẫu trên công cụ → kéo điểm cho vừa ý → copy chuỗi
+        <code>clip-path: polygon(...)</code> → dán vào CSS của bạn. Nhớ kiểm lại trên đúng kích thước/ảnh thật vì toạ độ
+        <code>%</code> phụ thuộc tỉ lệ khung.</p></div>
+    </section>
+
+    <!-- ==========  10. BẢNG CÚ PHÁP  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Bảng cú pháp các hàm hình <span class="tag-base">Tra cứu</span></h2>
+      <p class="lead">Tóm tắt năm hàm hình dùng được cho cả <code>clip-path</code> và <code>shape-outside</code>.</p>
+
+      <table class="syntax">
+        <caption>Các hàm hình của clip-path (theo W3Schools / MDN)</caption>
+        <thead><tr><th>Hàm</th><th>Cú pháp</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>inset()</code></td>
+            <td><code>inset(t r b l round &lt;radii&gt;)</code></td>
+            <td>Chữ nhật thụt vào từ 4 cạnh; <code>round</code> để bo góc.</td>
+          </tr>
+          <tr>
+            <td><code>circle()</code></td>
+            <td><code>circle(r at x y)</code></td>
+            <td>Tròn, bán kính <code>r</code> (%, px, closest/farthest-side), tâm tại <code>x y</code>.</td>
+          </tr>
+          <tr>
+            <td><code>ellipse()</code></td>
+            <td><code>ellipse(rx ry at x y)</code></td>
+            <td>Bầu dục với bán kính ngang/dọc riêng, tâm tại <code>x y</code>.</td>
+          </tr>
+          <tr>
+            <td><code>polygon()</code></td>
+            <td><code>polygon(x1 y1, x2 y2, …)</code></td>
+            <td>Đa giác kín nối các đỉnh; tự do nhất.</td>
+          </tr>
+          <tr>
+            <td><code>path()</code></td>
+            <td><code>path("M… C… Z")</code></td>
+            <td>Đường SVG (có đường cong); toạ độ px tuyệt đối, không co giãn.</td>
+          </tr>
+          <tr>
+            <td><code>url(#id)</code></td>
+            <td><code>clip-path: url(#myClip)</code></td>
+            <td>Tham chiếu <code>&lt;clipPath&gt;</code> định nghĩa sẵn trong SVG (linh hoạt + responsive).</td>
+          </tr>
+          <tr>
+            <td><em>từ khoá hộp</em></td>
+            <td><code>border-box · padding-box · content-box</code></td>
+            <td>Đổi hộp tham chiếu để tính toạ độ.</td>
+          </tr>
+          <tr>
+            <td><code>none</code></td>
+            <td><code>clip-path: none</code></td>
+            <td>Không cắt (giá trị mặc định).</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  11. MẸO & LỖI THƯỜNG GẶP  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout warn"><p><strong>Vùng bị cắt không nhận sự kiện chuột.</strong> Phần nằm ngoài đường biên trở
+        nên trong suốt <em>và</em> không bắt được <code>click/hover</code>. Đây là điểm khác với <code>border-radius</code>
+        (vẫn click được ở góc) và rất hữu ích để tạo nút hình ngôi sao bấm đúng vùng.</p></div>
+      <div class="callout tip"><p><strong>Kết hợp transition để có hiệu ứng.</strong> Hai trạng thái phải cùng hàm hình
+        và cùng số điểm thì mới chuyển động mượt. polygon 6 điểm chỉ "morph" mượt sang polygon 6 điểm khác.</p></div>
+      <div class="callout info"><p><strong>clip-path khác mask.</strong> <code>clip-path</code> cắt theo đường biên hình học
+        (bật/tắt cứng — trong hoặc ngoài). <code>mask</code> cắt theo <em>độ mờ</em> của một ảnh/gradient nên có thể mờ dần,
+        viền mềm, hiệu ứng đổ bóng. Cần cạnh sắc → clip-path; cần chuyển sắc/mờ → mask.</p></div>
+      <div class="callout danger"><p><strong>path() không responsive.</strong> Toạ độ px cố định sẽ lệch nếu phần tử đổi
+        kích thước. Cần đường cong mà vẫn co giãn → dùng SVG <code>&lt;clipPath clipPathUnits="objectBoundingBox"&gt;</code>
+        với toạ độ 0–1 rồi <code>clip-path: url(#id)</code>.</p></div>
+      <div class="callout tip"><p><strong>Đa số trình duyệt hiện đại hỗ trợ tốt</strong> <code>circle/ellipse/polygon/inset</code>.
+        Riêng <code>path()</code> và <code>shape-outside</code> ra muộn hơn — luôn chừa phương án dự phòng (fallback) cho
+        layout khi không hỗ trợ.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="03-filter.html"><small>← Bài trước</small>2.4.3 · Filter</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="05-object-fit.html"><small>Bài tiếp →</small>2.4.5 · object-fit</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

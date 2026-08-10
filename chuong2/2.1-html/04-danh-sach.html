@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.1.5 — DANH SÁCH TRONG HTML (bản toàn diện)
+  ------------------------------------------------------------
+  Danh sách giúp nhóm các mục liên quan thành một khối có cấu
+  trúc. Bài này đi từ cơ bản → nâng cao, tham khảo W3Schools
+  "HTML Lists":
+    1) ul / li (không thứ tự)   6) Tuỳ biến list bằng CSS
+    2) Kiểu dấu đầu dòng         7) Biến list thành menu ngang
+    3) ol / li (có thứ tự)      8) Bảng tổng hợp loại danh sách
+    4) dl / dt / dd (mô tả)     9) Khi nào dùng ul / ol / dl
+    5) Danh sách lồng nhau
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.1.5 · Danh sách — ul · ol · dl</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* 2) các kiểu dấu đầu dòng của ul */
+    .d-disc   { list-style-type: disc; }
+    .d-circle { list-style-type: circle; }
+    .d-square { list-style-type: square; }
+    .d-none   { list-style-type: none; }
+    .d-styles ul { background: #f6f9fe; border: 1px solid #e3e8f0; border-radius: 8px; padding: 10px 10px 10px 34px; margin: 0; }
+    .d-styles ul.d-none { padding-left: 14px; }
+
+    /* 6) tuỳ biến list bằng CSS */
+    .d-inside  { list-style-position: inside;  background: #eef4fc; border: 1px solid #cfe0f5; border-radius: 8px; padding: 10px 14px; }
+    .d-outside { list-style-position: outside; background: #eafaf9; border: 1px solid #b7ebd9; border-radius: 8px; padding: 10px 14px 10px 34px; }
+    .d-img { list-style: none; padding-left: 0; }
+    .d-img li { padding: 4px 0 4px 26px; background-repeat: no-repeat; background-position: 0 .35em; background-size: 16px 16px;
+                /* "ảnh" dấu đầu dòng dạng SVG nhúng inline (offline) */
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="%2304AA6D" d="M6 11.5 2.5 8l1-1L6 9.5 12.5 3l1 1z"/></svg>'); }
+    /* dùng counter để tự đánh số kiểu tuỳ biến */
+    .d-counter { list-style: none; counter-reset: muc; padding-left: 0; }
+    .d-counter li { counter-increment: muc; padding: 4px 0 4px 38px; position: relative; }
+    .d-counter li::before {
+      content: counter(muc); position: absolute; left: 0; top: 4px;
+      width: 26px; height: 26px; line-height: 26px; text-align: center;
+      background: #1D559F; color: #fff; border-radius: 50%; font-size: .8rem; font-weight: 700;
+    }
+
+    /* 7) biến list thành MENU NGANG */
+    .d-navbar { list-style: none; margin: 0; padding: 0; overflow: hidden;
+                background: #16407a; border-radius: 8px; }
+    .d-navbar li { display: inline-block; }       /* li vốn block → ép thành 1 hàng */
+    .d-navbar li a { display: block; color: #fff; text-decoration: none; padding: 12px 18px; }
+    .d-navbar li a:hover { background: #1D559F; }
+    .d-navbar li a.active { background: #04AA6D; }
+
+    /* 7b) menu ngang bằng Flexbox (hiện đại) */
+    .d-navflex { list-style: none; margin: 0; padding: 0; display: flex; gap: 4px;
+                 background: #6c5ce7; border-radius: 8px; }
+    .d-navflex li a { display: block; color: #fff; text-decoration: none; padding: 12px 18px; border-radius: 6px; }
+    .d-navflex li a:hover { background: rgba(255,255,255,.18); }
+
+    /* cây thư mục (mục 5) cho rõ phân cấp */
+    .d-tree, .d-tree ul { list-style: "📁 " inside; }
+    .d-tree ul ul { list-style: "📄 " inside; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.1 HTML</a><span>›</span>
+        Danh sách
+      </nav>
+      <h1>Danh sách trong HTML — <code style="color:#fff;background:rgba(255,255,255,.18)">ul</code> · <code style="color:#fff;background:rgba(255,255,255,.18)">ol</code> · <code style="color:#fff;background:rgba(255,255,255,.18)">dl</code></h1>
+      <p class="sub">Danh sách giúp nhóm các mục liên quan thành khối có cấu trúc: danh sách không thứ tự,
+         có thứ tự và danh sách mô tả. Đi từ cách dùng cơ bản đến tuỳ biến bằng CSS và biến danh sách thành menu điều hướng.</p>
+      <div class="chips">
+        <span class="chip solid">2.1.5</span>
+        <span class="chip solid">HTML cơ bản</span>
+        <span class="chip solid">Cơ bản → Nâng cao</span>
+        <span class="chip solid">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Danh sách không thứ tự &lt;ul&gt;</a></li>
+        <li><a href="#s2">Kiểu dấu đầu dòng (list-style-type)</a></li>
+        <li><a href="#s3">Danh sách có thứ tự &lt;ol&gt;</a></li>
+        <li><a href="#s4">Danh sách mô tả &lt;dl&gt;</a></li>
+        <li><a href="#s5">Danh sách lồng nhau (nested)</a></li>
+        <li><a href="#s6">Tuỳ biến list bằng CSS</a></li>
+        <li><a href="#s7">Biến list thành menu ngang</a></li>
+        <li><a href="#s8">Bảng tổng hợp danh sách</a></li>
+        <li><a href="#s9">Khi nào dùng ul / ol / dl</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. DANH SÁCH KHÔNG THỨ TỰ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Danh sách không thứ tự <code>&lt;ul&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Dùng khi <strong>thứ tự các mục không quan trọng</strong>. Mỗi mục là một thẻ
+         <code>&lt;li&gt;</code> (<em>list item</em>) đặt bên trong <code>&lt;ul&gt;</code> (<em>unordered list</em>).
+         Mặc định trình duyệt hiển thị một chấm tròn đặc (●) trước mỗi mục.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <ul>
+            <li>Cà phê</li>
+            <li>Trà</li>
+            <li>Sữa</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>Chỉ được đặt <code>&lt;li&gt;</code> làm con <strong>trực tiếp</strong> của <code>&lt;ul&gt;</code>.
+           Bên trong mỗi <code>&lt;li&gt;</code> thì lại có thể chứa văn bản, ảnh, liên kết, thậm chí cả một danh sách con (xem mục 5).</p>
+      </div>
+
+      <p class="syntax-label muted" style="font-weight:600">Cú pháp:</p>
+      <pre class="code"><code><span class="k">&lt;ul&gt;</span>
+  <span class="k">&lt;li&gt;</span>Cà phê<span class="k">&lt;/li&gt;</span>
+  <span class="k">&lt;li&gt;</span>Trà<span class="k">&lt;/li&gt;</span>
+  <span class="k">&lt;li&gt;</span>Sữa<span class="k">&lt;/li&gt;</span>
+<span class="k">&lt;/ul&gt;</span></code></pre>
+
+      <div class="callout info"><p><code>&lt;ul&gt;</code> và <code>&lt;li&gt;</code> đều là phần tử <strong>khối</strong> (block),
+        nên mỗi mục tự xuống một dòng riêng.</p></div>
+    </section>
+
+    <!-- ==========  2. KIỂU DẤU ĐẦU DÒNG  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Kiểu dấu đầu dòng — <code>list-style-type</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Thuộc tính CSS <code>list-style-type</code> đổi hình dạng dấu đầu dòng của <code>&lt;ul&gt;</code>.
+         Bốn giá trị hay dùng: <code>disc</code> (chấm đặc — mặc định), <code>circle</code> (vòng tròn rỗng),
+         <code>square</code> (vuông đặc) và <code>none</code> (không có dấu).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · 4 kiểu cạnh nhau</div>
+        <div class="demo-body d-styles split" style="grid-template-columns:repeat(2,1fr)">
+          <div>
+            <p class="muted" style="margin:0 0 6px"><code>disc</code> (mặc định)</p>
+            <ul class="d-disc"><li>Mục một</li><li>Mục hai</li></ul>
+          </div>
+          <div>
+            <p class="muted" style="margin:0 0 6px"><code>circle</code></p>
+            <ul class="d-circle"><li>Mục một</li><li>Mục hai</li></ul>
+          </div>
+          <div>
+            <p class="muted" style="margin:0 0 6px"><code>square</code></p>
+            <ul class="d-square"><li>Mục một</li><li>Mục hai</li></ul>
+          </div>
+          <div>
+            <p class="muted" style="margin:0 0 6px"><code>none</code></p>
+            <ul class="d-none"><li>Mục một</li><li>Mục hai</li></ul>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* đặt kiểu dấu đầu dòng cho ul */</span>
+ul.disc   { <span class="k">list-style-type</span>: <span class="v">disc</span>; }   <span class="c">/* ● mặc định */</span>
+ul.circle { <span class="k">list-style-type</span>: <span class="v">circle</span>; } <span class="c">/* ○ */</span>
+ul.square { <span class="k">list-style-type</span>: <span class="v">square</span>; } <span class="c">/* ▪ */</span>
+ul.none   { <span class="k">list-style-type</span>: <span class="v">none</span>; }   <span class="c">/* (bỏ dấu) */</span></code></pre>
+
+      <div class="callout tip"><p><code>list-style-type:none</code> rất hay dùng để "xoá" dấu đầu dòng khi biến danh sách
+        thành thanh menu hoặc danh sách thẻ — sẽ gặp lại ở mục 7.</p></div>
+    </section>
+
+    <!-- ==========  3. DANH SÁCH CÓ THỨ TỰ  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Danh sách có thứ tự <code>&lt;ol&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Dùng khi <strong>thứ tự quan trọng</strong> (các bước, bảng xếp hạng…). Mặc định đánh số 1, 2, 3…
+         Thuộc tính HTML <code>type</code> đổi kiểu đánh số; <code>start</code> đặt số bắt đầu; <code>reversed</code> đảo ngược.</p>
+
+      <h3>3.1 — Mặc định &amp; thuộc tính <code>type</code></h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · các kiểu type: 1 · A · a · I · i</div>
+        <div class="demo-body split" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+          <div>
+            <p class="muted" style="margin:0 0 4px"><code>type="1"</code></p>
+            <ol type="1"><li>Một</li><li>Hai</li><li>Ba</li></ol>
+          </div>
+          <div>
+            <p class="muted" style="margin:0 0 4px"><code>type="A"</code></p>
+            <ol type="A"><li>Một</li><li>Hai</li><li>Ba</li></ol>
+          </div>
+          <div>
+            <p class="muted" style="margin:0 0 4px"><code>type="a"</code></p>
+            <ol type="a"><li>Một</li><li>Hai</li><li>Ba</li></ol>
+          </div>
+          <div>
+            <p class="muted" style="margin:0 0 4px"><code>type="I"</code></p>
+            <ol type="I"><li>Một</li><li>Hai</li><li>Ba</li></ol>
+          </div>
+          <div>
+            <p class="muted" style="margin:0 0 4px"><code>type="i"</code></p>
+            <ol type="i"><li>Một</li><li>Hai</li><li>Ba</li></ol>
+          </div>
+        </div>
+      </div>
+
+      <h3>3.2 — Thuộc tính <code>start</code> và <code>reversed</code></h3>
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">start="5" — bắt đầu từ 5</div>
+          <div class="demo-body">
+            <ol start="5"><li>Mục thứ năm</li><li>Mục thứ sáu</li><li>Mục thứ bảy</li></ol>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">reversed — đếm ngược 3, 2, 1</div>
+          <div class="demo-body">
+            <ol reversed><li>Hạng ba</li><li>Hạng nhì</li><li>Hạng nhất</li></ol>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* type, start, reversed là thuộc tính HTML (không phải CSS) */</span>
+<span class="k">&lt;ol</span> <span class="k">type</span>=<span class="s">"A"</span><span class="k">&gt;</span>            <span class="c">&lt;!-- đánh số A, B, C --&gt;</span>
+<span class="k">&lt;ol</span> <span class="k">start</span>=<span class="s">"5"</span><span class="k">&gt;</span>          <span class="c">&lt;!-- bắt đầu từ 5 --&gt;</span>
+<span class="k">&lt;ol</span> <span class="k">reversed</span><span class="k">&gt;</span>            <span class="c">&lt;!-- đếm ngược --&gt;</span>
+  <span class="k">&lt;li</span> <span class="k">value</span>=<span class="s">"10"</span><span class="k">&gt;</span>...<span class="k">&lt;/li&gt;</span> <span class="c">&lt;!-- value: đặt số riêng cho 1 mục --&gt;</span>
+<span class="k">&lt;/ol&gt;</span></code></pre>
+
+      <div class="callout info"><p>Có thể đặt giá trị riêng cho một mục bằng thuộc tính <code>value</code> trên <code>&lt;li&gt;</code>;
+        các mục sau sẽ tiếp tục đếm từ giá trị đó.</p></div>
+    </section>
+
+    <!-- ==========  4. DANH SÁCH MÔ TẢ  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Danh sách mô tả <code>&lt;dl&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Danh sách mô tả (<em>description list</em>) ghép từng <strong>thuật ngữ</strong> với
+         <strong>định nghĩa</strong> của nó — như một cuốn từ điển hay bảng chú giải. Gồm ba thẻ:
+         <code>&lt;dl&gt;</code> (bao ngoài), <code>&lt;dt&gt;</code> (thuật ngữ) và <code>&lt;dd&gt;</code> (mô tả).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · bảng chú giải</div>
+        <div class="demo-body">
+          <dl>
+            <dt>HTML</dt>
+            <dd>Ngôn ngữ đánh dấu siêu văn bản — tạo cấu trúc nội dung trang web.</dd>
+            <dt>CSS</dt>
+            <dd>Ngôn ngữ định kiểu — quy định màu sắc, phông chữ, bố cục.</dd>
+            <dt>JavaScript</dt>
+            <dd>Ngôn ngữ lập trình — thêm tính tương tác cho trang web.</dd>
+          </dl>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;dl&gt;</span>
+  <span class="k">&lt;dt&gt;</span>HTML<span class="k">&lt;/dt&gt;</span>
+  <span class="k">&lt;dd&gt;</span>Ngôn ngữ đánh dấu siêu văn bản…<span class="k">&lt;/dd&gt;</span>
+  <span class="k">&lt;dt&gt;</span>CSS<span class="k">&lt;/dt&gt;</span>
+  <span class="k">&lt;dd&gt;</span>Ngôn ngữ định kiểu…<span class="k">&lt;/dd&gt;</span>
+<span class="k">&lt;/dl&gt;</span></code></pre>
+
+      <div class="callout tip"><p>Một <code>&lt;dt&gt;</code> có thể đi kèm <strong>nhiều</strong> <code>&lt;dd&gt;</code> (một thuật ngữ, nhiều nghĩa),
+        và ngược lại nhiều <code>&lt;dt&gt;</code> có thể chung một <code>&lt;dd&gt;</code> (nhiều từ đồng nghĩa).</p></div>
+    </section>
+
+    <!-- ==========  5. DANH SÁCH LỒNG NHAU  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Danh sách lồng nhau (nested) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Có thể đặt một danh sách <strong>bên trong một <code>&lt;li&gt;</code></strong> để tạo cấu trúc nhiều cấp:
+         menu nhiều tầng, cây thư mục, mục lục… Lưu ý <code>&lt;ul&gt;</code>/<code>&lt;ol&gt;</code> con phải nằm
+         <em>trong</em> thẻ <code>&lt;li&gt;</code>, không nằm trực tiếp dưới <code>&lt;ul&gt;</code> cha.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">Menu nhiều cấp</div>
+          <div class="demo-body">
+            <ul>
+              <li>Đồ uống
+                <ul>
+                  <li>Cà phê
+                    <ul><li>Đen</li><li>Sữa</li></ul>
+                  </li>
+                  <li>Trà</li>
+                </ul>
+              </li>
+              <li>Đồ ăn
+                <ul><li>Bánh ngọt</li><li>Snack</li></ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">Cây thư mục (dấu tuỳ biến)</div>
+          <div class="demo-body">
+            <ul class="d-tree">
+              <li>du-an
+                <ul>
+                  <li>index.html</li>
+                  <li>css
+                    <ul><li>style.css</li></ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;ul&gt;</span>
+  <span class="k">&lt;li&gt;</span>Đồ uống
+    <span class="k">&lt;ul&gt;</span>                 <span class="c">&lt;!-- danh sách con nằm TRONG &lt;li&gt; --&gt;</span>
+      <span class="k">&lt;li&gt;</span>Cà phê<span class="k">&lt;/li&gt;</span>
+      <span class="k">&lt;li&gt;</span>Trà<span class="k">&lt;/li&gt;</span>
+    <span class="k">&lt;/ul&gt;</span>
+  <span class="k">&lt;/li&gt;</span>                      <span class="c">&lt;!-- đóng &lt;li&gt; cha SAU danh sách con --&gt;</span>
+<span class="k">&lt;/ul&gt;</span></code></pre>
+
+      <div class="callout warn"><p>Lỗi thường gặp: đóng <code>&lt;/li&gt;</code> cha <strong>trước</strong> khi mở danh sách con,
+        khiến cây bị "vỡ" thụt lề. Hãy đóng <code>&lt;/li&gt;</code> cha <em>sau</em> khi đã đóng danh sách con.</p></div>
+    </section>
+
+    <!-- ==========  6. TUỲ BIẾN LIST BẰNG CSS  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Tuỳ biến list bằng CSS — <code>list-style</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Thuộc tính rút gọn <code>list-style</code> gộp ba thuộc tính: <code>list-style-type</code> (kiểu dấu),
+         <code>list-style-position</code> (vị trí <code>inside</code>/<code>outside</code>) và <code>list-style-image</code> (ảnh làm dấu).</p>
+
+      <h3>6.1 — Vị trí dấu: <code>inside</code> vs <code>outside</code></h3>
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">outside (mặc định) — dấu nằm NGOÀI lề chữ</div>
+          <div class="demo-body">
+            <ul class="d-outside"><li>Khi xuống dòng, chữ canh thẳng và dấu nhô ra ngoài.</li><li>Mục hai.</li></ul>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">inside — dấu nằm TRONG, chữ bao quanh dấu</div>
+          <div class="demo-body">
+            <ul class="d-inside"><li>Khi xuống dòng, chữ thụt theo dấu nằm bên trong khối.</li><li>Mục hai.</li></ul>
+          </div>
+        </div>
+      </div>
+
+      <h3>6.2 — Dùng ảnh / counter làm dấu đầu dòng</h3>
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">Ảnh SVG làm dấu (background-image)</div>
+          <div class="demo-body">
+            <ul class="d-img">
+              <li>Hoàn thành chương 1</li>
+              <li>Hoàn thành chương 2</li>
+              <li>Ôn tập cuối kỳ</li>
+            </ul>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">Đánh số tròn bằng CSS counter</div>
+          <div class="demo-body">
+            <ol class="d-counter">
+              <li>Tạo file HTML</li>
+              <li>Liên kết CSS</li>
+              <li>Kiểm tra trên trình duyệt</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* list-style rút gọn: type | position | image */</span>
+ul { <span class="k">list-style</span>: <span class="v">square inside</span>; }
+
+<span class="c">/* dùng ảnh làm dấu (hoặc background-image cho linh hoạt hơn) */</span>
+ul { <span class="k">list-style-image</span>: <span class="v">url(check.svg)</span>; }
+
+<span class="c">/* đánh số tuỳ biến bằng counter */</span>
+ol { <span class="k">list-style</span>: <span class="v">none</span>; <span class="k">counter-reset</span>: <span class="v">muc</span>; }
+ol li { <span class="k">counter-increment</span>: <span class="v">muc</span>; }
+ol li<span class="k">::before</span> { <span class="k">content</span>: <span class="v">counter(muc)</span>; }</code></pre>
+
+      <div class="callout info"><p>Dùng <code>background-image</code> + <code>padding-left</code> (như demo trên) thường dễ căn chỉnh
+        kích thước/vị trí dấu hơn <code>list-style-image</code>.</p></div>
+    </section>
+
+    <!-- ==========  7. BIẾN LIST THÀNH MENU NGANG  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Biến danh sách thành menu ngang <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Bài thực hành kinh điển của W3Schools: thanh điều hướng (navbar) bản chất là một
+         <code>&lt;ul&gt;</code>. Ta bỏ dấu đầu dòng, xoá lề mặc định rồi xếp các <code>&lt;li&gt;</code> nằm ngang.</p>
+
+      <h3>7.1 — Cách cổ điển: <code>li { display: inline-block }</code></h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · navbar bằng inline-block</div>
+        <div class="demo-body">
+          <ul class="d-navbar">
+            <li><a class="active" href="#s7">Trang chủ</a></li>
+            <li><a href="#s7">Giới thiệu</a></li>
+            <li><a href="#s7">Dịch vụ</a></li>
+            <li><a href="#s7">Liên hệ</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">ul</span> { <span class="k">list-style-type</span>: <span class="v">none</span>;   <span class="c">/* bỏ dấu đầu dòng */</span>
+       <span class="k">margin</span>: <span class="v">0</span>; <span class="k">padding</span>: <span class="v">0</span>;  <span class="c">/* xoá lề/khoảng đệm mặc định */</span>
+       <span class="k">overflow</span>: <span class="v">hidden</span>;
+       <span class="k">background</span>: <span class="v">#16407a</span>; }
+<span class="k">li</span>    { <span class="k">display</span>: <span class="v">inline-block</span>; }  <span class="c">/* li vốn block → ép thành 1 hàng */</span>
+<span class="k">li a</span>  { <span class="k">display</span>: <span class="v">block</span>; <span class="k">color</span>: <span class="v">#fff</span>;
+        <span class="k">padding</span>: <span class="v">12px 18px</span>; <span class="k">text-decoration</span>: <span class="v">none</span>; }
+<span class="k">li a:hover</span> { <span class="k">background</span>: <span class="v">#1D559F</span>; }</code></pre>
+
+      <h3>7.2 — Cách hiện đại: <code>display: flex</code></h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · navbar bằng Flexbox</div>
+        <div class="demo-body">
+          <ul class="d-navflex">
+            <li><a href="#s7">Trang chủ</a></li>
+            <li><a href="#s7">Sản phẩm</a></li>
+            <li><a href="#s7">Tin tức</a></li>
+            <li><a href="#s7">Liên hệ</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">ul</span> { <span class="k">list-style</span>: <span class="v">none</span>; <span class="k">margin</span>: <span class="v">0</span>; <span class="k">padding</span>: <span class="v">0</span>;
+       <span class="k">display</span>: <span class="v">flex</span>; <span class="k">gap</span>: <span class="v">4px</span>; }  <span class="c">/* xếp ngang, có khoảng cách */</span>
+<span class="k">li a</span> { <span class="k">display</span>: <span class="v">block</span>; <span class="k">padding</span>: <span class="v">12px 18px</span>;
+        <span class="k">color</span>: <span class="v">#fff</span>; <span class="k">text-decoration</span>: <span class="v">none</span>; }</code></pre>
+
+      <div class="callout tip"><p>Đặt <code>&lt;a&gt;</code> thành <code>display:block</code> giúp <em>cả ô</em> (kể cả phần đệm)
+        đều bấm được, không chỉ riêng phần chữ. Ngày nay Flexbox được ưu tiên vì dễ căn giữa và chia khoảng cách.</p></div>
+    </section>
+
+    <!-- ==========  8. BẢNG TỔNG HỢP  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Bảng tổng hợp các loại danh sách &amp; thuộc tính <span class="tag-base">Tra cứu</span></h2>
+      <p class="lead">Bảng tra nhanh các thẻ danh sách và thuộc tính quan trọng (theo W3Schools).</p>
+
+      <table class="syntax">
+        <caption>Các thẻ tạo danh sách</caption>
+        <thead><tr><th>Thẻ</th><th>Tên</th><th>Vai trò</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;ul&gt;</code></td><td>Unordered list</td><td>Danh sách không thứ tự (dấu chấm).</td></tr>
+          <tr><td><code>&lt;ol&gt;</code></td><td>Ordered list</td><td>Danh sách có thứ tự (đánh số).</td></tr>
+          <tr><td><code>&lt;li&gt;</code></td><td>List item</td><td>Một mục trong <code>ul</code> hoặc <code>ol</code>.</td></tr>
+          <tr><td><code>&lt;dl&gt;</code></td><td>Description list</td><td>Danh sách mô tả (thuật ngữ – nghĩa).</td></tr>
+          <tr><td><code>&lt;dt&gt;</code></td><td>Description term</td><td>Thuật ngữ cần mô tả.</td></tr>
+          <tr><td><code>&lt;dd&gt;</code></td><td>Description details</td><td>Phần mô tả / định nghĩa.</td></tr>
+        </tbody>
+      </table>
+
+      <table class="syntax">
+        <caption>Thuộc tính HTML &amp; CSS hay dùng</caption>
+        <thead><tr><th>Thuộc tính</th><th>Áp dụng cho</th><th>Tác dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>type</code> <small>(HTML)</small></td><td><code>ol</code></td><td>Kiểu đánh số: <code>1</code> · <code>A</code> · <code>a</code> · <code>I</code> · <code>i</code>.</td></tr>
+          <tr><td><code>start</code> <small>(HTML)</small></td><td><code>ol</code></td><td>Số bắt đầu (vd <code>start="5"</code>).</td></tr>
+          <tr><td><code>reversed</code> <small>(HTML)</small></td><td><code>ol</code></td><td>Đếm ngược.</td></tr>
+          <tr><td><code>value</code> <small>(HTML)</small></td><td><code>li</code></td><td>Đặt số riêng cho một mục.</td></tr>
+          <tr><td><code>list-style-type</code> <small>(CSS)</small></td><td><code>ul</code>, <code>ol</code></td><td>Kiểu dấu: <code>disc</code> · <code>circle</code> · <code>square</code> · <code>none</code> · <code>decimal</code>…</td></tr>
+          <tr><td><code>list-style-position</code> <small>(CSS)</small></td><td><code>ul</code>, <code>ol</code></td><td><code>inside</code> / <code>outside</code>.</td></tr>
+          <tr><td><code>list-style-image</code> <small>(CSS)</small></td><td><code>ul</code>, <code>ol</code></td><td>Dùng ảnh làm dấu đầu dòng.</td></tr>
+          <tr><td><code>list-style</code> <small>(CSS)</small></td><td><code>ul</code>, <code>ol</code></td><td>Rút gọn 3 thuộc tính trên.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  9. KHI NÀO DÙNG GÌ  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Khi nào dùng <code>ul</code> / <code>ol</code> / <code>dl</code>? <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout tip"><p><strong>Dùng <code>&lt;ul&gt;</code></strong> khi thứ tự <em>không</em> quan trọng:
+        danh sách tính năng, mục giỏ hàng, các liên kết menu. Đây cũng là nền tảng cho mọi navbar.</p></div>
+      <div class="callout info"><p><strong>Dùng <code>&lt;ol&gt;</code></strong> khi thứ tự <em>có</em> ý nghĩa:
+        các bước hướng dẫn, bảng xếp hạng, danh sách đánh số tham chiếu.</p></div>
+      <div class="callout info"><p><strong>Dùng <code>&lt;dl&gt;</code></strong> cho cặp <em>thuật ngữ – định nghĩa</em>:
+        bảng chú giải, FAQ (câu hỏi/đáp), thông số kỹ thuật, metadata (tên : giá trị).</p></div>
+      <div class="callout warn"><p><strong>Mẹo navbar.</strong> Thanh điều hướng nên dựng từ <code>&lt;ul&gt;</code> chứa các
+        <code>&lt;li&gt;</code> &gt; <code>&lt;a&gt;</code>, bọc trong <code>&lt;nav&gt;</code>. Cấu trúc danh sách giúp trình đọc màn hình
+        thông báo "menu có N mục" — tốt cho khả năng truy cập (accessibility).</p></div>
+      <div class="callout danger"><p><strong>Tránh.</strong> Đừng dùng danh sách chỉ để <em>thụt lề</em> văn bản, và đừng
+        nhồi nội dung không phải mục con (vd <code>&lt;p&gt;</code> "lạc lõng") trực tiếp vào <code>&lt;ul&gt;</code>/<code>&lt;ol&gt;</code> —
+        con trực tiếp hợp lệ chỉ là <code>&lt;li&gt;</code>.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="03-dinh-dang-van-ban.html"><small>← Bài trước</small>2.1.4 · Định dạng văn bản</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="05-lien-ket-hinh-anh.html"><small>Bài tiếp →</small>2.1.6 · Liên kết &amp; hình ảnh</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

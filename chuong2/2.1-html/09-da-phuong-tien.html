@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.1.9 — HTML ĐA PHƯƠNG TIỆN (Multimedia) · bản toàn diện
+  ------------------------------------------------------------
+  Đưa âm thanh, video, đồ hoạ vector & nội dung nhúng vào trang.
+  Đi từ cơ bản → nâng cao, tham khảo theo W3Schools:
+    1) Tổng quan media     6) <canvas> + JS vẽ
+    2) <video>             7) SVG nội tuyến
+    3) <audio>             8) Canvas vs SVG
+    4) <iframe>            9) <object> & <embed>
+    5) Nhúng YouTube      10) Định dạng & khả năng tiếp cận
+  Ảnh demo dùng SVG offline trong ../assets (sky / photo / rose).
+  Video/audio không có file thật → để mã đúng cú pháp + poster.
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.1.9 · HTML Đa phương tiện — Video · Audio · Iframe · Canvas · SVG</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* khung media chung cho video/iframe để gọn gàng */
+    .d-frame { width: 100%; max-width: 520px; height: 320px; border: 1px solid #cfd8e6; border-radius: 10px; background: #fff; }
+
+    /* thẻ "không có file" để báo cho sinh viên */
+    .d-fakebar {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .8rem; font-weight: 600; color: #16407a;
+      background: #eaf1fb; border: 1px solid #cfe0f5;
+      padding: 6px 12px; border-radius: 999px; margin-bottom: 10px;
+    }
+
+    /* 1) tổng quan — thẻ phân loại media */
+    .d-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+    .d-card  { background: #f8fafc; border: 1px solid #e3e8f0; border-radius: 12px; padding: 14px; text-align: center; }
+    .d-card .ic { font-size: 1.8rem; line-height: 1; }
+    .d-card b   { display: block; color: #1D559F; margin: 8px 0 4px; }
+    .d-card small { color: #5b6472; }
+
+    /* 6) canvas */
+    .d-canvas { border: 1px solid #cfd8e6; border-radius: 10px; background: #fff; max-width: 100%; }
+
+    /* 7) svg nội tuyến */
+    .d-svgbox { border: 1px solid #cfd8e6; border-radius: 10px; background: #fff; max-width: 100%; display: block; }
+    .d-svgbox text { font-family: "Segoe UI", Arial, sans-serif; }
+
+    /* video poster minh hoạ (không có file thật, dùng nền + ảnh poster) */
+    .d-videoholder {
+      position: relative; width: 100%; max-width: 480px;
+      border-radius: 10px; overflow: hidden; border: 1px solid #cfd8e6;
+    }
+    .d-videoholder img { display: block; width: 100%; }
+    .d-videoholder .play {
+      position: absolute; inset: 0; display: grid; place-items: center;
+      background: rgba(15,23,42,.25); color: #fff; font-size: 2.4rem;
+    }
+    .d-videoholder .ctrl {
+      position: absolute; left: 0; right: 0; bottom: 0; height: 30px;
+      background: rgba(15,23,42,.7); display: flex; align-items: center; gap: 8px;
+      padding: 0 10px; color: #fff; font-size: .75rem;
+    }
+    .d-videoholder .ctrl .bar { flex: 1; height: 5px; border-radius: 3px; background: rgba(255,255,255,.35); }
+    .d-videoholder .ctrl .bar i { display: block; width: 30%; height: 100%; border-radius: 3px; background: #04AA6D; }
+
+    /* audio giả lập */
+    .d-audiofake {
+      display: flex; align-items: center; gap: 10px; max-width: 360px;
+      background: #f1f5f9; border: 1px solid #cfd8e6; border-radius: 999px; padding: 8px 14px;
+    }
+    .d-audiofake .pp { width: 30px; height: 30px; border-radius: 50%; background: #1D559F; color: #fff; display: grid; place-items: center; }
+    .d-audiofake .bar { flex: 1; height: 5px; border-radius: 3px; background: #cbd5e1; }
+    .d-audiofake .bar i { display: block; width: 45%; height: 100%; border-radius: 3px; background: #1D559F; }
+    .d-audiofake small { color: #5b6472; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.1 HTML</a><span>›</span>
+        Đa phương tiện
+      </nav>
+      <h1>HTML Đa phương tiện —
+        <code style="color:#fff;background:rgba(255,255,255,.18)">video</code>,
+        <code style="color:#fff;background:rgba(255,255,255,.18)">audio</code>,
+        <code style="color:#fff;background:rgba(255,255,255,.18)">canvas</code>,
+        <code style="color:#fff;background:rgba(255,255,255,.18)">svg</code></h1>
+      <p class="sub">Đưa âm thanh, video, đồ hoạ vector và nội dung nhúng (iframe, YouTube) vào trang web.
+         Đi từ thẻ media cơ bản đến vẽ động với Canvas và đồ hoạ SVG nội tuyến.</p>
+      <div class="chips">
+        <span class="chip solid">2.1.9</span>
+        <span class="chip">HTML Media</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Tổng quan media trên web</a></li>
+        <li><a href="#s2">Thẻ &lt;video&gt;</a></li>
+        <li><a href="#s3">Thẻ &lt;audio&gt;</a></li>
+        <li><a href="#s4">Thẻ &lt;iframe&gt;</a></li>
+        <li><a href="#s5">Nhúng YouTube</a></li>
+        <li><a href="#s6">&lt;canvas&gt; vẽ bằng JS</a></li>
+        <li><a href="#s7">SVG nội tuyến</a></li>
+        <li><a href="#s8">Canvas vs SVG</a></li>
+        <li><a href="#s9">&lt;object&gt; &amp; &lt;embed&gt;</a></li>
+        <li><a href="#s10">Định dạng &amp; khả năng tiếp cận</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. TỔNG QUAN MEDIA  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Tổng quan media trên web <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">"Đa phương tiện" (multimedia) là mọi thứ ngoài chữ thuần: hình ảnh, âm thanh, video và đồ hoạ.
+         HTML5 cung cấp các thẻ <strong>chuyên dụng</strong> để chèn từng loại — không cần plugin như Flash thời trước.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Bốn nhóm media chính</div>
+        <div class="demo-body">
+          <div class="d-cards">
+            <div class="d-card"><div class="ic"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></svg></div><b>Hình ảnh</b><small>&lt;img&gt; · JPG, PNG, GIF, WEBP</small></div>
+            <div class="d-card"><div class="ic"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><path d="M11 4.7 6.3 9H2v6h4.3l4.7 4.3V4.7Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></div><b>Âm thanh</b><small>&lt;audio&gt; · MP3, OGG, WAV</small></div>
+            <div class="d-card"><div class="ic"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div><b>Video</b><small>&lt;video&gt; · MP4, WEBM, OGG</small></div>
+            <div class="d-card"><div class="ic"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><path d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z"/><rect x="3" y="14" width="7" height="7" rx="1"/><circle cx="17.5" cy="17.5" r="3.5"/></svg></div><b>Vector</b><small>&lt;svg&gt; · &lt;canvas&gt; (đồ hoạ)</small></div>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Thẻ media chính trong HTML5</caption>
+        <thead><tr><th>Thẻ</th><th>Dùng để</th><th>Loại đồ hoạ / nguồn</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;img&gt;</code></td><td>Chèn ảnh bitmap (đã học ở bài 2.1.5)</td><td>Bitmap (điểm ảnh)</td></tr>
+          <tr><td><code>&lt;video&gt;</code></td><td>Phát phim, clip có hình</td><td>Tệp video .mp4 / .webm</td></tr>
+          <tr><td><code>&lt;audio&gt;</code></td><td>Phát nhạc, podcast, hiệu ứng</td><td>Tệp âm thanh .mp3 / .ogg</td></tr>
+          <tr><td><code>&lt;iframe&gt;</code></td><td>Nhúng cả một trang web khác vào</td><td>Trang HTML, bản đồ, YouTube…</td></tr>
+          <tr><td><code>&lt;svg&gt;</code></td><td>Vẽ đồ hoạ vector bằng thẻ (DOM)</td><td>Vector (mô tả hình học)</td></tr>
+          <tr><td><code>&lt;canvas&gt;</code></td><td>Vẽ bitmap động bằng JavaScript</td><td>Bitmap (script điều khiển)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info"><p><strong>Bitmap vs Vector.</strong> Ảnh <em>bitmap</em> (JPG, PNG) lưu từng điểm ảnh — phóng to sẽ vỡ.
+        Đồ hoạ <em>vector</em> (SVG) lưu công thức hình học — phóng to bao nhiêu cũng nét. Canvas là bitmap nhưng được "vẽ" bằng code.</p></div>
+    </section>
+
+    <!-- ==========  2. VIDEO  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Thẻ <code>&lt;video&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Thẻ <code>&lt;video&gt;</code> phát video ngay trong trang. Bên trong đặt nhiều <code>&lt;source&gt;</code>
+         để trình duyệt chọn định dạng nó hỗ trợ, và một dòng chữ <strong>dự phòng</strong> cho trình duyệt quá cũ.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Trình phát video (minh hoạ — chưa có file .mp4 thật)</div>
+        <div class="demo-body">
+          <span class="d-fakebar">ℹ️ Khung dưới mô phỏng giao diện trình phát; <code>poster</code> là ../../assets/sky.svg</span>
+          <div class="d-videoholder">
+            <img src="../../assets/sky.svg" alt="Ảnh poster hiển thị trước khi video phát">
+            <div class="play">▶</div>
+            <div class="ctrl"><span>▶</span><span class="bar"><i></i></span><span>0:12 / 0:40</span><span><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><path d="M11 4.7 6.3 9H2v6h4.3l4.7 4.3V4.7Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></span></div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;video</span> <span class="v">width</span>=<span class="s">"480"</span> <span class="v">height</span>=<span class="s">"270"</span> <span class="v">controls</span> <span class="v">poster</span>=<span class="s">"../../assets/sky.svg"</span><span class="k">&gt;</span>
+  <span class="k">&lt;source</span> <span class="v">src</span>=<span class="s">"phim.mp4"</span>  <span class="v">type</span>=<span class="s">"video/mp4"</span><span class="k">&gt;</span>
+  <span class="k">&lt;source</span> <span class="v">src</span>=<span class="s">"phim.webm"</span> <span class="v">type</span>=<span class="s">"video/webm"</span><span class="k">&gt;</span>
+  <span class="c">&lt;!-- chữ dự phòng nếu trình duyệt không hỗ trợ video --&gt;</span>
+  Trình duyệt của bạn không hỗ trợ thẻ video.
+<span class="k">&lt;/video&gt;</span></code></pre>
+
+      <div class="note">
+        <p><strong>Vì sao nhiều <code>&lt;source&gt;</code>?</strong> Mỗi trình duyệt hỗ trợ định dạng khác nhau.
+           Trình duyệt đọc từ trên xuống, gặp định dạng đầu tiên nó hiểu thì dùng, bỏ qua phần còn lại.</p>
+        <p>Khi đặt nhiều <code>&lt;source&gt;</code> thì <strong>không</strong> ghi <code>src</code> trực tiếp trên thẻ <code>&lt;video&gt;</code>.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Các thuộc tính thường dùng của &lt;video&gt; (và &lt;audio&gt;)</caption>
+        <thead><tr><th>Thuộc tính</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>controls</code></td><td>Hiện thanh điều khiển (play, âm lượng, tua). <strong>Nên luôn có.</strong></td></tr>
+          <tr><td><code>width</code> / <code>height</code></td><td>Kích thước khung video (điểm ảnh). Đặt sẵn để trang không "nhảy" khi tải.</td></tr>
+          <tr><td><code>poster</code></td><td>Ảnh hiển thị <em>trước</em> khi video phát (chỉ có ở <code>&lt;video&gt;</code>).</td></tr>
+          <tr><td><code>autoplay</code></td><td>Tự phát khi tải xong. Trình duyệt chỉ cho phép nếu kèm <code>muted</code>.</td></tr>
+          <tr><td><code>muted</code></td><td>Tắt tiếng mặc định.</td></tr>
+          <tr><td><code>loop</code></td><td>Phát lặp lại vô hạn.</td></tr>
+          <tr><td><code>preload</code></td><td><code>none</code> / <code>metadata</code> / <code>auto</code> — gợi ý mức tải trước.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Ví dụ: autoplay đúng cách (phải có muted)</h3>
+      <pre class="code"><code><span class="c">&lt;!-- autoplay sẽ bị chặn nếu thiếu muted --&gt;</span>
+<span class="k">&lt;video</span> <span class="v">src</span>=<span class="s">"banner.mp4"</span> <span class="v">autoplay</span> <span class="v">muted</span> <span class="v">loop</span> <span class="v">playsinline</span><span class="k">&gt;&lt;/video&gt;</span></code></pre>
+
+      <div class="callout warn"><p><strong>Lưu ý.</strong> Hầu hết trình duyệt <u>chặn autoplay có tiếng</u> để tránh làm phiền người dùng.
+        Muốn video tự chạy (vd banner nền) thì <strong>bắt buộc</strong> thêm <code>muted</code>.</p></div>
+    </section>
+
+    <!-- ==========  3. AUDIO  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Thẻ <code>&lt;audio&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Tương tự <code>&lt;video&gt;</code> nhưng chỉ có âm thanh: nhạc nền, podcast, hiệu ứng.
+         Cũng dùng nhiều <code>&lt;source&gt;</code> và chữ dự phòng. Không có <code>poster</code>/<code>width</code>/<code>height</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Trình phát âm thanh (minh hoạ — chưa có file .mp3 thật)</div>
+        <div class="demo-body">
+          <span class="d-fakebar">ℹ️ Thay <code>src</code> bằng tệp âm thanh thật để nghe được</span>
+          <div class="d-audiofake">
+            <span class="pp">▶</span>
+            <span class="bar"><i></i></span>
+            <small>1:05 / 2:30</small>
+            <span><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><path d="M11 4.7 6.3 9H2v6h4.3l4.7 4.3V4.7Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;audio</span> <span class="v">controls</span><span class="k">&gt;</span>
+  <span class="k">&lt;source</span> <span class="v">src</span>=<span class="s">"nhac.mp3"</span> <span class="v">type</span>=<span class="s">"audio/mpeg"</span><span class="k">&gt;</span>
+  <span class="k">&lt;source</span> <span class="v">src</span>=<span class="s">"nhac.ogg"</span> <span class="v">type</span>=<span class="s">"audio/ogg"</span><span class="k">&gt;</span>
+  <span class="c">&lt;!-- chữ dự phòng --&gt;</span>
+  Trình duyệt của bạn không hỗ trợ phát âm thanh.
+<span class="k">&lt;/audio&gt;</span></code></pre>
+
+      <div class="note">
+        <p><code>type="audio/mpeg"</code> là MIME type cho <strong>MP3</strong>, còn <code>audio/ogg</code> cho <strong>OGG</strong>.
+           MP3 được hỗ trợ rộng rãi nhất nên thường để <code>&lt;source&gt;</code> MP3 lên đầu.</p>
+      </div>
+      <div class="callout tip"><p><strong>Mẹo.</strong> Không nên <code>autoplay</code> âm thanh có tiếng — vừa khó chịu, vừa bị trình duyệt chặn.
+        Hãy để người dùng tự bấm play.</p></div>
+    </section>
+
+    <!-- ==========  4. IFRAME  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Thẻ <code>&lt;iframe&gt;</code> — nhúng trang khác <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>&lt;iframe&gt;</code> (inline frame) nhúng <strong>cả một trang web khác</strong> vào trong trang của bạn —
+         như bản đồ Google Maps, video YouTube, hay một trang nội bộ. Demo dưới nhúng chính <code>../index.html</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả — nhúng ../index.html (trang mục lục Chương 2)</div>
+        <div class="demo-body">
+          <iframe class="d-frame" src="../index.html" title="Mục lục Chương 2" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;iframe</span> <span class="v">src</span>=<span class="s">"../index.html"</span>
+        <span class="v">width</span>=<span class="s">"520"</span> <span class="v">height</span>=<span class="s">"320"</span>
+        <span class="v">title</span>=<span class="s">"Mục lục Chương 2"</span>
+        <span class="v">loading</span>=<span class="s">"lazy"</span><span class="k">&gt;&lt;/iframe&gt;</span></code></pre>
+
+      <table class="syntax">
+        <caption>Thuộc tính của &lt;iframe&gt;</caption>
+        <thead><tr><th>Thuộc tính</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>src</code></td><td>Địa chỉ trang cần nhúng (nội bộ hoặc URL ngoài).</td></tr>
+          <tr><td><code>width</code> / <code>height</code></td><td>Kích thước khung nhúng (điểm ảnh).</td></tr>
+          <tr><td><code>title</code></td><td><strong>Mô tả</strong> nội dung khung — bắt buộc để hỗ trợ khả năng tiếp cận.</td></tr>
+          <tr><td><code>loading="lazy"</code></td><td>Chỉ tải iframe khi cuộn gần tới — tiết kiệm băng thông, trang nhẹ hơn.</td></tr>
+          <tr><td><code>sandbox</code></td><td>Giới hạn quyền của trang nhúng (chặn script, popup…) cho an toàn.</td></tr>
+          <tr><td><code>allow</code></td><td>Cấp quyền cụ thể (camera, fullscreen, autoplay…) cho nội dung nhúng.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Bảo mật với <code>sandbox</code> <span class="tag-adv">Nâng cao</span></h3>
+      <pre class="code"><code><span class="c">&lt;!-- sandbox rỗng = chặn TẤT CẢ (script, form, popup, điều hướng) --&gt;</span>
+<span class="k">&lt;iframe</span> <span class="v">src</span>=<span class="s">"trang-la.html"</span> <span class="v">sandbox</span> <span class="v">title</span>=<span class="s">"Nội dung không tin cậy"</span><span class="k">&gt;&lt;/iframe&gt;</span>
+
+<span class="c">&lt;!-- Mở lại từng quyền cần thiết --&gt;</span>
+<span class="k">&lt;iframe</span> <span class="v">src</span>=<span class="s">"..."</span> <span class="v">sandbox</span>=<span class="s">"allow-scripts allow-same-origin"</span> <span class="v">title</span>=<span class="s">"..."</span><span class="k">&gt;&lt;/iframe&gt;</span></code></pre>
+      <div class="callout warn"><p><strong>An toàn.</strong> Khi nhúng nội dung từ nguồn không tin cậy, hãy dùng <code>sandbox</code>
+        để hạn chế quyền. Đặt <code>sandbox</code> không kèm giá trị sẽ khoá chặt nhất rồi mở dần đúng thứ cần.</p></div>
+    </section>
+
+    <!-- ==========  5. YOUTUBE  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Nhúng video YouTube <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Không nên tải video lớn lên server riêng. Cách phổ biến là nhúng từ YouTube bằng một
+         <code>&lt;iframe&gt;</code> trỏ tới đường dẫn <strong>embed</strong>. YouTube tự lo việc nén, streaming, phụ đề.</p>
+
+      <div class="callout info"><p><strong>Cần Internet.</strong> Demo này không hiển thị offline. Dưới đây là <em>mã mẫu</em> đúng cú pháp —
+        chỉ cần dán vào trang và mở khi có mạng là chạy.</p></div>
+
+      <pre class="code"><code><span class="c">&lt;!-- Lấy ID video từ URL: youtube.com/watch?v=<span class="v">tgbNymZ7vqY</span> --&gt;</span>
+<span class="k">&lt;iframe</span> <span class="v">width</span>=<span class="s">"560"</span> <span class="v">height</span>=<span class="s">"315"</span>
+        <span class="v">src</span>=<span class="s">"https://www.youtube.com/embed/tgbNymZ7vqY"</span>
+        <span class="v">title</span>=<span class="s">"Trình phát video YouTube"</span>
+        <span class="v">frameborder</span>=<span class="s">"0"</span>
+        <span class="v">allow</span>=<span class="s">"accelerometer; autoplay; encrypted-media; picture-in-picture"</span>
+        <span class="v">allowfullscreen</span><span class="k">&gt;&lt;/iframe&gt;</span></code></pre>
+
+      <div class="note">
+        <p><strong>Bí quyết.</strong> Đổi <code>watch?v=ID</code> trên thanh địa chỉ thành <code>embed/ID</code> trong <code>src</code>.
+           Có thể thêm tham số như <code>?autoplay=1&amp;mute=1</code> hoặc <code>?start=30</code> (bắt đầu ở giây 30).</p>
+      </div>
+      <div class="callout tip"><p>Cách nhanh nhất: trên YouTube bấm <em>Chia sẻ → Nhúng (Embed)</em>, sao chép sẵn đoạn <code>&lt;iframe&gt;</code> rồi dán vào trang.</p></div>
+    </section>
+
+    <!-- ==========  6. CANVAS  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> <code>&lt;canvas&gt;</code> — vẽ bằng JavaScript <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>&lt;canvas&gt;</code> là một "tấm toan" trống. Bản thân thẻ không vẽ gì — ta dùng
+         <strong>JavaScript</strong> lấy "ngữ cảnh vẽ 2D" rồi ra lệnh vẽ hình chữ nhật, đường, chữ… Đây là demo chạy thật, offline.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả — canvas vẽ bằng JS (hình chữ nhật · đường · chữ)</div>
+        <div class="demo-body">
+          <canvas id="dCanvas" class="d-canvas" width="460" height="200"
+                  role="img" aria-label="Canvas vẽ hai hình chữ nhật, một đường chéo và dòng chữ Canvas 2D"></canvas>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;canvas</span> <span class="v">id</span>=<span class="s">"c"</span> <span class="v">width</span>=<span class="s">"460"</span> <span class="v">height</span>=<span class="s">"200"</span><span class="k">&gt;&lt;/canvas&gt;</span>
+
+<span class="k">&lt;script&gt;</span>
+  <span class="k">const</span> ctx = document.getElementById(<span class="s">"c"</span>).getContext(<span class="s">"2d"</span>);
+
+  <span class="c">// 1) hình chữ nhật tô đặc</span>
+  ctx.fillStyle = <span class="s">"#1D559F"</span>;
+  ctx.fillRect(<span class="v">20</span>, <span class="v">30</span>, <span class="v">140</span>, <span class="v">90</span>);
+
+  <span class="c">// 2) hình chữ nhật chỉ có viền</span>
+  ctx.strokeStyle = <span class="s">"#04AA6D"</span>;
+  ctx.lineWidth = <span class="v">4</span>;
+  ctx.strokeRect(<span class="v">190</span>, <span class="v">30</span>, <span class="v">140</span>, <span class="v">90</span>);
+
+  <span class="c">// 3) một đường chéo</span>
+  ctx.beginPath();
+  ctx.moveTo(<span class="v">20</span>, <span class="v">160</span>);
+  ctx.lineTo(<span class="v">330</span>, <span class="v">160</span>);
+  ctx.strokeStyle = <span class="s">"#E63946"</span>;
+  ctx.stroke();
+
+  <span class="c">// 4) viết chữ</span>
+  ctx.fillStyle = <span class="s">"#16407a"</span>;
+  ctx.font = <span class="s">"20px Segoe UI"</span>;
+  ctx.fillText(<span class="s">"Canvas 2D"</span>, <span class="v">350</span>, <span class="v">80</span>);
+<span class="k">&lt;/script&gt;</span></code></pre>
+      <div class="callout info"><p><strong>Hệ toạ độ.</strong> Gốc <code>(0,0)</code> ở <em>góc trên-trái</em>; trục X sang phải, trục Y xuống dưới.
+        <code>fillRect(x, y, w, h)</code> = vẽ từ điểm (x,y) với chiều rộng w, chiều cao h.</p></div>
+    </section>
+
+    <!-- ==========  7. SVG NỘI TUYẾN  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> SVG nội tuyến — đồ hoạ vector bằng thẻ <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">SVG (Scalable Vector Graphics) mô tả hình bằng <strong>các thẻ</strong> ngay trong HTML: vòng tròn, chữ nhật,
+         đường thẳng, đa giác, chữ… Vì là vector nên phóng to bao nhiêu cũng <strong>nét căng</strong>, và có thể tô màu/định kiểu bằng CSS.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả — SVG vẽ circle · rect · line · polygon · text</div>
+        <div class="demo-body">
+          <svg class="d-svgbox" width="460" height="200" viewBox="0 0 460 200"
+               role="img" aria-label="Hình SVG gồm vòng tròn, hình chữ nhật, đường thẳng, tam giác và chữ SVG">
+            <circle cx="70" cy="100" r="50" fill="#6c5ce7" />
+            <rect x="150" y="55" width="100" height="90" rx="10" fill="#04AA6D" />
+            <line x1="280" y1="150" x2="430" y2="40" stroke="#E63946" stroke-width="5" />
+            <polygon points="300,150 360,60 420,150" fill="#FFC107" stroke="#16407a" stroke-width="2" />
+            <text x="30" y="190" font-size="18" fill="#1D559F">SVG vector — phóng to vẫn nét</text>
+          </svg>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;svg</span> <span class="v">width</span>=<span class="s">"460"</span> <span class="v">height</span>=<span class="s">"200"</span> <span class="v">viewBox</span>=<span class="s">"0 0 460 200"</span><span class="k">&gt;</span>
+  <span class="k">&lt;circle</span>  <span class="v">cx</span>=<span class="s">"70"</span> <span class="v">cy</span>=<span class="s">"100"</span> <span class="v">r</span>=<span class="s">"50"</span> <span class="v">fill</span>=<span class="s">"#6c5ce7"</span> <span class="k">/&gt;</span>
+  <span class="k">&lt;rect</span>    <span class="v">x</span>=<span class="s">"150"</span> <span class="v">y</span>=<span class="s">"55"</span> <span class="v">width</span>=<span class="s">"100"</span> <span class="v">height</span>=<span class="s">"90"</span> <span class="v">rx</span>=<span class="s">"10"</span> <span class="v">fill</span>=<span class="s">"#04AA6D"</span> <span class="k">/&gt;</span>
+  <span class="k">&lt;line</span>    <span class="v">x1</span>=<span class="s">"280"</span> <span class="v">y1</span>=<span class="s">"150"</span> <span class="v">x2</span>=<span class="s">"430"</span> <span class="v">y2</span>=<span class="s">"40"</span> <span class="v">stroke</span>=<span class="s">"#E63946"</span> <span class="v">stroke-width</span>=<span class="s">"5"</span> <span class="k">/&gt;</span>
+  <span class="k">&lt;polygon</span> <span class="v">points</span>=<span class="s">"300,150 360,60 420,150"</span> <span class="v">fill</span>=<span class="s">"#FFC107"</span> <span class="k">/&gt;</span>
+  <span class="k">&lt;text</span> <span class="v">x</span>=<span class="s">"30"</span> <span class="v">y</span>=<span class="s">"190"</span> <span class="v">fill</span>=<span class="s">"#1D559F"</span><span class="k">&gt;</span>SVG vector<span class="k">&lt;/text&gt;</span>
+<span class="k">&lt;/svg&gt;</span></code></pre>
+
+      <table class="syntax">
+        <caption>Vài hình SVG cơ bản</caption>
+        <thead><tr><th>Thẻ</th><th>Vẽ</th><th>Thuộc tính chính</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;circle&gt;</code></td><td>Hình tròn</td><td><code>cx cy r</code></td></tr>
+          <tr><td><code>&lt;rect&gt;</code></td><td>Hình chữ nhật</td><td><code>x y width height rx</code></td></tr>
+          <tr><td><code>&lt;line&gt;</code></td><td>Đoạn thẳng</td><td><code>x1 y1 x2 y2 stroke</code></td></tr>
+          <tr><td><code>&lt;polygon&gt;</code></td><td>Đa giác (nối các điểm)</td><td><code>points</code></td></tr>
+          <tr><td><code>&lt;text&gt;</code></td><td>Chữ</td><td><code>x y</code> + nội dung</td></tr>
+          <tr><td><code>&lt;path&gt;</code></td><td>Đường tự do (cong, phức tạp)</td><td><code>d</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout tip"><p>Các icon đẹp trên web (logo, biểu tượng) phần lớn là SVG, vì <strong>nhẹ</strong>, <strong>nét ở mọi kích thước</strong>
+        và có thể đổi màu bằng CSS (<code>fill</code>) hay tạo hiệu ứng động.</p></div>
+    </section>
+
+    <!-- ==========  8. CANVAS vs SVG  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> So sánh Canvas vs SVG <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Cả hai đều vẽ đồ hoạ trong trình duyệt nhưng theo hai triết lý khác hẳn nhau.
+         Chọn đúng công cụ giúp ứng dụng nhanh và dễ bảo trì.</p>
+
+      <table class="syntax">
+        <caption>Bảng so sánh (theo W3Schools)</caption>
+        <thead><tr><th>Tiêu chí</th><th><code>&lt;canvas&gt;</code></th><th><code>&lt;svg&gt;</code></th></tr></thead>
+        <tbody>
+          <tr><td>Loại đồ hoạ</td><td>Bitmap — điều khiển bằng <strong>script</strong></td><td>Vector — mô tả bằng <strong>thẻ (DOM)</strong></td></tr>
+          <tr><td>Phụ thuộc JavaScript</td><td>Bắt buộc (vẽ bằng JS)</td><td>Không bắt buộc (viết thẳng thẻ)</td></tr>
+          <tr><td>Phóng to (zoom)</td><td>Bị vỡ/mờ (như ảnh)</td><td>Luôn nét (vector)</td></tr>
+          <tr><td>Từng hình là phần tử DOM?</td><td>Không — chỉ là điểm ảnh, không bắt sự kiện riêng</td><td>Có — mỗi hình là 1 thẻ, gắn CSS/sự kiện được</td></tr>
+          <tr><td>Hợp với</td><td>Game, đồ thị động, nhiều đối tượng, xử lý ảnh</td><td>Icon, logo, biểu đồ tĩnh, hình ít chi tiết</td></tr>
+          <tr><td>Hiệu năng khi <em>nhiều</em> đối tượng</td><td>Tốt (vẽ pixel trực tiếp)</td><td>Chậm dần (mỗi hình thêm 1 nút DOM)</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p><strong>Tóm tắt.</strong> Cần <em>tương tác từng hình</em>, icon nét đẹp → dùng <strong>SVG</strong>.
+        Cần <em>vẽ động, nhiều đối tượng, hiệu năng cao</em> (game, hạt, biểu đồ realtime) → dùng <strong>Canvas</strong>.</p></div>
+    </section>
+
+    <!-- ==========  9. OBJECT & EMBED  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> <code>&lt;object&gt;</code> &amp; <code>&lt;embed&gt;</code> <span class="tag-base">Giới thiệu</span></h2>
+      <p class="lead">Hai thẻ "đa năng" cũ để nhúng tài nguyên ngoài (PDF, SVG, đôi khi cả trang web).
+         Ngày nay ít dùng — đã có <code>&lt;img&gt;</code>, <code>&lt;video&gt;</code>, <code>&lt;iframe&gt;</code> chuyên dụng hơn — nhưng vẫn nên biết.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả — &lt;object&gt; nhúng một ảnh SVG (../../assets/rose.svg)</div>
+        <div class="demo-body">
+          <object type="image/svg+xml" data="../../assets/rose.svg" width="180" height="180" aria-label="Hoa hồng vẽ bằng SVG">
+            Trình duyệt không hiển thị được đối tượng này.
+          </object>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">&lt;!-- object: có thể đặt nội dung dự phòng bên trong --&gt;</span>
+<span class="k">&lt;object</span> <span class="v">type</span>=<span class="s">"image/svg+xml"</span> <span class="v">data</span>=<span class="s">"../../assets/rose.svg"</span> <span class="v">width</span>=<span class="s">"180"</span> <span class="v">height</span>=<span class="s">"180"</span><span class="k">&gt;</span>
+  Trình duyệt không hiển thị được đối tượng này.
+<span class="k">&lt;/object&gt;</span>
+
+<span class="c">&lt;!-- embed: thẻ tự đóng, không có nội dung dự phòng --&gt;</span>
+<span class="k">&lt;embed</span> <span class="v">type</span>=<span class="s">"image/svg+xml"</span> <span class="v">src</span>=<span class="s">"../../assets/rose.svg"</span> <span class="v">width</span>=<span class="s">"180"</span> <span class="v">height</span>=<span class="s">"180"</span><span class="k">&gt;</span></code></pre>
+      <div class="callout warn"><p><strong>Khác biệt nhỏ.</strong> <code>&lt;object&gt;</code> dùng <code>data=</code> và <strong>cho phép nội dung dự phòng</strong> bên trong;
+        <code>&lt;embed&gt;</code> dùng <code>src=</code>, là thẻ rỗng, không có dự phòng. Khi nhúng trang web hãy ưu tiên <code>&lt;iframe&gt;</code>.</p></div>
+    </section>
+
+    <!-- ==========  10. ĐỊNH DẠNG & KHẢ NĂNG TIẾP CẬN  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Định dạng nên dùng &amp; khả năng tiếp cận <span class="tag-base">Tổng kết</span></h2>
+      <p class="lead">Vài quy tắc gói gọn để media của bạn chạy mượt trên mọi trình duyệt và thân thiện với mọi người dùng.</p>
+
+      <div class="callout tip"><p><strong>Video.</strong> Ưu tiên <code>MP4 (H.264)</code> vì hỗ trợ rộng nhất; thêm <code>WEBM</code> làm phương án nhẹ hơn.
+        Luôn để nhiều <code>&lt;source&gt;</code> với <code>type</code> đúng.</p></div>
+      <div class="callout tip"><p><strong>Audio.</strong> Dùng <code>MP3</code> (audio/mpeg) làm chính — gần như mọi trình duyệt đọc được; thêm <code>OGG</code> nếu cần.</p></div>
+      <div class="callout warn"><p><strong>Autoplay cần muted.</strong> Trình duyệt chặn tự phát có tiếng. Muốn video/banner tự chạy thì
+        <strong>bắt buộc</strong> thêm <code>muted</code> (và nên có <code>loop</code>, <code>playsinline</code>).</p></div>
+      <div class="callout info"><p><strong>Khả năng tiếp cận.</strong> Luôn đặt <code>title</code> cho mỗi <code>&lt;iframe&gt;</code> (trình đọc màn hình đọc lên),
+        thêm phụ đề (<code>&lt;track&gt;</code>) cho video, và <code>aria-label</code> cho <code>&lt;canvas&gt;</code>/<code>&lt;svg&gt;</code> mang ý nghĩa.</p></div>
+      <div class="callout danger"><p><strong>Hiệu năng.</strong> Đừng tự host video lớn — dùng YouTube/Vimeo. Với iframe/ảnh ngoài màn hình,
+        thêm <code>loading="lazy"</code> để trang tải nhanh hơn.</p></div>
+
+      <table class="syntax">
+        <caption>Tóm tắt: chọn thẻ nào cho việc gì</caption>
+        <thead><tr><th>Mục tiêu</th><th>Thẻ nên dùng</th></tr></thead>
+        <tbody>
+          <tr><td>Phát phim/clip có hình + tiếng</td><td><code>&lt;video&gt;</code> + nhiều <code>&lt;source&gt;</code></td></tr>
+          <tr><td>Phát nhạc/podcast</td><td><code>&lt;audio&gt;</code> + nhiều <code>&lt;source&gt;</code></td></tr>
+          <tr><td>Nhúng trang web / bản đồ / YouTube</td><td><code>&lt;iframe&gt;</code> (kèm <code>title</code>, <code>loading="lazy"</code>)</td></tr>
+          <tr><td>Icon, logo, biểu đồ tĩnh, nét ở mọi cỡ</td><td><code>&lt;svg&gt;</code> nội tuyến</td></tr>
+          <tr><td>Game, đồ hoạ động, nhiều đối tượng</td><td><code>&lt;canvas&gt;</code> + JavaScript</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="08-the-ngu-nghia.html"><small>← Bài trước</small>2.1.8 · Thẻ ngữ nghĩa</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="../2.2-css/01-cach-chen-css.html"><small>Bài tiếp →</small>2.2.1 · 3 cách chèn CSS</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+
+  <!-- ====================  SCRIPT DEMO CANVAS  ==================== -->
+  <script>
+    // Vẽ vào canvas demo ở mục 6 — chạy offline, không phụ thuộc mạng
+    (function () {
+      var c = document.getElementById("dCanvas");
+      if (!c || !c.getContext) return;
+      var ctx = c.getContext("2d");
+
+      // 1) hình chữ nhật tô đặc
+      ctx.fillStyle = "#1D559F";
+      ctx.fillRect(20, 30, 140, 90);
+
+      // 2) hình chữ nhật chỉ có viền
+      ctx.strokeStyle = "#04AA6D";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(190, 30, 140, 90);
+
+      // 3) một đường chéo màu đỏ
+      ctx.beginPath();
+      ctx.moveTo(20, 160);
+      ctx.lineTo(330, 160);
+      ctx.strokeStyle = "#E63946";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // 4) viết chữ
+      ctx.fillStyle = "#16407a";
+      ctx.font = "20px Segoe UI, Arial, sans-serif";
+      ctx.fillText("Canvas 2D", 350, 80);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  3.11 — JQUERY (thư viện — đọc thêm)
+  ------------------------------------------------------------
+    1) jQuery là gì? cách nhúng    5) Thêm / xoá phần tử
+    2) Selector & sự kiện          6) CSS & class
+    3) Hiệu ứng fade/slide (demo)  7) Đối chiếu jQuery ↔ vanilla
+    4) Nội dung: text/html/val     8) Góc nhìn thực tế & mẹo
+  Mục tiêu: ĐỌC-HIỂU code cũ (legacy). Dự án mới → vanilla JS.
+  Demo cần mạng để nạp jQuery từ CDN — nếu offline, trang vẫn
+    hiển thị bình thường và có thông báo thay demo.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.11 · jQuery</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI ===== */
+    .d-btn { background:#1D559F; color:#fff; border:none; border-radius:8px;
+             padding:9px 16px; font-size:.92rem; font-weight:600; cursor:pointer;
+             margin:3px 4px 3px 0; }
+    .d-btn:hover { background:#16407a; }
+    .d-btn.green { background:#04AA6D; } .d-btn.green:hover { background:#03875a; }
+    .d-field { padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px;
+               font-size:.95rem; margin:3px 4px 3px 0; }
+    .d-out { background:#0f172a; color:#e6edf3; border-radius:10px;
+             font-family:"Cascadia Code",Consolas,monospace; font-size:.88rem;
+             padding:12px 14px; margin-top:12px; min-height:20px; white-space:pre-wrap; }
+    .d-out .ok { color:#7ee787; }
+    .d-panel { background:#eaf1fb; border:1px solid #1D559F; border-radius:10px;
+               padding:16px; margin-top:10px; }
+    .d-noibat { background:#FFC107; border-radius:6px; padding:2px 8px; }
+    #d-offline { display:none; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        3.11 jQuery
+      </nav>
+      <h1>jQuery <span class="chip" style="vertical-align:middle">đọc thêm</span></h1>
+      <p class="sub">Thư viện "Write less, do more" (John Resig, 2006) — từng thống trị web,
+         nay chủ yếu gặp trong <strong>dự án cũ</strong>. Học để <strong>đọc-hiểu code legacy</strong>
+         và trả lời trắc nghiệm; dự án mới ưu tiên vanilla JS.</p>
+      <div class="chips">
+        <span class="chip solid">3.11</span>
+        <span class="chip">Thư viện</span>
+        <span class="chip">Legacy — đọc hiểu</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">jQuery là gì? Cách nhúng</a></li>
+        <li><a href="#s2">Selector &amp; sự kiện</a></li>
+        <li><a href="#s3">Hiệu ứng fade / slide</a></li>
+        <li><a href="#s4">Nội dung: text · html · val</a></li>
+        <li><a href="#s5">Thêm / xoá phần tử</a></li>
+        <li><a href="#s6">CSS &amp; class</a></li>
+        <li><a href="#s7">Đối chiếu jQuery ↔ vanilla</a></li>
+        <li><a href="#s8">Góc nhìn thực tế &amp; mẹo</a></li>
+      </ol>
+    </nav>
+
+    <div class="callout warn" id="d-offline">
+      <p><strong>Không nạp được jQuery từ CDN</strong> (bạn đang offline?). Nội dung bài vẫn đọc
+      bình thường, nhưng các nút demo sẽ không chạy. Kết nối mạng rồi tải lại trang nhé.</p>
+    </div>
+
+    <!-- ==========  1. JQUERY LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> jQuery là gì? Cách nhúng <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code><span class="c">&lt;!-- nhúng từ CDN (đặt TRƯỚC code jQuery của mình) --&gt;</span>
+&lt;script src=<span class="s">"https://code.jquery.com/jquery-3.7.1.min.js"</span>&gt;&lt;/script&gt;
+
+&lt;script&gt;
+  <span class="c">// cú pháp chung:  $(selector).action()</span>
+  $(<span class="k">function</span> () {
+    <span class="c">// code ở đây chạy khi DOM sẵn sàng — viết đầy đủ là $(document).ready(fn)
+    // (câu trắc nghiệm 24!)</span>
+  });
+&lt;/script&gt;</code></pre>
+
+      <div class="note">
+        <p>Ký hiệu <code>$</code> chỉ là <em>tên hàm</em> của jQuery. <code>$(selector)</code>
+        chọn phần tử (cú pháp CSS như <code>querySelectorAll</code>) và trả về "đối tượng jQuery"
+        có sẵn hàng trăm phương thức nối chuỗi được.</p>
+      </div>
+    </section>
+
+    <!-- ==========  2. SELECTOR & SỰ KIỆN  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Selector &amp; sự kiện <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code>$(<span class="s">"#id"</span>)  $(<span class="s">".class"</span>)  $(<span class="s">"ul li"</span>)     <span class="c">// selector CSS quen thuộc</span>
+$(<span class="s">"ul li:contains('Hot')"</span>)              <span class="c">// mở rộng riêng của jQuery (câu 30)</span>
+
+$(<span class="s">"#btn"</span>).click(<span class="k">function</span> () {           <span class="c">// gắn sự kiện click</span>
+  $(<span class="k">this</span>).text(<span class="s">"Đã bấm!"</span>);              <span class="c">// this = phần tử đang bấm (câu 27)</span>
+});
+
+<span class="c">// .on() cho phần tử THÊM SAU NÀY (event delegation — câu 29):</span>
+$(<span class="s">"body"</span>).on(<span class="s">"click"</span>, <span class="s">".btn"</span>, <span class="k">function</span> () { ... });</code></pre>
+    </section>
+
+    <!-- ==========  3. HIỆU ỨNG  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Hiệu ứng fade / slide / animate <span class="tag-base">Cơ bản</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Nhóm</th><th>Phương thức</th></tr></thead>
+        <tbody>
+          <tr><td>Ẩn / hiện</td><td><code>hide()</code>, <code>show()</code>, <code>toggle()</code></td></tr>
+          <tr><td>Mờ dần</td><td><code>fadeIn()</code>, <code>fadeOut()</code>, <code>fadeTo(speed, opacity)</code></td></tr>
+          <tr><td>Trượt</td><td><code>slideUp()</code>, <code>slideDown()</code>, <code>slideToggle()</code></td></tr>
+          <tr><td>Tuỳ biến</td><td><code>animate({ left: "200px", opacity: .5 }, 1000)</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — hiệu ứng jQuery trên tấm panel</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-fade">fadeToggle(600)</button>
+          <button class="d-btn green" id="d-slide">slideToggle(600)</button>
+          <button class="d-btn" style="background:#6c5ce7" id="d-animate">animate() phóng to chữ</button>
+          <div class="d-panel" id="d-panel">
+            <strong>Panel demo.</strong> Các hiệu ứng fade/slide mà jQuery làm bằng 1 lệnh,
+            vanilla JS phải phối hợp class + CSS transition (bài 3.8 mục 10).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  4. NỘI DUNG  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Nội dung: <code>text</code> · <code>html</code> · <code>val</code> · <code>attr</code> <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code><span class="c">// ví dụ giáo trình: chào theo tên nhập vào</span>
+$(<span class="s">"#btnName"</span>).click(<span class="k">function</span> () {
+  <span class="k">let</span> name = $(<span class="s">"#name"</span>).val();            <span class="c">// val(): giá trị ô input</span>
+  $(<span class="s">"#helloId"</span>).html(name ? `Hello: &lt;b&gt;${name}&lt;/b&gt;`
+                           : <span class="s">"Please enter your name!"</span>);
+});
+<span class="c">// text() ↔ textContent · html() ↔ innerHTML · attr() ↔ get/setAttribute (câu 23)</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — bản chạy thật của ví dụ trên</div>
+        <div class="demo-body">
+          <input class="d-field" id="d-name" placeholder="Nhập tên…" size="22">
+          <button class="d-btn" id="d-btnName">Say Hello</button>
+          <p id="d-hello" style="min-height:1.3em;margin:8px 0 0"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  5. THÊM / XOÁ  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Thêm / xoá phần tử <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code>$(<span class="s">"#demo"</span>).append(<span class="s">"&lt;li&gt;C&lt;/li&gt;"</span>);   <span class="c">// thêm vào CUỐI bên trong (câu 25, 28)</span>
+$(<span class="s">"#demo"</span>).prepend(<span class="s">"&lt;li&gt;A&lt;/li&gt;"</span>);  <span class="c">// thêm vào ĐẦU bên trong</span>
+$(<span class="s">"#demo"</span>).before(<span class="s">"&lt;h3&gt;…&lt;/h3&gt;"</span>);   <span class="c">// chèn TRƯỚC phần tử (bên ngoài)</span>
+$(<span class="s">"#demo"</span>).after(<span class="s">"&lt;h3&gt;…&lt;/h3&gt;"</span>);    <span class="c">// chèn SAU phần tử (bên ngoài)</span>
+$(<span class="s">"#demo li:last"</span>).remove();        <span class="c">// xoá hẳn · empty(): xoá hết CON bên trong</span></code></pre>
+    </section>
+
+    <!-- ==========  6. CSS & CLASS  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> CSS &amp; class <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code>$(<span class="s">"p"</span>).addClass(<span class="s">"noi-bat"</span>);       <span class="c">// ↔ classList.add</span>
+$(<span class="s">"p"</span>).removeClass(<span class="s">"noi-bat"</span>);    <span class="c">// ↔ classList.remove</span>
+$(<span class="s">"p"</span>).toggleClass(<span class="s">"noi-bat"</span>);    <span class="c">// ↔ classList.toggle</span>
+$(<span class="s">"p"</span>).css(<span class="s">"color"</span>, <span class="s">"red"</span>);       <span class="c">// ↔ e.style.color = "red"</span>
+
+$(<span class="s">"#hop"</span>).outerWidth();            <span class="c">// rộng gồm padding + border (câu 26)
+                                    // width() &lt; innerWidth() &lt; outerWidth()</span></code></pre>
+    </section>
+
+    <!-- ==========  7. ĐỐI CHIẾU  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Đối chiếu jQuery ↔ vanilla JS <span class="tag-adv">Quan trọng</span></h2>
+      <p class="lead">Bảng "phiên dịch" để đọc code cũ rồi viết lại bằng JS thuần — kỹ năng
+         thực tế nhất của bài này.</p>
+
+      <table class="syntax">
+        <thead><tr><th>Việc</th><th>jQuery (cũ)</th><th>Vanilla JS (mới)</th></tr></thead>
+        <tbody>
+          <tr><td>Chọn 1 / nhiều</td><td><code>$("#id")</code> / <code>$(".c")</code></td><td><code>querySelector</code> / <code>querySelectorAll</code></td></tr>
+          <tr><td>DOM sẵn sàng</td><td><code>$(document).ready(fn)</code></td><td><code>DOMContentLoaded</code> hoặc <code>&lt;script defer&gt;</code></td></tr>
+          <tr><td>Sự kiện</td><td><code>.click(fn)</code> / <code>.on()</code></td><td><code>addEventListener("click", fn)</code></td></tr>
+          <tr><td>Nội dung</td><td><code>.text()</code> / <code>.html()</code> / <code>.val()</code></td><td><code>textContent</code> / <code>innerHTML</code> / <code>.value</code></td></tr>
+          <tr><td>Class</td><td><code>.addClass()</code> / <code>.toggleClass()</code></td><td><code>classList.add()</code> / <code>classList.toggle()</code></td></tr>
+          <tr><td>Thêm phần tử</td><td><code>.append(html)</code></td><td><code>insertAdjacentHTML("beforeend", html)</code></td></tr>
+          <tr><td>Hiệu ứng</td><td><code>.fadeIn()</code> / <code>.slideUp()</code></td><td>đổi class + CSS <code>transition</code></td></tr>
+          <tr><td>Gọi API</td><td><code>$.ajax()</code> / <code>$.get()</code></td><td><code>fetch()</code> + <code>async/await</code> (bài 3.12)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  8. GÓC NHÌN THỰC TẾ  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Góc nhìn thực tế &amp; mẹo <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout info"><p><strong>Vì sao jQuery "hạ nhiệt"?</strong> Vanilla JS hiện đại
+        đã có sẵn <code>querySelector</code>, <code>classList</code>, <code>fetch</code>… làm được
+        hầu hết việc jQuery từng độc quyền; trang lớn thì dùng framework (React/Vue). jQuery còn
+        sống trong hàng triệu trang legacy — nên vẫn phải <em>đọc hiểu</em>.</p></div>
+      <div class="callout tip"><p><strong>Mẹo thi.</strong> Các câu trắc nghiệm 23–30 đều nằm trong
+        bài này: <code>attr()</code>, <code>$(document).ready</code>, <code>append</code>,
+        <code>outerWidth</code>, <code>$(this)</code>, <code>on("click", ".btn")</code>,
+        <code>:contains()</code>.</p></div>
+      <div class="callout warn"><p><strong>Lưu ý.</strong> Đừng trộn lẫn: <code>$("#id").value</code>
+        (sai — jQuery dùng <code>.val()</code>) hay <code>document.querySelector().val()</code>
+        (sai — DOM dùng <code>.value</code>). Xác định rõ đang cầm object loại nào.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> Học jQuery để đọc code cũ;
+        bài tập &amp; dự án mới viết vanilla JS (3.7–3.9).</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="11-canvas-svg.html"><small>← Bài trước</small>3.10 · Canvas &amp; SVG</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="13-json-fetch-async.html"><small>Bài tiếp →</small>3.12 · JSON · fetch · async/await</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- ===== jQuery từ CDN + JS MINH HOẠ (cuối body) ===== -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script>
+    'use strict';
+
+    // Offline / CDN lỗi → hiện cảnh báo, các demo im lặng bỏ qua
+    if (typeof window.jQuery === "undefined") {
+      document.getElementById("d-offline").style.display = "block";
+    } else {
+      $(function () {                            // $(document).ready(...)
+        /* ---- Mục 3: hiệu ứng ---- */
+        $("#d-fade").click(function () { $("#d-panel").fadeToggle(600); });
+        $("#d-slide").click(function () { $("#d-panel").slideToggle(600); });
+        $("#d-animate").click(function () {
+          $("#d-panel").animate({ fontSize: "1.15rem", paddingLeft: "34px" }, 500)
+                       .animate({ fontSize: "1rem",    paddingLeft: "16px" }, 500);
+        });
+
+        /* ---- Mục 4: Say Hello (ví dụ giáo trình) ---- */
+        $("#d-btnName").click(function () {
+          let name = $("#d-name").val();
+          $("#d-hello").html(name ? `Hello: <b>${name}</b>`
+                                  : "Please enter your name!");
+        });
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  3.5 — HÀM (FUNCTION)
+  ------------------------------------------------------------
+    1) Khai báo hàm & return       6) Arrow function
+    2) Tham số & đối số (demo)     7) Arrow + map/filter/sort (demo)
+    3) Tham số mặc định            8) Hàm thuần & tái sử dụng
+    4) Tham số rest ...            9) Callback — hàm truyền vào hàm
+    5) Function expression        10) Mẹo & lỗi thường gặp
+  JS minh hoạ đặt cuối <body>.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.5 · Hàm</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI ===== */
+    .d-btn { background:#1D559F; color:#fff; border:none; border-radius:8px;
+             padding:9px 16px; font-size:.92rem; font-weight:600; cursor:pointer;
+             margin:3px 4px 3px 0; }
+    .d-btn:hover { background:#16407a; }
+    .d-field { padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px;
+               font-size:.95rem; margin:3px 4px 3px 0; font-family:Consolas,monospace; }
+    .d-out { background:#0f172a; color:#e6edf3; border-radius:10px;
+             font-family:"Cascadia Code",Consolas,monospace; font-size:.88rem;
+             padding:12px 14px; margin-top:12px; min-height:20px; white-space:pre-wrap; }
+    .d-out .ok  { color:#7ee787; }
+    .d-out .bad { color:#ff7b72; }
+    .d-out .hl  { color:#ffa657; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        3.5 Hàm
+      </nav>
+      <h1>Hàm (Function)</h1>
+      <p class="sub">Đóng gói một việc thành khối tái sử dụng: khai báo, tham số mặc định, rest,
+         function expression và ngôi sao hiện đại — <strong>arrow function</strong> — cánh tay phải
+         của <code>map</code>/<code>filter</code>/<code>sort</code>.</p>
+      <div class="chips">
+        <span class="chip solid">3.5</span>
+        <span class="chip">function · arrow</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Khai báo hàm &amp; return</a></li>
+        <li><a href="#s2">Tham số &amp; đối số</a></li>
+        <li><a href="#s3">Tham số mặc định</a></li>
+        <li><a href="#s4">Tham số rest <code>...</code></a></li>
+        <li><a href="#s5">Function expression</a></li>
+        <li><a href="#s6">Arrow function</a></li>
+        <li><a href="#s7">Arrow + map / filter / sort</a></li>
+        <li><a href="#s8">Hàm thuần &amp; tái sử dụng</a></li>
+        <li><a href="#s9">Callback</a></li>
+        <li><a href="#s10">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. KHAI BÁO HÀM  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Khai báo hàm &amp; <code>return</code> <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code><span class="k">function</span> sum(a, b) {        <span class="c">// a, b: THAM SỐ (parameter)</span>
+  <span class="k">return</span> a + b;             <span class="c">// return: trả giá trị về nơi gọi & THOÁT hàm</span>
+}
+
+sum(5, 6);                    <span class="c">// gọi hàm với ĐỐI SỐ (argument) 5, 6 → 11</span>
+<span class="k">let</span> kq = sum(2, 3) * 10;      <span class="c">// dùng kết quả như một giá trị → 50</span></code></pre>
+
+      <div class="note">
+        <p>Hàm <strong>không</strong> có <code>return</code> (hoặc <code>return</code> không kèm giá trị)
+        sẽ trả về <code>undefined</code>. Sau khi <code>return</code> chạy, mọi lệnh phía dưới trong hàm
+        bị bỏ qua — tận dụng để "thoát sớm" khi dữ liệu không hợp lệ.</p>
+      </div>
+    </section>
+
+    <!-- ==========  2. THAM SỐ & ĐỐI SỐ  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Tham số &amp; đối số — JS "dễ dãi" thế nào <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">JavaScript <strong>không</strong> kiểm tra kiểu, <strong>không</strong> kiểm tra
+         số lượng đối số. Thiếu đối số → tham số nhận <code>undefined</code>.</p>
+
+      <pre class="code"><code><span class="k">function</span> sum(a, b) { <span class="k">return</span> a + b; }
+
+sum(5, 6);      <span class="c">// 11  — đủ đối số</span>
+sum(5);         <span class="c">// NaN — b = undefined → 5 + undefined = NaN</span>
+sum(5, 6, 99);  <span class="c">// 11  — đối số thừa bị lờ đi</span>
+sum(<span class="s">"5"</span>, 6);    <span class="c">// "56" — không ai chặn bạn truyền chuỗi!</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — gọi sum() kiểu gì cũng được</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-goi1">sum(5, 6)</button>
+          <button class="d-btn" id="d-btn-goi2">sum(5)</button>
+          <button class="d-btn" id="d-btn-goi3">sum(5, 6, 99)</button>
+          <button class="d-btn" id="d-btn-goi4">sum("5", 6)</button>
+          <div class="d-out" id="d-out-goi">// bấm từng nút và giải thích kết quả</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  3. THAM SỐ MẶC ĐỊNH  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Tham số mặc định <span class="tag-adv">ES6</span></h2>
+
+      <pre class="code"><code><span class="k">function</span> add(a, b = 5) {      <span class="c">// b không được truyền → tự lấy 5</span>
+  <span class="k">return</span> a + b;
+}
+add(5);      <span class="c">// 10</span>
+add(5, 7);   <span class="c">// 12 — có truyền thì dùng giá trị truyền</span>
+
+<span class="c">// ứng dụng thật: lời chào có tên mặc định</span>
+<span class="k">function</span> chao(ten = <span class="s">"bạn"</span>) {
+  <span class="k">return</span> `Xin chào ${ten}!`;
+}</code></pre>
+    </section>
+
+    <!-- ==========  4. REST  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Tham số rest <code>...</code> <span class="tag-adv">ES6</span></h2>
+      <p class="lead">Gom <strong>số lượng đối số bất kỳ</strong> thành một mảng — hết cảnh
+         "không biết người ta truyền mấy số".</p>
+
+      <pre class="code"><code><span class="k">function</span> sum(...nums) {        <span class="c">// nums là MẢNG các đối số</span>
+  <span class="k">let</span> s = 0;
+  <span class="k">for</span> (<span class="k">let</span> x <span class="k">of</span> nums) s += x;
+  <span class="k">return</span> s;
+}
+sum(4, 5, 2);        <span class="c">// 11</span>
+sum(1, 2, 3, 4, 5);  <span class="c">// 15 — bao nhiêu cũng nhận</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — cộng bao nhiêu số tuỳ bạn</div>
+        <div class="demo-body">
+          <input class="d-field" id="d-sonhap" value="4, 5, 2" size="26">
+          <button class="d-btn" id="d-btn-rest">sum(...cácSố)</button>
+          <div class="d-out" id="d-out-rest">// nhập dãy số cách nhau dấu phẩy</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  5. FUNCTION EXPRESSION  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Function expression <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Hàm (thường không tên) <strong>gán vào biến</strong> — vì trong JS, hàm cũng là
+         một giá trị như số hay chuỗi.</p>
+
+      <pre class="code"><code><span class="c">// function DECLARATION — có tên, được "hoisting" (gọi trước khai báo vẫn chạy)</span>
+<span class="k">function</span> tinhTong(a, b) { <span class="k">return</span> a + b; }
+
+<span class="c">// function EXPRESSION — gán hàm vô danh vào biến, KHÔNG hoisting</span>
+<span class="k">let</span> x = <span class="k">function</span> (a, b) { <span class="k">return</span> a + b; };
+x(10, 20);   <span class="c">// 30 — gọi qua tên biến</span></code></pre>
+
+      <div class="note">
+        <p><strong>Hoisting khác nhau:</strong> declaration được "kéo lên đầu" nên gọi trước khi
+        khai báo vẫn chạy; expression thì <em>không</em> — gọi trước dòng gán sẽ lỗi. Đây là khác
+        biệt thực dụng nhất giữa hai cách viết.</p>
+      </div>
+    </section>
+
+    <!-- ==========  6. ARROW FUNCTION  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Arrow function <code>=&gt;</code> <span class="tag-adv">ES6</span></h2>
+      <p class="lead">Cú pháp ngắn gọn của function expression — chuẩn viết callback hiện đại.</p>
+
+      <pre class="code"><code><span class="c">// 4 nấc rút gọn — cùng một hàm cộng:</span>
+<span class="k">let</span> add = <span class="k">function</span> (a, b) { <span class="k">return</span> a + b; };  <span class="c">// ① expression đầy đủ</span>
+<span class="k">let</span> add = (a, b) =&gt; { <span class="k">return</span> a + b; };         <span class="c">// ② thay function bằng =&gt;</span>
+<span class="k">let</span> add = (a, b) =&gt; a + b;                     <span class="c">// ③ thân 1 biểu thức: bỏ { } và return</span>
+<span class="k">let</span> binhPhuong = x =&gt; x * x;                   <span class="c">// ④ 1 tham số: bỏ luôn ( )</span></code></pre>
+
+      <div class="callout warn">
+        <p><strong><code>this</code> của arrow khác hàm thường!</strong> Arrow <em>không có
+        <code>this</code> riêng</em> — nó "mượn" <code>this</code> của phạm vi bao ngoài.
+        Khi xử lý sự kiện DOM mà cần <code>this</code> là phần tử nhận sự kiện thì phải dùng
+        <code>function () {}</code> thường — gặp lại bẫy này ở bài 3.8.</p>
+      </div>
+    </section>
+
+    <!-- ==========  7. ARROW + MAP/FILTER/SORT  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Arrow + <code>map</code> / <code>filter</code> / <code>sort</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Lý do arrow phổ biến: truyền hàm ngắn gọn vào các phương thức mảng.</p>
+
+      <pre class="code"><code><span class="k">let</span> a = [5, 8, 5, 9, -9, 4];
+
+a.map(v =&gt; v + 2);        <span class="c">// [7, 10, 7, 11, -7, 6]   — tăng 2 mỗi phần tử</span>
+a.filter(v =&gt; v % 2);     <span class="c">// [5, 5, 9, -9]           — lọc số lẻ (1 là truthy)</span>
+a.sort((t1, t2) =&gt; t2 - t1); <span class="c">// [9, 8, 5, 5, 4, -9]  — sắp GIẢM dần</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — bộ ba map · filter · sort trên [5, 8, 5, 9, -9, 4]</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-map">map(v =&gt; v + 2)</button>
+          <button class="d-btn" id="d-btn-filter">filter(v =&gt; v % 2)</button>
+          <button class="d-btn" id="d-btn-sort">sort((a,b) =&gt; b - a)</button>
+          <div class="d-out" id="d-out-mfs">// mỗi nút một phép biến đổi — mảng gốc không bị map/filter làm hỏng</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  8. HÀM THUẦN  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Hàm thuần &amp; tái sử dụng <span class="tag-adv">Chuẩn nghề</span></h2>
+      <p class="lead">Hàm thuần (pure function): cùng đầu vào → cùng đầu ra, <strong>không tác dụng
+         phụ</strong> — dễ test, dễ tái sử dụng.</p>
+
+      <pre class="code"><code><span class="c">// ✗ KHÔNG thuần: phụ thuộc & sửa biến bên ngoài, khó tái sử dụng</span>
+<span class="k">let</span> tong = 0;
+<span class="k">function</span> congDon(x) { tong += x; }
+
+<span class="c">// ✓ THUẦN: chỉ nhìn tham số, chỉ trả kết quả</span>
+<span class="k">const</span> tinhBmi = (kg, m) =&gt; kg / (m * m);
+<span class="c">// dùng lại được ở mọi nơi: form BMI, bảng thống kê, kiểm thử…</span></code></pre>
+
+      <div class="callout tip">
+        <p><strong>Rubric thực hành "viết hàm xử lý cần thiết":</strong> tách phần <em>tính toán</em>
+        (hàm thuần — nhận tham số, trả kết quả) khỏi phần <em>giao diện</em> (đọc input, ghi DOM).
+        Bài tập BMI ở bài 14 áp dụng đúng mẫu này.</p>
+      </div>
+    </section>
+
+    <!-- ==========  9. CALLBACK  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Callback — hàm truyền vào hàm <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Vì hàm là giá trị, ta truyền được hàm A vào hàm B để B "gọi lại" (call back)
+         khi cần — nền tảng của sự kiện (3.7) và bất đồng bộ (3.12).</p>
+
+      <pre class="code"><code><span class="c">// map nhận CALLBACK: gọi lại hàm đó với từng phần tử</span>
+[1, 2, 3].map(x =&gt; x * 10);              <span class="c">// [10, 20, 30]</span>
+
+<span class="c">// addEventListener nhận CALLBACK: gọi lại khi có click</span>
+nut.addEventListener(<span class="s">"click"</span>, () =&gt; console.log(<span class="s">"Đã bấm!"</span>));
+
+<span class="c">// setTimeout nhận CALLBACK: gọi lại sau 2 giây</span>
+setTimeout(() =&gt; console.log(<span class="s">"2 giây trôi qua"</span>), 2000);</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — callback hẹn giờ</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-cb">setTimeout 2 giây</button>
+          <div class="d-out" id="d-out-cb">// bấm rồi chờ — callback chạy SAU, không chặn trang</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  10. MẸO & LỖI  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout warn"><p><strong>Lỗi 1.</strong> Gọi thiếu đối số → <code>undefined</code>
+        → kết quả <code>NaN</code>. Phòng bằng <em>tham số mặc định</em> hoặc kiểm tra đầu hàm.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> <code>nut.addEventListener("click", sayHello<span style="color:#E63946">()</span>)</code>
+        — cặp ngoặc thừa khiến hàm chạy NGAY thay vì đợi click. Truyền <em>tên hàm</em>:
+        <code>sayHello</code>, không phải <em>kết quả gọi hàm</em>.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 3.</strong> Quên <code>return</code> — hàm tính đúng
+        nhưng trả về <code>undefined</code> vì kết quả chỉ nằm trong <code>console.log</code>.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> Mặc định viết arrow cho callback;
+        hàm có tên dùng declaration; cần <code>this</code> phần tử sự kiện → function thường;
+        tách hàm thuần khỏi code giao diện.</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="04-cau-truc-dieu-khien.html"><small>← Bài trước</small>3.4 · Cấu trúc điều khiển</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="06-mang.html"><small>Bài tiếp →</small>3.6.1 · Mảng</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- ===== JS MINH HOẠ CỦA BÀI (cuối body) ===== -->
+  <script>
+    'use strict';
+
+    /* ---- Mục 2: JS dễ dãi với đối số ---- */
+    function sum(a, b) { return a + b; }
+    const outGoi = document.getElementById("d-out-goi");
+    document.getElementById("d-btn-goi1").addEventListener("click", () =>
+      outGoi.innerHTML = `sum(5, 6)     → <span class="ok">${sum(5, 6)}</span>   (đủ đối số)`);
+    document.getElementById("d-btn-goi2").addEventListener("click", () =>
+      outGoi.innerHTML = `sum(5)        → <span class="bad">${sum(5)}</span>   (b = undefined → 5 + undefined = NaN)`);
+    document.getElementById("d-btn-goi3").addEventListener("click", () =>
+      outGoi.innerHTML = `sum(5, 6, 99) → <span class="ok">${sum(5, 6, 99)}</span>   (đối số thừa bị lờ đi)`);
+    document.getElementById("d-btn-goi4").addEventListener("click", () =>
+      outGoi.innerHTML = `sum("5", 6)   → <span class="hl">"${sum("5", 6)}"</span>   (dấu + gặp chuỗi → NỐI chuỗi!)`);
+
+    /* ---- Mục 4: rest gom đối số ---- */
+    function sumRest(...nums) {          // nums là mảng
+      let s = 0;
+      for (let x of nums) s += x;
+      return s;
+    }
+    document.getElementById("d-btn-rest").addEventListener("click", () => {
+      const day = document.getElementById("d-sonhap").value
+        .split(",")                      // "4, 5, 2" → ["4", " 5", " 2"]
+        .map(x => parseFloat(x))         // → [4, 5, 2]
+        .filter(x => !isNaN(x));         // bỏ phần tử không phải số
+      document.getElementById("d-out-rest").innerHTML =
+        `sum(${day.join(", ")})  →  <span class="ok">${sumRest(...day)}</span>` +
+        `\n(spread "..." lúc GỌI trải mảng thành các đối số; rest "..." lúc KHAI BÁO gom lại)`;
+    });
+
+    /* ---- Mục 7: map / filter / sort ---- */
+    const goc = [5, 8, 5, 9, -9, 4];
+    const outMfs = document.getElementById("d-out-mfs");
+    document.getElementById("d-btn-map").addEventListener("click", () =>
+      outMfs.innerHTML = `gốc  : [${goc}]\nmap  : <span class="ok">[${goc.map(v => v + 2)}]</span>   (mảng MỚI, gốc nguyên vẹn)`);
+    document.getElementById("d-btn-filter").addEventListener("click", () =>
+      outMfs.innerHTML = `gốc   : [${goc}]\nfilter: <span class="ok">[${goc.filter(v => v % 2)}]</span>   (v % 2 = 1 là truthy → giữ số lẻ)`);
+    document.getElementById("d-btn-sort").addEventListener("click", () => {
+      const banSao = [...goc];           // sort sửa TRỰC TIẾP mảng → sort trên bản sao
+      banSao.sort((t1, t2) => t2 - t1);
+      outMfs.innerHTML = `gốc : [${goc}]\nsort: <span class="ok">[${banSao}]</span>   (giảm dần — sort làm trên BẢN SAO vì sort sửa mảng gốc)`;
+    });
+
+    /* ---- Mục 9: callback hẹn giờ ---- */
+    document.getElementById("d-btn-cb").addEventListener("click", () => {
+      const out = document.getElementById("d-out-cb");
+      out.textContent = "Đã hẹn giờ... trang vẫn hoạt động bình thường trong lúc chờ.";
+      setTimeout(() => {                 // callback này được "gọi lại" sau 2000ms
+        out.innerHTML += '\n<span class="ok">✓ 2 giây trôi qua — callback vừa được gọi!</span>';
+      }, 2000);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="5.4-5.5 Hiệu ứng, Transform &amp; Filter trong Tailwind CSS v4 - trạng thái &amp; transition, transform 2D/3D, opacity/shadow/effects, animation dựng sẵn, filter &amp; backdrop.">
+  <title>5.4–5.5 · Hiệu ứng &amp; Filter — Chương 5</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <!-- Tailwind v4 — bản trình duyệt (biên dịch class ngay trong browser). Chỉ dùng để học/prototype. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- Tuỳ biến CSS-first của v4: token thương hiệu + animation tự tạo bằng --animate-* -->
+  <style type="text/tailwindcss">
+    @theme {
+      --color-brand: #04AA6D;
+      --animate-wiggle: wiggle 1s ease-in-out infinite;
+      @keyframes wiggle {
+        0%, 100% { transform: rotate(-6deg); }
+        50%      { transform: rotate(6deg); }
+      }
+    }
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- ===== Breadcrumb ===== -->
+  <nav class="mx-auto max-w-4xl px-4 pt-4 text-sm text-gray-500">
+    <a class="hover:text-[#1D559F]" href="../index.html">Môn học</a>
+    <span class="mx-1">›</span>
+    <a class="hover:text-[#1D559F]" href="index.html">Chương 5</a>
+    <span class="mx-1">›</span>
+    <span class="text-gray-700">5.4–5.5 Hiệu ứng</span>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="mt-3 bg-linear-to-br from-[#1D559F] to-violet-600 text-white">
+    <div class="mx-auto max-w-4xl px-4 py-10">
+      <h1 class="text-3xl font-bold">5.4–5.5 · Hiệu ứng, Transform &amp; Filter</h1>
+      <p class="mt-2 text-white/80">Làm giao diện "sống động": <strong>transition</strong> mượt khi hover, <strong>transform</strong> phóng to/xoay, <strong>shadow</strong> đổ bóng, <strong>animation</strong> dựng sẵn và <strong>filter</strong> xử lý ảnh — tất cả bằng class, không viết CSS thủ công.</p>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-4xl px-4 py-8">
+
+    <!-- 1 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">1</span>Trạng thái &amp; Transition
+      </h2>
+      <p class="mb-3">Thêm <strong>tiền tố trạng thái</strong> để đổi style theo tương tác: <code>hover:</code> (rê chuột), <code>focus:</code> (đang chọn), <code>active:</code> (đang nhấn). Muốn đổi <em>mượt</em> thay vì "nhảy" đột ngột, thêm nhóm class <code>transition</code>.</p>
+
+      <div class="mb-3 overflow-x-auto rounded-xl border border-gray-200">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-gray-100 text-gray-700">
+            <tr><th class="p-3">Class</th><th class="p-3">Tác dụng</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr><td class="p-3"><code>transition</code></td><td class="p-3">Chuyển động chung (mọi thuộc tính phổ biến)</td></tr>
+            <tr><td class="p-3"><code>transition-colors</code></td><td class="p-3">Chỉ đổi màu (nền, chữ, viền)</td></tr>
+            <tr><td class="p-3"><code>transition-transform</code></td><td class="p-3">Chỉ đổi transform (scale, rotate…)</td></tr>
+            <tr><td class="p-3"><code>transition-all</code></td><td class="p-3">Mọi thuộc tính đổi được</td></tr>
+            <tr><td class="p-3"><code>duration-300</code></td><td class="p-3">Thời lượng 300<strong>ms</strong> (mặc định 150ms)</td></tr>
+            <tr><td class="p-3"><code>ease-linear/-in/-out/-in-out</code></td><td class="p-3">Kiểu gia tốc (mặc định <code>cubic-bezier(.4,0,.2,1)</code>)</td></tr>
+            <tr><td class="p-3"><code>delay-200</code></td><td class="p-3">Chờ 200ms rồi mới chạy</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — rê chuột vào nút</div>
+        <div class="p-4">
+          <button class="rounded bg-blue-500 px-4 py-2 font-bold text-white transition-colors duration-300 hover:bg-red-500">Hover me!</button>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- đổi màu nền mượt 300ms khi hover --&gt;</span>
+<span class="text-sky-300">&lt;button</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"bg-blue-500 text-white font-bold py-2 px-4 rounded
+               transition-colors duration-300 hover:bg-red-500"</span><span class="text-sky-300">&gt;</span>
+  Hover me!
+<span class="text-sky-300">&lt;/button&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Phân rã class</p>
+        <p><code class="rounded bg-emerald-100 px-1">transition-colors</code> chỉ chuyển động màu ·
+           <code class="rounded bg-emerald-100 px-1">duration-300</code> kéo dài 300ms ·
+           <code class="rounded bg-emerald-100 px-1">hover:bg-red-500</code> nền đỏ khi rê chuột. Bỏ <code>transition</code> thì màu vẫn đổi nhưng "nhảy" tức thì.</p>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">2</span>Transform — phóng to, xoay, dời, nghiêng
+      </h2>
+      <p class="mb-3">Nhóm <strong>transform</strong> biến đổi hình học phần tử mà không ảnh hưởng bố cục xung quanh: <code>scale-*</code> phóng to/thu nhỏ, <code>rotate-*</code> xoay, <code>translate-x/y-*</code> dời, <code>skew-*</code> nghiêng, <code>origin-*</code> đổi tâm biến đổi.</p>
+
+      <div class="mb-3 overflow-x-auto rounded-xl border border-gray-200">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-gray-100 text-gray-700">
+            <tr><th class="p-3">Class</th><th class="p-3">Ý nghĩa</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr><td class="p-3"><code>scale-50 / 100 / 110 / 125</code></td><td class="p-3">Tỉ lệ 50% → 125%</td></tr>
+            <tr><td class="p-3"><code>rotate-45 / -rotate-12</code></td><td class="p-3">Xoay ±độ</td></tr>
+            <tr><td class="p-3"><code>translate-x-4 / translate-y-2</code></td><td class="p-3">Dời ngang/dọc</td></tr>
+            <tr><td class="p-3"><code>skew-6</code></td><td class="p-3">Nghiêng 6°</td></tr>
+            <tr><td class="p-3"><code>origin-center / origin-top-left</code></td><td class="p-3">Tâm biến đổi</td></tr>
+            <tr><td class="p-3"><code>rotate-x-* / rotate-y-*</code></td><td class="p-3">Xoay 3D + <code>perspective-normal</code>, <code>transform-3d</code>, <code>backface-hidden</code></td></tr>
+            <tr><td class="p-3"><code>transform-gpu</code></td><td class="p-3">Ép dùng GPU → chuyển động mượt hơn</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — rê chuột vào bông hồng</div>
+        <div class="flex flex-wrap items-center gap-8 p-6">
+          <img src="../assets/rose.svg" alt="Bông hồng phóng to khi hover" class="w-32 transition-transform duration-300 hover:scale-125">
+          <img src="../assets/photo.svg" alt="Ảnh xoay nghiêng" class="w-32 rotate-6 transition-transform duration-300 hover:-rotate-6">
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- phóng to 125% mượt 300ms khi hover --&gt;</span>
+<span class="text-sky-300">&lt;img</span> <span class="text-orange-300">src</span>=<span class="text-emerald-300">"../assets/rose.svg"</span>
+     <span class="text-orange-300">class</span>=<span class="text-emerald-300">"w-32 transition-transform duration-300 hover:scale-125"</span><span class="text-sky-300">&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-amber-500 bg-amber-50 p-3 text-sm">
+        <p class="font-semibold text-amber-800">Tự kiểm tra</p>
+        <p>Rê chuột vào bông hồng → ảnh <strong>phóng to 125%</strong> một cách <strong>mượt trong 300ms</strong>. Dời chuột ra, ảnh trở về kích thước gốc cũng mượt. Muốn êm hơn nữa trên phần tử lớn, thêm <code>transform-gpu</code>.</p>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">3</span>Opacity · Shadow · Effects
+      </h2>
+      <p class="mb-3"><code>opacity-0/25/50/75/100</code> chỉnh độ trong suốt. <code>shadow-*</code> đổ bóng khối; thêm màu bóng <code>shadow-cyan-500/50</code>, bóng trong <code>inset-shadow-sm</code>, bóng chữ <code>text-shadow-sm/md/lg</code> (v4.1). Trộn màu lớp bằng <code>mix-blend-*</code> / <code>bg-blend-*</code>.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — các mức box-shadow</div>
+        <div class="flex flex-wrap items-center gap-6 bg-gray-50 p-8">
+          <div class="grid size-20 place-items-center rounded-lg bg-white text-xs shadow-xs">shadow-xs</div>
+          <div class="grid size-20 place-items-center rounded-lg bg-white text-xs shadow-sm">shadow-sm</div>
+          <div class="grid size-20 place-items-center rounded-lg bg-white text-xs shadow-md">shadow-md</div>
+          <div class="grid size-20 place-items-center rounded-lg bg-white text-xs shadow-lg">shadow-lg</div>
+          <div class="grid size-20 place-items-center rounded-lg bg-white text-xs shadow-xl">shadow-xl</div>
+          <div class="grid size-20 place-items-center rounded-lg bg-white text-xs shadow-2xl">shadow-2xl</div>
+          <div class="grid size-20 place-items-center rounded-lg bg-white text-center text-xs shadow-lg shadow-cyan-500/50">shadow màu</div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- bóng thường → bóng đậm hơn --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"shadow-sm"</span><span class="text-sky-300">&gt;</span> ... <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"shadow-2xl"</span><span class="text-sky-300">&gt;</span> ... <span class="text-sky-300">&lt;/div&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- bóng màu · bóng trong · bóng chữ (v4.1) --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"shadow-lg shadow-cyan-500/50 inset-shadow-sm"</span><span class="text-sky-300">&gt;</span> ... <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;h3</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"text-shadow-lg"</span><span class="text-sky-300">&gt;</span> Tiêu đề <span class="text-sky-300">&lt;/h3&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-amber-500 bg-amber-50 p-3 text-sm">
+        <p class="font-semibold text-amber-800">Lưu ý — v4 đổi tên thang đo</p>
+        <p>Nhiều class "cỡ mặc định" của v3 bị dời một bậc trong v4:</p>
+        <ul class="mt-1 list-disc space-y-1 pl-5">
+          <li><code>shadow</code> (v3) → <code>shadow-sm</code>; nhỏ nhất giờ là <code>shadow-2xs</code>. Bóng trong <code>shadow-inner</code> → <code>inset-shadow-sm</code>.</li>
+          <li>Tương tự: <code>rounded</code> → <code>rounded-sm</code>, <code>blur</code> → <code>blur-sm</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">4</span>Animation có sẵn
+      </h2>
+      <p class="mb-3">Tailwind cho <strong>4 animation dựng sẵn</strong> dùng ngay không cần <code>@keyframes</code>. Cần hiệu ứng riêng thì tự khai báo bằng biến <code>--animate-*</code> kèm <code>@keyframes</code> trong khối <code>@theme</code>.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — 4 animation dựng sẵn + 1 tự tạo</div>
+        <div class="grid grid-cols-2 gap-6 p-8 sm:grid-cols-5">
+          <div class="flex flex-col items-center gap-2 text-xs">
+            <div class="size-12 rounded-full border-4 border-gray-200 border-t-sky-500 animate-spin"></div>
+            <code>animate-spin</code>
+            <span class="text-gray-500">loading</span>
+          </div>
+          <div class="flex flex-col items-center gap-2 text-xs">
+            <span class="relative flex size-12 items-center justify-center">
+              <span class="absolute inline-flex size-full rounded-full bg-rose-400 opacity-75 animate-ping"></span>
+              <span class="relative inline-flex size-6 rounded-full bg-rose-500"></span>
+            </span>
+            <code>animate-ping</code>
+            <span class="text-gray-500">lan toả</span>
+          </div>
+          <div class="flex flex-col items-center gap-2 text-xs">
+            <div class="size-12 rounded-lg bg-gray-300 animate-pulse"></div>
+            <code>animate-pulse</code>
+            <span class="text-gray-500">skeleton</span>
+          </div>
+          <div class="flex flex-col items-center gap-2 text-xs">
+            <div class="size-12 rounded-full bg-emerald-500 animate-bounce"></div>
+            <code>animate-bounce</code>
+            <span class="text-gray-500">nảy</span>
+          </div>
+          <div class="flex flex-col items-center gap-2 text-xs">
+            <div class="grid size-12 place-items-center rounded-lg bg-violet-500 text-sm font-bold text-white animate-wiggle">Hi</div>
+            <code>animate-wiggle</code>
+            <span class="text-gray-500">tự tạo</span>
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- 4 animation dựng sẵn --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"animate-spin"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span>   <span class="text-gray-400 italic">&lt;!-- xoay/loading --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"animate-ping"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span>   <span class="text-gray-400 italic">&lt;!-- lan toả --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"animate-pulse"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span>  <span class="text-gray-400 italic">&lt;!-- skeleton --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"animate-bounce"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span> <span class="text-gray-400 italic">&lt;!-- nảy --&gt;</span>
+
+<span class="text-gray-400 italic">/* tự tạo animation: khai báo trong @theme */</span>
+<span class="text-sky-300">@theme</span> {
+  <span class="text-orange-300">--animate-wiggle</span>: <span class="text-emerald-300">wiggle 1s ease-in-out infinite</span>;
+  <span class="text-sky-300">@keyframes</span> wiggle {
+    <span class="text-orange-300">0%, 100%</span> { transform: rotate(-6deg); }
+    <span class="text-orange-300">50%</span>      { transform: rotate(6deg); }
+  }
+}</code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+        <p class="font-semibold text-violet-800">Chuẩn nghề</p>
+        <p>Mẫu <strong>thẻ sản phẩm</strong> thường dùng <code class="rounded bg-violet-100 px-1">transition-transform hover:scale-105</code> — nhấc nhẹ thẻ khi rê chuột, tinh tế mà không "giật". Kết hợp thêm <code>hover:shadow-lg</code> để nổi khối.</p>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">5</span>Filter &amp; Backdrop
+      </h2>
+      <p class="mb-3"><strong>Filter</strong> xử lý hình ảnh trực tiếp trên phần tử: làm mờ, chỉnh sáng/tương phản, đổi màu. <strong>Backdrop</strong> áp filter lên <em>nền phía sau</em> phần tử (kính mờ). Rất hợp cho thư viện ảnh, hero, lớp phủ.</p>
+
+      <div class="mb-3 overflow-x-auto rounded-xl border border-gray-200">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-gray-100 text-gray-700">
+            <tr><th class="p-3">Class</th><th class="p-3">Tác dụng</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr><td class="p-3"><code>blur-xs … blur-3xl</code></td><td class="p-3">Làm mờ (v4: <code>blur</code> → <code>blur-sm</code>)</td></tr>
+            <tr><td class="p-3"><code>brightness-110 · contrast-125</code></td><td class="p-3">Chỉnh độ sáng / tương phản</td></tr>
+            <tr><td class="p-3"><code>grayscale · sepia · invert</code></td><td class="p-3">Xám · nâu cổ điển · đảo màu</td></tr>
+            <tr><td class="p-3"><code>hue-rotate-90 · saturate-150</code></td><td class="p-3">Xoay tông màu · tăng độ bão hoà</td></tr>
+            <tr><td class="p-3"><code>drop-shadow-lg</code></td><td class="p-3">Bóng theo hình (có màu: <code>drop-shadow-cyan-500/50</code>, v4.1)</td></tr>
+            <tr><td class="p-3"><code>backdrop-blur-md · backdrop-brightness-110</code></td><td class="p-3">Filter cho nền phía sau (kính mờ)</td></tr>
+            <tr><td class="p-3"><code>filter-none · backdrop-filter-none</code></td><td class="p-3">Tắt filter / backdrop-filter</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — rê chuột để bỏ xám · một ảnh làm mờ sẵn</div>
+        <div class="flex flex-wrap items-center gap-8 p-6">
+          <figure class="text-center">
+            <img src="../assets/rose.svg" alt="Ảnh xám, rê chuột để hiện màu" class="w-64 grayscale transition hover:grayscale-0">
+            <figcaption class="mt-2 text-xs text-gray-500"><code>grayscale hover:grayscale-0</code></figcaption>
+          </figure>
+          <figure class="text-center">
+            <img src="../assets/photo.svg" alt="Ảnh làm mờ" class="w-64 blur-sm">
+            <figcaption class="mt-2 text-xs text-gray-500"><code>blur-sm</code></figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- xám mặc định, hiện màu khi hover (v4: filter TỰ kích hoạt) --&gt;</span>
+<span class="text-sky-300">&lt;img</span> <span class="text-orange-300">src</span>=<span class="text-emerald-300">"../assets/rose.svg"</span>
+     <span class="text-orange-300">class</span>=<span class="text-emerald-300">"w-64 grayscale hover:grayscale-0 transition"</span><span class="text-sky-300">&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- làm mờ ảnh (v4: blur → blur-sm) --&gt;</span>
+<span class="text-sky-300">&lt;img</span> <span class="text-orange-300">src</span>=<span class="text-emerald-300">"../assets/photo.svg"</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"w-64 blur-sm"</span><span class="text-sky-300">&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-amber-500 bg-amber-50 p-3 text-sm">
+        <p class="font-semibold text-amber-800">Lưu ý — v4: filter tự kích hoạt</p>
+        <p>v3 phải thêm class <code>filter</code> (hoặc <code>backdrop-filter</code>) để "bật" rồi mới ghi <code>blur-sm</code>. <strong>v4 bỏ bước này</strong>: chỉ cần ghi thẳng <code>blur-sm</code>, <code>grayscale</code>, <code>brightness-110</code>… là filter tự áp dụng. Cần tắt thì dùng <code>filter-none</code> / <code>backdrop-filter-none</code>.</p>
+      </div>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Mẹo dùng thực tế</p>
+        <p><code class="rounded bg-emerald-100 px-1">grayscale hover:grayscale-0</code> cho <strong>thư viện ảnh</strong> (ảnh xám, hiện màu khi rê chuột) ·
+           <code class="rounded bg-emerald-100 px-1">blur</code> + lớp phủ tối cho <strong>hero</strong> để chữ nổi trên ảnh nền.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer điều hướng ===== -->
+  <footer class="mx-auto mt-6 flex max-w-4xl flex-wrap justify-between gap-2 border-t border-gray-200 px-4 py-6">
+    <a class="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-100" href="05-typography-nen-vien.html">← Typography · Nền · Viền</a>
+    <a class="rounded-lg bg-[#1D559F] px-4 py-2 text-sm text-white hover:bg-[#17457f]" href="07-tuong-tac-a11y.html">Tương tác · A11y →</a>
+  </footer>
+
+</body>
+</html>

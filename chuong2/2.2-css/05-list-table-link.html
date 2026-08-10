@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.2.5 — CSS LIST · TABLE · LINK · NAVBAR (bản toàn diện)
+  ------------------------------------------------------------
+  Định dạng danh sách, bảng, liên kết và thanh điều hướng — đi
+  từ cơ bản → nâng cao, tham khảo theo W3Schools:
+    1) list-style-type            7) Bảng responsive (overflow)
+    2) position / image / shorthand 8) Link — trạng thái LVHA
+    3) List → menu ngang          9) Link kiểu nút + transition
+    4) Table: border/collapse     10) Navbar dọc & ngang
+    5) Table: align/caption       11) Bảng tra cứu tổng hợp
+    6) Bảng zebra + hover         12) Mẹo & lỗi thường gặp
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  LƯU Ý: bảng minh hoạ dùng .d-table riêng, KHÔNG dùng .syntax.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.2.5 · List · Table · Link</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* ---------- 1) list-style-type ---------- */
+    .d-lists { display: flex; flex-wrap: wrap; gap: 26px; }
+    .d-lists ul, .d-lists ol { margin: 0; padding-left: 26px; }
+    .d-lists > div { background: #f8fafc; border: 1px solid #e3e8f0; border-radius: 8px; padding: 12px 14px; min-width: 150px; }
+    .d-lists h4 { margin: 0 0 6px; color: #16407a; font-size: .9rem; }
+    .lt-disc    { list-style-type: disc; }
+    .lt-circle  { list-style-type: circle; }
+    .lt-square  { list-style-type: square; }
+    .lt-decimal { list-style-type: decimal; }
+    .lt-roman   { list-style-type: upper-roman; }
+    .lt-alpha   { list-style-type: lower-alpha; }
+    .lt-none    { list-style-type: none; }
+
+    /* ---------- 2) position / image / shorthand ---------- */
+    .d-pos { display: flex; flex-wrap: wrap; gap: 20px; }
+    .d-pos ul { margin: 0; width: 260px; border: 2px solid #1D559F; border-radius: 8px; padding: 10px 10px 10px 34px; }
+    .d-pos .inside  { list-style-position: inside;  background: #eafaf3; }
+    .d-pos .outside { list-style-position: outside; background: #eaf1fb; }
+    .d-imglist { list-style-image: url("../../assets/favicon.svg"); padding-left: 30px; margin: 0; }
+    .d-imglist li { margin: 4px 0; }
+    .d-short { list-style: square inside; background: #fff8e6; border: 1px solid #ffe39a;
+               border-radius: 8px; padding: 10px 14px; margin: 0; }
+
+    /* ---------- 3) List → menu ngang (bỏ chấm) ---------- */
+    .d-hmenu { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap;
+               background: #16407a; border-radius: 8px; overflow: hidden; }
+    .d-hmenu li a { display: block; color: #fff; text-decoration: none; padding: 12px 18px; }
+    .d-hmenu li a:hover { background: #1D559F; }
+    /* biến thể inline-block (kỹ thuật cổ điển) */
+    .d-hmenu2 { list-style: none; margin: 0; padding: 0; background: #04AA6D; border-radius: 8px; overflow: hidden; }
+    .d-hmenu2 li { display: inline-block; }
+    .d-hmenu2 li a { display: block; color: #fff; text-decoration: none; padding: 12px 18px; }
+    .d-hmenu2 li a:hover { background: #038a58; }
+
+    /* ===== BẢNG MINH HOẠ (.d-table) — KHÔNG dùng .syntax ===== */
+    /* ---------- 4) border / collapse / width / padding ---------- */
+    .d-table { border-collapse: collapse; width: 100%; }
+    .d-table th, .d-table td { border: 1px solid #1D559F; padding: 10px; }
+    .d-table thead th { background: #1D559F; color: #fff; }
+    /* bảng so sánh separate vs collapse */
+    .d-sep { border-collapse: separate; border-spacing: 4px; width: 100%; }
+    .d-sep th, .d-sep td { border: 1px solid #6c5ce7; padding: 8px; }
+    .d-col { border-collapse: collapse; width: 100%; }
+    .d-col th, .d-col td { border: 1px solid #6c5ce7; padding: 8px; }
+
+    /* ---------- 5) align / vertical-align / caption-side / height ---------- */
+    .d-align { border-collapse: collapse; width: 100%; }
+    .d-align caption { caption-side: bottom; padding: 8px; color: #5b6472; font-style: italic; font-size: .85rem; }
+    .d-align th, .d-align td { border: 1px solid #e3e8f0; padding: 10px; }
+    .d-align thead th { background: #6c5ce7; color: #fff; }
+    .d-align th { height: 46px; }
+    .d-align .c-left   { text-align: left; }
+    .d-align .c-center { text-align: center; }
+    .d-align .c-right  { text-align: right; }
+    .d-align .v-top    { vertical-align: top; }
+    .d-align .v-middle { vertical-align: middle; }
+    .d-align .v-bottom { vertical-align: bottom; }
+    .d-align .tall { height: 80px; background: #f6f9fe; }
+
+    /* ---------- 6) zebra striping + hover ---------- */
+    .d-zebra { border-collapse: collapse; width: 100%; }
+    .d-zebra th, .d-zebra td { padding: 10px 12px; border: none; text-align: left; }
+    .d-zebra thead th { background: #04AA6D; color: #fff; }
+    .d-zebra tbody tr:nth-child(even) { background: #eafaf3; }
+    .d-zebra tbody tr:nth-child(odd)  { background: #ffffff; }
+    .d-zebra tbody tr:hover { background: #ffe6a8; transition: background .15s; }
+
+    /* ---------- 7) bảng responsive (bọc div cuộn ngang) ---------- */
+    .d-scroll { overflow-x: auto; border: 1px solid #e3e8f0; border-radius: 8px; }
+    .d-wide { border-collapse: collapse; width: 100%; min-width: 720px; }
+    .d-wide th, .d-wide td { border: 1px solid #e3e8f0; padding: 9px 12px; white-space: nowrap; }
+    .d-wide thead th { background: #1D559F; color: #fff; }
+    .d-wide tbody tr:nth-child(even) { background: #f6f9fe; }
+
+    /* ---------- 8) Link — LVHA (đổi màu) ---------- */
+    .d-link { text-decoration: none; padding: 3px 6px; border-radius: 4px; font-weight: 600; }
+    .d-link:link    { color: #1D559F; }                          /* chưa bấm  */
+    .d-link:visited { color: #8e44ad; }                          /* đã bấm    */
+    .d-link:hover   { color: #fff; background: #FFC107; }         /* rê chuột  */
+    .d-link:active  { color: #fff; background: #E63946; }         /* đang giữ  */
+
+    /* gạch chân chỉ khi hover */
+    .d-underline:link, .d-underline:visited { text-decoration: none; color: #1D559F; }
+    .d-underline:hover { text-decoration: underline; }
+
+    /* ---------- 9) Link kiểu nút + transition ---------- */
+    .d-btnlink {
+      display: inline-block; text-decoration: none; color: #fff; background: #1D559F;
+      padding: 10px 22px; border-radius: 8px; font-weight: 700;
+      transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+    }
+    .d-btnlink:hover { background: #16407a; transform: translateY(-2px); box-shadow: 0 8px 18px rgba(29,85,159,.3); }
+    .d-btnlink:active { transform: translateY(0); }
+    .d-btnlink.green { background: #04AA6D; }
+    .d-btnlink.green:hover { background: #038a58; box-shadow: 0 8px 18px rgba(4,170,109,.3); }
+    .d-btnlink.outline { background: transparent; color: #1D559F; border: 2px solid #1D559F; padding: 8px 20px; }
+    .d-btnlink.outline:hover { background: #1D559F; color: #fff; }
+
+    /* ---------- 10) NAVBAR dọc & ngang ---------- */
+    /* navbar NGANG hoàn chỉnh (có .active) */
+    .d-topnav { list-style: none; margin: 0; padding: 0; overflow: hidden; background: #16407a; border-radius: 8px; }
+    .d-topnav li { float: left; }
+    .d-topnav li a { display: block; color: #cdd9ee; text-align: center; padding: 14px 20px;
+                     text-decoration: none; transition: background .2s, color .2s; }
+    .d-topnav li a:hover { background: #1D559F; color: #fff; }
+    .d-topnav li a.active { background: #04AA6D; color: #fff; }
+    .d-topnav::after { content: ""; display: table; clear: both; }  /* clearfix do dùng float */
+
+    /* navbar DỌC (sidebar) */
+    .d-sidenav { list-style: none; margin: 0; padding: 0; width: 200px;
+                 background: #f1f5f9; border-radius: 8px; overflow: hidden; }
+    .d-sidenav li a { display: block; color: #16407a; padding: 12px 16px; text-decoration: none;
+                      border-bottom: 1px solid #e3e8f0; transition: background .2s, color .2s; }
+    .d-sidenav li:last-child a { border-bottom: none; }
+    .d-sidenav li a:hover { background: #1D559F; color: #fff; }
+    .d-sidenav li a.active { background: #04AA6D; color: #fff; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.2 CSS</a><span>›</span>
+        List · Table · Link
+      </nav>
+      <h1>Định dạng <code style="color:#fff;background:rgba(255,255,255,.18)">List</code> ·
+        <code style="color:#fff;background:rgba(255,255,255,.18)">Table</code> ·
+        <code style="color:#fff;background:rgba(255,255,255,.18)">Link</code> &amp; Navbar</h1>
+      <p class="sub">Trang trí danh sách, kẻ bảng đẹp, đổi màu liên kết theo trạng thái và dựng thanh
+         điều hướng (navbar) hoàn chỉnh từ thẻ <code style="color:#fff;background:rgba(255,255,255,.18)">&lt;ul&gt;</code>.
+         Đi từ cơ bản đến nâng cao theo W3Schools.</p>
+      <div class="chips">
+        <span class="chip solid">2.2.5</span>
+        <span class="chip">CSS cơ bản</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">list-style-type</a></li>
+        <li><a href="#s2">position · image · shorthand</a></li>
+        <li><a href="#s3">List → menu ngang</a></li>
+        <li><a href="#s4">Table: border &amp; collapse</a></li>
+        <li><a href="#s5">Table: align · caption · height</a></li>
+        <li><a href="#s6">Bảng tô xen kẽ (zebra)</a></li>
+        <li><a href="#s7">Bảng responsive</a></li>
+        <li><a href="#s8">Link — trạng thái LVHA</a></li>
+        <li><a href="#s9">Link kiểu nút + transition</a></li>
+        <li><a href="#s10">Navbar dọc &amp; ngang</a></li>
+        <li><a href="#s11">Bảng tra cứu tổng hợp</a></li>
+        <li><a href="#s12">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. LIST-STYLE-TYPE  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Kiểu dấu đầu dòng: <code>list-style-type</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Thuộc tính <code>list-style-type</code> đổi <strong>ký hiệu đầu dòng</strong> của danh sách:
+         chấm tròn đặc/rỗng, ô vuông, số, số La Mã, chữ cái… hoặc bỏ hẳn bằng <code>none</code>.
+         Dùng được cho cả <code>&lt;ul&gt;</code> lẫn <code>&lt;ol&gt;</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · các giá trị thường gặp</div>
+        <div class="demo-body">
+          <div class="d-lists">
+            <div><h4>disc (mặc định ul)</h4><ul class="lt-disc"><li>Táo</li><li>Cam</li><li>Xoài</li></ul></div>
+            <div><h4>circle</h4><ul class="lt-circle"><li>Táo</li><li>Cam</li><li>Xoài</li></ul></div>
+            <div><h4>square</h4><ul class="lt-square"><li>Táo</li><li>Cam</li><li>Xoài</li></ul></div>
+            <div><h4>decimal (mặc định ol)</h4><ol class="lt-decimal"><li>Táo</li><li>Cam</li><li>Xoài</li></ol></div>
+            <div><h4>upper-roman</h4><ol class="lt-roman"><li>Táo</li><li>Cam</li><li>Xoài</li></ol></div>
+            <div><h4>lower-alpha</h4><ol class="lt-alpha"><li>Táo</li><li>Cam</li><li>Xoài</li></ol></div>
+            <div><h4>none</h4><ul class="lt-none"><li>Táo</li><li>Cam</li><li>Xoài</li></ul></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><code>list-style-type</code> đặt trên <code>&lt;ul&gt;</code>/<code>&lt;ol&gt;</code> sẽ áp cho mọi mục con;
+           cũng có thể đặt riêng cho từng <code>&lt;li&gt;</code>.</p>
+        <p>Giá trị <code>none</code> rất hay dùng khi biến danh sách thành menu/navbar (xem mục 3 &amp; 10).</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Một số giá trị list-style-type (theo W3Schools)</caption>
+        <thead><tr><th>Giá trị</th><th>Hiển thị</th><th>Dùng cho</th></tr></thead>
+        <tbody>
+          <tr><td><code>disc</code></td><td>● chấm tròn đặc (mặc định <code>ul</code>)</td><td>ul</td></tr>
+          <tr><td><code>circle</code></td><td>○ chấm tròn rỗng</td><td>ul</td></tr>
+          <tr><td><code>square</code></td><td>■ ô vuông đặc</td><td>ul</td></tr>
+          <tr><td><code>decimal</code></td><td>1, 2, 3 (mặc định <code>ol</code>)</td><td>ol</td></tr>
+          <tr><td><code>decimal-leading-zero</code></td><td>01, 02, 03</td><td>ol</td></tr>
+          <tr><td><code>upper-roman</code> / <code>lower-roman</code></td><td>I, II, III / i, ii, iii</td><td>ol</td></tr>
+          <tr><td><code>upper-alpha</code> / <code>lower-alpha</code></td><td>A, B, C / a, b, c</td><td>ol</td></tr>
+          <tr><td><code>none</code></td><td>Không có dấu đầu dòng</td><td>ul, ol</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="k">ul</span> { <span class="k">list-style-type</span>: <span class="v">square</span>; }
+<span class="k">ol</span> { <span class="k">list-style-type</span>: <span class="v">upper-roman</span>; }
+<span class="k">ul.menu</span> { <span class="k">list-style-type</span>: <span class="v">none</span>; }  <span class="c">/* bỏ chấm để làm menu */</span></code></pre>
+    </section>
+
+    <!-- ==========  2. POSITION / IMAGE / SHORTHAND  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Vị trí dấu, dấu bằng ảnh &amp; viết gộp <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>list-style-position</code> quyết định dấu nằm <em>ngoài</em> hay <em>trong</em> hộp nội dung;
+         <code>list-style-image</code> thay dấu bằng một ảnh; còn <code>list-style</code> là cách viết gộp cả ba.</p>
+
+      <h3>2.1 — list-style-position: outside vs inside</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · để ý vị trí dấu khi chữ xuống dòng</div>
+        <div class="demo-body">
+          <div class="d-pos">
+            <ul class="outside lt-square">
+              <li><b>outside</b> — dấu nằm NGOÀI khung chữ; khi dòng dài xuống hàng, chữ vẫn thẳng lề, dấu lùi ra ngoài.</li>
+              <li>Mục hai</li>
+            </ul>
+            <ul class="inside lt-square">
+              <li><b>inside</b> — dấu nằm TRONG khung chữ; khi xuống hàng, chữ chạy thẳng dưới dấu.</li>
+              <li>Mục hai</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <h3>2.2 — list-style-image: dùng ảnh làm dấu</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · dấu đầu dòng là favicon.svg</div>
+        <div class="demo-body">
+          <ul class="d-imglist">
+            <li>Mục có dấu bằng ảnh</li>
+            <li>Mục thứ hai</li>
+            <li>Mục thứ ba</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>2.3 — Viết gộp: <code>list-style</code></h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · list-style: square inside</div>
+        <div class="demo-body">
+          <ul class="d-short">
+            <li>Gộp type + position trong một dòng</li>
+            <li>Ngắn gọn, dễ đọc</li>
+          </ul>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Cú pháp viết gộp list-style</caption>
+        <thead><tr><th>Thành phần</th><th>Ý nghĩa</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>list-style-type</code></td><td>Kiểu dấu</td><td><code>square</code></td></tr>
+          <tr><td><code>list-style-position</code></td><td>Trong / ngoài hộp</td><td><code>inside</code></td></tr>
+          <tr><td><code>list-style-image</code></td><td>Ảnh làm dấu</td><td><code>url(dot.png)</code></td></tr>
+          <tr><td><code>list-style</code> (gộp)</td><td>Cả ba, theo thứ tự bất kỳ</td><td><code>square inside url(dot.png)</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* viết riêng từng thuộc tính */</span>
+<span class="k">ul</span> { <span class="k">list-style-type</span>: <span class="v">square</span>;
+     <span class="k">list-style-position</span>: <span class="v">inside</span>;
+     <span class="k">list-style-image</span>: <span class="v">url(<span class="s">"dot.png"</span>)</span>; }
+
+<span class="c">/* hoặc gộp 1 dòng */</span>
+<span class="k">ul</span> { <span class="k">list-style</span>: <span class="v">square inside url(<span class="s">"dot.png"</span>)</span>; }</code></pre>
+
+      <div class="callout info"><p>Nếu trình duyệt không tải được ảnh trong <code>list-style-image</code>,
+        nó tự quay về dùng <code>list-style-type</code>. Vì vậy nên đặt cả hai để có "dấu dự phòng".</p></div>
+    </section>
+
+    <!-- ==========  3. LIST → MENU NGANG  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Biến danh sách thành menu ngang <span class="tag-base">Thực hành</span></h2>
+      <p class="lead">Công thức kinh điển của W3Schools: bỏ <code>list-style</code>, xoá <code>margin/padding</code>,
+         rồi cho các <code>&lt;li&gt;</code> nằm cùng hàng bằng <code>display:flex</code> (hiện đại) hoặc
+         <code>display:inline-block</code> (cổ điển).</p>
+
+      <h3>3.1 — Cách hiện đại: <code>ul { display: flex }</code></h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · menu flex</div>
+        <div class="demo-body">
+          <ul class="d-hmenu">
+            <li><a href="#s3">Trang chủ</a></li>
+            <li><a href="#s3">Giới thiệu</a></li>
+            <li><a href="#s3">Dịch vụ</a></li>
+            <li><a href="#s3">Liên hệ</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">.menu</span> {
+  <span class="k">list-style</span>: <span class="v">none</span>;       <span class="c">/* bỏ chấm đầu dòng   */</span>
+  <span class="k">margin</span>: <span class="v">0</span>; <span class="k">padding</span>: <span class="v">0</span>;  <span class="c">/* xoá thụt lề mặc định */</span>
+  <span class="k">display</span>: <span class="v">flex</span>;          <span class="c">/* các li nằm cùng hàng */</span>
+}
+<span class="k">.menu li a</span> { <span class="k">display</span>: <span class="v">block</span>; <span class="k">padding</span>: <span class="v">12px 18px</span>; <span class="k">text-decoration</span>: <span class="v">none</span>; }</code></pre>
+
+      <h3>3.2 — Cách cổ điển: <code>li { display: inline-block }</code></h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · menu inline-block</div>
+        <div class="demo-body">
+          <ul class="d-hmenu2">
+            <li><a href="#s3">HTML</a></li>
+            <li><a href="#s3">CSS</a></li>
+            <li><a href="#s3">JavaScript</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout tip"><p><strong>Vì sao đặt <code>display:block</code> cho thẻ <code>&lt;a&gt;</code>?</strong>
+        Để cả ô (kể cả phần padding) đều bấm được, chứ không chỉ riêng dòng chữ. Đây là chi tiết nhỏ
+        nhưng tạo trải nghiệm bấm tốt hơn hẳn.</p></div>
+    </section>
+
+    <!-- ==========  4. TABLE: BORDER / COLLAPSE  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Bảng: <code>border</code>, <code>border-collapse</code>, width, padding <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Bảng HTML mặc định rất "trống". Bốn thuộc tính nền tảng để bảng đẹp:
+         <code>border</code> (kẻ ô), <code>border-collapse</code> (gộp viền đôi thành đơn),
+         <code>width</code> và <code>padding</code> (giãn ô cho thoáng).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · bảng cơ bản, border-collapse: collapse</div>
+        <div class="demo-body">
+          <table class="d-table">
+            <thead><tr><th>STT</th><th>Họ tên</th><th>Lớp</th><th>Điểm</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Lê Ngọc Trân</td><td>TH2024A</td><td>9.0</td></tr>
+              <tr><td>2</td><td>Nguyễn Đình Huy</td><td>TH2024A</td><td>8.5</td></tr>
+              <tr><td>3</td><td>Dương Hữu Thành</td><td>TH2024B</td><td>9.5</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <h3>So sánh: separate vs collapse</h3>
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">separate (mặc định) — viền đôi, có khe</div>
+          <div class="demo-body">
+            <table class="d-sep">
+              <tr><th>A</th><th>B</th></tr>
+              <tr><td>1</td><td>2</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">collapse — viền gộp thành đường đơn</div>
+          <div class="demo-body">
+            <table class="d-col">
+              <tr><th>A</th><th>B</th></tr>
+              <tr><td>1</td><td>2</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">table</span> {
+  <span class="k">border-collapse</span>: <span class="v">collapse</span>;  <span class="c">/* gộp viền đôi → đơn */</span>
+  <span class="k">width</span>: <span class="v">100%</span>;
+}
+<span class="k">th, td</span> {
+  <span class="k">border</span>: <span class="v">1px solid #1D559F</span>;
+  <span class="k">padding</span>: <span class="v">10px</span>;             <span class="c">/* giãn ô cho thoáng */</span>
+}</code></pre>
+
+      <div class="callout warn"><p>Không có <code>border-collapse: collapse</code> thì mỗi ô vẽ viền riêng,
+        cạnh chung bị <strong>nhân đôi</strong> trông dày và có khe hở. Đây là dòng CSS gần như luôn cần khi kẻ bảng.</p></div>
+    </section>
+
+    <!-- ==========  5. TABLE: ALIGN / CAPTION / HEIGHT  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Căn lề, chú thích &amp; chiều cao ô <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>text-align</code> canh ngang, <code>vertical-align</code> canh dọc, <code>height</code> tăng chiều cao
+         hàng, và <code>caption-side</code> đặt tiêu đề bảng (<code>&lt;caption&gt;</code>) ở trên hay dưới.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · căn lề + caption ở dưới</div>
+        <div class="demo-body">
+          <table class="d-align">
+            <caption>Bảng 5.1 — caption-side: bottom (chú thích nằm dưới)</caption>
+            <thead>
+              <tr><th class="c-left">Trái</th><th class="c-center">Giữa</th><th class="c-right">Phải</th></tr>
+            </thead>
+            <tbody>
+              <tr class="tall">
+                <td class="c-left v-top">v-top</td>
+                <td class="c-center v-middle">v-middle</td>
+                <td class="c-right v-bottom">v-bottom</td>
+              </tr>
+              <tr>
+                <td class="c-left">An</td>
+                <td class="c-center">95</td>
+                <td class="c-right">1.250.000 ₫</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><code>text-align: left | center | right</code> — canh chữ theo chiều ngang trong ô.
+           Số tiền/điểm thường canh <em>phải</em>, chữ canh <em>trái</em>.</p>
+        <p><code>vertical-align: top | middle | bottom</code> — canh nội dung theo chiều dọc khi ô cao.
+           <code>height</code> trên <code>&lt;th&gt;</code>/<code>&lt;td&gt;</code>/<code>&lt;tr&gt;</code> đặt chiều cao tối thiểu.</p>
+      </div>
+
+      <pre class="code"><code><span class="k">caption</span> { <span class="k">caption-side</span>: <span class="v">bottom</span>; }   <span class="c">/* hoặc top (mặc định) */</span>
+<span class="k">th</span>  { <span class="k">height</span>: <span class="v">46px</span>; }
+<span class="k">td</span>  { <span class="k">text-align</span>: <span class="v">right</span>; <span class="k">vertical-align</span>: <span class="v">middle</span>; }</code></pre>
+    </section>
+
+    <!-- ==========  6. ZEBRA STRIPING + HOVER  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Tô xen kẽ &amp; làm nổi hàng đang trỏ (zebra) <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Tô màu xen kẽ các hàng giúp mắt dò ngang dễ hơn rất nhiều. Dùng bộ chọn
+         <code>tr:nth-child(even)</code> / <code>tr:nth-child(odd)</code>, kết hợp <code>tr:hover</code>
+         để làm nổi hàng đang trỏ chuột.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · zebra + rê chuột vào từng hàng</div>
+        <div class="demo-body">
+          <table class="d-zebra">
+            <thead><tr><th>Mã</th><th>Sản phẩm</th><th>Loại</th><th>Giá</th></tr></thead>
+            <tbody>
+              <tr><td>SP01</td><td>Bàn phím cơ</td><td>Thiết bị</td><td>790.000 ₫</td></tr>
+              <tr><td>SP02</td><td>Chuột không dây</td><td>Thiết bị</td><td>320.000 ₫</td></tr>
+              <tr><td>SP03</td><td>Tai nghe</td><td>Âm thanh</td><td>1.100.000 ₫</td></tr>
+              <tr><td>SP04</td><td>Webcam HD</td><td>Hình ảnh</td><td>650.000 ₫</td></tr>
+              <tr><td>SP05</td><td>Đèn bàn LED</td><td>Phụ kiện</td><td>240.000 ₫</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* tô màu các hàng CHẴN (2, 4, 6...) */</span>
+<span class="k">tbody tr:nth-child(even)</span> { <span class="k">background</span>: <span class="v">#eafaf3</span>; }
+
+<span class="c">/* làm nổi hàng đang rê chuột */</span>
+<span class="k">tbody tr:hover</span> { <span class="k">background</span>: <span class="v">#ffe6a8</span>;
+                    <span class="k">transition</span>: <span class="v">background .15s</span>; }</code></pre>
+
+      <div class="callout tip"><p><code>:nth-child(even)</code> = hàng chẵn, <code>:nth-child(odd)</code> = hàng lẻ.
+        Có thể dùng công thức tổng quát như <code>:nth-child(3n)</code> (cứ 3 hàng tô 1) cho hiệu ứng khác.</p></div>
+    </section>
+
+    <!-- ==========  7. BẢNG RESPONSIVE  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Bảng responsive — bọc <code>overflow-x: auto</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Bảng nhiều cột dễ bị tràn khỏi màn hình điện thoại. Giải pháp đơn giản &amp; kinh điển:
+         bọc bảng trong một <code>&lt;div&gt;</code> đặt <code>overflow-x: auto</code> để có thể
+         <strong>cuộn ngang</strong> bảng mà không phá vỡ bố cục trang.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · thu hẹp cửa sổ rồi cuộn ngang bảng</div>
+        <div class="demo-body">
+          <div class="d-scroll">
+            <table class="d-wide">
+              <thead>
+                <tr><th>Mã SV</th><th>Họ và tên</th><th>Ngày sinh</th><th>Lớp</th><th>Email</th><th>Điện thoại</th><th>GPA</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>2024001</td><td>Lê Ngọc Trân</td><td>02/03/2006</td><td>TH2024A</td><td>tran.le@ou.edu.vn</td><td>0901 234 567</td><td>3.6</td></tr>
+                <tr><td>2024002</td><td>Nguyễn Đình Huy</td><td>15/07/2006</td><td>TH2024A</td><td>huy.nguyen@ou.edu.vn</td><td>0902 345 678</td><td>3.4</td></tr>
+                <tr><td>2024003</td><td>Dương Hữu Thành</td><td>28/11/2005</td><td>TH2024B</td><td>thanh.duong@ou.edu.vn</td><td>0903 456 789</td><td>3.8</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* HTML: bọc bảng trong 1 div */</span>
+&lt;<span class="k">div</span> class=<span class="s">"table-wrap"</span>&gt;
+  &lt;<span class="k">table</span>&gt; ... &lt;/<span class="k">table</span>&gt;
+&lt;/<span class="k">div</span>&gt;
+
+<span class="c">/* CSS */</span>
+<span class="k">.table-wrap</span> { <span class="k">overflow-x</span>: <span class="v">auto</span>; }   <span class="c">/* hiện thanh cuộn ngang khi tràn */</span>
+<span class="k">table</span> { <span class="k">min-width</span>: <span class="v">720px</span>; }    <span class="c">/* đảm bảo bảng đủ rộng để cuộn */</span></code></pre>
+
+      <div class="callout info"><p>Đặt <code>min-width</code> cho bảng để các cột không bị "bóp" quá hẹp. Khi màn hình
+        nhỏ hơn <code>min-width</code>, thanh cuộn ngang xuất hiện thay vì làm vỡ trang.</p></div>
+    </section>
+
+    <!-- ==========  8. LINK — LVHA  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Liên kết: 4 trạng thái theo thứ tự <strong>LVHA</strong> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Một liên kết <code>&lt;a&gt;</code> có 4 trạng thái, mỗi trạng thái tô màu được riêng.
+         Quan trọng: phải khai báo <strong>đúng thứ tự</strong> <em>Link → Visited → Hover → Active</em>
+         (ghi nhớ: <strong>L</strong>o<strong>V</strong>e <strong>HA</strong>te), nếu sai thì hover/active bị "nuốt".</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · rê chuột &amp; giữ chuột để thử đổi màu</div>
+        <div class="demo-body">
+          <p style="font-size:1.05rem; line-height:2.2">
+            <a class="d-link" href="#s8">Liên kết A</a>
+            <a class="d-link" href="#s8">Liên kết B</a>
+            <a class="d-link" href="https://www.w3schools.com" target="_blank" rel="noopener">Liên kết đã ghé (B)</a>
+            <a class="d-underline" href="#s8">Chỉ gạch chân khi hover</a>
+          </p>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Bốn trạng thái của liên kết (thứ tự bắt buộc)</caption>
+        <thead><tr><th>#</th><th>Pseudo-class</th><th>Khi nào</th></tr></thead>
+        <tbody>
+          <tr><td>1 · <b>L</b></td><td><code>a:link</code></td><td>Liên kết chưa từng được bấm.</td></tr>
+          <tr><td>2 · <b>V</b></td><td><code>a:visited</code></td><td>Liên kết đã được bấm/đã ghé thăm.</td></tr>
+          <tr><td>3 · <b>H</b></td><td><code>a:hover</code></td><td>Đang rê chuột lên trên liên kết.</td></tr>
+          <tr><td>4 · <b>A</b></td><td><code>a:active</code></td><td>Đang nhấn giữ (khoảnh khắc bấm xuống).</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* PHẢI theo đúng thứ tự L → V → H → A */</span>
+<span class="k">a:link</span>    { <span class="k">color</span>: <span class="v">#1D559F</span>; }   <span class="c">/* chưa bấm   */</span>
+<span class="k">a:visited</span> { <span class="k">color</span>: <span class="v">#8e44ad</span>; }   <span class="c">/* đã bấm     */</span>
+<span class="k">a:hover</span>   { <span class="k">color</span>: <span class="v">#fff</span>; <span class="k">background</span>: <span class="v">#FFC107</span>; } <span class="c">/* rê chuột */</span>
+<span class="k">a:active</span>  { <span class="k">color</span>: <span class="v">#fff</span>; <span class="k">background</span>: <span class="v">#E63946</span>; } <span class="c">/* đang giữ */</span></code></pre>
+
+      <div class="callout danger"><p><strong>Sai thứ tự = lỗi thầm lặng.</strong> Nếu đặt <code>:hover</code> trước <code>:visited</code>,
+        màu visited sẽ ghi đè và bạn không bao giờ thấy hiệu ứng hover. Luôn nhớ thứ tự <strong>LVHA</strong>.</p></div>
+    </section>
+
+    <!-- ==========  9. LINK KIỂU NÚT + TRANSITION  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> <code>text-decoration</code> &amp; liên kết kiểu nút <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>text-decoration: none</code> bỏ gạch chân; thêm <code>display:inline-block</code>, nền, bo góc và
+         <code>transition</code> là biến một liên kết thành <strong>nút bấm</strong> mượt mà — không cần thẻ
+         <code>&lt;button&gt;</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · rê chuột để thấy hiệu ứng nâng &amp; đổi nền</div>
+        <div class="demo-body" style="display:flex; gap:14px; flex-wrap:wrap; align-items:center">
+          <a class="d-btnlink" href="#s9">Nút chính</a>
+          <a class="d-btnlink green" href="#s9">Nút xanh lá</a>
+          <a class="d-btnlink outline" href="#s9">Nút viền</a>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">.btn</span> {
+  <span class="k">display</span>: <span class="v">inline-block</span>;       <span class="c">/* nhận padding/width như block */</span>
+  <span class="k">text-decoration</span>: <span class="v">none</span>;       <span class="c">/* bỏ gạch chân */</span>
+  <span class="k">color</span>: <span class="v">#fff</span>; <span class="k">background</span>: <span class="v">#1D559F</span>;
+  <span class="k">padding</span>: <span class="v">10px 22px</span>; <span class="k">border-radius</span>: <span class="v">8px</span>;
+  <span class="k">transition</span>: <span class="v">background .2s, transform .2s, box-shadow .2s</span>;
+}
+<span class="k">.btn:hover</span> {
+  <span class="k">background</span>: <span class="v">#16407a</span>;
+  <span class="k">transform</span>: <span class="v">translateY(-2px)</span>;  <span class="c">/* nhấc lên 2px */</span>
+  <span class="k">box-shadow</span>: <span class="v">0 8px 18px rgba(29,85,159,.3)</span>;
+}</code></pre>
+
+      <div class="note">
+        <p><code>transition</code> làm thay đổi <em>diễn ra dần</em> trong khoảng thời gian định trước thay vì
+           "nhảy" tức thì — đó là chìa khoá tạo cảm giác mượt khi hover.</p>
+        <p><code>text-decoration</code> còn nhận <code>underline</code>, <code>overline</code>, <code>line-through</code>;
+           bản mới cho phép đổi màu/kiểu gạch: <code>text-decoration: underline wavy #E63946</code>.</p>
+      </div>
+    </section>
+
+    <!-- ==========  10. NAVBAR DỌC & NGANG  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Thanh điều hướng (Navbar) từ <code>&lt;ul&gt;</code> <span class="tag-adv">Thực hành</span></h2>
+      <p class="lead">Bài thực hành kinh điển của W3Schools: navbar về bản chất chỉ là một <code>&lt;ul&gt;</code> đã bỏ
+         dấu đầu dòng. Đặt theo chiều ngang (top nav) hoặc dọc (sidebar), và làm nổi mục hiện tại bằng class
+         <code>.active</code>.</p>
+
+      <h3>10.1 — Navbar NGANG (có mục đang chọn .active)</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · "Trang chủ" đang active</div>
+        <div class="demo-body">
+          <ul class="d-topnav">
+            <li><a class="active" href="#s10">Trang chủ</a></li>
+            <li><a href="#s10">Bài viết</a></li>
+            <li><a href="#s10">Thư viện</a></li>
+            <li><a href="#s10">Liên hệ</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>10.2 — Navbar DỌC (sidebar)</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · "Tổng quan" đang active</div>
+        <div class="demo-body">
+          <ul class="d-sidenav">
+            <li><a class="active" href="#s10">Tổng quan</a></li>
+            <li><a href="#s10">Học phần</a></li>
+            <li><a href="#s10">Bài tập</a></li>
+            <li><a href="#s10">Điểm số</a></li>
+            <li><a href="#s10">Cài đặt</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* === NAVBAR NGANG === */</span>
+<span class="k">ul.topnav</span> { <span class="k">list-style</span>: <span class="v">none</span>; <span class="k">margin</span>: <span class="v">0</span>; <span class="k">padding</span>: <span class="v">0</span>;
+            <span class="k">overflow</span>: <span class="v">hidden</span>; <span class="k">background</span>: <span class="v">#16407a</span>; }
+<span class="k">ul.topnav li</span>   { <span class="k">float</span>: <span class="v">left</span>; }
+<span class="k">ul.topnav li a</span> { <span class="k">display</span>: <span class="v">block</span>; <span class="k">color</span>: <span class="v">#fff</span>;
+                 <span class="k">padding</span>: <span class="v">14px 20px</span>; <span class="k">text-decoration</span>: <span class="v">none</span>; }
+<span class="k">ul.topnav li a:hover</span>  { <span class="k">background</span>: <span class="v">#1D559F</span>; }
+<span class="k">ul.topnav li a.active</span> { <span class="k">background</span>: <span class="v">#04AA6D</span>; }  <span class="c">/* mục hiện tại */</span>
+
+<span class="c">/* === NAVBAR DỌC === */</span>
+<span class="k">ul.sidenav</span>   { <span class="k">list-style</span>: <span class="v">none</span>; <span class="k">margin</span>: <span class="v">0</span>; <span class="k">padding</span>: <span class="v">0</span>; <span class="k">width</span>: <span class="v">200px</span>; }
+<span class="k">ul.sidenav li a</span> { <span class="k">display</span>: <span class="v">block</span>; <span class="k">padding</span>: <span class="v">12px 16px</span>; <span class="k">text-decoration</span>: <span class="v">none</span>; }</code></pre>
+
+      <div class="callout tip"><p>Class <code>.active</code> đánh dấu trang/mục người dùng đang xem — thường gắn sẵn trong HTML
+        của từng trang. Với navbar ngang dùng <code>float</code>, nhớ thêm <strong>clearfix</strong>
+        (<code>overflow:hidden</code> hoặc <code>::after{clear:both}</code>) để khung <code>&lt;ul&gt;</code> không bị "sập".</p></div>
+    </section>
+
+    <!-- ==========  11. BẢNG TRA CỨU TỔNG HỢP  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Bảng tra cứu nhanh: List · Table · Link <span class="tag-base">Tra cứu</span></h2>
+      <p class="lead">Tổng hợp các thuộc tính/bộ chọn hay dùng nhất trong bài để tra nhanh khi làm bài tập.</p>
+
+      <table class="syntax">
+        <caption>Nhóm List</caption>
+        <thead><tr><th>Thuộc tính</th><th>Công dụng</th><th>Giá trị tiêu biểu</th></tr></thead>
+        <tbody>
+          <tr><td><code>list-style-type</code></td><td>Kiểu dấu đầu dòng</td><td><code>disc · circle · square · decimal · none</code></td></tr>
+          <tr><td><code>list-style-position</code></td><td>Dấu trong / ngoài hộp</td><td><code>inside · outside</code></td></tr>
+          <tr><td><code>list-style-image</code></td><td>Dùng ảnh làm dấu</td><td><code>url("dot.png") · none</code></td></tr>
+          <tr><td><code>list-style</code></td><td>Viết gộp cả ba</td><td><code>square inside url(...)</code></td></tr>
+        </tbody>
+      </table>
+
+      <table class="syntax">
+        <caption>Nhóm Table</caption>
+        <thead><tr><th>Thuộc tính / bộ chọn</th><th>Công dụng</th><th>Giá trị tiêu biểu</th></tr></thead>
+        <tbody>
+          <tr><td><code>border-collapse</code></td><td>Gộp viền đôi thành đơn</td><td><code>collapse · separate</code></td></tr>
+          <tr><td><code>border-spacing</code></td><td>Khoảng cách ô (khi separate)</td><td><code>4px</code></td></tr>
+          <tr><td><code>text-align</code></td><td>Canh chữ ngang trong ô</td><td><code>left · center · right</code></td></tr>
+          <tr><td><code>vertical-align</code></td><td>Canh nội dung dọc trong ô</td><td><code>top · middle · bottom</code></td></tr>
+          <tr><td><code>caption-side</code></td><td>Vị trí chú thích bảng</td><td><code>top · bottom</code></td></tr>
+          <tr><td><code>tr:nth-child(even)</code></td><td>Chọn hàng chẵn (zebra)</td><td>—</td></tr>
+          <tr><td><code>tr:hover</code></td><td>Làm nổi hàng đang trỏ</td><td>—</td></tr>
+          <tr><td><code>overflow-x</code> (div bọc)</td><td>Cho bảng cuộn ngang (responsive)</td><td><code>auto · scroll</code></td></tr>
+        </tbody>
+      </table>
+
+      <table class="syntax">
+        <caption>Nhóm Link</caption>
+        <thead><tr><th>Pseudo-class / thuộc tính</th><th>Công dụng</th><th>Ghi chú</th></tr></thead>
+        <tbody>
+          <tr><td><code>a:link</code></td><td>Liên kết chưa bấm</td><td>Thứ tự <b>1</b> · L</td></tr>
+          <tr><td><code>a:visited</code></td><td>Liên kết đã ghé</td><td>Thứ tự <b>2</b> · V</td></tr>
+          <tr><td><code>a:hover</code></td><td>Đang rê chuột</td><td>Thứ tự <b>3</b> · H</td></tr>
+          <tr><td><code>a:active</code></td><td>Đang nhấn giữ</td><td>Thứ tự <b>4</b> · A</td></tr>
+          <tr><td><code>text-decoration</code></td><td>Gạch chân liên kết</td><td><code>none · underline · line-through</code></td></tr>
+          <tr><td><code>transition</code></td><td>Đổi trạng thái mượt</td><td><code>background .2s</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  12. MẸO & LỖI THƯỜNG GẶP  ========== -->
+    <section class="block" id="s12">
+      <h2><span class="num">12</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout tip"><p><strong>Mẹo 1 — Menu nên dùng <code>&lt;ul&gt;</code>.</strong> Về mặt
+        <em>ngữ nghĩa</em>, một danh sách liên kết chính là một danh sách. Dùng <code>&lt;ul&gt;&lt;li&gt;&lt;a&gt;</code>
+        rồi bỏ <code>list-style</code> giúp trình đọc màn hình và SEO hiểu đúng cấu trúc điều hướng.</p></div>
+      <div class="callout danger"><p><strong>Lỗi 2 — Sai thứ tự LVHA.</strong> Luôn khai báo
+        <code>:link → :visited → :hover → :active</code>. Đặt <code>:hover</code> sau <code>:active</code> hoặc trước
+        <code>:visited</code> khiến hiệu ứng bị một quy tắc sau ghi đè và "biến mất".</p></div>
+      <div class="callout info"><p><strong>Mẹo 3 — Zebra giúp đọc bảng dễ hơn.</strong> Tô xen kẽ bằng
+        <code>tr:nth-child(even)</code> và làm nổi hàng bằng <code>tr:hover</code> giảm rõ rệt việc "dò nhầm dòng"
+        khi bảng nhiều cột.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 4 — Quên <code>border-collapse</code>.</strong> Bảng kẻ viền mà thiếu
+        <code>border-collapse: collapse</code> sẽ có viền đôi dày và khe hở. Đây là dòng gần như luôn cần khi tạo bảng.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ nhanh.</strong> Bỏ chấm → <code>list-style:none</code>; menu cùng hàng →
+        <code>flex</code>/<code>inline-block</code>; bảng kẻ đẹp → <code>border-collapse:collapse</code>; link đổi màu →
+        thứ tự <code>LVHA</code>; bảng tràn trên mobile → bọc <code>div{overflow-x:auto}</code>.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="04-background-font-text.html"><small>← Bài trước</small>2.2.4 · Background · Font · Text</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="06-overflow-float-position.html"><small>Bài tiếp →</small>2.2.6 · Overflow · Float · Position</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

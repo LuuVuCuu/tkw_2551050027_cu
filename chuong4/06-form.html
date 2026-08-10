@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="4.6 Bootstrap Form - điều khiển form, bố cục grid, input group, floating label và kiểm tra hợp lệ (validation) client-side.">
+  <title>4.6 · Bootstrap Form — Chương 4</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/bootstrap-lesson.css">
+</head>
+<body>
+
+  <!-- ===== Breadcrumb ===== -->
+  <nav class="container-lg pt-3" aria-label="breadcrumb">
+    <ol class="breadcrumb small mb-0">
+      <li class="breadcrumb-item"><a href="../index.html">Môn học</a></li>
+      <li class="breadcrumb-item"><a href="index.html">Chương 4</a></li>
+      <li class="breadcrumb-item active" aria-current="page">4.6 Form</li>
+    </ol>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="hero4 py-5 mt-2">
+    <div class="container-lg">
+      <h1 class="h2 fw-bold mb-2">4.6 · Bootstrap Form</h1>
+      <p class="mb-0 opacity-75">Nhập liệu chuyên nghiệp: điều khiển form dựng sẵn, bố cục bằng lưới, nhóm input, nhãn nổi và kiểm tra hợp lệ ngay trên trình duyệt.</p>
+    </div>
+  </header>
+
+  <main class="container-lg my-4" style="max-width: 960px;">
+
+    <!-- 1 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">1</span>Điều khiển form cơ bản</h2>
+      <p>Bootstrap chuẩn hoá mọi ô nhập bằng vài class chính. Ghép nhãn <code>.form-label</code> với ô nhập
+         <code>.form-control</code> (dùng cho <em>text, email, password, number</em>...), danh sách chọn
+         <code>.form-select</code>, ô đánh dấu <code>.form-check</code> và thanh trượt <code>.form-range</code>.</p>
+      <ul>
+        <li><strong><code>.form-check</code></strong> — bọc <code>checkbox</code>/<code>radio</code>; thêm
+            <code>.form-switch</code> để biến checkbox thành công tắc gạt.</li>
+        <li><strong>Cỡ ô nhập</strong> — <code>.form-control-lg</code> (to) và <code>.form-control-sm</code> (nhỏ).</li>
+        <li><strong>Trạng thái</strong> — <code>disabled</code> (khoá, mờ) và <code>readonly</code> (chỉ đọc, vẫn gửi được).</li>
+        <li><strong><code>.form-text</code></strong> — dòng chú thích nhỏ, xám dưới ô nhập.</li>
+      </ul>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <form>
+            <div class="mb-3">
+              <label for="hoTen" class="form-label">Họ và tên</label>
+              <input type="text" class="form-control" id="hoTen" placeholder="Nguyễn Văn A">
+            </div>
+            <div class="mb-3">
+              <label for="email1" class="form-label">Email</label>
+              <input type="email" class="form-control form-control-lg" id="email1" placeholder="ban@vidu.com">
+              <div class="form-text">Chúng tôi không chia sẻ email của bạn.</div>
+            </div>
+            <div class="mb-3">
+              <label for="matKhau" class="form-label">Mật khẩu</label>
+              <input type="password" class="form-control form-control-sm" id="matKhau">
+            </div>
+            <div class="mb-3">
+              <label for="soLuong" class="form-label">Số lượng</label>
+              <input type="number" class="form-control" id="soLuong" value="1" min="1">
+            </div>
+            <div class="mb-3">
+              <label for="tinhTP" class="form-label">Tỉnh / Thành phố</label>
+              <select class="form-select" id="tinhTP">
+                <option selected>Chọn tỉnh/thành...</option>
+                <option>Hà Nội</option>
+                <option>TP. Hồ Chí Minh</option>
+                <option>Đà Nẵng</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="maSV" class="form-label">Mã sinh viên (chỉ đọc)</label>
+              <input type="text" class="form-control" id="maSV" value="SV-2026-001" readonly>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="dongY" checked>
+              <label class="form-check-label" for="dongY">Đồng ý nhận bản tin</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="gioiTinh" id="gtNam" checked>
+              <label class="form-check-label" for="gtNam">Nam</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="gioiTinh" id="gtNu">
+              <label class="form-check-label" for="gtNu">Nữ</label>
+            </div>
+            <div class="form-check form-switch mt-2">
+              <input class="form-check-input" type="checkbox" role="switch" id="cheDoToi">
+              <label class="form-check-label" for="cheDoToi">Bật chế độ tối</label>
+            </div>
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="checkbox" id="khoa" disabled>
+              <label class="form-check-label" for="khoa">Tuỳ chọn bị khoá (disabled)</label>
+            </div>
+            <div class="mt-3">
+              <label for="mucAmLuong" class="form-label">Âm lượng</label>
+              <input type="range" class="form-range" min="0" max="100" value="60" id="mucAmLuong">
+            </div>
+          </form>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;label</span> <span class="v">class</span>=<span class="s">"form-label"</span> <span class="v">for</span>=<span class="s">"email1"</span><span class="k">&gt;</span>Email<span class="k">&lt;/label&gt;</span>
+<span class="k">&lt;input</span> <span class="v">type</span>=<span class="s">"email"</span> <span class="v">class</span>=<span class="s">"form-control form-control-lg"</span> <span class="v">id</span>=<span class="s">"email1"</span><span class="k">&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"form-text"</span><span class="k">&gt;</span>Chúng tôi không chia sẻ email.<span class="k">&lt;/div&gt;</span>
+
+<span class="k">&lt;select</span> <span class="v">class</span>=<span class="s">"form-select"</span><span class="k">&gt;</span> <span class="c">&lt;!-- danh sách chọn --&gt;</span> <span class="k">&lt;/select&gt;</span>
+
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"form-check form-switch"</span><span class="k">&gt;</span>
+  <span class="k">&lt;input</span> <span class="v">class</span>=<span class="s">"form-check-input"</span> <span class="v">type</span>=<span class="s">"checkbox"</span> <span class="v">role</span>=<span class="s">"switch"</span><span class="k">&gt;</span>
+  <span class="k">&lt;label</span> <span class="v">class</span>=<span class="s">"form-check-label"</span><span class="k">&gt;</span>Bật chế độ tối<span class="k">&lt;/label&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+    </section>
+
+    <!-- 2 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">2</span>Bố cục form bằng grid</h2>
+      <p>Đặt <code>&lt;form class="row g-3"&gt;</code> rồi cho mỗi trường vào một cột (ví dụ <code>.col-md-6</code>).
+         Trên màn rộng các trường xếp <em>cạnh nhau</em>; trên màn hẹp tự động <em>xuống dòng</em>.
+         Lớp <code>g-3</code> tạo khoảng hở (gutter) đều giữa các trường.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <form class="row g-3">
+            <div class="col-md-6">
+              <label for="ten" class="form-label">Tên</label>
+              <input type="text" class="form-control" id="ten">
+            </div>
+            <div class="col-md-6">
+              <label for="ho" class="form-label">Họ</label>
+              <input type="text" class="form-control" id="ho">
+            </div>
+            <div class="col-md-8">
+              <label for="diaChi" class="form-label">Địa chỉ</label>
+              <input type="text" class="form-control" id="diaChi" placeholder="Số nhà, đường...">
+            </div>
+            <div class="col-md-4">
+              <label for="maBuuChinh" class="form-label">Mã bưu chính</label>
+              <input type="text" class="form-control" id="maBuuChinh">
+            </div>
+            <div class="col-12">
+              <button type="button" class="btn btn-primary">Lưu thông tin</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;form</span> <span class="v">class</span>=<span class="s">"row g-3"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-md-6"</span><span class="k">&gt;</span> <span class="c">&lt;!-- nửa hàng --&gt;</span>
+    <span class="k">&lt;label</span> <span class="v">class</span>=<span class="s">"form-label"</span><span class="k">&gt;</span>Tên<span class="k">&lt;/label&gt;</span>
+    <span class="k">&lt;input</span> <span class="v">class</span>=<span class="s">"form-control"</span><span class="k">&gt;</span>
+  <span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-md-6"</span><span class="k">&gt;</span> ... <span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/form&gt;</span></code></pre>
+      <div class="alert alert-info mb-0">
+        <strong>Nhắc lại Grid.</strong> <code>col-md-*</code> chỉ áp dụng từ breakpoint <code>md</code> trở lên;
+        dưới ngưỡng đó mỗi trường chiếm trọn 1 hàng — chính là hành vi <em>mobile-first</em>.
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">3</span>Input Group</h2>
+      <p>Gắn <strong>tiền tố</strong>/<strong>hậu tố</strong> hoặc <strong>nút</strong> sát vào ô nhập bằng
+         <code>.input-group</code>. Phần chữ dùng <code>.input-group-text</code>; nút thì đặt <code>.btn</code> thẳng
+         bên trong nhóm. Rất hợp cho ký hiệu như <code>@</code>, <code>.com</code>, đơn vị tiền <code>VND</code>...</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="input-group mb-3">
+            <span class="input-group-text">@</span>
+            <input type="text" class="form-control" placeholder="tên đăng nhập">
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="website">
+            <span class="input-group-text">.com</span>
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">Giá</span>
+            <input type="number" class="form-control" placeholder="0">
+            <span class="input-group-text">VND</span>
+          </div>
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Tìm kiếm...">
+            <button class="btn btn-primary" type="button">Tìm</button>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"input-group"</span><span class="k">&gt;</span>
+  <span class="k">&lt;span</span> <span class="v">class</span>=<span class="s">"input-group-text"</span><span class="k">&gt;</span>Giá<span class="k">&lt;/span&gt;</span>       <span class="c">&lt;!-- tiền tố --&gt;</span>
+  <span class="k">&lt;input</span> <span class="v">type</span>=<span class="s">"number"</span> <span class="v">class</span>=<span class="s">"form-control"</span><span class="k">&gt;</span>
+  <span class="k">&lt;span</span> <span class="v">class</span>=<span class="s">"input-group-text"</span><span class="k">&gt;</span>VND<span class="k">&lt;/span&gt;</span>       <span class="c">&lt;!-- hậu tố --&gt;</span>
+<span class="k">&lt;/div&gt;</span>
+
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"input-group"</span><span class="k">&gt;</span>
+  <span class="k">&lt;input</span> <span class="v">class</span>=<span class="s">"form-control"</span><span class="k">&gt;</span>
+  <span class="k">&lt;button</span> <span class="v">class</span>=<span class="s">"btn btn-primary"</span><span class="k">&gt;</span>Tìm<span class="k">&lt;/button&gt;</span>   <span class="c">&lt;!-- nút trong nhóm --&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+    </section>
+
+    <!-- 4 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">4</span>Floating Labels</h2>
+      <p>Nhãn nổi giúp tiết kiệm chỗ: nhãn nằm <em>bên trong</em> ô khi trống và <em>trượt lên trên</em> khi có nội dung.
+         Bọc ô nhập trong <code>.form-floating</code> và đặt <code>&lt;label&gt;</code> <strong>ngay sau</strong>
+         <code>&lt;input&gt;</code>. Bắt buộc dùng <code>placeholder</code> (giá trị gì cũng được) để hiệu ứng chạy đúng.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="emailFloat" placeholder="ban@vidu.com">
+            <label for="emailFloat">Địa chỉ email</label>
+          </div>
+          <div class="form-floating">
+            <input type="password" class="form-control" id="mkFloat" placeholder="Mật khẩu">
+            <label for="mkFloat">Mật khẩu</label>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"form-floating"</span><span class="k">&gt;</span>
+  <span class="k">&lt;input</span> <span class="v">type</span>=<span class="s">"email"</span> <span class="v">class</span>=<span class="s">"form-control"</span> <span class="v">id</span>=<span class="s">"emailFloat"</span> <span class="v">placeholder</span>=<span class="s">"ban@vidu.com"</span><span class="k">&gt;</span>
+  <span class="k">&lt;label</span> <span class="v">for</span>=<span class="s">"emailFloat"</span><span class="k">&gt;</span>Địa chỉ email<span class="k">&lt;/label&gt;</span>   <span class="c">&lt;!-- label đặt SAU input --&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+    </section>
+
+    <!-- 5 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">5</span>Kiểm tra hợp lệ (Validation)</h2>
+      <p>Bootstrap tô màu phản hồi theo trạng thái ô nhập: <code>.is-valid</code> (xanh) và <code>.is-invalid</code> (đỏ),
+         kèm thông báo <code>.valid-feedback</code>/<code>.invalid-feedback</code>. Cách phổ biến nhất là để trình duyệt
+         tự kiểm tra: thêm thuộc tính <code>required</code> vào các ô bắt buộc, và khi form đã kiểm tra thì gắn class
+         <code>.was-validated</code> lên <code>&lt;form&gt;</code> để lộ toàn bộ phản hồi.</p>
+      <p>Bấm <strong>Gửi</strong> khi đang <em>bỏ trống</em> để thấy form chặn lại và tô đỏ; điền hợp lệ rồi bấm lại để thấy tô xanh:</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <form class="row g-3 needs-validation" novalidate>
+            <div class="col-md-6">
+              <label for="vTen" class="form-label">Họ tên</label>
+              <input type="text" class="form-control" id="vTen" required>
+              <div class="valid-feedback">Trông ổn!</div>
+              <div class="invalid-feedback">Vui lòng nhập họ tên.</div>
+            </div>
+            <div class="col-md-6">
+              <label for="vEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="vEmail" required>
+              <div class="invalid-feedback">Email không hợp lệ.</div>
+            </div>
+            <div class="col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="vDieuKhoan" required>
+                <label class="form-check-label" for="vDieuKhoan">Tôi đồng ý với điều khoản</label>
+                <div class="invalid-feedback">Bạn phải đồng ý trước khi tiếp tục.</div>
+              </div>
+            </div>
+            <div class="col-12">
+              <button class="btn btn-primary" type="submit">Gửi</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;form</span> <span class="v">class</span>=<span class="s">"needs-validation"</span> <span class="v">novalidate</span><span class="k">&gt;</span>
+  <span class="k">&lt;input</span> <span class="v">class</span>=<span class="s">"form-control"</span> <span class="v">required</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"invalid-feedback"</span><span class="k">&gt;</span>Vui lòng nhập họ tên.<span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;button</span> <span class="v">type</span>=<span class="s">"submit"</span><span class="k">&gt;</span>Gửi<span class="k">&lt;/button&gt;</span>
+<span class="k">&lt;/form&gt;</span>
+
+<span class="c">// đoạn JS chuẩn của Bootstrap, đặt SAU bundle</span>
+<span class="k">document</span>.querySelectorAll(<span class="s">'.needs-validation'</span>).forEach(form =&gt; {
+  form.addEventListener(<span class="s">'submit'</span>, e =&gt; {
+    <span class="k">if</span> (!form.checkValidity()) { e.preventDefault(); e.stopPropagation(); }
+    form.classList.add(<span class="s">'was-validated'</span>);
+  });
+});</code></pre>
+      <div class="alert alert-warning mb-0">
+        <strong>Lưu ý.</strong> Thêm <code>novalidate</code> để tắt hộp báo lỗi mặc định của trình duyệt,
+        nhường việc hiển thị cho giao diện Bootstrap. Đây chỉ là kiểm tra phía <em>client</em> (tiện cho người dùng) —
+        máy chủ vẫn phải kiểm tra lại vì dữ liệu client có thể bị giả mạo.
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer điều hướng ===== -->
+  <footer class="foot4">
+    <div class="container-lg py-4 d-flex flex-wrap justify-content-between gap-2">
+      <a class="btn btn-outline-secondary btn-sm" href="05-components-2.html">← 4.5 Components (2)</a>
+      <a class="btn btn-primary btn-sm" href="07-landing-tong-hop.html">Landing tổng hợp →</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Kích hoạt kiểm tra hợp lệ kiểu Bootstrap: chặn submit khi chưa hợp lệ
+    (function () {
+      'use strict';
+      const forms = document.querySelectorAll('.needs-validation');
+      Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    })();
+  </script>
+</body>
+</html>

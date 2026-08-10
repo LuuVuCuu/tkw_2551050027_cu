@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  3.3 — XUẤT DỮ LIỆU TRONG JAVASCRIPT
+  ------------------------------------------------------------
+    1) Console & DevTools          5) alert / confirm / prompt
+    2) console.log/info/warn/error 6) Ghi ra trang (DOM)
+    3) console.table / dir         7) Mẹo & lỗi thường gặp
+    4) time / group / assert
+  Demo đặc biệt: các nút vừa ghi vào Console THẬT (F12) vừa
+  "soi gương" kết quả ra khung đen trên trang để dễ quan sát.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.3 · Xuất dữ liệu trong JavaScript</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI ===== */
+    .d-btn { background:#1D559F; color:#fff; border:none; border-radius:8px;
+             padding:9px 16px; font-size:.92rem; font-weight:600; cursor:pointer;
+             margin:3px 4px 3px 0; }
+    .d-btn:hover { background:#16407a; }
+    .d-btn.green { background:#04AA6D; } .d-btn.green:hover { background:#03875a; }
+    .d-btn.amber { background:#FFC107; color:#16407a; }
+    .d-btn.red   { background:#E63946; } .d-btn.red:hover { background:#c02936; }
+
+    .d-out { background:#0f172a; color:#e6edf3; border-radius:10px;
+             font-family:"Cascadia Code",Consolas,monospace; font-size:.88rem;
+             padding:12px 14px; margin-top:12px; min-height:20px; white-space:pre-wrap; }
+    .d-out .log  { color:#e6edf3; }
+    .d-out .info { color:#79c0ff; }
+    .d-out .warn { color:#f0c674; }
+    .d-out .err  { color:#ff7b72; }
+    .d-out table { border-collapse:collapse; margin-top:6px; color:#e6edf3; }
+    .d-out table th, .d-out table td { border:1px solid #334155; padding:4px 10px; font-size:.85rem; }
+    .d-out table th { background:#1e293b; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        3.3 Xuất dữ liệu
+      </nav>
+      <h1>Xuất dữ liệu trong JavaScript</h1>
+      <p class="sub">Console là "bảng điều khiển" số 1 để debug; hộp thoại alert/confirm/prompt để
+         demo nhanh; còn web thật thì ghi thẳng ra trang bằng DOM. Mọi nút demo dưới đây đều ghi vào
+         <strong>Console thật</strong> — hãy mở <kbd>F12</kbd> song song.</p>
+      <div class="chips">
+        <span class="chip solid">3.3</span>
+        <span class="chip">Console · Dialog</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Console &amp; DevTools</a></li>
+        <li><a href="#s2">log · info · warn · error</a></li>
+        <li><a href="#s3">console.table · dir</a></li>
+        <li><a href="#s4">time · group · assert · clear</a></li>
+        <li><a href="#s5">alert · confirm · prompt</a></li>
+        <li><a href="#s6">Ghi ra trang (DOM)</a></li>
+        <li><a href="#s7">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. CONSOLE & DEVTOOLS  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Console &amp; DevTools <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Console là công cụ chính để <strong>debug</strong> và kiểm tra dữ liệu.</p>
+      <ul>
+        <li>Mở bằng <kbd>F12</kbd> (Windows) / <kbd>⌘⌥I</kbd> (macOS) → tab <strong>Console</strong>.</li>
+        <li>Mọi lỗi JavaScript của trang đều hiện ở đây, kèm <em>tên file và số dòng</em> — bấm vào là nhảy tới chỗ lỗi.</li>
+        <li>Có thể gõ lệnh JS trực tiếp vào Console để thử nhanh (REPL).</li>
+      </ul>
+      <div class="callout tip">
+        <p><strong>Thói quen vàng:</strong> khi trang "không chạy", việc đầu tiên là mở Console.
+        90% trường hợp câu trả lời nằm sẵn ở dòng chữ đỏ.</p>
+      </div>
+    </section>
+
+    <!-- ==========  2. LOG / INFO / WARN / ERROR  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> <code>log</code> · <code>info</code> · <code>warn</code> · <code>error</code> <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code>console.log(<span class="s">"Thông tin thường (phổ biến nhất khi debug)"</span>);
+console.info(<span class="s">"Thông tin hữu ích"</span>);
+console.warn(<span class="s">"Cảnh báo — chữ vàng"</span>);
+console.error(<span class="s">"Lỗi — chữ đỏ"</span>);
+
+<span class="c">// log nhiều giá trị một lúc, cách nhau dấu phẩy:</span>
+console.log(<span class="s">"Điểm:"</span>, 8.5, { ten: <span class="s">"An"</span> });</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — ghi vào Console thật + soi gương ra trang</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-log">console.log</button>
+          <button class="d-btn green" id="d-btn-info">console.info</button>
+          <button class="d-btn amber" id="d-btn-warn">console.warn</button>
+          <button class="d-btn red" id="d-btn-error">console.error</button>
+          <div class="d-out" id="d-out-log">// bấm nút — nhớ mở F12 để thấy bản "xịn" trong Console</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  3. TABLE / DIR  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> <code>console.table</code> · <code>console.dir</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Xem <strong>mảng đối tượng</strong> (như danh sách món của "Góc Cà Phê") dạng
+         bảng — dễ đọc gấp nhiều lần <code>console.log</code>.</p>
+
+      <pre class="code"><code><span class="k">const</span> menu = [
+  { ten: <span class="s">"Cà phê sữa"</span>, gia: 25000 },
+  { ten: <span class="s">"Bạc xỉu"</span>,    gia: 29000 },
+  { ten: <span class="s">"Trà đào"</span>,    gia: 35000 },
+];
+console.table(menu);   <span class="c">// hiển thị thành bảng có cột index / ten / gia</span>
+console.dir(document.body);  <span class="c">// xem object dạng cây (khác log với phần tử DOM)</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — console.table(menu)</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-table">Chạy console.table(menu)</button>
+          <div class="d-out" id="d-out-table">// bấm để xem bảng (bản thật nằm trong Console F12)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  4. TIME / GROUP / ASSERT  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> <code>time</code> · <code>group</code> · <code>assert</code> · <code>clear</code> <span class="tag-adv">Nâng cao</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Phương thức</th><th>Công dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>console.time(nhãn)</code> / <code>timeEnd(nhãn)</code></td><td>Đo thời gian chạy một đoạn code</td></tr>
+          <tr><td><code>console.group(nhãn)</code> / <code>groupEnd()</code></td><td>Gom các log thành nhóm gấp/mở được</td></tr>
+          <tr><td><code>console.assert(điều_kiện, msg)</code></td><td>Chỉ in <code>msg</code> khi điều kiện <strong>sai</strong></td></tr>
+          <tr><td><code>console.clear()</code></td><td>Xoá sạch console</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code>console.time(<span class="s">"Loop"</span>);
+<span class="k">for</span> (<span class="k">let</span> i = 0; i &lt; 1_000_000; i++) {}   <span class="c">// 1_000_000: dấu _ chỉ để dễ đọc</span>
+console.timeEnd(<span class="s">"Loop"</span>);                  <span class="c">// Loop: 3.2 ms (tuỳ máy)</span>
+
+console.assert(diem &gt;= 0, <span class="s">"Điểm không được âm!"</span>);</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — đo tốc độ vòng lặp 1 triệu lần</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-time">console.time / timeEnd</button>
+          <div class="d-out" id="d-out-time">// đo ngay trên máy của bạn</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  5. ALERT / CONFIRM / PROMPT  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> <code>alert</code> · <code>confirm</code> · <code>prompt</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Ba hộp thoại có sẵn của trình duyệt — tiện cho demo, nhưng <strong>chặn</strong>
+         toàn bộ trang cho đến khi người dùng bấm nút.</p>
+
+      <table class="syntax">
+        <thead><tr><th>Hàm</th><th>Hiển thị</th><th>Trả về</th></tr></thead>
+        <tbody>
+          <tr><td><code>alert(msg)</code></td><td>Thông báo + nút OK</td><td><code>undefined</code></td></tr>
+          <tr><td><code>confirm(msg)</code></td><td>Câu hỏi + OK / Cancel</td><td><code>true</code> (OK) hoặc <code>false</code> (Cancel)</td></tr>
+          <tr><td><code>prompt(msg)</code></td><td>Ô nhập + OK / Cancel</td><td><strong>Chuỗi</strong> đã nhập, hoặc <code>null</code> nếu Cancel</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="k">let</span> name = prompt(<span class="s">"Tên của bạn:"</span>);
+<span class="k">if</span> (confirm(<span class="s">"Bạn chắc chắn?"</span>)) {
+  console.info(<span class="s">"Hello "</span> + name);
+}</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — chuỗi prompt → confirm → kết quả</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-dialog">Chạy prompt + confirm</button>
+          <div class="d-out" id="d-out-dialog">// bấm để trải nghiệm 3 hộp thoại nối nhau</div>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <p><strong>Lưu ý thực tế:</strong> <code>alert</code>/<code>confirm</code>/<code>prompt</code>
+        chặn giao diện và trông thô — chỉ dùng để <strong>học/demo nhanh</strong>. Web thật hiển thị
+        thông báo bằng thành phần HTML/CSS (modal, toast) đẹp và không chặn trang. Nhớ:
+        <code>prompt</code> luôn trả về <strong>chuỗi</strong> — muốn tính toán phải đổi kiểu.</p>
+      </div>
+    </section>
+
+    <!-- ==========  6. GHI RA TRANG  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Ghi ra trang (DOM) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Cách web thật hiển thị dữ liệu: gán vào <code>textContent</code> /
+         <code>innerHTML</code> của một phần tử (học sâu ở bài 3.8).</p>
+
+      <pre class="code"><code>document.getElementById(<span class="s">"kq"</span>).textContent = <span class="s">"Chỉ chữ — an toàn"</span>;
+document.getElementById(<span class="s">"kq"</span>).innerHTML  = <span class="s">"Có &lt;b&gt;thẻ HTML&lt;/b&gt; — cẩn thận XSS"</span>;
+
+<span class="c">// document.write("..."): CHỈ thấy trong sách cũ — gọi sau khi trang
+// nạp xong sẽ XOÁ TRẮNG cả trang. Không dùng trong code thật.</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — textContent vs innerHTML</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-text">textContent</button>
+          <button class="d-btn green" id="d-btn-html">innerHTML</button>
+          <p id="d-kq" style="background:#f1f5f9;border-radius:8px;padding:10px 14px">Kết quả sẽ hiện ở đoạn văn này.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  7. MẸO & LỖI  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout tip"><p><strong>Mẹo 1.</strong> Dữ liệu dạng mảng object →
+        <code>console.table()</code>; object lồng sâu → <code>console.dir()</code>;
+        nghi ngờ chậm → <code>console.time()</code>.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 1.</strong> <code>prompt</code> trả về chuỗi:
+        <code>prompt("Tuổi?") + 1</code> với input 20 cho <code>"201"</code> chứ không phải 21.
+        Bọc <code>Number()</code> trước khi cộng.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> Người dùng bấm Cancel →
+        <code>prompt</code> trả về <code>null</code> — phải kiểm tra trước khi dùng.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> Debug → Console. Demo nhanh → dialog.
+        Web thật → ghi ra DOM (textContent an toàn hơn innerHTML).</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="02-bien-kieu-du-lieu-toan-tu.html"><small>← Bài trước</small>3.2 · Biến · Kiểu dữ liệu · Toán tử</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="04-cau-truc-dieu-khien.html"><small>Bài tiếp →</small>3.4 · Cấu trúc điều khiển</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- ===== JS MINH HOẠ CỦA BÀI (cuối body) ===== -->
+  <script>
+    'use strict';
+
+    /* Hàm "soi gương": vừa ghi console thật, vừa in ra khung đen trên trang */
+    function guong(idOut, loai, noiDung) {
+      console[loai](noiDung);                        // ghi vào Console thật (F12)
+      const out = document.getElementById(idOut);
+      const icon = { log: "▸", info: "ℹ", warn: "⚠", error: "✗" }[loai];
+      out.innerHTML += `\n<span class="${loai === "error" ? "err" : loai}">${icon} console.${loai}: ${noiDung}</span>`;
+    }
+
+    /* ---- Mục 2: bốn mức log ---- */
+    document.getElementById("d-btn-log").addEventListener("click",
+      () => guong("d-out-log", "log", "Thông tin thường — phổ biến nhất khi debug"));
+    document.getElementById("d-btn-info").addEventListener("click",
+      () => guong("d-out-log", "info", "Thông tin hữu ích"));
+    document.getElementById("d-btn-warn").addEventListener("click",
+      () => guong("d-out-log", "warn", "Cảnh báo — trong Console chữ này màu vàng"));
+    document.getElementById("d-btn-error").addEventListener("click",
+      () => guong("d-out-log", "error", "Lỗi — trong Console chữ này màu đỏ"));
+
+    /* ---- Mục 3: console.table ---- */
+    const menu = [
+      { ten: "Cà phê sữa", gia: 25000 },
+      { ten: "Bạc xỉu",    gia: 29000 },
+      { ten: "Trà đào",    gia: 35000 },
+    ];
+    document.getElementById("d-btn-table").addEventListener("click", () => {
+      console.table(menu);                           // bảng thật trong DevTools
+      // dựng bảng "soi gương" trên trang bằng map + join (học kỹ ở bài 3.6)
+      const dong = menu.map((m, i) =>
+        `<tr><td>${i}</td><td>${m.ten}</td><td>${m.gia.toLocaleString("vi-VN")}</td></tr>`).join("");
+      document.getElementById("d-out-table").innerHTML =
+        `console.table(menu) — bản thật nằm trong F12:` +
+        `<table><tr><th>(index)</th><th>ten</th><th>gia</th></tr>${dong}</table>`;
+    });
+
+    /* ---- Mục 4: console.time ---- */
+    document.getElementById("d-btn-time").addEventListener("click", () => {
+      console.time("Loop");
+      const t0 = performance.now();                  // đo song song để in ra trang
+      for (let i = 0; i < 1_000_000; i++) {}         // vòng lặp rỗng 1 triệu lần
+      const ms = (performance.now() - t0).toFixed(2);
+      console.timeEnd("Loop");
+      document.getElementById("d-out-time").textContent =
+        `Loop: ${ms} ms  (1.000.000 vòng lặp rỗng — máy bạn đo được vậy đó!)`;
+    });
+
+    /* ---- Mục 5: chuỗi dialog ---- */
+    document.getElementById("d-btn-dialog").addEventListener("click", () => {
+      const out = document.getElementById("d-out-dialog");
+      const name = prompt("Tên của bạn:");           // trả về chuỗi hoặc null
+      if (name === null) {                           // bấm Cancel
+        out.textContent = "prompt trả về null (bạn đã bấm Cancel).";
+        return;
+      }
+      if (confirm("Bạn chắc chắn?")) {               // true / false
+        console.info("Hello " + name);
+        out.textContent = `confirm → true. Đã console.info("Hello ${name}") — xem F12.`;
+      } else {
+        out.textContent = "confirm → false (bạn đã bấm Cancel).";
+      }
+    });
+
+    /* ---- Mục 6: textContent vs innerHTML ---- */
+    const kq = document.getElementById("d-kq");
+    document.getElementById("d-btn-text").addEventListener("click", () => {
+      kq.textContent = "textContent: thẻ <b>không</b> được diễn giải — hiện nguyên văn, an toàn.";
+    });
+    document.getElementById("d-btn-html").addEventListener("click", () => {
+      kq.innerHTML = 'innerHTML: thẻ <b>được</b> diễn giải — chữ này <b style="color:#E63946">in đậm đỏ</b> thật.';
+    });
+  </script>
+</body>
+</html>

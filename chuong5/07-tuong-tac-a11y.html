@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="5.6 Tương tác (cursor, pointer-events, select, resize, accent, caret, scroll-snap, appearance, field-sizing), SVG, Bảng và Khả năng truy cập (sr-only) với Tailwind CSS v4.">
+  <title>Tương tác · SVG · Bảng · A11y — Chương 5</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <!-- Tailwind v4 — bản trình duyệt (biên dịch class ngay trong browser). Chỉ dùng để học/prototype. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- Tuỳ biến CSS-first của v4: token thương hiệu + bật dark bằng class .dark -->
+  <style type="text/tailwindcss">
+    @theme {
+      --color-brand: #04AA6D;
+    }
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- ===== Breadcrumb ===== -->
+  <nav class="mx-auto max-w-4xl px-4 pt-4 text-sm text-gray-500">
+    <a class="hover:text-[#1D559F]" href="../index.html">Môn học</a>
+    <span class="mx-1">›</span>
+    <a class="hover:text-[#1D559F]" href="index.html">Chương 5</a>
+    <span class="mx-1">›</span>
+    <span class="text-gray-700">Tương tác · A11y</span>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="mt-3 bg-linear-to-br from-[#1D559F] to-violet-600 text-white">
+    <div class="mx-auto max-w-4xl px-4 py-10">
+      <h1 class="text-3xl font-bold">Tương tác, SVG, Bảng &amp; Khả năng truy cập</h1>
+      <p class="mt-2 text-white/80">Nhóm tiện ích tinh chỉnh <strong>trải nghiệm dùng</strong>: con trỏ chuột, chọn văn bản, cuộn "ăn khớp", tô màu SVG, kẻ bảng và nhãn cho trình đọc màn hình.</p>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-4xl px-4 py-8">
+
+    <!-- 1 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">1</span>Tương tác (Interactivity)
+      </h2>
+      <p class="mb-3">Các tiện ích điều khiển cách người dùng "chạm" vào giao diện: hình con trỏ, khả năng bấm, bôi chọn, kéo giãn ô nhập và màu của điều khiển.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — di chuột lên từng nút để thấy con trỏ đổi hình</div>
+        <div class="space-y-4 p-4">
+          <div class="flex flex-wrap gap-2">
+            <button class="cursor-pointer rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700">cursor-pointer</button>
+            <button class="cursor-not-allowed rounded-lg bg-gray-300 px-4 py-2 text-sm font-semibold text-gray-600" disabled>cursor-not-allowed</button>
+            <button class="cursor-wait rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white">cursor-wait</button>
+            <button class="cursor-grab rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white">cursor-grab</button>
+          </div>
+
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" class="size-5 accent-sky-600" checked>
+            Ô chọn dùng <code class="rounded bg-gray-100 px-1">accent-sky-600</code> — đổi màu dấu tích
+          </label>
+
+          <label class="block text-sm">
+            <span class="mb-1 block">Ô nhập với <code class="rounded bg-gray-100 px-1">caret-pink-500</code> (bấm vào để thấy con nháy hồng):</span>
+            <input type="text" value="Gõ thử ở đây…" class="w-full rounded-lg border border-gray-300 px-3 py-2 caret-pink-500 focus:border-sky-500 focus:outline-none">
+          </label>
+
+          <label class="block text-sm">
+            <span class="mb-1 block">Vùng soạn thảo <code class="rounded bg-gray-100 px-1">resize-y</code> — kéo cạnh dưới để giãn cao:</span>
+            <textarea rows="2" class="w-full resize-y rounded-lg border border-gray-300 p-3 focus:border-sky-500 focus:outline-none">Chỉ cho phép kéo giãn theo chiều dọc.</textarea>
+          </label>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- Hình con trỏ chuột --&gt;</span>
+<span class="text-sky-300">&lt;button</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"cursor-pointer"</span><span class="text-sky-300">&gt;</span>...<span class="text-sky-300">&lt;/button&gt;</span>   <span class="text-gray-400 italic">/* bàn tay */</span>
+<span class="text-sky-300">&lt;button</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"cursor-not-allowed"</span><span class="text-sky-300">&gt;</span>...<span class="text-sky-300">&lt;/button&gt;</span>  <span class="text-gray-400 italic">/* cấm */</span>
+
+<span class="text-gray-400 italic">&lt;!-- Màu điều khiển biểu mẫu --&gt;</span>
+<span class="text-sky-300">&lt;input</span> <span class="text-orange-300">type</span>=<span class="text-emerald-300">"checkbox"</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"accent-sky-600"</span><span class="text-sky-300">&gt;</span>
+<span class="text-sky-300">&lt;input</span> <span class="text-orange-300">type</span>=<span class="text-emerald-300">"text"</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"caret-pink-500"</span><span class="text-sky-300">&gt;</span>
+<span class="text-sky-300">&lt;textarea</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"resize-y"</span><span class="text-sky-300">&gt;&lt;/textarea&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Bảng tra nhanh</p>
+        <ul class="mt-1 list-disc space-y-1 pl-5">
+          <li><code class="rounded bg-emerald-100 px-1">pointer-events-none</code> cho phần tử "trong suốt" với chuột · <code class="rounded bg-emerald-100 px-1">pointer-events-auto</code> nhận lại</li>
+          <li><code class="rounded bg-emerald-100 px-1">select-none</code> cấm bôi chọn · <code class="rounded bg-emerald-100 px-1">select-all</code> bấm là chọn hết · <code class="rounded bg-emerald-100 px-1">select-text</code> chọn bình thường</li>
+          <li><code class="rounded bg-emerald-100 px-1">resize-none</code> khoá kéo giãn · <code class="rounded bg-emerald-100 px-1">resize-y</code> chỉ dọc</li>
+          <li><code class="rounded bg-emerald-100 px-1">scroll-smooth</code> cuộn mượt · <code class="rounded bg-emerald-100 px-1">scroll-mt-16</code> chừa lề trên bù header dính (anchor không bị che)</li>
+          <li><code class="rounded bg-emerald-100 px-1">appearance-none</code> bỏ style mặc định của <code>&lt;select&gt;</code> để tự vẽ lại</li>
+          <li><code class="rounded bg-emerald-100 px-1">field-sizing-content</code> textarea tự cao theo nội dung · <code class="rounded bg-emerald-100 px-1">will-change-transform</code> báo trình duyệt tối ưu animation</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">2</span>Scroll-snap — cuộn "ăn khớp"
+      </h2>
+      <p class="mb-3">Băng chuyền ngang mà khi thả tay sẽ <strong>tự dừng đúng tâm</strong> từng ô. Container bật <code class="rounded bg-gray-100 px-1">snap-x snap-mandatory</code>, mỗi ô con đặt điểm khớp bằng <code class="rounded bg-gray-100 px-1">snap-center</code>.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — vuốt/cuộn ngang, ảnh tự dừng ở giữa</div>
+        <div class="p-4">
+          <div class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2">
+            <img src="../assets/sky.svg" alt="Bầu trời" class="h-40 w-72 shrink-0 snap-center rounded-lg border border-gray-200 object-cover">
+            <img src="../assets/rose.svg" alt="Hoa hồng" class="h-40 w-72 shrink-0 snap-center rounded-lg border border-gray-200 object-cover">
+            <img src="../assets/photo.svg" alt="Ảnh mẫu" class="h-40 w-72 shrink-0 snap-center rounded-lg border border-gray-200 object-cover">
+            <img src="../assets/img-medium.svg" alt="Ảnh vừa" class="h-40 w-72 shrink-0 snap-center rounded-lg border border-gray-200 object-cover">
+            <img src="../assets/img-large.svg" alt="Ảnh lớn" class="h-40 w-72 shrink-0 snap-center rounded-lg border border-gray-200 object-cover">
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- container: bật snap theo trục X, bắt buộc khớp --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"flex gap-4 overflow-x-auto snap-x snap-mandatory"</span><span class="text-sky-300">&gt;</span>
+  <span class="text-gray-400 italic">&lt;!-- mỗi ô: khớp tâm, không co lại, rộng cố định --&gt;</span>
+  <span class="text-sky-300">&lt;img</span> <span class="text-orange-300">src</span>=<span class="text-emerald-300">"../assets/sky.svg"</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"snap-center shrink-0 w-72"</span><span class="text-sky-300">&gt;</span>
+  <span class="text-sky-300">&lt;img</span> <span class="text-orange-300">src</span>=<span class="text-emerald-300">"../assets/rose.svg"</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"snap-center shrink-0 w-72"</span><span class="text-sky-300">&gt;</span>
+<span class="text-sky-300">&lt;/div&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-sky-500 bg-sky-50 p-3 text-sm">
+        <p class="font-semibold text-sky-800">Tự kiểm tra</p>
+        <p>Vuốt ngang băng ảnh rồi thả tay: mỗi ảnh phải <strong>tự dừng đúng tâm</strong>, không dừng lửng lơ giữa hai ảnh. Đổi <code class="rounded bg-sky-100 px-1">snap-center</code> thành <code class="rounded bg-sky-100 px-1">snap-start</code> để so sánh điểm khớp.</p>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">3</span>SVG · Bảng · Khả năng truy cập
+      </h2>
+      <p class="mb-3">Ba nhóm tiện ích thường gặp khi hoàn thiện trang: tô màu icon SVG, kẻ bảng dữ liệu và gắn nhãn cho trình đọc màn hình (screen reader).</p>
+
+      <div class="grid gap-4 md:grid-cols-2">
+
+        <!-- SVG -->
+        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white">
+          <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — tô màu SVG bằng class</div>
+          <div class="flex items-center gap-4 p-4">
+            <svg viewBox="0 0 24 24" class="size-16 fill-sky-500 stroke-white stroke-2">
+              <path d="M12 2l2.9 6.3 6.9.8-5.1 4.6 1.4 6.8L12 17.8 5.9 20.5l1.4-6.8L2.2 9.1l6.9-.8z"/>
+            </svg>
+            <svg viewBox="0 0 24 24" class="size-16 fill-current text-emerald-600">
+              <circle cx="12" cy="12" r="10"/>
+            </svg>
+            <p class="text-sm text-gray-600"><code class="rounded bg-gray-100 px-1">fill-sky-500</code>, <code class="rounded bg-gray-100 px-1">stroke-white stroke-2</code>; <code class="rounded bg-gray-100 px-1">fill-current</code> lấy theo màu chữ.</p>
+          </div>
+        </div>
+
+        <!-- A11y -->
+        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white">
+          <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — nút chỉ có biểu tượng</div>
+          <div class="flex items-center gap-4 p-4">
+            <button class="inline-flex items-center gap-2 rounded-lg bg-sky-600 p-2 text-white hover:bg-sky-700 sm:px-3">
+              <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2">
+                <circle cx="11" cy="11" r="7"/>
+                <path d="M21 21l-4.3-4.3" stroke-linecap="round"/>
+              </svg>
+              <!-- ẩn khỏi mắt nhưng screen reader vẫn đọc "Tìm kiếm"; từ sm trở lên hiện lại thành chữ -->
+              <span class="sr-only sm:not-sr-only">Tìm kiếm</span>
+            </button>
+            <p class="text-sm text-gray-600">Nhãn dùng <code class="rounded bg-gray-100 px-1">sr-only</code>; <code class="rounded bg-gray-100 px-1">sm:not-sr-only</code> cho hiện lại ở màn hình rộng.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bảng -->
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — bảng có đường kẻ</div>
+        <div class="overflow-x-auto p-4">
+          <table class="table-auto border-collapse text-left text-sm">
+            <caption class="caption-top mb-2 text-gray-500">Bảng 1 — điểm thành phần</caption>
+            <thead class="bg-gray-100 text-gray-700">
+              <tr>
+                <th class="border border-gray-300 px-3 py-2">Sinh viên</th>
+                <th class="border border-gray-300 px-3 py-2">Giữa kỳ</th>
+                <th class="border border-gray-300 px-3 py-2">Cuối kỳ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border border-gray-300 px-3 py-2 font-medium">An</td>
+                <td class="border border-gray-300 px-3 py-2">8.0</td>
+                <td class="border border-gray-300 px-3 py-2">9.0</td>
+              </tr>
+              <tr>
+                <td class="border border-gray-300 px-3 py-2 font-medium">Bình</td>
+                <td class="border border-gray-300 px-3 py-2">7.5</td>
+                <td class="border border-gray-300 px-3 py-2">8.5</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- SVG: tô nền + viền theo class Tailwind --&gt;</span>
+<span class="text-sky-300">&lt;svg</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"fill-sky-500 stroke-white stroke-2"</span><span class="text-sky-300">&gt;</span>...<span class="text-sky-300">&lt;/svg&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- Bảng: kẻ liền + caption trên --&gt;</span>
+<span class="text-sky-300">&lt;table</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"table-auto border-collapse"</span><span class="text-sky-300">&gt;</span>
+  <span class="text-sky-300">&lt;caption</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"caption-top"</span><span class="text-sky-300">&gt;</span>Bảng 1<span class="text-sky-300">&lt;/caption&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- A11y: nhãn ẩn cho nút icon --&gt;</span>
+<span class="text-sky-300">&lt;button&gt;</span>
+  <span class="text-sky-300">&lt;svg&gt;</span>...<span class="text-sky-300">&lt;/svg&gt;</span>
+  <span class="text-sky-300">&lt;span</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"sr-only sm:not-sr-only"</span><span class="text-sky-300">&gt;</span>Tìm kiếm<span class="text-sky-300">&lt;/span&gt;</span>
+<span class="text-sky-300">&lt;/button&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+        <p class="font-semibold text-violet-800">Mẹo</p>
+        <p>Luôn đặt nhãn <code class="rounded bg-violet-100 px-1">sr-only</code> cho nút chỉ có biểu tượng — người dùng screen reader mới biết nút làm gì. Với chế độ tương phản cao của Windows, <code class="rounded bg-violet-100 px-1">forced-color-adjust-none</code> giúp giữ đúng màu thương hiệu khi cần.</p>
+      </div>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Tra nhanh — bảng</p>
+        <p><code class="rounded bg-emerald-100 px-1">table-auto</code> cột co theo nội dung · <code class="rounded bg-emerald-100 px-1">table-fixed</code> cột đều nhau · <code class="rounded bg-emerald-100 px-1">border-collapse</code> gộp viền · <code class="rounded bg-emerald-100 px-1">border-separate</code> + <code class="rounded bg-emerald-100 px-1">border-spacing-2</code> viền tách có khoảng cách · <code class="rounded bg-emerald-100 px-1">caption-top</code> đưa chú thích lên trên.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer điều hướng ===== -->
+  <footer class="mx-auto mt-6 flex max-w-4xl flex-wrap justify-between gap-2 border-t border-gray-200 px-4 py-6">
+    <a class="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-100" href="06-hieu-ung-filter.html">← 5.4–5.5 Hiệu ứng</a>
+    <a class="rounded-lg bg-[#1D559F] px-4 py-2 text-sm text-white hover:bg-[#17457f]" href="08-du-an-bai-tap.html">Dự án &amp; Bài tập →</a>
+  </footer>
+
+</body>
+</html>

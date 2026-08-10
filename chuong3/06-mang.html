@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  3.6.1 — MẢNG (ARRAY)
+  ------------------------------------------------------------
+    1) Tạo & truy cập              7) sort — và cái bẫy nổi tiếng
+    2) Duyệt: for / of / forEach   8) reduce — gộp về một giá trị
+    3) Thêm/xoá (playground)       9) Destructuring
+    4) Tìm kiếm                   10) Spread ...
+    5) every / some / filter      11) Render mảng ra DOM (demo)
+    6) map / join / slice…        12) Mẹo & lỗi thường gặp
+  JS minh hoạ đặt cuối <body>.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.6.1 · Mảng (Array)</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI ===== */
+    .d-btn { background:#1D559F; color:#fff; border:none; border-radius:8px;
+             padding:8px 14px; font-size:.9rem; font-weight:600; cursor:pointer;
+             margin:3px 4px 3px 0; }
+    .d-btn:hover { background:#16407a; }
+    .d-btn.green { background:#04AA6D; } .d-btn.green:hover { background:#03875a; }
+    .d-btn.red   { background:#E63946; } .d-btn.red:hover   { background:#c02936; }
+    .d-out { background:#0f172a; color:#e6edf3; border-radius:10px;
+             font-family:"Cascadia Code",Consolas,monospace; font-size:.88rem;
+             padding:12px 14px; margin-top:12px; min-height:20px; white-space:pre-wrap; }
+    .d-out .ok  { color:#7ee787; }
+    .d-out .bad { color:#ff7b72; }
+    .d-out .hl  { color:#ffa657; }
+    /* trực quan hoá mảng thành dãy ô */
+    .d-array { display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
+    .d-array .o { min-width:52px; text-align:center; background:#eaf1fb; border:2px solid #1D559F;
+                  border-radius:8px; padding:8px 6px 4px; font-weight:700; color:#16407a; }
+    .d-array .o small { display:block; font-weight:400; color:#5b6472; font-size:.7rem; }
+    /* menu render demo */
+    .d-menu { list-style:none; margin:12px 0 0; padding:0; }
+    .d-menu li { display:flex; justify-content:space-between; background:#fff;
+                 border:1px solid #e3e8f0; border-radius:8px; padding:8px 14px; margin-bottom:6px; }
+    .d-menu .gia { color:#04AA6D; font-weight:700; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        3.6.1 Mảng
+      </nav>
+      <h1>Mảng (Array)</h1>
+      <p class="sub">Cấu trúc dữ liệu quan trọng nhất của web: danh sách món, danh sách sản phẩm,
+         danh sách việc… đều là mảng. Nắm chắc push/pop/splice, bộ ba hiện đại
+         <code>map</code>/<code>filter</code>/<code>reduce</code>, destructuring và spread.</p>
+      <div class="chips">
+        <span class="chip solid">3.6.1</span>
+        <span class="chip">Array</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Tạo &amp; truy cập</a></li>
+        <li><a href="#s2">Duyệt mảng</a></li>
+        <li><a href="#s3">Thêm / xoá (playground)</a></li>
+        <li><a href="#s4">Tìm kiếm</a></li>
+        <li><a href="#s5">every · some · filter</a></li>
+        <li><a href="#s6">map · join · slice · concat</a></li>
+        <li><a href="#s7">sort — cái bẫy nổi tiếng</a></li>
+        <li><a href="#s8">reduce</a></li>
+        <li><a href="#s9">Destructuring</a></li>
+        <li><a href="#s10">Spread ...</a></li>
+        <li><a href="#s11">Render mảng ra DOM</a></li>
+        <li><a href="#s12">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. TẠO & TRUY CẬP  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Tạo &amp; truy cập <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code><span class="k">let</span> a = [3, 7, 10];             <span class="c">// cách thường dùng: array literal [ ]</span>
+<span class="k">let</span> tapNham = [1, <span class="s">"hai"</span>, <span class="k">true</span>]; <span class="c">// phần tử được phép khác kiểu</span>
+
+a[0];          <span class="c">// 3   — chỉ số bắt đầu từ 0</span>
+a[a.length-1]; <span class="c">// 10  — phần tử cuối</span>
+a.length;      <span class="c">// 3   — số phần tử</span>
+a[1] = 99;     <span class="c">// gán đè: [3, 99, 10]</span>
+a[9];          <span class="c">// undefined — vượt biên KHÔNG báo lỗi (cẩn thận!)</span></code></pre>
+    </section>
+
+    <!-- ==========  2. DUYỆT  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Duyệt mảng <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code><span class="k">let</span> a = [3, 7, 10];
+
+<span class="k">for</span> (<span class="k">let</span> i = 0; i &lt; a.length; i++)  <span class="c">// ① for cổ điển — có chỉ số i</span>
+  console.log(i, a[i]);
+
+<span class="k">for</span> (<span class="k">let</span> x <span class="k">of</span> a)                      <span class="c">// ② for…of — gọn khi chỉ cần giá trị</span>
+  console.log(x);
+
+a.forEach((value, index) =&gt; {          <span class="c">// ③ forEach — callback nhận (giá trị, chỉ số)</span>
+  console.log(index, value);
+});</code></pre>
+    </section>
+
+    <!-- ==========  3. THÊM / XOÁ  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Thêm / xoá phần tử <span class="tag-base">Cơ bản</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Phương thức</th><th>Công dụng</th><th>Trả về</th></tr></thead>
+        <tbody>
+          <tr><td><code>push(x)</code> / <code>pop()</code></td><td>Thêm / lấy phần tử ở <strong>cuối</strong></td><td>length mới / phần tử bị lấy</td></tr>
+          <tr><td><code>unshift(x)</code> / <code>shift()</code></td><td>Thêm / lấy phần tử ở <strong>đầu</strong></td><td>length mới / phần tử bị lấy</td></tr>
+          <tr><td><code>splice(i, n, …)</code></td><td>Từ vị trí <code>i</code> xoá <code>n</code> phần tử, chèn thêm các phần tử phía sau (nếu có)</td><td>mảng các phần tử bị xoá</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Playground — thao tác trực tiếp lên mảng</div>
+        <div class="demo-body">
+          <button class="d-btn green" id="d-btn-push">push("mới")</button>
+          <button class="d-btn red" id="d-btn-pop">pop()</button>
+          <button class="d-btn green" id="d-btn-unshift">unshift("đầu")</button>
+          <button class="d-btn red" id="d-btn-shift">shift()</button>
+          <button class="d-btn" id="d-btn-splice">splice(1, 1)</button>
+          <button class="d-btn" style="background:#5b6472" id="d-btn-reset">↺ Reset</button>
+          <div class="d-array" id="d-array"></div>
+          <div class="d-out" id="d-out-arr">// mảng khởi đầu: ["cam", "táo", "ổi"] — bấm các nút để biến đổi</div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p>Câu trắc nghiệm kinh điển: <code>["green"]</code> rồi <code>push("blue")</code> rồi
+        <code>unshift("red")</code> → <code>["red", "green", "blue"]</code> — push vào cuối,
+        unshift chen vào đầu.</p>
+      </div>
+    </section>
+
+    <!-- ==========  4. TÌM KIẾM  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Tìm kiếm <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code><span class="k">let</span> a = [3, 2, 4, 2, 5, 2, 7];
+
+a.indexOf(2);       <span class="c">// 1  — vị trí xuất hiện ĐẦU tiên (không thấy → -1)</span>
+a.lastIndexOf(2);   <span class="c">// 5  — vị trí xuất hiện CUỐI cùng</span>
+a.includes(2);      <span class="c">// true — có tồn tại không (gọn nhất để kiểm tra)</span>
+a.find(x =&gt; x &gt; 3); <span class="c">// 4  — PHẦN TỬ đầu tiên thoả điều kiện</span>
+a.findIndex(x =&gt; x &gt; 3); <span class="c">// 2 — CHỈ SỐ của phần tử đó</span></code></pre>
+
+      <div class="note">
+        <p>Mẹo từ đề trắc nghiệm: phần tử xuất hiện <em>đúng một lần</em> khi
+        <code>indexOf(x) === lastIndexOf(x)</code> — với <code>[2,3,2,3,4,5]</code> lọc theo điều kiện
+        này được <code>[4, 5]</code>.</p>
+      </div>
+    </section>
+
+    <!-- ==========  5. EVERY / SOME / FILTER  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> <code>every</code> · <code>some</code> · <code>filter</code> <span class="tag-adv">Nâng cao</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Phương thức</th><th>Câu hỏi nó trả lời</th><th>Trả về</th></tr></thead>
+        <tbody>
+          <tr><td><code>every(fn)</code></td><td><strong>Tất cả</strong> phần tử đều thoả?</td><td><code>true</code>/<code>false</code></td></tr>
+          <tr><td><code>some(fn)</code></td><td><strong>Tồn tại</strong> phần tử thoả?</td><td><code>true</code>/<code>false</code></td></tr>
+          <tr><td><code>filter(fn)</code></td><td>Lấy <strong>các</strong> phần tử thoả</td><td>mảng <strong>mới</strong></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="k">const</span> diem = [8, 6.5, 9, 4, 7];
+
+diem.every(d =&gt; d &gt;= 5);   <span class="c">// false — có bạn 4 điểm</span>
+diem.some(d =&gt; d &gt;= 9);    <span class="c">// true  — có ít nhất một điểm 9</span>
+diem.filter(d =&gt; d &gt;= 5);  <span class="c">// [8, 6.5, 9, 7] — danh sách đậu</span></code></pre>
+    </section>
+
+    <!-- ==========  6. MAP / JOIN / SLICE / CONCAT  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> <code>map</code> · <code>join</code> · <code>slice</code> · <code>concat</code> <span class="tag-adv">Nâng cao</span></h2>
+
+      <pre class="code"><code><span class="k">let</span> a = [3, 2, 4];
+
+a.map(x =&gt; x * 2);      <span class="c">// [6, 4, 8]  — ánh xạ từng phần tử → mảng MỚI cùng độ dài</span>
+a.join(<span class="s">" - "</span>);          <span class="c">// "3 - 2 - 4" — nối thành CHUỖI</span>
+a.slice(1);             <span class="c">// [2, 4]     — cắt từ vị trí 1 → mảng mới (gốc nguyên)</span>
+a.slice(-2);            <span class="c">// [2, 4]     — số âm: đếm từ CUỐI (câu trắc nghiệm quen!)</span>
+a.concat([9, 8]);       <span class="c">// [3, 2, 4, 9, 8] — nối 2 mảng</span>
+a.reverse();            <span class="c">// [4, 2, 3]  — ⚠ đảo TRỰC TIẾP mảng gốc</span></code></pre>
+
+      <div class="callout info">
+        <p><strong>Nhóm "hiền" vs nhóm "dữ":</strong> <code>map/filter/slice/concat</code> trả về
+        mảng <em>mới</em>, mảng gốc nguyên vẹn; còn <code>push/pop/splice/sort/reverse</code>
+        <em>sửa trực tiếp</em> mảng gốc. Phân biệt rõ để khỏi "mất dữ liệu oan".</p>
+      </div>
+    </section>
+
+    <!-- ==========  7. SORT  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> <code>sort</code> — cái bẫy nổi tiếng <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Mặc định <code>sort()</code> so sánh theo <strong>bảng chữ cái</strong> (chuỗi)
+         — sắp số sẽ sai!</p>
+
+      <pre class="code"><code>[10, 2, 1].sort();               <span class="c">// [1, 10, 2]  ✗ SAI về số! ("10" đứng trước "2")</span>
+[10, 2, 1].sort((a, b) =&gt; a - b); <span class="c">// [1, 2, 10]  ✓ tăng dần — truyền hàm so sánh</span>
+[10, 2, 1].sort((a, b) =&gt; b - a); <span class="c">// [10, 2, 1]  ✓ giảm dần</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — sort mặc định vs sort có hàm so sánh</div>
+        <div class="demo-body">
+          <button class="d-btn red" id="d-btn-sortbad">[10, 2, 1].sort()</button>
+          <button class="d-btn green" id="d-btn-sortok">[10, 2, 1].sort((a,b) =&gt; a - b)</button>
+          <div class="d-out" id="d-out-sort">// bấm hai nút và so sánh</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  8. REDUCE  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> <code>reduce</code> — gộp cả mảng về một giá trị <span class="tag-adv">Nâng cao</span></h2>
+
+      <pre class="code"><code><span class="k">let</span> a = [3, 2, 4, 2, 5, 2, 7];
+
+<span class="c">// (tong, x): tong = kết quả cộng dồn, x = phần tử hiện tại, 0 = giá trị khởi đầu</span>
+a.reduce((tong, x) =&gt; tong + x, 0);   <span class="c">// 25 — tính tổng</span>
+
+<span class="c">// ứng dụng thật: tổng tiền giỏ hàng</span>
+<span class="k">const</span> gio = [{ ten: <span class="s">"Cà phê"</span>, gia: 25000 }, { ten: <span class="s">"Trà đào"</span>, gia: 35000 }];
+<span class="k">const</span> tongTien = gio.reduce((s, mon) =&gt; s + mon.gia, 0);   <span class="c">// 60000</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — reduce từng bước</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-reduce">Xem reduce cộng dồn [3,2,4,2,5,2,7]</button>
+          <div class="d-out" id="d-out-reduce">// nhìn "tong" lớn dần qua từng bước</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  9. DESTRUCTURING  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Destructuring — trích phần tử vào biến <span class="tag-adv">ES6</span></h2>
+
+      <pre class="code"><code><span class="k">const</span> [first, , third] = [1, 2, 3];   <span class="c">// first=1, third=3 (bỏ qua phần tử giữa)</span>
+<span class="k">const</span> [head, ...rest] = [1, 2, 3, 4]; <span class="c">// head=1, rest=[2, 3, 4]</span>
+
+<span class="c">// hoán đổi 2 biến không cần biến tạm:</span>
+<span class="k">let</span> a = 1, b = 2;
+[a, b] = [b, a];                       <span class="c">// a=2, b=1</span></code></pre>
+    </section>
+
+    <!-- ==========  10. SPREAD  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Spread <code>...</code> — trải mảng/object ra <span class="tag-adv">ES6</span></h2>
+
+      <pre class="code"><code><span class="k">const</span> a = [1, 2], b = [3, 4];
+
+<span class="k">const</span> gop    = [...a, ...b];      <span class="c">// [1, 2, 3, 4]  — gộp mảng</span>
+<span class="k">const</span> banSao = [...a];            <span class="c">// [1, 2]        — bản sao nông (sửa không ảnh hưởng a)</span>
+Math.max(...[5, 9, 3]);            <span class="c">// 9 — trải mảng thành các đối số</span>
+
+<span class="k">const</span> sv  = { ten: <span class="s">"An"</span>, tuoi: 20 };
+<span class="k">const</span> sv2 = { ...sv, tuoi: 21 };  <span class="c">// {ten:"An", tuoi:21} — copy & ghi đè 1 trường</span></code></pre>
+
+      <div class="note">
+        <p><strong>Rest vs Spread — cùng ký hiệu <code>...</code>, ngược chiều nhau:</strong>
+        rest <em>gom</em> nhiều thứ thành mảng (bên trái phép gán / trong tham số hàm);
+        spread <em>trải</em> mảng thành nhiều thứ (bên phải / khi gọi hàm). Đây chính là cách
+        sao chép object an toàn đã hứa ở bài 3.2.</p>
+      </div>
+    </section>
+
+    <!-- ==========  11. RENDER RA DOM  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Tổng hợp: render mảng ra DOM <span class="tag-adv">Chuẩn nghề</span></h2>
+      <p class="lead">Mẫu code gặp lại suốt đời làm web: <code>mảng dữ liệu → filter → map →
+         join → innerHTML</code>. Xem trước kỹ thuật của bài 3.8 và dự án "Góc Cà Phê".</p>
+
+      <pre class="code"><code><span class="k">const</span> menu = [
+  { ten: <span class="s">"Cà phê sữa"</span>, gia: 25000 },
+  { ten: <span class="s">"Bạc xỉu"</span>,    gia: 29000 },
+  { ten: <span class="s">"Trà đào"</span>,    gia: 35000 },
+  { ten: <span class="s">"Nước cam"</span>,   gia: 40000 },
+];
+
+ul.innerHTML = menu
+  .filter(m =&gt; m.gia &lt;= 35000)          <span class="c">// 1. lọc theo điều kiện</span>
+  .map(m =&gt; `&lt;li&gt;${m.ten} — ${m.gia}đ&lt;/li&gt;`) <span class="c">// 2. mỗi object → chuỗi &lt;li&gt;</span>
+  .join(<span class="s">""</span>);                             <span class="c">// 3. nối lại rồi gán một lần</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — menu "Góc Cà Phê" lọc theo giá</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-menu-all">Hiện cả menu</button>
+          <button class="d-btn green" id="d-btn-menu-re">Chỉ món ≤ 30.000đ</button>
+          <ul class="d-menu" id="d-menu"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  12. MẸO & LỖI  ========== -->
+    <section class="block" id="s12">
+      <h2><span class="num">12</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout danger"><p><strong>Lỗi 1.</strong> <code>[10, 2, 1].sort()</code> →
+        <code>[1, 10, 2]</code>. Sắp số <strong>luôn</strong> truyền hàm so sánh
+        <code>(a, b) =&gt; a - b</code>.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> Nhầm nhóm "hiền/dữ": tưởng
+        <code>sort</code>/<code>reverse</code> trả mảng mới (thật ra sửa gốc), tưởng
+        <code>map</code>/<code>filter</code> sửa gốc (thật ra tạo mới).</p></div>
+      <div class="callout warn"><p><strong>Lỗi 3.</strong> So sánh mảng bằng <code>===</code>:
+        <code>[1,2] === [1,2]</code> → <code>false</code> (hai địa chỉ khác nhau — xem bài 3.2).</p></div>
+      <div class="callout tip"><p><strong>Mẹo.</strong> <code>typeof []</code> là
+        <code>"object"</code> — kiểm tra mảng bằng <code>Array.isArray(x)</code>. Chuỗi xử lý
+        dữ liệu hiện đại: <code>filter → map → join/reduce</code>.</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="05-ham.html"><small>← Bài trước</small>3.5 · Hàm</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="07-chuoi-date-doi-tuong.html"><small>Bài tiếp →</small>3.6.2-4 · Chuỗi · Date · Object</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- ===== JS MINH HOẠ CỦA BÀI (cuối body) ===== -->
+  <script>
+    'use strict';
+
+    /* ---- Mục 3: playground thêm/xoá ---- */
+    let arr = ["cam", "táo", "ổi"];              // mảng đang thao tác
+    const outArr = document.getElementById("d-out-arr");
+
+    function veMang(thongBao) {                  // vẽ mảng thành dãy ô + ghi log
+      document.getElementById("d-array").innerHTML = arr.length
+        ? arr.map((v, i) => `<div class="o">${v}<small>[${i}]</small></div>`).join("")
+        : '<em style="color:#5b6472">(mảng rỗng)</em>';
+      if (thongBao) outArr.innerHTML = thongBao + `\nHiện tại: [${arr.map(v => `"${v}"`).join(", ")}]  (length = ${arr.length})`;
+    }
+    document.getElementById("d-btn-push").addEventListener("click", () => {
+      const len = arr.push("mới");
+      veMang(`push("mới") → trả về length mới = <span class="ok">${len}</span>`);
+    });
+    document.getElementById("d-btn-pop").addEventListener("click", () => {
+      if (!arr.length) return veMang('<span class="bad">Mảng rỗng — không pop được nữa.</span>');
+      const bi = arr.pop();
+      veMang(`pop() → trả về phần tử bị lấy: <span class="hl">"${bi}"</span>`);
+    });
+    document.getElementById("d-btn-unshift").addEventListener("click", () => {
+      const len = arr.unshift("đầu");
+      veMang(`unshift("đầu") → chen vào ĐẦU, length mới = <span class="ok">${len}</span>`);
+    });
+    document.getElementById("d-btn-shift").addEventListener("click", () => {
+      if (!arr.length) return veMang('<span class="bad">Mảng rỗng — không shift được nữa.</span>');
+      const bi = arr.shift();
+      veMang(`shift() → lấy phần tử ĐẦU: <span class="hl">"${bi}"</span>`);
+    });
+    document.getElementById("d-btn-splice").addEventListener("click", () => {
+      if (arr.length < 2) return veMang('<span class="bad">Cần ít nhất 2 phần tử để splice(1, 1).</span>');
+      const bi = arr.splice(1, 1);               // từ vị trí 1, xoá 1 phần tử
+      veMang(`splice(1, 1) → xoá tại vị trí 1, trả về mảng bị xoá: <span class="hl">["${bi}"]</span>`);
+    });
+    document.getElementById("d-btn-reset").addEventListener("click", () => {
+      arr = ["cam", "táo", "ổi"];
+      veMang("↺ Đã reset về mảng ban đầu.");
+    });
+    veMang();                                    // vẽ lần đầu khi nạp trang
+
+    /* ---- Mục 7: bẫy sort ---- */
+    document.getElementById("d-btn-sortbad").addEventListener("click", () => {
+      document.getElementById("d-out-sort").innerHTML =
+        `[10, 2, 1].sort() → <span class="bad">[${[10, 2, 1].sort()}]</span>  ✗ so theo BẢNG CHỮ CÁI: "1" &lt; "10" &lt; "2"`;
+    });
+    document.getElementById("d-btn-sortok").addEventListener("click", () => {
+      document.getElementById("d-out-sort").innerHTML =
+        `[10, 2, 1].sort((a, b) => a - b) → <span class="ok">[${[10, 2, 1].sort((a, b) => a - b)}]</span>  ✓ so theo SỐ`;
+    });
+
+    /* ---- Mục 8: reduce từng bước ---- */
+    document.getElementById("d-btn-reduce").addEventListener("click", () => {
+      const a = [3, 2, 4, 2, 5, 2, 7];
+      let buoc = [];
+      const tongCuoi = a.reduce((tong, x, i) => {
+        buoc.push(`bước ${i + 1}: tong(${tong}) + ${x} = ${tong + x}`);
+        return tong + x;
+      }, 0);
+      document.getElementById("d-out-reduce").innerHTML =
+        buoc.join("\n") + `\n→ kết quả: <span class="ok">${tongCuoi}</span>`;
+    });
+
+    /* ---- Mục 11: render menu ---- */
+    const menu = [
+      { ten: "Cà phê sữa", gia: 25000 },
+      { ten: "Bạc xỉu",    gia: 29000 },
+      { ten: "Trà đào",    gia: 35000 },
+      { ten: "Nước cam",   gia: 40000 },
+    ];
+    function renderMenu(ds) {                    // hàm thuần nhận mảng, trả chuỗi HTML
+      return ds.map(m =>
+        `<li><span>${m.ten}</span><span class="gia">${m.gia.toLocaleString("vi-VN")}đ</span></li>`
+      ).join("");
+    }
+    document.getElementById("d-btn-menu-all").addEventListener("click", () => {
+      document.getElementById("d-menu").innerHTML = renderMenu(menu);
+    });
+    document.getElementById("d-btn-menu-re").addEventListener("click", () => {
+      document.getElementById("d-menu").innerHTML = renderMenu(menu.filter(m => m.gia <= 30000));
+    });
+  </script>
+</body>
+</html>

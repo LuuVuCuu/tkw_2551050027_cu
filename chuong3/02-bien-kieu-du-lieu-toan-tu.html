@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  3.2 — BIẾN · KIỂU DỮ LIỆU · TOÁN TỬ
+  ------------------------------------------------------------
+  Nền tảng số 1 của JavaScript:
+    1) Kiểu động & typeof (demo)   6) Toán tử số học & gán
+    2) Kiểu nguyên thuỷ            7) So sánh == vs === (demo)
+    3) Kiểu tham chiếu (demo)      8) Logic && || ! · ba ngôi
+    4) Biến: var / let / const     9) Truthy & Falsy (demo)
+    5) Phạm vi (scope)            10) Mẹo & lỗi thường gặp
+  JS minh hoạ đặt cuối <body>.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.2 · Biến · Kiểu dữ liệu · Toán tử</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI ===== */
+    .d-btn { background:#1D559F; color:#fff; border:none; border-radius:8px;
+             padding:9px 16px; font-size:.92rem; font-weight:600; cursor:pointer;
+             margin:3px 4px 3px 0; }
+    .d-btn:hover { background:#16407a; }
+    .d-field { padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px;
+               font-size:.95rem; margin:3px 4px 3px 0; font-family:Consolas,monospace; }
+    .d-out { background:#0f172a; color:#e6edf3; border-radius:10px;
+             font-family:"Cascadia Code",Consolas,monospace; font-size:.88rem;
+             padding:12px 14px; margin-top:12px; min-height:20px; white-space:pre-wrap; }
+    .d-out .ok  { color:#7ee787; }
+    .d-out .bad { color:#ff7b72; }
+    select.d-field { font-family:inherit; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        3.2 Biến · Kiểu dữ liệu · Toán tử
+      </nav>
+      <h1>Biến · Kiểu dữ liệu · Toán tử</h1>
+      <p class="sub">JavaScript là ngôn ngữ <strong>kiểu động</strong>: không khai báo kiểu, kiểu tự xác định
+         lúc chạy. Bài này nắm chắc primitive vs reference, let/const, bẫy <code>==</code> vs
+         <code>===</code> và bộ 6 giá trị falsy.</p>
+      <div class="chips">
+        <span class="chip solid">3.2</span>
+        <span class="chip">JavaScript</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Kiểu động &amp; typeof</a></li>
+        <li><a href="#s2">Kiểu nguyên thuỷ (primitive)</a></li>
+        <li><a href="#s3">Kiểu tham chiếu (reference)</a></li>
+        <li><a href="#s4">Biến: var / let / const</a></li>
+        <li><a href="#s5">Phạm vi (scope)</a></li>
+        <li><a href="#s6">Toán tử số học &amp; gán</a></li>
+        <li><a href="#s7">So sánh == vs ===</a></li>
+        <li><a href="#s8">Logic &amp;&amp; || ! · ba ngôi</a></li>
+        <li><a href="#s9">Truthy &amp; Falsy</a></li>
+        <li><a href="#s10">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. KIỂU ĐỘNG & TYPEOF  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Kiểu động &amp; <code>typeof</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Cùng một biến có thể lần lượt chứa số, chuỗi, boolean… Kiểm tra kiểu hiện tại
+         bằng toán tử <code>typeof</code>.</p>
+
+      <pre class="code"><code><span class="k">let</span> x = 5;          <span class="c">// typeof x → "number"</span>
+x = <span class="s">"năm"</span>;           <span class="c">// typeof x → "string"  (cùng biến, kiểu đã đổi!)</span>
+x = <span class="k">true</span>;            <span class="c">// typeof x → "boolean"</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — máy soi kiểu dữ liệu</div>
+        <div class="demo-body">
+          <p style="margin-top:0">Gõ một <em>biểu thức</em> bất kỳ (ví dụ <code>5</code>, <code>"5"</code>,
+             <code>true</code>, <code>[1,2]</code>, <code>{a:1}</code>, <code>null</code>, <code>1/0</code>):</p>
+          <input class="d-field" id="d-bt" value='"Góc Cà Phê"' size="28">
+          <button class="d-btn" id="d-btn-typeof">Soi typeof</button>
+          <div class="d-out" id="d-out-typeof">// kết quả hiện ở đây</div>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <p><strong>Hai kết quả "kỳ quặc" nổi tiếng:</strong> <code>typeof null</code> →
+        <code>"object"</code> (lỗi lịch sử của JS, được giữ vĩnh viễn) và <code>typeof NaN</code> →
+        <code>"number"</code> (NaN = "Not a Number" nhưng vẫn thuộc kiểu number!).</p>
+      </div>
+    </section>
+
+    <!-- ==========  2. PRIMITIVE  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Kiểu nguyên thuỷ (primitive) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Lưu <strong>trực tiếp giá trị</strong> — gán sang biến khác là <em>sao chép giá trị</em>.</p>
+
+      <table class="syntax">
+        <thead><tr><th>Kiểu</th><th>Ý nghĩa</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>String</code></td><td>Chuỗi ký tự</td><td><code>"Hà Nội"</code>, <code>'xin chào'</code></td></tr>
+          <tr><td><code>Number</code></td><td>Số nguyên lẫn số thực (chung một kiểu)</td><td><code>42</code>, <code>3.14</code>, <code>NaN</code>, <code>Infinity</code></td></tr>
+          <tr><td><code>Boolean</code></td><td>Đúng / sai</td><td><code>true</code>, <code>false</code></td></tr>
+          <tr><td><code>Undefined</code></td><td>Đã khai báo, <em>chưa</em> có giá trị</td><td><code>let a;  // a === undefined</code></td></tr>
+          <tr><td><code>null</code></td><td>Rỗng <em>có chủ đích</em> (người viết tự gán)</td><td><code>let b = null;</code></td></tr>
+          <tr><td><code>Symbol</code> <span class="tag-adv">ES6</span></td><td>Giá trị duy nhất, không trùng lặp</td><td><code>Symbol("id")</code></td></tr>
+          <tr><td><code>BigInt</code> <span class="tag-adv">ES2020</span></td><td>Số nguyên rất lớn</td><td><code>9007199254740993n</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <p><strong><code>undefined</code> vs <code>null</code>:</strong> <code>undefined</code> là
+        "chưa kịp có gì" (JS tự gán); <code>null</code> là "cố ý để trống" (người viết gán).
+        So sánh: <code>null == undefined</code> → <code>true</code> nhưng
+        <code>null === undefined</code> → <code>false</code>.</p>
+      </div>
+    </section>
+
+    <!-- ==========  3. REFERENCE  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Kiểu tham chiếu (reference) <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Object, Array, Function, Date, Map, Set… lưu <strong>địa chỉ tham chiếu</strong> —
+         gán sang biến khác là <em>sao chép địa chỉ</em>, hai biến cùng trỏ một chỗ.</p>
+
+      <pre class="code"><code><span class="c">// PRIMITIVE — sao chép GIÁ TRỊ: b nhận bản sao, sửa b không đụng a</span>
+<span class="k">let</span> a = 10;
+<span class="k">let</span> b = a;
+b = 99;
+console.log(a);        <span class="c">// 10  (a không đổi)</span>
+
+<span class="c">// REFERENCE — sao chép ĐỊA CHỈ: sv2 và sv1 cùng trỏ MỘT object</span>
+<span class="k">let</span> sv1 = { ten: <span class="s">"An"</span>, tuoi: 20 };
+<span class="k">let</span> sv2 = sv1;
+sv2.tuoi = 99;
+console.log(sv1.tuoi); <span class="c">// 99  (!!! sv1 cũng đổi theo)</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — bẫy sao chép object</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-ref">Chạy thí nghiệm value vs reference</button>
+          <div class="d-out" id="d-out-ref">// bấm để xem primitive và object khác nhau thế nào</div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p><strong>Muốn sao chép object thật sự?</strong> Dùng spread:
+        <code>let sv2 = { ...sv1 };</code> (bản sao nông — học kỹ ở bài 3.6). Đây là nguồn gốc
+        của rất nhiều lỗi khó hiểu ở người mới — hãy nhớ demo trên.</p>
+      </div>
+    </section>
+
+    <!-- ==========  4. VAR / LET / CONST  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Biến: <code>var</code> / <code>let</code> / <code>const</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Ba từ khoá khai báo biến — nhưng code hiện đại chỉ dùng hai.</p>
+
+      <table class="syntax">
+        <thead><tr><th>Từ khoá</th><th>Phạm vi</th><th>Gán lại?</th><th>Khuyến nghị</th></tr></thead>
+        <tbody>
+          <tr><td><code>var</code></td><td>Theo <strong>hàm</strong> (function scope), bị hoisting</td><td>Được</td><td>✗ Không dùng trong code mới</td></tr>
+          <tr><td><code>let</code></td><td>Theo <strong>khối</strong> <code>{ }</code> (block scope)</td><td>Được</td><td>✓ Khi cần gán lại</td></tr>
+          <tr><td><code>const</code></td><td>Theo khối <code>{ }</code></td><td><strong>Không</strong></td><td>✓ <strong>Mặc định dùng const</strong></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Quy tắc đặt tên</h3>
+      <ul>
+        <li><strong>Phân biệt hoa/thường</strong>; không trùng từ khoá (<code>var</code>, <code>function</code>, <code>break</code>…).</li>
+        <li>Bắt đầu bằng <strong>chữ cái</strong>, <code>_</code> hoặc <code>$</code> — không bắt đầu bằng chữ số.</li>
+        <li>Quy ước <strong>camelCase</strong>: <code>firstName</code>, <code>totalPrice</code>, <code>giaSanPham</code>.</li>
+      </ul>
+
+      <div class="callout warn">
+        <p><strong><code>const</code> với object/array:</strong> không gán lại được biến, nhưng
+        <strong>vẫn sửa được nội dung bên trong</strong>:
+        <code>const a = [1]; a.push(2); ✓</code> — còn <code>a = [9]; ✗ TypeError</code>.
+        <code>const</code> khoá "địa chỉ", không khoá "ruột".</p>
+      </div>
+    </section>
+
+    <!-- ==========  5. SCOPE  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Phạm vi (scope) <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Biến "sống" ở đâu thì chỉ dùng được ở đó. <code>var</code> rò rỉ ra ngoài khối —
+         lý do chính khiến nó bị khai tử.</p>
+
+      <pre class="code"><code><span class="k">function</span> testScope() {
+  <span class="k">if</span> (<span class="k">true</span>) {
+    <span class="k">var</span> a = 1;         <span class="c">// var: phạm vi THEO HÀM</span>
+    <span class="k">let</span> b = 2;         <span class="c">// let: phạm vi THEO KHỐI { }</span>
+    <span class="k">const</span> c = 3;
+  }
+  console.log(a);        <span class="c">// 1   → var "rò" ra ngoài khối if!</span>
+  console.log(b);        <span class="c">// ✗ ReferenceError: b is not defined</span>
+  console.log(c);        <span class="c">// ✗ ReferenceError: c is not defined</span>
+}</code></pre>
+
+      <div class="note">
+        <p><strong>Biến toàn cục vs cục bộ:</strong> khai báo <em>ngoài</em> mọi hàm → toàn cục
+        (mọi nơi truy cập được, hạn chế dùng); khai báo <em>trong</em> hàm/khối → cục bộ.
+        Quy ước hiện đại: <strong>mặc định <code>const</code></strong>, cần gán lại mới dùng
+        <code>let</code>, <strong>tránh <code>var</code></strong>.</p>
+      </div>
+    </section>
+
+    <!-- ==========  6. TOÁN TỬ SỐ HỌC & GÁN  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Toán tử số học &amp; gán <span class="tag-base">Cơ bản</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Nhóm</th><th>Toán tử</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td>Số học</td><td><code>+ &nbsp;- &nbsp;* &nbsp;/ &nbsp;%</code> (chia dư) &nbsp;<code>**</code> (luỹ thừa)</td><td><code>7 % 2 → 1</code>, <code>2 ** 10 → 1024</code></td></tr>
+          <tr><td>Tăng/giảm</td><td><code>++ &nbsp;--</code></td><td><code>i++</code> (dùng xong mới tăng), <code>++i</code> (tăng rồi mới dùng)</td></tr>
+          <tr><td>Gán</td><td><code>= &nbsp;+= &nbsp;-= &nbsp;*= &nbsp;/= &nbsp;%=</code></td><td><code>x += 5</code> ⇔ <code>x = x + 5</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn">
+        <p><strong>Dấu <code>+</code> hai vai:</strong> gặp chuỗi là nó <em>nối chuỗi</em> chứ không cộng:
+        <code>"5" + 3</code> → <code>"53"</code>, nhưng <code>"5" - 3</code> → <code>2</code>
+        (trừ thì lại ép về số!). Muốn cộng số từ ô input, hãy đổi kiểu trước bằng
+        <code>Number()</code> / <code>parseFloat()</code> — vì <code>input.value</code> luôn là <strong>chuỗi</strong>.</p>
+      </div>
+    </section>
+
+    <!-- ==========  7. == VS ===  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> So sánh <code>==</code> vs <code>===</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>==</code> <strong>ép kiểu</strong> trước khi so sánh → kết quả "bất ngờ".
+         <code>===</code> so sánh cả <strong>giá trị và kiểu</strong> → dự đoán được.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — máy so sánh 2 giá trị</div>
+        <div class="demo-body">
+          <select class="d-field" id="d-ss">
+            <option value='0|""'>0 và "" (chuỗi rỗng)</option>
+            <option value='1|"1"'>1 và "1"</option>
+            <option value='null|undefined'>null và undefined</option>
+            <option value='0|false'>0 và false</option>
+            <option value='"5"|5'>"5" và 5</option>
+            <option value='NaN|NaN'>NaN và NaN</option>
+          </select>
+          <button class="d-btn" id="d-btn-ss">So sánh bằng == và ===</button>
+          <div class="d-out" id="d-out-ss">// chọn cặp giá trị rồi bấm so sánh</div>
+        </div>
+      </div>
+
+      <pre class="code"><code>0 == <span class="s">""</span>          <span class="c">// true  (!) — "" bị ép thành 0</span>
+1 == <span class="s">"1"</span>         <span class="c">// true  (!) — "1" bị ép thành 1</span>
+<span class="k">null</span> == <span class="k">undefined</span> <span class="c">// true  (!)</span>
+
+0 === <span class="s">""</span>         <span class="c">// false — khác kiểu là false ngay</span>
+1 === <span class="s">"1"</span>        <span class="c">// false</span>
+5 === 5           <span class="c">// true  — cùng kiểu, cùng giá trị</span></code></pre>
+
+      <div class="callout danger">
+        <p><strong>Quy ước nghề: luôn dùng <code>===</code> / <code>!==</code>.</strong>
+        Chỉ dùng <code>==</code> khi có lý do rõ ràng (gần như không bao giờ). Đây cũng là
+        câu trắc nghiệm kinh điển: với <code>var x = 5</code> thì <code>x === "5"</code> →
+        <code>false</code>.</p>
+      </div>
+    </section>
+
+    <!-- ==========  8. LOGIC & BA NGÔI  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Logic <code>&amp;&amp;</code> <code>||</code> <code>!</code> · toán tử ba ngôi <span class="tag-base">Cơ bản</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Toán tử</th><th>Ý nghĩa</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>&amp;&amp;</code></td><td>VÀ — đúng khi cả hai đúng</td><td><code>tuoi &gt;= 18 &amp;&amp; coGPLX</code></td></tr>
+          <tr><td><code>||</code></td><td>HOẶC — đúng khi ít nhất một đúng</td><td><code>laAdmin || laChuBai</code></td></tr>
+          <tr><td><code>!</code></td><td>PHỦ ĐỊNH — đảo đúng/sai</td><td><code>!daDangNhap</code></td></tr>
+          <tr><td><code>?:</code></td><td>Ba ngôi — if/else viết gọn trong biểu thức</td><td><code>diem &gt;= 5 ? "Đậu" : "Rớt"</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">// ba ngôi: điều_kiện ? giá_trị_khi_đúng : giá_trị_khi_sai</span>
+<span class="k">const</span> ketQua = diem &gt;= 5 ? <span class="s">"Đậu"</span> : <span class="s">"Rớt"</span>;
+
+<span class="c">// && và || còn dùng để "chọn giá trị" (short-circuit):</span>
+<span class="k">const</span> ten = tenNhap || <span class="s">"Khách"</span>;   <span class="c">// tenNhap rỗng/falsy → dùng "Khách"</span></code></pre>
+    </section>
+
+    <!-- ==========  9. TRUTHY / FALSY  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Truthy &amp; Falsy <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Trong <code>if</code>, mọi giá trị đều bị quy về đúng/sai. Chỉ có đúng
+         <strong>6 giá trị falsy</strong> — thuộc lòng chúng là hết bẫy.</p>
+
+      <pre class="code"><code><span class="c">// 6 giá trị FALSY (coi như false):</span>
+<span class="k">false</span>   0   <span class="s">""</span>   <span class="k">null</span>   <span class="k">undefined</span>   NaN
+
+<span class="c">// MỌI giá trị còn lại đều TRUTHY — kể cả những "kẻ gây bất ngờ":</span>
+<span class="s">"0"</span>   <span class="s">"false"</span>   [ ]   { }   <span class="c">// đều truthy!</span>
+
+<span class="c">// Nhờ vậy viết được gọn:</span>
+<span class="k">if</span> (name) { ... }        <span class="c">// "nếu name khác rỗng/null/undefined"</span>
+<span class="k">if</span> (arr.length) { ... }  <span class="c">// "nếu mảng không rỗng" (0 là falsy)</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — máy kiểm tra truthy / falsy</div>
+        <div class="demo-body">
+          <input class="d-field" id="d-tf" value='"0"' size="20">
+          <button class="d-btn" id="d-btn-tf">Truthy hay Falsy?</button>
+          <div class="d-out" id="d-out-tf">// thử lần lượt: 0, "0", "", [], {}, null, NaN, "false"</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  10. MẸO & LỖI  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout warn"><p><strong>Lỗi 1.</strong> Quên rằng <code>input.value</code> là
+        <strong>chuỗi</strong>: <code>"5" + 3 → "53"</code>. Luôn <code>parseFloat()</code> /
+        <code>Number()</code> trước khi tính toán.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> Gán biến chưa khai báo
+        (<code>num = 5;</code>) → vô tình tạo biến toàn cục. Bật <code>'use strict'</code>
+        để JS báo lỗi ngay.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 3.</strong> Sao chép object bằng <code>=</code>
+        rồi ngạc nhiên vì "sửa một cái, đổi cả hai" — xem lại mục 3 (reference).</p></div>
+      <div class="callout tip"><p><strong>Mẹo.</strong> Mặc định <code>const</code> → cần gán lại
+        mới <code>let</code> → không bao giờ <code>var</code>. Luôn <code>===</code>. Thuộc lòng
+        6 giá trị falsy.</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="01-tong-quan-javascript.html"><small>← Bài trước</small>3.1 · Tổng quan JavaScript</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="03-xuat-du-lieu.html"><small>Bài tiếp →</small>3.3 · Xuất dữ liệu</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- ===== JS MINH HOẠ CỦA BÀI (cuối body) ===== -->
+  <script>
+    'use strict';
+
+    /* ---- Mục 1: máy soi typeof ---- */
+    document.getElementById("d-btn-typeof").addEventListener("click", () => {
+      const bieuThuc = document.getElementById("d-bt").value;
+      const out = document.getElementById("d-out-typeof");
+      try {
+        // eval chỉ dùng cho DEMO HỌC TẬP — không dùng với dữ liệu người lạ!
+        const giaTri = eval("(" + bieuThuc + ")");
+        out.innerHTML = `typeof (${bieuThuc})  →  <span class="ok">"${typeof giaTri}"</span>` +
+          (Array.isArray(giaTri) ? '\n(mảng là object — kiểm tra riêng bằng <span class="ok">Array.isArray()</span>)' : "") +
+          (giaTri === null ? '\n(typeof null → "object" là lỗi lịch sử của JS)' : "");
+      } catch (e) {
+        out.innerHTML = `<span class="bad">✗ Biểu thức không hợp lệ: ${e.message}</span>`;
+      }
+    });
+
+    /* ---- Mục 3: value vs reference ---- */
+    document.getElementById("d-btn-ref").addEventListener("click", () => {
+      // primitive: sao chép giá trị
+      let a = 10;
+      let b = a;
+      b = 99;
+
+      // reference: sao chép địa chỉ
+      const sv1 = { ten: "An", tuoi: 20 };
+      const sv2 = sv1;          // cùng trỏ MỘT object
+      sv2.tuoi = 99;
+
+      // spread: bản sao thật sự
+      const sv3 = { ...sv1, tuoi: 21 };
+
+      document.getElementById("d-out-ref").innerHTML =
+`PRIMITIVE  : let b = a; b = 99;
+   → a = <span class="ok">${a}</span>  (a không đổi — b chỉ là bản sao)
+
+REFERENCE  : let sv2 = sv1; sv2.tuoi = 99;
+   → sv1.tuoi = <span class="bad">${sv1.tuoi}</span>  (!!! sv1 đổi theo — hai biến một object)
+
+SPREAD COPY: let sv3 = {...sv1, tuoi: 21};
+   → sv1.tuoi = ${sv1.tuoi}, sv3.tuoi = <span class="ok">${sv3.tuoi}</span>  (độc lập nhau)`;
+    });
+
+    /* ---- Mục 7: máy so sánh == vs === ---- */
+    document.getElementById("d-btn-ss").addEventListener("click", () => {
+      const [traiRaw, phaiRaw] = document.getElementById("d-ss").value.split("|");
+      const trai = eval("(" + traiRaw + ")");
+      const phai = eval("(" + phaiRaw + ")");
+      const longg = (trai == phai);    // so sánh lỏng (ép kiểu)
+      const chat  = (trai === phai);   // so sánh nghiêm ngặt
+      document.getElementById("d-out-ss").innerHTML =
+`${traiRaw} ==  ${phaiRaw}   →  <span class="${longg ? "ok" : "bad"}">${longg}</span>   (ép kiểu rồi mới so)
+${traiRaw} === ${phaiRaw}   →  <span class="${chat ? "ok" : "bad"}">${chat}</span>   (so cả kiểu lẫn giá trị)` +
+        (traiRaw === "NaN" ? '\n\nNaN không bằng chính nó! Kiểm tra NaN bằng <span class="ok">Number.isNaN(x)</span>.' : "");
+    });
+
+    /* ---- Mục 9: truthy / falsy ---- */
+    document.getElementById("d-btn-tf").addEventListener("click", () => {
+      const raw = document.getElementById("d-tf").value;
+      const out = document.getElementById("d-out-tf");
+      try {
+        const giaTri = eval("(" + raw + ")");
+        out.innerHTML = giaTri
+          ? `if (${raw}) → chạy nhánh ĐÚNG  ⇒  <span class="ok">TRUTHY</span>`
+          : `if (${raw}) → chạy nhánh SAI   ⇒  <span class="bad">FALSY</span>`;
+      } catch (e) {
+        out.innerHTML = `<span class="bad">✗ Biểu thức không hợp lệ: ${e.message}</span>`;
+      }
+    });
+  </script>
+</body>
+</html>

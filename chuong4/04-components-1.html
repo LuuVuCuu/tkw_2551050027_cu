@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="4.5 Thành phần Bootstrap (phần 1) - Dropdown, Collapse, Spinner, Progress, Badge, Pagination, Card, Nav và Navbar.">
+  <title>4.5.1–4.5.5 · Components (1) — Chương 4</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/bootstrap-lesson.css">
+</head>
+<body>
+
+  <!-- ===== Breadcrumb ===== -->
+  <nav class="container-lg pt-3" aria-label="breadcrumb">
+    <ol class="breadcrumb small mb-0">
+      <li class="breadcrumb-item"><a href="../index.html">Môn học</a></li>
+      <li class="breadcrumb-item"><a href="index.html">Chương 4</a></li>
+      <li class="breadcrumb-item active" aria-current="page">4.5 Components (1)</li>
+    </ol>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="hero4 py-5 mt-2">
+    <div class="container-lg">
+      <h1 class="h2 fw-bold mb-2">4.5 · Thành phần Bootstrap (phần 1)</h1>
+      <p class="mb-0 opacity-75">Kho thành phần dựng sẵn: Dropdown, Collapse, Spinner, Progress, Badge, Pagination, Card, Nav và Navbar. Chỉ ghép class là có ngay giao diện chuẩn.</p>
+    </div>
+  </header>
+
+  <main class="container-lg my-4" style="max-width: 960px;">
+
+    <div class="alert alert-warning">
+      <strong>Cần nạp JavaScript.</strong> Các thành phần <em>tương tác</em> trong bài — <strong>Dropdown</strong>,
+      <strong>Collapse</strong> và nút <strong>navbar-toggler</strong> (menu hamburger) — chỉ chạy khi đã nạp
+      <code>bootstrap.bundle.min.js</code> ngay trước <code>&lt;/body&gt;</code>. File này đã nạp sẵn, nên các demo bấm được ngay.
+    </div>
+
+    <!-- 1 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">1</span>Dropdown &amp; Collapse</h2>
+      <p><strong>Dropdown</strong> là menu xổ xuống khi bấm. Cần một nút mang
+         <code>data-bs-toggle="dropdown"</code> đặt cạnh một <code>&lt;ul class="dropdown-menu"&gt;</code>,
+         cả hai bọc trong <code>.dropdown</code>. Bootstrap dùng Popper để canh vị trí menu.</p>
+      <p><strong>Collapse</strong> ẩn/hiện một khối nội dung. Nút bấm mang
+         <code>data-bs-toggle="collapse"</code> và <code>data-bs-target="#id"</code> trỏ tới khối
+         <code>.collapse</code> tương ứng.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="dropdown d-inline-block">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Hành động</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Sửa</a></li>
+              <li><a class="dropdown-item" href="#">Nhân bản</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="#">Xoá</a></li>
+            </ul>
+          </div>
+          <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#chiTiet" aria-expanded="false" aria-controls="chiTiet">Xem chi tiết</button>
+          <div class="collapse mt-3" id="chiTiet">
+            <div class="card card-body mb-0">Đây là nội dung được ẩn/hiện bằng Collapse. Bấm lại nút để đóng.</div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="c">&lt;!-- Dropdown --&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"dropdown"</span><span class="k">&gt;</span>
+  <span class="k">&lt;button</span> <span class="v">class</span>=<span class="s">"btn btn-primary dropdown-toggle"</span> <span class="v">data-bs-toggle</span>=<span class="s">"dropdown"</span><span class="k">&gt;</span>Hành động<span class="k">&lt;/button&gt;</span>
+  <span class="k">&lt;ul</span> <span class="v">class</span>=<span class="s">"dropdown-menu"</span><span class="k">&gt;</span>
+    <span class="k">&lt;li&gt;&lt;a</span> <span class="v">class</span>=<span class="s">"dropdown-item"</span> <span class="v">href</span>=<span class="s">"#"</span><span class="k">&gt;</span>Sửa<span class="k">&lt;/a&gt;&lt;/li&gt;</span>
+  <span class="k">&lt;/ul&gt;</span>
+<span class="k">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- Collapse --&gt;</span>
+<span class="k">&lt;button</span> <span class="v">class</span>=<span class="s">"btn btn-outline-secondary"</span> <span class="v">data-bs-toggle</span>=<span class="s">"collapse"</span> <span class="v">data-bs-target</span>=<span class="s">"#chiTiet"</span><span class="k">&gt;</span>Xem chi tiết<span class="k">&lt;/button&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"collapse"</span> <span class="v">id</span>=<span class="s">"chiTiet"</span><span class="k">&gt;</span> ... <span class="k">&lt;/div&gt;</span></code></pre>
+      <div class="alert alert-warning mb-0">
+        <strong>Cần JS.</strong> Dropdown và Collapse <em>không tự chạy</em> nếu thiếu <code>bootstrap.bundle.min.js</code>.
+        Nhớ để <code>data-bs-target</code> khớp đúng <code>id</code> của khối cần mở.
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">2</span>Spinner &amp; Progress</h2>
+      <p><strong>Spinner</strong> là vòng quay báo "đang tải". Hai kiểu:
+         <code>.spinner-border</code> (viền quay) và <code>.spinner-grow</code> (chấm phồng).
+         Tô màu bằng utility văn bản như <code>.text-primary</code>.</p>
+      <p><strong>Progress</strong> là thanh tiến độ: khung <code>.progress</code> bọc phần đã hoàn thành
+         <code>.progress-bar</code>, độ dài đặt bằng <code>width</code>. Thêm
+         <code>.progress-bar-striped</code> để có sọc, kèm <code>.progress-bar-animated</code> để sọc chạy.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Đang tải...</span></div>
+          <div class="spinner-grow text-success ms-2" role="status"><span class="visually-hidden">Đang tải...</span></div>
+
+          <div class="progress mt-3" role="progressbar" aria-label="Tiến độ cơ bản" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar" style="width: 35%">35%</div>
+          </div>
+          <div class="progress mt-2" role="progressbar" aria-label="Tiến độ có sọc" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: 70%">70%</div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"spinner-border text-primary"</span> <span class="v">role</span>=<span class="s">"status"</span><span class="k">&gt;&lt;/div&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"spinner-grow text-success"</span> <span class="v">role</span>=<span class="s">"status"</span><span class="k">&gt;&lt;/div&gt;</span>
+
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"progress"</span> <span class="v">role</span>=<span class="s">"progressbar"</span> <span class="v">aria-valuenow</span>=<span class="s">"70"</span> <span class="v">aria-valuemin</span>=<span class="s">"0"</span> <span class="v">aria-valuemax</span>=<span class="s">"100"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"progress-bar progress-bar-striped progress-bar-animated bg-success"</span> <span class="v">style</span>=<span class="s">"width: 70%"</span><span class="k">&gt;</span>70%<span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+      <div class="alert alert-info mb-0">
+        <strong>Chỉ CSS.</strong> Spinner và Progress không cần JavaScript. Muốn tiến độ thay đổi theo thời gian thực
+        thì tự cập nhật <code>width</code> (và <code>aria-valuenow</code>) bằng JS của bạn.
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">3</span>Badge &amp; Pagination</h2>
+      <p><strong>Badge</strong> là nhãn nhỏ đếm số hoặc gắn trạng thái. Dùng <code>.badge</code> kèm màu nền
+         <code>.text-bg-*</code> (đã tự chọn màu chữ tương phản). Thêm <code>.rounded-pill</code> để bo tròn viên thuốc.
+         Badge hay đặt bên trong nút hoặc tiêu đề.</p>
+      <p><strong>Pagination</strong> là dải phân trang: <code>.pagination</code> bọc các
+         <code>.page-item</code>, mỗi mục có một <code>.page-link</code>. Đánh dấu trang hiện tại bằng
+         <code>.active</code> và khoá nút bằng <code>.disabled</code>.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <span class="badge text-bg-primary">Chính</span>
+          <span class="badge text-bg-success">Xong</span>
+          <span class="badge text-bg-warning">Chờ</span>
+          <span class="badge rounded-pill text-bg-danger">Nóng</span>
+          <button type="button" class="btn btn-outline-secondary ms-2">Hộp thư <span class="badge text-bg-secondary">9</span></button>
+
+          <nav class="mt-3" aria-label="Phân trang">
+            <ul class="pagination mb-0">
+              <li class="page-item disabled"><a class="page-link" href="#" aria-label="Trước">&laquo;</a></li>
+              <li class="page-item"><a class="page-link" href="#">1</a></li>
+              <li class="page-item active" aria-current="page"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#" aria-label="Sau">&raquo;</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;span</span> <span class="v">class</span>=<span class="s">"badge text-bg-primary"</span><span class="k">&gt;</span>Chính<span class="k">&lt;/span&gt;</span>
+<span class="k">&lt;span</span> <span class="v">class</span>=<span class="s">"badge rounded-pill text-bg-danger"</span><span class="k">&gt;</span>Nóng<span class="k">&lt;/span&gt;</span>
+
+<span class="k">&lt;ul</span> <span class="v">class</span>=<span class="s">"pagination"</span><span class="k">&gt;</span>
+  <span class="k">&lt;li</span> <span class="v">class</span>=<span class="s">"page-item disabled"</span><span class="k">&gt;&lt;a</span> <span class="v">class</span>=<span class="s">"page-link"</span> <span class="v">href</span>=<span class="s">"#"</span><span class="k">&gt;</span>&amp;laquo;<span class="k">&lt;/a&gt;&lt;/li&gt;</span>
+  <span class="k">&lt;li</span> <span class="v">class</span>=<span class="s">"page-item active"</span><span class="k">&gt;&lt;a</span> <span class="v">class</span>=<span class="s">"page-link"</span> <span class="v">href</span>=<span class="s">"#"</span><span class="k">&gt;</span>2<span class="k">&lt;/a&gt;&lt;/li&gt;</span>
+<span class="k">&lt;/ul&gt;</span></code></pre>
+    </section>
+
+    <!-- 4 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">4</span>Card</h2>
+      <p><strong>Card</strong> là hộp nội dung linh hoạt: gói ảnh, tiêu đề, mô tả và nút vào một khối bo góc, đổ bóng nhẹ.
+         Ảnh trên cùng dùng <code>.card-img-top</code>; phần chữ đặt trong <code>.card-body</code> với
+         <code>.card-title</code> và <code>.card-text</code>. Có thể thêm <code>.card-header</code> và
+         <code>.card-footer</code> làm đầu/chân card.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="card mb-3" style="max-width: 20rem;">
+            <img src="../assets/photo.svg" class="card-img-top" alt="Ảnh minh hoạ">
+            <div class="card-body">
+              <h5 class="card-title">Phong cảnh</h5>
+              <p class="card-text">Một card cơ bản gồm ảnh, tiêu đề, mô tả ngắn và một nút hành động.</p>
+              <a href="#" class="btn btn-primary">Xem thêm</a>
+            </div>
+          </div>
+
+          <div class="row row-cols-1 row-cols-md-3 g-3">
+            <div class="col">
+              <div class="card h-100">
+                <div class="card-header">Cơ bản</div>
+                <div class="card-body">
+                  <h5 class="card-title">0đ</h5>
+                  <p class="card-text mb-0">Đủ dùng cho người mới bắt đầu.</p>
+                </div>
+                <div class="card-footer text-body-secondary small">Miễn phí</div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 border-primary">
+                <div class="card-header text-bg-primary">Phổ biến</div>
+                <div class="card-body">
+                  <h5 class="card-title">99k</h5>
+                  <p class="card-text mb-0">Thêm dung lượng và hỗ trợ nhanh.</p>
+                </div>
+                <div class="card-footer text-body-secondary small">Mỗi tháng</div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100">
+                <div class="card-header">Doanh nghiệp</div>
+                <div class="card-body">
+                  <h5 class="card-title">Liên hệ</h5>
+                  <p class="card-text mb-0">Tuỳ biến theo nhu cầu tổ chức.</p>
+                </div>
+                <div class="card-footer text-body-secondary small">Theo hợp đồng</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"card"</span> <span class="v">style</span>=<span class="s">"max-width: 20rem;"</span><span class="k">&gt;</span>
+  <span class="k">&lt;img</span> <span class="v">src</span>=<span class="s">"../assets/photo.svg"</span> <span class="v">class</span>=<span class="s">"card-img-top"</span> <span class="v">alt</span>=<span class="s">"Ảnh minh hoạ"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"card-body"</span><span class="k">&gt;</span>
+    <span class="k">&lt;h5</span> <span class="v">class</span>=<span class="s">"card-title"</span><span class="k">&gt;</span>Phong cảnh<span class="k">&lt;/h5&gt;</span>
+    <span class="k">&lt;p</span> <span class="v">class</span>=<span class="s">"card-text"</span><span class="k">&gt;</span>Mô tả ngắn cho card.<span class="k">&lt;/p&gt;</span>
+    <span class="k">&lt;a</span> <span class="v">href</span>=<span class="s">"#"</span> <span class="v">class</span>=<span class="s">"btn btn-primary"</span><span class="k">&gt;</span>Xem thêm<span class="k">&lt;/a&gt;</span>
+  <span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- Nhóm card đều nhau bằng grid + h-100 --&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"row row-cols-1 row-cols-md-3 g-3"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col"</span><span class="k">&gt;&lt;div</span> <span class="v">class</span>=<span class="s">"card h-100"</span><span class="k">&gt;</span> ... <span class="k">&lt;/div&gt;&lt;/div&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+      <div class="alert alert-info mb-0">
+        <strong>Mẹo chiều cao.</strong> Trong lưới, thêm <code>.h-100</code> cho card để mọi card trong hàng
+        cao bằng nhau dù nội dung dài ngắn khác nhau.
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">5</span>Nav &amp; Navbar</h2>
+      <p><strong>Nav</strong> là dải liên kết điều hướng. Từ lớp gốc <code>.nav</code>, thêm
+         <code>.nav-tabs</code> để ra dạng tab hoặc <code>.nav-pills</code> để ra dạng viên thuốc.
+         Mỗi liên kết là một <code>.nav-link</code>; dùng <code>.active</code> cho mục đang xem và
+         <code>.disabled</code> cho mục bị khoá.</p>
+      <p><strong>Navbar</strong> là thanh điều hướng đầu trang, responsive sẵn. Với
+         <code>.navbar-expand-lg</code>, menu nằm ngang trên màn rộng và thu về nút hamburger
+         (<code>.navbar-toggler</code>) trên màn hẹp. Nút hamburger dùng cơ chế Collapse để mở
+         khối <code>.navbar-collapse</code>.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <ul class="nav nav-tabs">
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Trang chủ</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Hồ sơ</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Liên hệ</a></li>
+            <li class="nav-item"><a class="nav-link disabled" aria-disabled="true">Vô hiệu</a></li>
+          </ul>
+
+          <ul class="nav nav-pills mt-3">
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Trang chủ</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Hồ sơ</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Liên hệ</a></li>
+          </ul>
+
+          <nav class="navbar navbar-expand-lg bg-body-tertiary border rounded mt-3">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#">MySite</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navDemo" aria-controls="navDemo" aria-expanded="false" aria-label="Bật/tắt menu">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navDemo">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Trang chủ</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#">Giới thiệu</a></li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Dịch vụ</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">Thiết kế</a></li>
+                      <li><a class="dropdown-item" href="#">Lập trình</a></li>
+                    </ul>
+                  </li>
+                </ul>
+                <form class="d-flex" role="search">
+                  <input class="form-control me-2" type="search" placeholder="Tìm kiếm" aria-label="Tìm kiếm">
+                  <button class="btn btn-outline-success" type="submit">Tìm</button>
+                </form>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;ul</span> <span class="v">class</span>=<span class="s">"nav nav-tabs"</span><span class="k">&gt;</span>
+  <span class="k">&lt;li</span> <span class="v">class</span>=<span class="s">"nav-item"</span><span class="k">&gt;&lt;a</span> <span class="v">class</span>=<span class="s">"nav-link active"</span> <span class="v">href</span>=<span class="s">"#"</span><span class="k">&gt;</span>Trang chủ<span class="k">&lt;/a&gt;&lt;/li&gt;</span>
+<span class="k">&lt;/ul&gt;</span>
+
+<span class="k">&lt;nav</span> <span class="v">class</span>=<span class="s">"navbar navbar-expand-lg bg-body-tertiary"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"container-fluid"</span><span class="k">&gt;</span>
+    <span class="k">&lt;a</span> <span class="v">class</span>=<span class="s">"navbar-brand"</span> <span class="v">href</span>=<span class="s">"#"</span><span class="k">&gt;</span>MySite<span class="k">&lt;/a&gt;</span>
+    <span class="k">&lt;button</span> <span class="v">class</span>=<span class="s">"navbar-toggler"</span> <span class="v">data-bs-toggle</span>=<span class="s">"collapse"</span> <span class="v">data-bs-target</span>=<span class="s">"#navDemo"</span><span class="k">&gt;</span>
+      <span class="k">&lt;span</span> <span class="v">class</span>=<span class="s">"navbar-toggler-icon"</span><span class="k">&gt;&lt;/span&gt;</span>
+    <span class="k">&lt;/button&gt;</span>
+    <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"collapse navbar-collapse"</span> <span class="v">id</span>=<span class="s">"navDemo"</span><span class="k">&gt;</span>
+      <span class="k">&lt;ul</span> <span class="v">class</span>=<span class="s">"navbar-nav"</span><span class="k">&gt;</span> ... <span class="k">&lt;/ul&gt;</span>
+    <span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/nav&gt;</span></code></pre>
+      <div class="alert alert-warning mb-0">
+        <strong>Thu nhỏ để thử.</strong> Kéo hẹp cửa sổ đến dưới breakpoint <code>lg</code> để thấy menu gom về nút
+        hamburger. Nút này dùng Collapse nên <em>bắt buộc</em> có <code>bootstrap.bundle.min.js</code> mới bấm mở được.
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer điều hướng ===== -->
+  <footer class="foot4">
+    <div class="container-lg py-4 d-flex flex-wrap justify-content-between gap-2">
+      <a class="btn btn-outline-secondary btn-sm" href="03-utilities-co-ban.html">← 4.4 Utilities</a>
+      <a class="btn btn-primary btn-sm" href="05-components-2.html">4.5 Components (2) →</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

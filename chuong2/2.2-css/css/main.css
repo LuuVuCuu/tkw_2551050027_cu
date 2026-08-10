@@ -1,0 +1,41 @@
+/* ============================================================
+   main.css — file CSS NGOÀI (External CSS)
+   Được nhúng vào 01-cach-chen-css.html qua thẻ <link>.
+   Đây là cách khuyến nghị cho dự án thật: tách HTML khỏi CSS,
+   tái sử dụng cho nhiều trang, tận dụng cache trình duyệt.
+   ============================================================ */
+
+/* Đặt box-sizing cho mọi phần tử — best practice (xem 2.2.3) */
+* { box-sizing: border-box; }
+
+body {
+  font-family: Arial, Helvetica, sans-serif;  /* thuộc tính này KẾ THỪA xuống con */
+  color: #1a1a1a;
+  max-width: 720px;
+  margin: 24px auto;
+  padding: 0 16px;
+  line-height: 1.6;
+}
+
+h1 { color: #1D559F; }
+
+/* Selector theo tên thành phần */
+.card {
+  border: 1px solid #008B8B;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 12px 0;
+}
+
+/* Áp dụng cho NHIỀU selector cùng lúc (cách nhau dấu phẩy) */
+.tag-external,
+.tag-internal,
+.tag-inline {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: bold;
+  color: #fff;
+}
+.tag-external { background: #04AA6D; }

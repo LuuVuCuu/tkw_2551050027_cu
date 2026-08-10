@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.4.5 — KỸ THUẬT CSS · object-fit & object-position (toàn diện)
+  ------------------------------------------------------------
+  object-fit quyết định cách MỘT TẤM ẢNH (hoặc video) lấp đầy
+  khung có kích thước cố định khác tỉ lệ với ảnh gốc. Bài đi từ
+  cơ bản → nâng cao, tham khảo theo W3Schools "CSS object-fit":
+    1) Vấn đề: ảnh bị méo      6) scale-down
+    2) fill (mặc định)         7) So sánh trực quan 5 ô
+    3) contain                 8) object-position
+    4) cover (phổ biến nhất)   9) Ứng dụng thumbnail/avatar
+    5) none                   10) Bảng tra & mẹo
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  Ảnh demo: ../../assets/photo.svg (640×420 ngang) đặt vào khung
+  VUÔNG 160×160 → thấy rõ méo / cắt.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.4.5 · Kỹ thuật CSS — object-fit &amp; object-position</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* Khung VUÔNG cố định 160×160 — khác tỉ lệ ảnh ngang 640×420 (≈1.52:1)
+       → mọi giá trị object-fit sẽ lộ rõ khác biệt. */
+    .d-frame {
+      width: 160px; height: 160px;
+      border: 2px solid #1D559F; border-radius: 10px;
+      background:
+        repeating-linear-gradient(45deg, #eef2f9 0 10px, #e2e8f4 10px 20px);
+      overflow: hidden;            /* cắt phần ảnh tràn ra ngoài khung */
+      display: inline-block; vertical-align: top;
+    }
+    /* Ảnh luôn được "ép" lấp đầy đúng khung 160×160 để so sánh công bằng */
+    .d-frame img { width: 100%; height: 100%; display: block; }
+
+    /* 1) ảnh thả tự nhiên (không object-fit) để đối chiếu */
+    .d-natural img { width: auto; height: auto; max-width: 100%; }
+
+    /* 2–6) năm giá trị object-fit */
+    .d-fill       img { object-fit: fill; }        /* mặc định — kéo méo */
+    .d-contain    img { object-fit: contain; }     /* thu vừa, chừa lề */
+    .d-cover      img { object-fit: cover; }        /* lấp đầy, cắt thừa */
+    .d-none       img { object-fit: none; }         /* giữ cỡ gốc, cắt theo khung */
+    .d-scaledown  img { object-fit: scale-down; }   /* nhỏ hơn giữa none & contain */
+
+    /* 7) lưới so sánh 5 ô */
+    .d-grid5 {
+      display: grid;
+      grid-template-columns: repeat(5, max-content);
+      gap: 14px; justify-content: start;
+    }
+    .d-cell  { text-align: center; }
+    .d-cell figcaption { margin-top: 6px; font-size: .82rem; font-weight: 700; color: #16407a; }
+    .d-cell .d-val { display: block; font-size: .72rem; font-weight: 400; color: #5b6472; }
+    @media (max-width: 720px) {
+      .d-grid5 { grid-template-columns: repeat(2, max-content); }
+    }
+
+    /* 8) object-position — canh ảnh khi cover cắt bớt */
+    .d-pos img { object-fit: cover; }
+    .d-pos.tl  img { object-position: left top; }
+    .d-pos.tr  img { object-position: right top; }
+    .d-pos.c   img { object-position: center; }
+    .d-pos.b   img { object-position: center bottom; }
+    .d-pos.pct img { object-position: 80% 20%; }
+    .d-posrow  { display: flex; flex-wrap: wrap; gap: 14px; }
+    .d-posrow figure { margin: 0; text-align: center; }
+    .d-posrow figcaption { margin-top: 6px; font-size: .8rem; color: #16407a; font-weight: 600; }
+
+    /* 9) Ứng dụng — thư viện thumbnail đồng cỡ bằng cover + aspect-ratio */
+    .d-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 520px; }
+    .d-gallery img {
+      width: 100%;
+      aspect-ratio: 4 / 3;          /* khung đồng nhất, KHÔNG cần đặt height cứng */
+      object-fit: cover;
+      border-radius: 10px; display: block;
+      border: 1px solid #e3e8f0;
+    }
+    /* avatar tròn — ảnh vuông/ngang đều gọn gàng nhờ cover */
+    .d-avatars { display: flex; gap: 14px; align-items: center; }
+    .d-avatars img {
+      width: 72px; height: 72px; border-radius: 50%;
+      object-fit: cover; object-position: center;
+      border: 3px solid #6c5ce7; display: block;
+    }
+    /* thẻ sản phẩm — ảnh cùng tỉ lệ dù nguồn khác nhau */
+    .d-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 520px; }
+    .d-card  { background: #fff; border: 1px solid #e3e8f0; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(20,40,80,.06); }
+    .d-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; }
+    .d-card p   { margin: 0; padding: 8px 10px; font-size: .82rem; font-weight: 600; color: #16407a; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.4 Kỹ thuật CSS</a><span>›</span>
+        object-fit
+      </nav>
+      <h1>Lấp ảnh vào khung với <code style="color:#fff;background:rgba(255,255,255,.18)">object-fit</code></h1>
+      <p class="sub">Khi ép một tấm ảnh vào khung có kích thước cố định khác tỉ lệ, ảnh dễ bị méo.
+         <code style="color:#fff;background:rgba(255,255,255,.18)">object-fit</code> giúp ảnh lấp khung mà
+         vẫn đẹp: kéo vừa, thu gọn hay cắt bớt — và <code style="color:#fff;background:rgba(255,255,255,.18)">object-position</code>
+         quyết định lấy phần nào của ảnh.</p>
+      <div class="chips">
+        <span class="chip solid">2.4.5</span>
+        <span class="chip">object-fit</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Vấn đề: ảnh bị méo</a></li>
+        <li><a href="#s2">object-fit: fill</a></li>
+        <li><a href="#s3">object-fit: contain</a></li>
+        <li><a href="#s4">object-fit: cover</a></li>
+        <li><a href="#s5">object-fit: none</a></li>
+        <li><a href="#s6">object-fit: scale-down</a></li>
+        <li><a href="#s7">So sánh trực quan 5 ô</a></li>
+        <li><a href="#s8">object-position</a></li>
+        <li><a href="#s9">Ứng dụng thumbnail/avatar</a></li>
+        <li><a href="#s10">Bảng tra &amp; mẹo</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. VẤN ĐỀ: ẢNH BỊ MÉO  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Vấn đề: ép ảnh vào khung khác tỉ lệ <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Ảnh gốc <code>photo.svg</code> là ảnh <strong>ngang</strong> 640×420 (tỉ lệ ≈ 1.52:1).
+         Nếu nhồi nó vào một khung <strong>vuông</strong> 160×160 bằng <code>width:100%; height:100%</code> thì
+         ảnh bị <strong>kéo méo</strong> — đây chính là lý do ta cần <code>object-fit</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="d-frame d-natural" style="display:inline-block; width:auto; height:auto; border-style:dashed">
+            <img src="../../assets/photo.svg" alt="Ảnh gốc 640×420, hiển thị tự nhiên">
+          </div>
+          <div class="d-frame" title="Khung vuông 160×160, ảnh bị kéo méo">
+            <img src="../../assets/photo.svg" alt="Ảnh bị kéo méo trong khung vuông">
+          </div>
+          <p class="muted" style="margin:10px 0 0">
+            ◂ Trái: ảnh gốc tỉ lệ tự nhiên &nbsp;|&nbsp; Phải: nhồi vào khung vuông → mặt trời thành hình trứng,
+            ngọn núi bị bè ra (méo).
+          </p>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Khung vuông cố định, ảnh ngang bị ép → MÉO */</span>
+.frame { <span class="k">width</span>: <span class="v">160px</span>; <span class="k">height</span>: <span class="v">160px</span>; <span class="k">overflow</span>: <span class="v">hidden</span>; }
+.frame img { <span class="k">width</span>: <span class="v">100%</span>; <span class="k">height</span>: <span class="v">100%</span>; } <span class="c">/* chưa có object-fit → kéo méo */</span></code></pre>
+
+      <div class="note">
+        <p>Khi ép <code>width</code> và <code>height</code> không khớp tỉ lệ ảnh gốc, trình duyệt
+           <strong>kéo giãn từng chiều độc lập</strong> nên ảnh biến dạng. <code>object-fit</code> ra đời để
+           xử lý đúng việc này — quyết định ảnh <em>vừa khung</em> theo cách nào.</p>
+      </div>
+    </section>
+
+    <!-- ==========  2. FILL  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> object-fit: <code>fill</code> — mặc định <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>fill</code> là giá trị <strong>mặc định</strong>: ảnh bị <strong>kéo/nén</strong> để lấp <em>đầy</em>
+         toàn bộ khung, <strong>không giữ</strong> tỉ lệ gốc → có thể méo. Nó đúng bằng kết quả "không đặt object-fit" ở mục 1.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · object-fit: fill</div>
+        <div class="demo-body">
+          <div class="d-frame d-fill">
+            <img src="../../assets/photo.svg" alt="object-fit fill — ảnh bị méo lấp đầy khung">
+          </div>
+          <p class="muted" style="margin:10px 0 0">Lấp đầy 100% khung nhưng ảnh ngang bị nén lại theo chiều dọc → méo.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code>img { <span class="k">object-fit</span>: <span class="v">fill</span>; } <span class="c">/* mặc định: lấp đầy, KHÔNG giữ tỉ lệ → méo */</span></code></pre>
+
+      <div class="callout warn"><p>Vì <code>fill</code> là mặc định nên ảnh trong khung cố định <strong>luôn có nguy cơ méo</strong>
+        nếu bạn quên đặt một giá trị object-fit khác. Hiếm khi ta thực sự muốn <code>fill</code>.</p></div>
+    </section>
+
+    <!-- ==========  3. CONTAIN  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> object-fit: <code>contain</code> — thu vừa, chừa lề <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>contain</code> thu/phóng ảnh sao cho <strong>toàn bộ ảnh nằm gọn</strong> trong khung và
+         <strong>giữ nguyên tỉ lệ</strong> → không méo, không mất phần nào, nhưng để <strong>lộ lề trống</strong>
+         (letterbox) ở hai bên hoặc trên–dưới.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · object-fit: contain</div>
+        <div class="demo-body">
+          <div class="d-frame d-contain">
+            <img src="../../assets/photo.svg" alt="object-fit contain — ảnh thu vừa khung, chừa lề">
+          </div>
+          <p class="muted" style="margin:10px 0 0">Ảnh ngang được thu vừa bề ngang khung → còn dải nền sọc trống trên &amp; dưới.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code>img { <span class="k">object-fit</span>: <span class="v">contain</span>; } <span class="c">/* giữ tỉ lệ, thấy trọn ảnh, có lề trống */</span></code></pre>
+
+      <div class="callout tip"><p>Dùng <code>contain</code> khi <strong>không được cắt</strong> mất chi tiết — ví dụ logo, biểu đồ,
+        ảnh sản phẩm cần thấy trọn vẹn. Có thể tô màu phần lề bằng <code>background</code> của khung.</p></div>
+    </section>
+
+    <!-- ==========  4. COVER  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> object-fit: <code>cover</code> — lấp đầy &amp; cắt thừa <span class="tag-base">Phổ biến nhất</span></h2>
+      <p class="lead"><code>cover</code> phóng ảnh để <strong>lấp đầy toàn khung</strong> mà vẫn <strong>giữ tỉ lệ</strong> (không méo);
+         phần ảnh dư ra ngoài khung sẽ bị <strong>cắt bỏ</strong>. Đây là lựa chọn <strong>được dùng nhiều nhất</strong>
+         cho thumbnail, banner, avatar.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · object-fit: cover</div>
+        <div class="demo-body">
+          <div class="d-frame d-cover">
+            <img src="../../assets/photo.svg" alt="object-fit cover — lấp đầy khung, cắt hai mép">
+          </div>
+          <p class="muted" style="margin:10px 0 0">Lấp kín khung vuông, không méo; bù lại hai mép trái–phải của ảnh ngang bị cắt.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code>img { <span class="k">object-fit</span>: <span class="v">cover</span>; } <span class="c">/* lấp đầy + giữ tỉ lệ, cắt phần thừa — phổ biến nhất */</span></code></pre>
+
+      <div class="callout tip"><p><code>cover</code> kết hợp với <code>object-position</code> (mục 8) cho phép chọn <em>giữ lại phần nào</em>
+        của ảnh khi cắt — ví dụ luôn giữ khuôn mặt ở giữa.</p></div>
+    </section>
+
+    <!-- ==========  5. NONE  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> object-fit: <code>none</code> — giữ nguyên cỡ gốc <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>none</code> <strong>không co giãn</strong> ảnh — giữ nguyên kích thước pixel gốc, rồi
+         khung chỉ "soi" một vùng. Ảnh 640×420 lớn hơn khung 160×160 nên ta chỉ thấy <strong>phần giữa</strong>
+         (mặc định canh tâm), còn lại bị cắt.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · object-fit: none</div>
+        <div class="demo-body">
+          <div class="d-frame d-none">
+            <img src="../../assets/photo.svg" alt="object-fit none — giữ cỡ gốc, chỉ thấy vùng giữa">
+          </div>
+          <p class="muted" style="margin:10px 0 0">Ảnh không bị thu nhỏ; khung chỉ hiện vùng 160×160 ở giữa ảnh gốc (zoom 100%).</p>
+        </div>
+      </div>
+
+      <pre class="code"><code>img { <span class="k">object-fit</span>: <span class="v">none</span>; } <span class="c">/* giữ cỡ pixel gốc, cắt theo khung (mặc định lấy phần giữa) */</span></code></pre>
+
+      <div class="callout info"><p><code>none</code> hữu ích khi cần hiển thị ảnh ở đúng độ phân giải gốc (sprite, ảnh pixel-art),
+        kết hợp <code>object-position</code> để chọn vùng cần soi.</p></div>
+    </section>
+
+    <!-- ==========  6. SCALE-DOWN  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> object-fit: <code>scale-down</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>scale-down</code> so sánh kết quả của <code>none</code> và <code>contain</code> rồi
+         <strong>chọn cái có kích thước nhỏ hơn</strong>. Nói cách khác: nếu ảnh lớn hơn khung thì hành xử như
+         <code>contain</code> (thu nhỏ vừa khung); nếu ảnh nhỏ hơn khung thì như <code>none</code> (không phóng to).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · object-fit: scale-down</div>
+        <div class="demo-body">
+          <div class="d-frame d-scaledown">
+            <img src="../../assets/photo.svg" alt="object-fit scale-down với ảnh lớn → giống contain">
+          </div>
+          <p class="muted" style="margin:10px 0 0">
+            Ảnh gốc (640×420) lớn hơn khung nên <code>scale-down</code> cho kết quả <strong>giống contain</strong>
+            (thu vừa, chừa lề). Nếu ảnh nhỏ hơn khung, nó sẽ giống <code>none</code> (không phóng to gây vỡ ảnh).
+          </p>
+        </div>
+      </div>
+
+      <pre class="code"><code>img { <span class="k">object-fit</span>: <span class="v">scale-down</span>; } <span class="c">/* = min(none, contain): không phóng to, chỉ thu nhỏ khi cần */</span></code></pre>
+
+      <div class="callout tip"><p>Chọn <code>scale-down</code> khi muốn <strong>không bao giờ phóng to</strong> ảnh nhỏ (tránh vỡ hạt)
+        nhưng vẫn thu gọn ảnh quá lớn cho vừa khung.</p></div>
+    </section>
+
+    <!-- ==========  7. SO SÁNH TRỰC QUAN 5 Ô  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> So sánh trực quan 5 giá trị <span class="tag-base">Quan trọng</span></h2>
+      <p class="lead">Cùng một ảnh <code>photo.svg</code> ngang, cùng khung vuông 160×160 — chỉ đổi <code>object-fit</code>.
+         Đặt cạnh nhau sẽ thấy ngay khác biệt: méo, lề trống hay bị cắt.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · 5 ô — cùng ảnh, cùng khung, khác object-fit</div>
+        <div class="demo-body">
+          <div class="d-grid5">
+            <figure class="d-cell" style="margin:0">
+              <div class="d-frame d-fill"><img src="../../assets/photo.svg" alt="fill"></div>
+              <figcaption>fill <span class="d-val">méo, lấp đầy</span></figcaption>
+            </figure>
+            <figure class="d-cell" style="margin:0">
+              <div class="d-frame d-contain"><img src="../../assets/photo.svg" alt="contain"></div>
+              <figcaption>contain <span class="d-val">vừa khung, chừa lề</span></figcaption>
+            </figure>
+            <figure class="d-cell" style="margin:0">
+              <div class="d-frame d-cover"><img src="../../assets/photo.svg" alt="cover"></div>
+              <figcaption>cover <span class="d-val">lấp đầy, cắt thừa</span></figcaption>
+            </figure>
+            <figure class="d-cell" style="margin:0">
+              <div class="d-frame d-none"><img src="../../assets/photo.svg" alt="none"></div>
+              <figcaption>none <span class="d-val">cỡ gốc, cắt giữa</span></figcaption>
+            </figure>
+            <figure class="d-cell" style="margin:0">
+              <div class="d-frame d-scaledown"><img src="../../assets/photo.svg" alt="scale-down"></div>
+              <figcaption>scale-down <span class="d-val">= contain ở đây</span></figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Đọc nhanh:</strong> <em>fill</em> = méo · <em>contain</em> = thấy trọn ảnh + lề trống ·
+           <em>cover</em> = lấp kín, mất mép · <em>none</em> = phóng 100% xén giữa ·
+           <em>scale-down</em> = bản nhỏ hơn giữa none và contain.</p>
+      </div>
+    </section>
+
+    <!-- ==========  8. OBJECT-POSITION  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> <code>object-position</code> — canh ảnh trong khung <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Khi <code>cover</code> (hay <code>none</code>) cắt bớt ảnh, <code>object-position</code> quyết định
+         <strong>giữ lại phần nào</strong>. Cú pháp giống <code>background-position</code>: từ khoá
+         (<code>left/right/top/bottom/center</code>), phần trăm <code>%</code> hoặc <code>px</code>. Mặc định là <code>50% 50%</code> (giữa).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · cùng cover, đổi object-position</div>
+        <div class="demo-body">
+          <div class="d-posrow">
+            <figure>
+              <div class="d-frame d-pos tl"><img src="../../assets/photo.svg" alt="object-position left top"></div>
+              <figcaption>left top</figcaption>
+            </figure>
+            <figure>
+              <div class="d-frame d-pos c"><img src="../../assets/photo.svg" alt="object-position center"></div>
+              <figcaption>center (mặc định)</figcaption>
+            </figure>
+            <figure>
+              <div class="d-frame d-pos tr"><img src="../../assets/photo.svg" alt="object-position right top"></div>
+              <figcaption>right top</figcaption>
+            </figure>
+            <figure>
+              <div class="d-frame d-pos b"><img src="../../assets/photo.svg" alt="object-position center bottom"></div>
+              <figcaption>center bottom</figcaption>
+            </figure>
+            <figure>
+              <div class="d-frame d-pos pct"><img src="../../assets/photo.svg" alt="object-position 80% 20%"></div>
+              <figcaption>80% 20%</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>img {
+  <span class="k">object-fit</span>: <span class="v">cover</span>;
+  <span class="k">object-position</span>: <span class="v">right top</span>;  <span class="c">/* giữ góc trên–phải khi cắt */</span>
+}
+<span class="c">/* Cũng nhận: center · left bottom · 80% 20% · 20px 0 ... (như background-position) */</span></code></pre>
+
+      <div class="callout tip"><p>Với ảnh chân dung, đặt <code>object-position: center top</code> để <strong>luôn giữ khuôn mặt</strong>
+        khi khung cắt bớt phần dưới.</p></div>
+    </section>
+
+    <!-- ==========  9. ỨNG DỤNG  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Ứng dụng: thumbnail · avatar · ảnh sản phẩm đồng cỡ <span class="tag-adv">Thực chiến</span></h2>
+      <p class="lead">Bài toán kinh điển: nhiều ảnh <strong>kích thước/tỉ lệ khác nhau</strong> cần hiện <strong>cùng một cỡ</strong>
+         gọn gàng. Lời giải: <code>object-fit: cover</code> + đặt khung bằng <code>aspect-ratio</code> (hoặc width/height).</p>
+
+      <h3>9.1 — Thư viện thumbnail 4:3 đồng nhất</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · cover + aspect-ratio: 4/3</div>
+        <div class="demo-body">
+          <div class="d-gallery">
+            <img src="../../assets/photo.svg" alt="thumbnail 1 (ảnh ngang)">
+            <img src="../../assets/rose.svg"  alt="thumbnail 2 (ảnh vuông)">
+            <img src="../../assets/avatar.svg" alt="thumbnail 3 (ảnh vuông nhỏ)">
+            <img src="../../assets/rose.svg"  alt="thumbnail 4">
+            <img src="../../assets/photo.svg" alt="thumbnail 5">
+            <img src="../../assets/avatar.svg" alt="thumbnail 6">
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.gallery img {
+  <span class="k">width</span>: <span class="v">100%</span>;
+  <span class="k">aspect-ratio</span>: <span class="v">4 / 3</span>;   <span class="c">/* khung đồng nhất, khỏi đặt height cứng */</span>
+  <span class="k">object-fit</span>: <span class="v">cover</span>;   <span class="c">/* ảnh nguồn khác tỉ lệ vẫn lấp gọn */</span>
+}</code></pre>
+
+      <h3>9.2 — Avatar tròn</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · cover + border-radius:50%</div>
+        <div class="demo-body">
+          <div class="d-avatars">
+            <img src="../../assets/avatar.svg" alt="avatar 1">
+            <img src="../../assets/photo.svg"  alt="avatar 2 (ảnh ngang vẫn tròn đều)">
+            <img src="../../assets/rose.svg"   alt="avatar 3">
+          </div>
+        </div>
+      </div>
+
+      <h3>9.3 — Thẻ sản phẩm vuông 1:1</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · cover + aspect-ratio:1/1</div>
+        <div class="demo-body">
+          <div class="d-cards">
+            <div class="d-card"><img src="../../assets/photo.svg" alt="sản phẩm A"><p>Sản phẩm A</p></div>
+            <div class="d-card"><img src="../../assets/rose.svg"  alt="sản phẩm B"><p>Sản phẩm B</p></div>
+            <div class="d-card"><img src="../../assets/avatar.svg" alt="sản phẩm C"><p>Sản phẩm C</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip"><p>Mẹo thực chiến: <code>cover</code> + <code>aspect-ratio</code> là combo "đồng cỡ ảnh" hiện đại,
+        sạch hơn cách đặt <code>height</code> cứng vì khung tự co theo bề rộng (responsive).</p></div>
+    </section>
+
+    <!-- ==========  10. BẢNG TRA & MẸO  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Bảng tra nhanh &amp; mẹo <span class="tag-base">Tổng kết</span></h2>
+
+      <table class="syntax">
+        <caption>Các giá trị của object-fit (theo W3Schools)</caption>
+        <thead><tr><th>Giá trị</th><th>Giữ tỉ lệ?</th><th>Lấp đầy khung?</th><th>Hệ quả</th></tr></thead>
+        <tbody>
+          <tr><td><code>fill</code> <em>(mặc định)</em></td><td>Không</td><td>Có</td><td>Kéo/nén lấp đầy → <strong>méo</strong></td></tr>
+          <tr><td><code>contain</code></td><td>Có</td><td>Không</td><td>Thấy trọn ảnh, có <strong>lề trống</strong></td></tr>
+          <tr><td><code>cover</code></td><td>Có</td><td>Có</td><td>Lấp đầy, <strong>cắt</strong> phần thừa — phổ biến nhất</td></tr>
+          <tr><td><code>none</code></td><td>Có (cỡ gốc)</td><td>Tuỳ</td><td>Không co giãn, cắt theo khung</td></tr>
+          <tr><td><code>scale-down</code></td><td>Có</td><td>Tuỳ</td><td>Nhỏ hơn giữa <code>none</code> và <code>contain</code></td></tr>
+        </tbody>
+      </table>
+
+      <table class="syntax">
+        <caption>Thuộc tính liên quan</caption>
+        <thead><tr><th>Thuộc tính</th><th>Công dụng</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>object-position</code></td><td>Chọn phần ảnh giữ lại khi cắt</td><td><code>center top</code>, <code>right bottom</code>, <code>80% 20%</code></td></tr>
+          <tr><td><code>aspect-ratio</code></td><td>Định khung tỉ lệ cố định mà không cần height</td><td><code>4 / 3</code>, <code>1 / 1</code>, <code>16 / 9</code></td></tr>
+          <tr><td><code>overflow</code></td><td>Cần cho khung cắt khi dùng <code>none</code></td><td><code>hidden</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip"><p><strong>Mẹo 1.</strong> Cần thumbnail/avatar/banner đồng cỡ đẹp đều → dùng
+        <code>object-fit: cover</code>. Đây là 90% trường hợp thực tế.</p></div>
+      <div class="callout warn"><p><strong>Lưu ý 2.</strong> <code>object-fit</code> chỉ có tác dụng khi ảnh có
+        <strong>kích thước cố định</strong> (đặt <code>width</code> &amp; <code>height</code>, hoặc <code>aspect-ratio</code>).
+        Thiếu kích thước thì không có gì để "fit".</p></div>
+      <div class="callout danger"><p><strong>Phạm vi 3.</strong> <code>object-fit</code>/<code>object-position</code> chỉ áp dụng cho
+        <strong>nội dung thay thế</strong> như <code>&lt;img&gt;</code>, <code>&lt;video&gt;</code>, <code>&lt;object&gt;</code>.
+        Để lấp ảnh nền cho <code>&lt;div&gt;</code> hãy dùng <code>background-size: cover</code> thay thế.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> Méo? → đang là <code>fill</code> mặc định.
+        Muốn thấy trọn ảnh → <code>contain</code>. Muốn lấp kín đẹp → <code>cover</code>. Chọn vùng giữ lại → <code>object-position</code>.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="04-clip-path.html"><small>← Bài trước</small>2.4.4 · Clip-path · Shape</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="06-font-awesome.html"><small>Bài tiếp →</small>2.4.6 · Font Awesome</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>
