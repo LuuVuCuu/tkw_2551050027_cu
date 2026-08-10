@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="5.1 Tổng quan Tailwind CSS - triết lý utility-first, ưu/khuyết, vs Bootstrap, cài đặt v4 (CDN/npm), tuỳ biến theme bằng @theme.">
+  <title>5.1 · Tổng quan Tailwind CSS — Chương 5</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <!-- Tailwind v4 — bản trình duyệt (biên dịch class ngay trong browser). Chỉ dùng để học/prototype. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- Tuỳ biến CSS-first của v4: token thương hiệu + bật dark bằng class .dark -->
+  <style type="text/tailwindcss">
+    @theme {
+      --color-brand: #04AA6D;
+    }
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- ===== Breadcrumb ===== -->
+  <nav class="mx-auto max-w-4xl px-4 pt-4 text-sm text-gray-500">
+    <a class="hover:text-[#1D559F]" href="../index.html">Môn học</a>
+    <span class="mx-1">›</span>
+    <a class="hover:text-[#1D559F]" href="index.html">Chương 5</a>
+    <span class="mx-1">›</span>
+    <span class="text-gray-700">5.1 Tổng quan</span>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="mt-3 bg-linear-to-br from-[#1D559F] to-violet-600 text-white">
+    <div class="mx-auto max-w-4xl px-4 py-10">
+      <h1 class="text-3xl font-bold">5.1 · Tổng quan Tailwind CSS</h1>
+      <p class="mt-2 text-white/80">Triết lý <strong>utility-first</strong>: dựng giao diện bằng những "viên gạch" class nhỏ ngay trong HTML — mỗi class là một dòng CSS đã học ở Chương 2.</p>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-4xl px-4 py-8">
+
+    <!-- 1 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">1</span>Utility-first là gì?
+      </h2>
+      <p class="mb-3">Thay vì viết một file CSS riêng, Tailwind cho hàng nghìn <strong>class tiện ích</strong> (utility) — mỗi class ứng với <em>một</em> quy tắc CSS. Ta ghép các "viên gạch nhỏ" ngay trong HTML để tự dựng thành phần theo ý muốn.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả</div>
+        <div class="p-4">
+          <button class="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">Click here!</button>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- ghép các "viên gạch nhỏ" để tự dựng nút --&gt;</span>
+<span class="text-sky-300">&lt;button</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"bg-blue-500 hover:bg-blue-700
+               text-white font-bold py-2 px-4 rounded"</span><span class="text-sky-300">&gt;</span>
+  Click here!
+<span class="text-sky-300">&lt;/button&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Phân rã class</p>
+        <p><code class="rounded bg-emerald-100 px-1">bg-blue-500</code> nền xanh ·
+           <code class="rounded bg-emerald-100 px-1">hover:bg-blue-700</code> đậm khi hover ·
+           <code class="rounded bg-emerald-100 px-1">text-white font-bold</code> ·
+           <code class="rounded bg-emerald-100 px-1">py-2 px-4</code> padding ·
+           <code class="rounded bg-emerald-100 px-1">rounded</code> bo góc.</p>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">2</span>Ưu &amp; khuyết điểm
+      </h2>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+          <h3 class="mb-2 font-semibold text-emerald-800">Ưu điểm</h3>
+          <ul class="list-disc space-y-1 pl-5 text-sm">
+            <li>Phát triển nhanh — không viết CSS thủ công</li>
+            <li>Dễ tuỳ chỉnh qua <code>@theme</code> (biến CSS)</li>
+            <li>Responsive &amp; dark mode tích hợp sẵn</li>
+            <li>Tái sử dụng linh hoạt, hỗ trợ trạng thái (hover/focus/active)</li>
+          </ul>
+        </div>
+        <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <h3 class="mb-2 font-semibold text-amber-800">Khuyết điểm</h3>
+          <ul class="list-disc space-y-1 pl-5 text-sm">
+            <li>HTML <strong>nhiều class</strong> → dài, khó đọc ban đầu</li>
+            <li>Cần thời gian nhớ tên class</li>
+            <li>Khắc phục: <strong>Tailwind IntelliSense</strong> (VS Code)</li>
+            <li>và <code>@apply</code> / tách component (React/Vue)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">3</span>Tailwind vs Bootstrap
+      </h2>
+      <div class="overflow-x-auto rounded-xl border border-gray-200">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-gray-100 text-gray-700">
+            <tr><th class="p-3">Tiêu chí</th><th class="p-3">Tailwind (utility-first)</th><th class="p-3">Bootstrap (component-based)</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr><td class="p-3 font-medium">Cách dùng</td><td class="p-3">Ghép class nhỏ tự dựng UI</td><td class="p-3">Component sẵn (button, card, modal)</td></tr>
+            <tr><td class="p-3 font-medium">Tuỳ chỉnh</td><td class="p-3">Rất linh hoạt (nhiều class)</td><td class="p-3">Dễ dùng nhưng ít linh hoạt</td></tr>
+            <tr><td class="p-3 font-medium">Kích thước</td><td class="p-3">Nhẹ (chỉ giữ class dùng tới)</td><td class="p-3">Lớn (nhiều component mặc định)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Vì sao học CSS thuần trước rồi mới Tailwind?</p>
+        <p>Mỗi class Tailwind chỉ là <em>một</em> dòng CSS đã học ở Chương 2 (<code>flex</code> = <code>display:flex</code>, <code>pt-4</code> = <code>padding-top:1rem</code>). Hiểu CSS thì học Tailwind rất nhanh và biết class nào sinh ra CSS gì.</p>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">4</span>Cài đặt: CDN (học) vs npm (production)
+      </h2>
+      <p class="mb-3">Giáo trình dùng <strong>Tailwind v4</strong> (v4.3, 2026) — v4 đổi cách cài đặt &amp; cấu hình so với v3.</p>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- Học nhanh: Play CDN trình duyệt (1 dòng, không cài) --&gt;</span>
+<span class="text-sky-300">&lt;script</span> <span class="text-orange-300">src</span>=<span class="text-emerald-300">"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"</span><span class="text-sky-300">&gt;&lt;/script&gt;</span>
+
+<span class="text-gray-400 italic"># Dự án thật: cài qua npm (cú pháp Tailwind v4)</span>
+<span class="text-sky-300">npm</span> install tailwindcss @tailwindcss/cli
+<span class="text-sky-300">npx</span> @tailwindcss/cli -i input.css -o output.css --watch
+
+<span class="text-gray-400 italic">/* input.css — v4 chỉ cần MỘT dòng (thay 3 chỉ thị @tailwind của v3) */</span>
+<span class="text-orange-300">@import</span> <span class="text-emerald-300">"tailwindcss"</span>;</code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+        <p class="font-semibold text-violet-800">Chuẩn nghề</p>
+        <p>Production <strong>không</strong> dùng Play CDN (tải cả Tailwind, chậm). Cài qua npm — v4 <strong>tự dò file</strong> để chỉ giữ class thực dùng (<em>automatic content detection</em>, không cần khai báo <code>content</code>/purge như v3) → CSS cuối chỉ vài KB.</p>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">5</span>Tuỳ biến theme — v4 cấu hình bằng CSS
+      </h2>
+      <p class="mb-3">v3 dùng <code>tailwind.config.js</code> (JS); v4 khai báo biến thương hiệu ngay trong CSS bằng khối <code>@theme</code>. Trang này đã khai báo <code>--color-brand: #04AA6D</code> → sinh ra class <code>bg-brand</code>, <code>text-brand</code>…</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — class thương hiệu tự sinh</div>
+        <div class="flex flex-wrap items-center gap-3 p-4">
+          <span class="rounded-lg bg-brand px-4 py-2 font-semibold text-white">bg-brand</span>
+          <span class="font-semibold text-brand">text-brand</span>
+          <span class="rounded-lg border-2 border-brand px-4 py-2 text-brand">border-brand</span>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">/* khối @theme tạo ra các class thương hiệu */</span>
+<span class="text-orange-300">@import</span> <span class="text-emerald-300">"tailwindcss"</span>;
+<span class="text-sky-300">@theme</span> {
+  <span class="text-orange-300">--color-brand</span>: <span class="text-emerald-300">#04AA6D</span>;     <span class="text-gray-400 italic">/* → class bg-brand, text-brand… */</span>
+  <span class="text-orange-300">--font-display</span>: <span class="text-emerald-300">"Poppins", sans-serif</span>;
+}</code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+        <p class="font-semibold text-violet-800">Thực tế doanh nghiệp</p>
+        <p>Tailwind là cách viết CSS phổ biến nhất cho dự án mới, thường đi kèm <strong>React/Vue + Vite</strong> (v4 có plugin Vite chính thức) — điểm cộng khi xin việc Front-end.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer điều hướng ===== -->
+  <footer class="mx-auto mt-6 flex max-w-4xl flex-wrap justify-between gap-2 border-t border-gray-200 px-4 py-6">
+    <a class="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-100" href="index.html">← Mục lục Chương 5</a>
+    <a class="rounded-lg bg-[#1D559F] px-4 py-2 text-sm text-white hover:bg-[#17457f]" href="02-core-concepts.html">Bài tiếp: Core concepts →</a>
+  </footer>
+
+</body>
+</html>

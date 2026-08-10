@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.4.2 — CSS MASK (bản toàn diện)
+  ------------------------------------------------------------
+  Mask = dùng một "mặt nạ" (ảnh/SVG/gradient) để CHE hoặc LỘ
+  phần tử theo độ MỜ (alpha): vùng đục → giữ, vùng trong suốt
+  → ẩn. Bài này đi từ cơ bản → nâng cao, tham khảo W3Schools/MDN:
+    1) Mask là gì              6) mask-composite & nhiều layer
+    2) mask-image (ảnh/SVG)    7) Ứng dụng: chữ/icon đổi màu
+    3) mask-image (gradient)   8) Tiền tố -webkit & hỗ trợ
+    4) repeat/position/size    9) Mẹo & mask vs clip-path
+    5) Mask tròn/elip (radial)
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung). Mask CẦN
+  cả -webkit-mask (Chrome/Safari) LẪN mask chuẩn.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.4.2 · CSS Mask — che/lộ theo hình</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* khung ảnh nền chung cho các demo mask */
+    .d-stage {
+      width: 460px; max-width: 100%; height: 170px;
+      background: url('../../assets/sky.svg') center / cover no-repeat;
+      border-radius: 10px;
+    }
+    .d-stage.photo { background-image: url('../../assets/photo.svg'); }
+    .d-stage.rose  { background-image: url('../../assets/rose.svg'); background-color:#2d3436; }
+    .d-cap { font-size: .85rem; color: var(--muted); margin: 6px 0 0; }
+
+    /* 1) MINH HOẠ KHÁI NIỆM: nền kẻ ô (để thấy phần bị "ẩn") + 3 lớp */
+    .d-concept { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-items: start; }
+    .d-checker {
+      background-image:
+        linear-gradient(45deg, #e3e8f0 25%, transparent 25%),
+        linear-gradient(-45deg, #e3e8f0 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e3e8f0 75%),
+        linear-gradient(-45deg, transparent 75%, #e3e8f0 75%);
+      background-size: 18px 18px;
+      background-position: 0 0, 0 9px, 9px -9px, -9px 0;
+    }
+    .d-tile { height: 130px; border-radius: 10px; display:grid; place-items:end center; padding-bottom:6px;
+              font-size:.74rem; font-weight:700; color:#16407a; }
+    .d-tile.src   { background: linear-gradient(135deg, #1D559F, #6c5ce7); color:#fff; }
+    /* mặt nạ: nửa trên đục → giữ, nửa dưới trong suốt → ẩn */
+    .d-tile.mask  { background: linear-gradient(to bottom, #111 0 50%, transparent 50% 100%); color:#fff; }
+    .d-tile.result {
+      background: linear-gradient(135deg, #1D559F, #6c5ce7);
+      -webkit-mask-image: linear-gradient(to bottom, #000 0 50%, transparent 50% 100%);
+              mask-image: linear-gradient(to bottom, #000 0 50%, transparent 50% 100%);
+    }
+
+    /* 2) MASK ẢNH/SVG: lộ ảnh theo hình chữ mask-text.svg */
+    .d-text-mask {
+      width: 100%; max-width: 540px; height: 180px;
+      background: url('../../assets/sky.svg') center / cover no-repeat;
+      -webkit-mask-image: url('../../assets/mask-text.svg');   /* Chrome/Safari */
+              mask-image: url('../../assets/mask-text.svg');
+      -webkit-mask-repeat: no-repeat;  mask-repeat: no-repeat;
+      -webkit-mask-size: contain;      mask-size: contain;
+      -webkit-mask-position: center;   mask-position: center;
+    }
+
+    /* 3) MASK GRADIENT: làm mờ dần (fade) mép ảnh */
+    .d-fade-x {           /* mờ dần TRÁI–PHẢI */
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 22%, #000 78%, transparent);
+              mask-image: linear-gradient(to right, transparent, #000 22%, #000 78%, transparent);
+    }
+    .d-fade-down {        /* mờ dần xuống đáy (đặt chữ đè lên) */
+      -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+              mask-image: linear-gradient(to bottom, #000 55%, transparent);
+    }
+    .d-fade-radial {      /* tâm rõ, viền mờ dần (vignette mềm) */
+      -webkit-mask-image: radial-gradient(circle at center, #000 45%, transparent 75%);
+              mask-image: radial-gradient(circle at center, #000 45%, transparent 75%);
+    }
+
+    /* 4) mask-repeat / position / size */
+    .d-rep-no, .d-rep-yes {
+      -webkit-mask-image: url('../../assets/rose.svg');  mask-image: url('../../assets/rose.svg');
+    }
+    .d-rep-no  { -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+                 -webkit-mask-size:120px;       mask-size:120px;
+                 -webkit-mask-position:center;  mask-position:center; }
+    .d-rep-yes { -webkit-mask-repeat:repeat;    mask-repeat:repeat;
+                 -webkit-mask-size:80px;        mask-size:80px; }
+    /* dùng radial-gradient nhỏ làm tile lặp lại (chấm bi) */
+    .d-dots {
+      -webkit-mask-image: radial-gradient(circle, #000 42%, transparent 46%);
+              mask-image: radial-gradient(circle, #000 42%, transparent 46%);
+      -webkit-mask-size: 26px 26px;  mask-size: 26px 26px;
+      -webkit-mask-repeat: repeat;   mask-repeat: repeat;
+    }
+
+    /* 5) MASK TRÒN / ELIP bằng radial-gradient (bo mềm) */
+    .d-circle {
+      width: 180px; height: 180px;
+      -webkit-mask-image: radial-gradient(circle, #000 68%, transparent 70%);
+              mask-image: radial-gradient(circle, #000 68%, transparent 70%);
+    }
+    .d-ellipse {
+      width: 260px; height: 170px;
+      -webkit-mask-image: radial-gradient(ellipse 50% 50% at center, #000 70%, transparent 72%);
+              mask-image: radial-gradient(ellipse 50% 50% at center, #000 70%, transparent 72%);
+    }
+
+    /* 6) NHIỀU MASK LAYER + mask-composite */
+    /* hai layer: dải ngang (linear) + vòng tròn (radial), kết hợp bằng composite */
+    .d-multi {
+      width: 280px; height: 180px;
+      -webkit-mask-image:
+        radial-gradient(circle at center, #000 50%, transparent 52%),
+        linear-gradient(to right, #000 0 100%);
+              mask-image:
+        radial-gradient(circle at center, #000 50%, transparent 52%),
+        linear-gradient(to right, #000 0 100%);
+      /* để dễ quan sát, layer 2 chỉ chừa một dải ngang */
+    }
+    .d-multi.layer-stripes {
+      -webkit-mask-image:
+        repeating-linear-gradient(45deg, #000 0 16px, transparent 16px 32px),
+        radial-gradient(circle at center, #000 60%, transparent 62%);
+              mask-image:
+        repeating-linear-gradient(45deg, #000 0 16px, transparent 16px 32px),
+        radial-gradient(circle at center, #000 60%, transparent 62%);
+      -webkit-mask-composite: source-in;    /* Chrome cú pháp cũ */
+              mask-composite: intersect;    /* chuẩn: giao của 2 layer */
+    }
+
+    /* 7) ỨNG DỤNG — icon đổi màu bằng mask + chữ texture */
+    /* icon ngôi sao vẽ bằng SVG data-uri, tô màu qua background-color */
+    .d-icon {
+      display:inline-block; width:48px; height:48px; vertical-align:middle;
+      -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2l3 7h7l-5.5 4.5L18 21l-6-4.5L6 21l1.5-7.5L2 9h7z'/></svg>") center / contain no-repeat;
+              mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2l3 7h7l-5.5 4.5L18 21l-6-4.5L6 21l1.5-7.5L2 9h7z'/></svg>") center / contain no-repeat;
+    }
+    .d-icon.blue  { background: var(--blue); }
+    .d-icon.green { background: var(--green); }
+    .d-icon.red   { background: var(--red); }
+    .d-icon.grad  { background: linear-gradient(135deg, #6c5ce7, #04AA6D); }
+
+    /* chữ lộ texture: so sánh mask-image vs background-clip:text */
+    .d-clip-text {
+      font-size: 2.6rem; font-weight: 900; letter-spacing: 1px; margin: 0;
+      background: linear-gradient(135deg, #1D559F, #6c5ce7, #04AA6D);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+    }
+
+    .d-flexwrap { display:flex; gap:24px; flex-wrap:wrap; align-items:center; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.4 Kỹ thuật CSS</a><span>›</span>
+        Mask
+      </nav>
+      <h1>CSS <code style="color:#fff;background:rgba(255,255,255,.18)">mask</code> — che &amp; lộ phần tử theo hình</h1>
+      <p class="sub">Mask dùng một "mặt nạ" (ảnh, SVG hay gradient) để quyết định phần nào của phần tử
+         được <strong>giữ</strong> và phần nào bị <strong>ẩn</strong> — theo độ mờ (alpha). Đi từ khái niệm
+         cơ bản đến gradient, nhiều layer và ứng dụng tô màu icon.</p>
+      <div class="chips">
+        <span class="chip solid">2.4.2</span>
+        <span class="chip">CSS Mask</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Mask là gì?</a></li>
+        <li><a href="#s2">mask-image: dùng ảnh/SVG</a></li>
+        <li><a href="#s3">mask-image: dùng gradient</a></li>
+        <li><a href="#s4">repeat · position · size</a></li>
+        <li><a href="#s5">Mask tròn/elip (radial)</a></li>
+        <li><a href="#s6">Nhiều layer &amp; mask-composite</a></li>
+        <li><a href="#s7">Ứng dụng: icon &amp; chữ</a></li>
+        <li><a href="#s8">Tiền tố &amp; hỗ trợ trình duyệt</a></li>
+        <li><a href="#s9">Mẹo · mask vs clip-path</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. MASK LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Mask là gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Thuộc tính <code>mask</code> phủ một "mặt nạ" lên phần tử. Trình duyệt đọc
+         <strong>độ mờ (alpha)</strong> của mặt nạ: chỗ nào <em>đục/đặc</em> (alpha cao) thì phần tử
+         <strong>hiện</strong>, chỗ nào <em>trong suốt</em> (alpha = 0) thì phần tử <strong>ẩn</strong>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Nguồn × Mặt nạ = Kết quả</div>
+        <div class="demo-body">
+          <div class="d-concept">
+            <div>
+              <div class="d-tile src">PHẦN TỬ GỐC</div>
+              <p class="d-cap">① Phần tử cần che (ảnh/màu).</p>
+            </div>
+            <div>
+              <div class="d-tile mask">MẶT NẠ</div>
+              <p class="d-cap">② Nửa trên ĐỤC, nửa dưới TRONG SUỐT.</p>
+            </div>
+            <div>
+              <div class="d-tile result d-checker">KẾT QUẢ</div>
+              <p class="d-cap">③ Chỉ nửa trên còn hiện; nửa dưới biến mất (lộ nền ô caro).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Quy ước alpha (mặc định <code>mask-mode: alpha</code>):</strong></p>
+        <p>• Vùng <strong>đục</strong> (đen đặc, alpha = 1) → <strong>GIỮ</strong> phần tử.<br>
+           • Vùng <strong>trong suốt</strong> (alpha = 0) → <strong>ẨN</strong> phần tử.<br>
+           • Vùng <strong>mờ một nửa</strong> (alpha = 0.5) → phần tử hiện mờ ~50% (rất hữu ích để làm hiệu ứng <em>fade</em>).</p>
+        <p class="muted">Lưu ý: với gradient, <em>màu</em> của các điểm dừng không quan trọng — chỉ <strong>độ trong suốt</strong>
+           mới quyết định. Người ta hay viết <code>black → transparent</code> cho dễ đọc.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Hai cơ chế đọc mặt nạ</caption>
+        <thead><tr><th><code>mask-mode</code></th><th>Trình duyệt nhìn vào</th><th>Giữ phần tử khi</th></tr></thead>
+        <tbody>
+          <tr><td><code>alpha</code> (mặc định)</td><td>Kênh trong suốt của mặt nạ</td><td>Vùng đó <strong>đục</strong></td></tr>
+          <tr><td><code>luminance</code></td><td>Độ sáng (luma) của mặt nạ</td><td>Vùng đó <strong>sáng/trắng</strong></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  2. MASK-IMAGE ẢNH/SVG  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> <code>mask-image</code> dùng ảnh/SVG <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Cách phổ biến nhất: lấy một ảnh/SVG có vùng trong suốt làm mặt nạ. Dưới đây ảnh
+         bầu trời (<code>sky.svg</code>) bị "cắt" theo hình chữ trong <code>mask-text.svg</code>
+         ("ĐẠI HỌC MỞ TPHCM") — chỉ phần ảnh nằm trong nét chữ mới lộ ra.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Ảnh lộ ra theo hình chữ</div>
+        <div class="demo-body">
+          <div class="d-text-mask"></div>
+          <p class="d-cap">Nền: <code>sky.svg</code> · Mặt nạ: <code>mask-text.svg</code> (chữ đặc, nền trong suốt).</p>
+        </div>
+      </div>
+
+      <pre class="code"><code>.masked {
+  <span class="k">width</span>: <span class="v">540px</span>; <span class="k">height</span>: <span class="v">180px</span>;
+  <span class="k">background</span>: <span class="v">url('sky.svg') center / cover no-repeat</span>;
+
+  <span class="c">/* Chrome/Safari cần tiền tố -webkit- */</span>
+  <span class="k">-webkit-mask-image</span>: <span class="v">url('mask-text.svg')</span>;
+          <span class="k">mask-image</span>: <span class="v">url('mask-text.svg')</span>;
+  <span class="k">-webkit-mask-repeat</span>: <span class="v">no-repeat</span>; <span class="k">mask-repeat</span>: <span class="v">no-repeat</span>;
+  <span class="k">-webkit-mask-size</span>:   <span class="v">contain</span>;   <span class="k">mask-size</span>:   <span class="v">contain</span>;
+  <span class="k">-webkit-mask-position</span>: <span class="v">center</span>; <span class="k">mask-position</span>: <span class="v">center</span>;
+}</code></pre>
+
+      <div class="callout info"><p>Mặt nạ SVG cần nền <strong>trong suốt</strong> và hình vẽ <strong>đặc màu</strong>.
+        Trong <code>mask-text.svg</code> chữ tô <code>fill="#000"</code> còn nền bỏ trống → ảnh lộ đúng theo nét chữ.</p></div>
+    </section>
+
+    <!-- ==========  3. MASK-IMAGE GRADIENT  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> <code>mask-image</code> dùng gradient <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Không cần file ảnh: dùng thẳng <code>linear-gradient()</code> / <code>radial-gradient()</code>
+         làm mặt nạ. Vùng <code>transparent</code> của gradient sẽ làm ảnh <strong>mờ dần</strong> (fade) — kỹ thuật
+         rất hay để làm mép ảnh chuyển êm vào nền.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">linear — mờ dần trái &amp; phải</div>
+          <div class="demo-body">
+            <div class="d-stage photo d-fade-x"></div>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">linear — mờ dần xuống đáy</div>
+          <div class="demo-body">
+            <div class="d-stage photo d-fade-down"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-bar">radial — tâm rõ, viền mờ (vignette mềm)</div>
+        <div class="demo-body">
+          <div class="d-stage photo d-fade-radial" style="height:200px"></div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Mờ dần hai mép trái–phải */</span>
+.fade-x {
+  <span class="k">-webkit-mask-image</span>: <span class="v">linear-gradient(to right, transparent, #000 22%, #000 78%, transparent)</span>;
+          <span class="k">mask-image</span>: <span class="v">linear-gradient(to right, transparent, #000 22%, #000 78%, transparent)</span>;
+}
+<span class="c">/* Mờ dần xuống đáy (đặt caption đè lên trông rất "xịn") */</span>
+.fade-down { <span class="k">mask-image</span>: <span class="v">linear-gradient(to bottom, #000 55%, transparent)</span>; }
+<span class="c">/* Vignette mềm bằng radial-gradient */</span>
+.vignette  { <span class="k">mask-image</span>: <span class="v">radial-gradient(circle, #000 45%, transparent 75%)</span>; }</code></pre>
+
+      <div class="callout tip"><p><strong>Mẹo:</strong> chỉ <strong>alpha</strong> của gradient có tác dụng. Bạn có thể đổi
+        <code>#000</code> thành màu bất kỳ mà kết quả không đổi — quan trọng là điểm nào <code>transparent</code>, điểm nào đặc.</p></div>
+    </section>
+
+    <!-- ==========  4. REPEAT / POSITION / SIZE  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> <code>mask-repeat</code> · <code>mask-position</code> · <code>mask-size</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Mặt nạ "cư xử" hệt như ảnh nền: bạn có thể chỉnh nó <strong>lặp lại</strong>, đặt <strong>vị trí</strong>
+         và đổi <strong>kích thước</strong> — y như các thuộc tính <code>background-*</code> tương ứng.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">no-repeat · center · size 120px</div>
+          <div class="demo-body">
+            <div class="d-stage rose d-rep-no" style="height:200px"></div>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">repeat · size 80px (lát gạch)</div>
+          <div class="demo-body">
+            <div class="d-stage rose d-rep-yes" style="height:200px"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-bar">Mặt nạ "chấm bi" — radial-gradient nhỏ lặp lại</div>
+        <div class="demo-body">
+          <div class="d-stage d-dots" style="height:170px"></div>
+          <p class="d-cap">Mặt nạ là một chấm tròn nhỏ <code>26×26px</code> được <code>mask-repeat:repeat</code> → ảnh hiện thành lưới chấm.</p>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Các thuộc tính điều khiển mặt nạ (đối chiếu background-*)</caption>
+        <thead><tr><th>Thuộc tính</th><th>Giá trị hay dùng</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>mask-repeat</code></td><td><code>no-repeat</code> · <code>repeat</code> · <code>repeat-x</code> · <code>space</code> · <code>round</code></td><td>Có lát lặp mặt nạ không.</td></tr>
+          <tr><td><code>mask-position</code></td><td><code>center</code> · <code>top left</code> · <code>50% 20%</code></td><td>Đặt mặt nạ ở đâu trong hộp.</td></tr>
+          <tr><td><code>mask-size</code></td><td><code>contain</code> · <code>cover</code> · <code>120px</code> · <code>50% auto</code></td><td>Phóng to/thu nhỏ mặt nạ.</td></tr>
+          <tr><td><code>mask-origin</code> / <code>mask-clip</code></td><td><code>border-box</code> · <code>padding-box</code> · <code>content-box</code></td><td>Vùng tham chiếu &amp; vùng cắt của mặt nạ.</td></tr>
+          <tr><td><code>mask</code> (rút gọn)</td><td><code>url(..) center / contain no-repeat</code></td><td>Gộp nhiều thuộc tính trên một dòng.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  5. MASK TRÒN / ELIP  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Mask hình tròn/elip bằng <code>radial-gradient</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Muốn ảnh bo tròn <strong>mép mềm</strong> (anti-alias mượt, không cứng như
+         <code>border-radius</code>)? Dùng <code>radial-gradient</code> làm mặt nạ: tâm đặc → giữ, ra rìa
+         <code>transparent</code> → ẩn. Đổi <code>circle</code> ↔ <code>ellipse</code> để ra tròn hay bầu dục.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Tròn mềm &amp; elip mềm</div>
+        <div class="demo-body d-flexwrap">
+          <div>
+            <div class="d-stage rose d-circle" style="width:180px;height:180px;background-size:cover"></div>
+            <p class="d-cap center">circle 68%</p>
+          </div>
+          <div>
+            <div class="d-stage photo d-ellipse"></div>
+            <p class="d-cap center">ellipse 50% × 50%</p>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Tròn mép mềm: đặc tới 68%, rồi tan dần ra trong suốt ở 70% */</span>
+.circle  { <span class="k">mask-image</span>: <span class="v">radial-gradient(circle, #000 68%, transparent 70%)</span>; }
+
+<span class="c">/* Elip: chỉ định bán kính ngang × dọc */</span>
+.ellipse { <span class="k">mask-image</span>: <span class="v">radial-gradient(ellipse 50% 50% at center, #000 70%, transparent 72%)</span>; }</code></pre>
+
+      <div class="callout info"><p>Khác với <code>clip-path: circle()</code> (cắt theo đường <em>sắc nét</em>),
+        mask bằng gradient cho <strong>mép chuyển mượt</strong>. Khoảng cách giữa hai mốc % (vd 68% → 70%) càng lớn thì viền càng "tan" nhiều.</p></div>
+    </section>
+
+    <!-- ==========  6. NHIỀU LAYER & COMPOSITE  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Nhiều mask layer &amp; <code>mask-composite</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Có thể xếp <strong>nhiều mặt nạ</strong> (mỗi <code>mask-image</code> cách nhau bằng dấu phẩy).
+         <code>mask-composite</code> quyết định cách các layer <em>kết hợp</em>: cộng (add), giao (intersect),
+         trừ (subtract) hay loại trừ (exclude).</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">2 layer · add (mặc định) — cộng vùng hiện</div>
+          <div class="demo-body">
+            <div class="d-stage photo d-multi" style="background-size:cover"></div>
+            <p class="d-cap">Vòng tròn + dải đặc → vùng hiện là HỢP của hai layer.</p>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">2 layer · intersect — giao của vạch chéo &amp; vòng tròn</div>
+          <div class="demo-body">
+            <div class="d-stage photo d-multi layer-stripes" style="background-size:cover"></div>
+            <p class="d-cap">Chỉ phần vừa nằm trong vòng tròn vừa trúng vạch chéo mới hiện.</p>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Hai layer mask, ngăn cách bằng dấu phẩy */</span>
+.multi {
+  <span class="k">mask-image</span>:
+    <span class="v">repeating-linear-gradient(45deg, #000 0 16px, transparent 16px 32px)</span>,  <span class="c">/* vạch chéo */</span>
+    <span class="v">radial-gradient(circle at center, #000 60%, transparent 62%)</span>;        <span class="c">/* vòng tròn */</span>
+
+  <span class="c">/* Chrome dùng cú pháp cũ source-in; chuẩn dùng intersect */</span>
+  <span class="k">-webkit-mask-composite</span>: <span class="v">source-in</span>;
+          <span class="k">mask-composite</span>: <span class="v">intersect</span>;
+}</code></pre>
+
+      <table class="syntax">
+        <caption><code>mask-composite</code> — giá trị chuẩn ↔ cú pháp -webkit cũ</caption>
+        <thead><tr><th>Chuẩn (<code>mask-composite</code>)</th><th>-webkit cũ</th><th>Kết quả</th></tr></thead>
+        <tbody>
+          <tr><td><code>add</code> (mặc định)</td><td><code>source-over</code></td><td>Hợp — chồng/cộng các layer.</td></tr>
+          <tr><td><code>intersect</code></td><td><code>source-in</code></td><td>Giao — chỉ giữ vùng chung.</td></tr>
+          <tr><td><code>subtract</code></td><td><code>source-out</code></td><td>Trừ — layer trên "khoét" layer dưới.</td></tr>
+          <tr><td><code>exclude</code></td><td><code>xor</code></td><td>Loại trừ — giữ phần KHÔNG chồng nhau.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn"><p>Cú pháp <code>-webkit-mask-composite</code> (cũ) khác tên với chuẩn. Nếu cần
+        chạy rộng, hãy khai báo <strong>cả hai</strong> như ví dụ trên.</p></div>
+    </section>
+
+    <!-- ==========  7. ỨNG DỤNG: ICON & CHỮ  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Ứng dụng: tô màu icon &amp; chữ lộ texture <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Hai ứng dụng "đời thường" nhất của mask: (a) đổi màu một icon đơn sắc bằng
+         <code>background-color</code>, và (b) cho chữ "lộ" gradient/texture.</p>
+
+      <h3>7.1 — Icon đổi màu tuỳ ý bằng <code>mask</code></h3>
+      <p>Hình SVG làm <em>mặt nạ</em>, còn màu thật do <code>background</code> của phần tử quyết định.
+         Cùng một icon ngôi sao, đổi màu bằng cách đổi nền — không cần sửa file SVG.</p>
+      <div class="demo">
+        <div class="demo-bar">Một icon, nhiều màu (kể cả gradient)</div>
+        <div class="demo-body d-flexwrap">
+          <span class="d-icon blue"></span>
+          <span class="d-icon green"></span>
+          <span class="d-icon red"></span>
+          <span class="d-icon grad"></span>
+          <span class="muted">← cùng 1 SVG, chỉ đổi <code>background</code></span>
+        </div>
+      </div>
+      <pre class="code"><code>.icon {
+  <span class="k">width</span>: <span class="v">48px</span>; <span class="k">height</span>: <span class="v">48px</span>; <span class="k">display</span>: <span class="v">inline-block</span>;
+  <span class="k">-webkit-mask</span>: <span class="v">url("star.svg") center / contain no-repeat</span>;
+          <span class="k">mask</span>: <span class="v">url("star.svg") center / contain no-repeat</span>;
+}
+.icon.blue  { <span class="k">background</span>: <span class="v">#1D559F</span>; }   <span class="c">/* đổi màu chỉ bằng background */</span>
+.icon.grad  { <span class="k">background</span>: <span class="v">linear-gradient(135deg, #6c5ce7, #04AA6D)</span>; }</code></pre>
+
+      <h3>7.2 — Chữ lộ gradient: <code>mask</code> vs <code>background-clip:text</code></h3>
+      <p>Để cho <strong>chữ</strong> lộ gradient, cách phổ biến nhất là <code>background-clip: text</code>
+         (cắt nền theo hình chữ). Đây là "họ hàng" của mask — cũng dùng hình để lộ nền.</p>
+      <div class="demo">
+        <div class="demo-bar">background-clip:text — chữ "đựng" gradient</div>
+        <div class="demo-body">
+          <p class="d-clip-text">ĐẠI HỌC MỞ</p>
+          <p class="d-cap">Chữ trong suốt, nền gradient bị "cắt" theo hình chữ → chữ lộ màu chuyển sắc.</p>
+        </div>
+      </div>
+      <table class="syntax">
+        <caption>So sánh nhanh hai kỹ thuật "lộ theo hình"</caption>
+        <thead><tr><th></th><th><code>mask-image</code></th><th><code>background-clip: text</code></th></tr></thead>
+        <tbody>
+          <tr><td>Áp lên</td><td>Mọi phần tử (ảnh, div, icon…)</td><td>Riêng chữ (văn bản)</td></tr>
+          <tr><td>Quyết định bởi</td><td>Alpha của mặt nạ</td><td>Hình dạng glyph của chữ</td></tr>
+          <tr><td>Dùng để</td><td>Cắt ảnh/icon, fade mép, đổi màu icon</td><td>Chữ tô gradient/ảnh (chữ "texture")</td></tr>
+        </tbody>
+      </table>
+      <div class="callout tip"><p>Muốn ảnh thật <em>lộ ra theo nét chữ</em> (như mục 2) thì dùng <code>mask-image: url(chu.svg)</code>.
+        Muốn <em>chữ tô gradient</em> thì dùng <code>background-clip:text</code>. Cả hai đều cần tiền tố <code>-webkit-</code>.</p></div>
+    </section>
+
+    <!-- ==========  8. TIỀN TỐ & HỖ TRỢ  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Tiền tố <code>-webkit-mask</code> &amp; hỗ trợ trình duyệt <span class="tag-base">Tham khảo</span></h2>
+      <p class="lead">Chrome, Safari và các trình duyệt nhân WebKit/Blink vẫn cần tiền tố
+         <code>-webkit-</code> cho hầu hết thuộc tính mask. Firefox hỗ trợ thuộc tính <code>mask</code> chuẩn.
+         <strong>Quy tắc vàng: luôn viết cả hai.</strong></p>
+
+      <table class="syntax">
+        <caption>Bảng tra thuộc tính <code>mask-*</code> (theo W3Schools/MDN)</caption>
+        <thead><tr><th>Thuộc tính</th><th>Mô tả</th><th>Giá trị tiêu biểu</th></tr></thead>
+        <tbody>
+          <tr><td><code>mask-image</code></td><td>Ảnh/SVG/gradient làm mặt nạ.</td><td><code>url()</code> · <code>linear-gradient()</code> · <code>none</code></td></tr>
+          <tr><td><code>mask-mode</code></td><td>Đọc alpha hay luminance.</td><td><code>alpha</code> · <code>luminance</code></td></tr>
+          <tr><td><code>mask-repeat</code></td><td>Lặp mặt nạ.</td><td><code>no-repeat</code> · <code>repeat</code> · <code>space</code> · <code>round</code></td></tr>
+          <tr><td><code>mask-position</code></td><td>Vị trí mặt nạ.</td><td><code>center</code> · <code>top left</code> · <code>50% 20%</code></td></tr>
+          <tr><td><code>mask-size</code></td><td>Kích thước mặt nạ.</td><td><code>auto</code> · <code>contain</code> · <code>cover</code> · <code>120px</code></td></tr>
+          <tr><td><code>mask-origin</code></td><td>Vùng tham chiếu định vị.</td><td><code>border-box</code> · <code>padding-box</code> · <code>content-box</code></td></tr>
+          <tr><td><code>mask-clip</code></td><td>Vùng mặt nạ được áp.</td><td><code>border-box</code> · <code>content-box</code> · <code>no-clip</code></td></tr>
+          <tr><td><code>mask-composite</code></td><td>Cách kết hợp nhiều layer.</td><td><code>add</code> · <code>subtract</code> · <code>intersect</code> · <code>exclude</code></td></tr>
+          <tr><td><code>mask</code></td><td>Rút gọn tất cả ở trên.</td><td><code>url(m.svg) center / contain no-repeat</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* Mẫu chuẩn: LUÔN viết tiền tố -webkit- TRƯỚC, chuẩn SAU */</span>
+.box {
+  <span class="k">-webkit-mask-image</span>: <span class="v">url('m.svg')</span>;
+          <span class="k">mask-image</span>: <span class="v">url('m.svg')</span>;
+  <span class="k">-webkit-mask-repeat</span>: <span class="v">no-repeat</span>; <span class="k">mask-repeat</span>: <span class="v">no-repeat</span>;
+  <span class="k">-webkit-mask-size</span>:   <span class="v">contain</span>;   <span class="k">mask-size</span>:   <span class="v">contain</span>;
+}</code></pre>
+      <div class="callout info"><p>Có thể dùng <a href="https://caniuse.com/css-masks" target="_blank" rel="noopener">caniuse.com/css-masks</a>
+        để kiểm tra hỗ trợ theo từng phiên bản trình duyệt. Trên các bản mới gần đây nhiều trình duyệt đã bỏ được tiền tố,
+        nhưng giữ <code>-webkit-</code> vẫn an toàn nhất.</p></div>
+    </section>
+
+    <!-- ==========  9. MẸO & MASK vs CLIP-PATH  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Mẹo &amp; phân biệt mask với clip-path <span class="tag-base">Tổng kết</span></h2>
+
+      <div class="callout tip"><p><strong>Mẹo 1 — Luôn kèm <code>-webkit-mask-*</code>.</strong> Thiếu tiền tố là lý do
+        số 1 khiến mask "không chạy" trên Chrome/Safari. Viết chuẩn <em>sau</em> để tương lai vẫn đúng.</p></div>
+
+      <div class="callout info"><p><strong>Mẹo 2 — mask khác clip-path.</strong>
+        <code>mask</code> che theo <em>độ mờ (alpha)</em> nên cho <strong>mép mềm, bán trong suốt, fade</strong>.
+        <code>clip-path</code> cắt theo một <em>đường hình học</em> nên cho <strong>mép sắc nét</strong> (polygon, circle, ellipse).</p></div>
+
+      <table class="syntax">
+        <caption><code>mask</code> vs <code>clip-path</code></caption>
+        <thead><tr><th>Tiêu chí</th><th><code>mask</code></th><th><code>clip-path</code></th></tr></thead>
+        <tbody>
+          <tr><td>Cơ chế</td><td>Theo độ mờ (alpha/luminance)</td><td>Theo đường cắt hình học</td></tr>
+          <tr><td>Mép</td><td>Mềm, có thể mờ dần (fade)</td><td>Sắc nét, cứng</td></tr>
+          <tr><td>Bán trong suốt</td><td>Có (alpha trung gian)</td><td>Không (hoặc trong, hoặc ngoài)</td></tr>
+          <tr><td>Gradient làm hiệu ứng</td><td>Rất hợp (fade, vignette)</td><td>Không dùng được</td></tr>
+          <tr><td>Hiệu năng</td><td>Nặng hơn chút</td><td>Nhẹ, nhanh</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn"><p><strong>Lưu ý 3.</strong> Mặt nạ <code>cư xử như background</code>: nếu quên
+        <code>mask-repeat:no-repeat</code> hoặc đặt sai <code>mask-size</code>, mặt nạ có thể bị lát lặp hoặc lệch khỏi ý muốn.</p></div>
+
+      <div class="callout danger"><p><strong>Cẩn trọng.</strong> Khi mặt nạ là SVG có nền <em>màu đặc</em> (không trong suốt),
+        toàn bộ phần tử sẽ hiện hết (vì chỗ nào cũng đục) → tưởng "mask không hoạt động". Hãy chắc nền SVG mặt nạ là <code>transparent</code>.</p></div>
+
+      <div class="note">
+        <p><strong>Ghi nhớ nhanh:</strong> cần mép mềm / fade / đổi màu icon → <code>mask</code>;
+           cần cắt hình sắc cạnh (sao, lục giác) → <code>clip-path</code> (xem bài 2.4.4).</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="01-bien-css.html"><small>← Bài trước</small>2.4.1 · Biến CSS</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="03-filter.html"><small>Bài tiếp →</small>2.4.3 · Filter</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

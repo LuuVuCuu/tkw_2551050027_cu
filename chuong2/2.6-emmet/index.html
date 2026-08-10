@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.6 — EMMET: viết HTML/CSS siêu nhanh (bản bài học)
+  ------------------------------------------------------------
+  Emmet là tính năng của TRÌNH SOẠN THẢO (VS Code…): gõ cú pháp
+  viết tắt + Tab → bung ra mã hoàn chỉnh. Khung trang dùng
+  ../../assets/lesson.css; CSS minh hoạ ở <style> (tiền tố .d-).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.6 · Emmet — viết HTML/CSS siêu nhanh</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== minh hoạ riêng (tiền tố d-) ===== */
+    .d-expand { display:grid; grid-template-columns: 1fr; gap:0; }
+    .d-io { display:grid; grid-template-columns: minmax(140px,260px) 1fr; gap:0; border:1px solid var(--line); border-radius:10px; overflow:hidden; margin:10px 0; }
+    .d-io > div { padding:10px 14px; }
+    .d-io .in  { background:#0f172a; color:#7ee787; font-family:"Cascadia Code",Consolas,monospace; font-size:.85rem; display:flex; align-items:center; }
+    .d-io .out { background:#fbfdff; font-family:"Cascadia Code",Consolas,monospace; font-size:.82rem; white-space:pre; overflow:auto; }
+    @media (max-width:640px){ .d-io{ grid-template-columns:1fr; } }
+    .d-key { display:inline-block; }
+    .d-menu-demo { list-style:none; display:flex; gap:8px; margin:0; padding:0; }
+    .d-menu-demo a { display:block; background:#1D559F; color:#fff; text-decoration:none; padding:8px 14px; border-radius:6px; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.6 Emmet</a><span>›</span>
+        Cheat sheet
+      </nav>
+      <h1>Viết HTML/CSS siêu nhanh với <code style="color:#fff;background:rgba(255,255,255,.18)">Emmet</code></h1>
+      <p class="sub">Gõ cú pháp viết tắt rồi nhấn <kbd>Tab</kbd> → Emmet bung ra mã hoàn chỉnh.
+         Một kỹ năng giúp gõ HTML/CSS nhanh gấp nhiều lần.</p>
+      <div class="chips">
+        <span class="chip solid">2.6</span>
+        <span class="chip">Emmet</span>
+        <span class="chip">VS Code</span>
+        <span class="chip">Năng suất</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <div class="callout info">
+      <p><strong>Emmet là tính năng của trình soạn thảo</strong> (tích hợp sẵn trong VS Code, Sublime…), không phải thứ chạy
+         trong trình duyệt. Hãy mở một file <code>.html</code> trong VS Code, gõ thử cú pháp rồi nhấn <kbd>Tab</kbd> để thấy nó bung.</p>
+    </div>
+
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Khởi tạo khung HTML5</a></li>
+        <li><a href="#s2">Cú pháp HTML thông dụng</a></li>
+        <li><a href="#s3">Lồng, nhân bản, đánh số</a></li>
+        <li><a href="#s4">Emmet cho CSS</a></li>
+        <li><a href="#s5">Bài tập tự bung</a></li>
+        <li><a href="#s6">Lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- 1 -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Khởi tạo nhanh khung HTML5 <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Gõ dấu <code>!</code> rồi nhấn <kbd>Tab</kbd> → sinh toàn bộ khung HTML5 chuẩn.</p>
+      <div class="d-io">
+        <div class="in">!&nbsp;<kbd>Tab</kbd></div>
+        <div class="out">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Document&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</div>
+      </div>
+      <div class="callout tip"><p>Gõ <code>!</code> là cách nhanh nhất để bắt đầu mọi file HTML — không cần nhớ thẻ <code>meta</code> viewport.</p></div>
+    </section>
+
+    <!-- 2 -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Cú pháp HTML thông dụng <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Mỗi ký hiệu là một "phép" để mô tả cây HTML. Ghép lại sẽ bung ra cấu trúc phức tạp chỉ trong một dòng.</p>
+      <table class="syntax">
+        <caption>Bảng tra cú pháp Emmet (HTML)</caption>
+        <thead><tr><th>Cú pháp</th><th>Ý nghĩa</th><th>Ví dụ → kết quả</th></tr></thead>
+        <tbody>
+          <tr><td><code>tag</code></td><td>Tạo thẻ</td><td><code>div</code> → <code>&lt;div&gt;&lt;/div&gt;</code></td></tr>
+          <tr><td><code>cha&gt;con</code></td><td>Lồng con vào cha</td><td><code>div&gt;p</code> → <code>&lt;div&gt;&lt;p&gt;&lt;/p&gt;&lt;/div&gt;</code></td></tr>
+          <tr><td><code>a+b</code></td><td>Cùng cấp (anh em)</td><td><code>h1+h2+h3</code></td></tr>
+          <tr><td><code>tag*n</code></td><td>Lặp n lần</td><td><code>li*3</code> → 3 thẻ <code>&lt;li&gt;</code></td></tr>
+          <tr><td><code>tag.class</code></td><td>Thêm class</td><td><code>p.note</code> → <code>&lt;p class="note"&gt;</code></td></tr>
+          <tr><td><code>tag#id</code></td><td>Thêm id</td><td><code>div#main</code> → <code>&lt;div id="main"&gt;</code></td></tr>
+          <tr><td><code>tag[attr="val"]</code></td><td>Thêm thuộc tính</td><td><code>a[href="#"]</code> → <code>&lt;a href="#"&gt;</code></td></tr>
+          <tr><td><code>tag{văn bản}</code></td><td>Thêm nội dung</td><td><code>p{Xin chào}</code> → <code>&lt;p&gt;Xin chào&lt;/p&gt;</code></td></tr>
+          <tr><td><code>lorem</code> / <code>lorem10</code></td><td>Văn bản giả (n từ)</td><td>một đoạn Lorem Ipsum</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p>Viết tắt class quen thuộc: chỉ gõ <code>.box</code> (không kèm thẻ) → Emmet mặc định bung thành
+        <code>&lt;div class="box"&gt;</code>. Muốn thẻ khác phải ghi rõ, ví dụ <code>span.box</code>.</p></div>
+    </section>
+
+    <!-- 3 -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Lồng, nhân bản, đánh số &amp; gom nhóm <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Sức mạnh thật của Emmet nằm ở việc kết hợp <code>&gt;</code>, <code>*</code>, <code>$</code>, <code>^</code>, <code>()</code> để sinh cả khối.</p>
+
+      <h3>Menu 4 mục chỉ trong một dòng</h3>
+      <div class="d-io">
+        <div class="in">ul.menu&gt;li*4&gt;a[href="#"]{Mục $}&nbsp;<kbd>Tab</kbd></div>
+        <div class="out">&lt;ul class="menu"&gt;
+    &lt;li&gt;&lt;a href="#"&gt;Mục 1&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;Mục 2&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;Mục 3&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;Mục 4&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</div>
+      </div>
+      <div class="demo">
+        <div class="demo-bar">Kết quả khi render menu trên</div>
+        <div class="demo-body">
+          <ul class="d-menu-demo">
+            <li><a href="#s3">Mục 1</a></li>
+            <li><a href="#s3">Mục 2</a></li>
+            <li><a href="#s3">Mục 3</a></li>
+            <li><a href="#s3">Mục 4</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <thead><tr><th>Ký hiệu</th><th>Tác dụng</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>$</code></td><td>Đánh số tự tăng khi lặp</td><td><code>li.item$*3</code> → item1, item2, item3</td></tr>
+          <tr><td><code>^</code></td><td>Lùi lên một cấp</td><td><code>div&gt;p^span</code> (span là anh em của div)</td></tr>
+          <tr><td><code>()</code></td><td>Gom nhóm</td><td><code>(ul&gt;li*2&gt;a)+div.content&gt;p</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 4 -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Emmet cho CSS <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Trong file <code>.css</code>, gõ viết tắt thuộc tính rồi <kbd>Tab</kbd> → bung ra khai báo đầy đủ.</p>
+      <table class="syntax">
+        <thead><tr><th>Gõ</th><th>Bung ra</th></tr></thead>
+        <tbody>
+          <tr><td><code>m10</code></td><td><code>margin: 10px;</code></td></tr>
+          <tr><td><code>p10-20</code></td><td><code>padding: 10px 20px;</code></td></tr>
+          <tr><td><code>w100p</code></td><td><code>width: 100%;</code></td></tr>
+          <tr><td><code>df</code></td><td><code>display: flex;</code></td></tr>
+          <tr><td><code>jcc</code></td><td><code>justify-content: center;</code></td></tr>
+          <tr><td><code>aic</code></td><td><code>align-items: center;</code></td></tr>
+          <tr><td><code>bgc</code></td><td><code>background-color: #fff;</code></td></tr>
+          <tr><td><code>pos:a</code></td><td><code>position: absolute;</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 5 -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Bài tập tự bung <span class="tag-base">Thực hành</span></h2>
+      <p class="lead">Gõ từng cú pháp dưới đây trong VS Code → nhấn <kbd>Tab</kbd> → so sánh với
+         <a href="ket-qua-mau.html">ket-qua-mau.html</a>.</p>
+      <pre class="code"><code><span class="c">1.</span> !
+<span class="c">2.</span> ul.menu&gt;li*4&gt;a[href="#"]{Mục $}
+<span class="c">3.</span> nav&gt;ul&gt;li*3&gt;a
+<span class="c">4.</span> .card*3&gt;img+h3{Tiêu đề $}+p&gt;lorem15
+<span class="c">5.</span> form&gt;(label+input)*3+button{Gửi}
+<span class="c">6.</span> table&gt;tr*3&gt;td*4
+<span class="c">7.</span> header+main&gt;(section&gt;h2)+aside^footer</code></pre>
+      <div class="callout tip"><p>Mở <a href="ket-qua-mau.html">ket-qua-mau.html</a> để xem kết quả bung của 7 bài trên rồi đối chiếu với máy bạn.</p></div>
+    </section>
+
+    <!-- 6 -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout warn"><p><strong>Quên nhấn <kbd>Tab</kbd></strong> (hoặc dùng editor không hỗ trợ Emmet) → cú pháp nằm
+        nguyên dạng văn bản, không bung.</p></div>
+      <div class="callout warn"><p><strong>Đặt class/id sai chỗ.</strong> <code>.box</code> mặc định bung thành <code>&lt;div class="box"&gt;</code>;
+        muốn thẻ khác phải ghi rõ <code>span.box</code>, <code>a.box</code>…</p></div>
+      <div class="callout info"><p>Trong VS Code, Emmet bật sẵn cho <code>.html</code>/<code>.css</code>. Với file khác (JSX…) có thể cần bật
+        <code>emmet.includeLanguages</code> trong Settings.</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="../2.5-phong-cach-thiet-ke/index.html"><small>← Bài trước</small>2.5 · 8 phong cách thiết kế</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="ket-qua-mau.html"><small>Xem thêm →</small>Kết quả bung mẫu (Emmet)</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.3.5 — CSS GRID cho RESPONSIVE (bản toàn diện)
+  ------------------------------------------------------------
+  Grid là hệ thống dàn trang 2 CHIỀU (hàng × cột) mạnh nhất
+  của CSS. Bài này đi từ cơ bản → nâng cao, tham khảo theo
+  W3Schools "CSS Grid", NHẤN MẠNH RESPONSIVE:
+    1) display:grid (ôn nhanh)   7) grid-template-areas
+    2) grid-template-columns+fr  8) Đổi areas theo @media
+    3) repeat()                  9) grid-column / grid-row / span
+    4) minmax + auto-fit       10) Bảng thuộc tính container/item
+    5) gap                       11) Mẹo & ghi nhớ
+    6) rows & lưới ngầm
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.3.5 · Grid cho Responsive</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* Ô lưới dùng chung để quan sát */
+    .d-cell {
+      background: #74b9ff; color: #fff; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; padding: 16px 8px; min-height: 48px; text-align: center;
+    }
+    .d-cell.alt  { background: #6c5ce7; }
+    .d-cell.alt2 { background: #04AA6D; }
+    .d-cell.alt3 { background: #e84393; }
+
+    /* khung kẻ chấm để thấy rõ "ô" của lưới */
+    .d-frame { background: #f1f5f9; border: 1px dashed #b8c4d6; border-radius: 10px; padding: 10px; }
+
+    /* 1) display:grid cơ bản */
+    .d-grid-basic { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+    /* 2) grid-template-columns + fr */
+    .d-fr { display: grid; gap: 10px; grid-template-columns: 1fr 2fr 1fr; }
+    .d-fr2 { display: grid; gap: 10px; grid-template-columns: 150px 1fr; margin-top: 10px; }
+
+    /* 3) repeat() */
+    .d-repeat { display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); }
+    .d-repeat-mix { display: grid; gap: 10px; grid-template-columns: repeat(2, 1fr) 2fr; margin-top: 10px; }
+
+    /* 4) minmax + auto-fit LƯỚI RESPONSIVE KHÔNG MEDIA QUERY */
+    .d-auto-fit {
+      display: grid; gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .d-auto-fill {
+      display: grid; gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+    /* gallery ảnh minh hoạ (ô màu thay cho ảnh, hoàn toàn offline) */
+    .d-gallery {
+      display: grid; gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+    .d-gallery .ph {
+      aspect-ratio: 4 / 3; border-radius: 8px; color: #fff;
+      display: flex; align-items: center; justify-content: center; font-weight: 700;
+      background: linear-gradient(135deg, #1D559F, #6c5ce7);
+    }
+    .d-gallery .ph:nth-child(2n)   { background: linear-gradient(135deg, #04AA6D, #1D559F); }
+    .d-gallery .ph:nth-child(3n)   { background: linear-gradient(135deg, #e84393, #6c5ce7); }
+
+    /* 5) gap */
+    .d-gap { display: grid; grid-template-columns: repeat(3, 1fr); row-gap: 24px; column-gap: 6px; }
+
+    /* 6) rows + lưới ngầm (auto-rows) */
+    .d-rows {
+      display: grid; gap: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: 80px 40px;     /* chỉ định 2 hàng tường minh */
+      grid-auto-rows: 60px;              /* các hàng PHÁT SINH thêm cao 60px */
+    }
+
+    /* 7) grid-template-areas — bố cục trang */
+    .d-page {
+      display: grid; gap: 10px;
+      grid-template-areas:
+        "header  header"
+        "sidebar main"
+        "footer  footer";
+      grid-template-columns: 200px 1fr;
+      grid-template-rows: 56px 1fr 44px;
+      min-height: 320px;
+    }
+    .d-page > * {
+      color: #fff; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-weight: 700;
+    }
+    .d-page .h { grid-area: header;  background: #1D559F; }
+    .d-page .s { grid-area: sidebar; background: #6c5ce7; }
+    .d-page .m { grid-area: main;    background: #04AA6D; }
+    .d-page .f { grid-area: footer;  background: #E63946; }
+
+    /* 8) Đổi areas theo @media (mobile dồn 1 cột) */
+    .d-page-rwd {
+      display: grid; gap: 10px;
+      grid-template-areas:
+        "nav  nav  nav"
+        "side main main"
+        "foot foot foot";
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 52px 1fr 44px;
+      min-height: 300px;
+    }
+    .d-page-rwd > * {
+      color: #fff; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-weight: 700; text-align: center;
+    }
+    .d-page-rwd .n  { grid-area: nav;  background: #1D559F; }
+    .d-page-rwd .sb { grid-area: side; background: #6c5ce7; }
+    .d-page-rwd .mn { grid-area: main; background: #04AA6D; }
+    .d-page-rwd .ft { grid-area: foot; background: #E63946; }
+    @media (max-width: 600px) {
+      .d-page-rwd {
+        grid-template-areas:
+          "nav"
+          "main"
+          "side"
+          "foot";
+        grid-template-columns: 1fr;       /* dồn về 1 cột */
+        grid-template-rows: 52px auto auto 44px;
+      }
+    }
+
+    /* 9) đặt vị trí item: grid-column / grid-row / span */
+    .d-place {
+      display: grid; gap: 8px;
+      grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: 60px;
+    }
+    .d-place .big   { grid-column: 1 / 3; background: #e84393; }   /* chiếm 2 cột (cột 1→3) */
+    .d-place .tall  { grid-row: span 2;   background: #00b894; }   /* chiếm 2 hàng */
+    .d-place .wide  { grid-column: span 4; background: #fd7e14; }  /* trải hết 4 cột */
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.3 Responsive</a><span>›</span>
+        Grid
+      </nav>
+      <h1>CSS <code style="color:#fff;background:rgba(255,255,255,.18)">Grid</code> cho thiết kế Responsive</h1>
+      <p class="sub">Grid là hệ thống dàn trang <strong>2 chiều</strong> (hàng × cột) mạnh nhất của CSS.
+         Từ chia cột bằng <code>fr</code>, <code>repeat()</code>, đến lưới tự co giãn với
+         <code>auto-fit + minmax()</code> (không cần media query) và bố cục cả trang bằng
+         <code>grid-template-areas</code>.</p>
+      <div class="chips">
+        <span class="chip solid">2.3.5</span>
+        <span class="chip">Responsive</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">display:grid — container &amp; item</a></li>
+        <li><a href="#s2">grid-template-columns &amp; đơn vị fr</a></li>
+        <li><a href="#s3">repeat() — rút gọn lặp cột</a></li>
+        <li><a href="#s4">minmax + auto-fit — lưới responsive</a></li>
+        <li><a href="#s5">gap (row-gap / column-gap)</a></li>
+        <li><a href="#s6">grid-template-rows &amp; lưới ngầm</a></li>
+        <li><a href="#s7">grid-template-areas — bố cục trang</a></li>
+        <li><a href="#s8">Đổi areas theo @media (responsive)</a></li>
+        <li><a href="#s9">grid-column / grid-row / span</a></li>
+        <li><a href="#s10">Bảng thuộc tính container vs item</a></li>
+        <li><a href="#s11">Mẹo &amp; ghi nhớ</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. DISPLAY:GRID  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> <code>display:grid</code> — container &amp; item <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Đặt <code>display:grid</code> cho một phần tử cha → nó trở thành <strong>grid container</strong>;
+         mọi con trực tiếp tự động thành <strong>grid item</strong> và được xếp vào các ô của lưới.
+         Lưới là khung 2 chiều gồm <em>hàng (row)</em> và <em>cột (column)</em>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · 6 item trong lưới 3 cột</div>
+        <div class="demo-body">
+          <div class="d-grid-basic d-frame">
+            <div class="d-cell">01</div>
+            <div class="d-cell">02</div>
+            <div class="d-cell">03</div>
+            <div class="d-cell">04</div>
+            <div class="d-cell">05</div>
+            <div class="d-cell">06</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* CHA: bật chế độ lưới */</span>
+.container { <span class="k">display</span>: <span class="v">grid</span>;
+             <span class="k">grid-template-columns</span>: <span class="v">1fr 1fr 1fr</span>; <span class="c">/* 3 cột bằng nhau */</span>
+             <span class="k">gap</span>: <span class="v">10px</span>; }
+<span class="c">/* Mọi &lt;div&gt; con trực tiếp tự thành grid item, tự xuống hàng khi đủ 3 cột */</span></code></pre>
+
+      <div class="note">
+        <p>Chỉ <strong>con trực tiếp</strong> mới là grid item (cháu thì không). Item tự động chảy
+           từ trái sang phải, hết một hàng thì sang hàng mới — không cần đếm trước số phần tử.</p>
+        <p>Còn <code>display:inline-grid</code> giống <code>grid</code> nhưng bản thân container lại nội tuyến.</p>
+      </div>
+      <div class="callout info"><p><strong>Grid vs Flexbox:</strong> Flexbox dàn theo <em>một chiều</em> (một hàng <u>hoặc</u> một cột);
+        Grid dàn theo <em>hai chiều</em> (hàng <u>và</u> cột cùng lúc) — lý tưởng cho bố cục cả trang.</p></div>
+    </section>
+
+    <!-- ==========  2. GRID-TEMPLATE-COLUMNS + FR  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> <code>grid-template-columns</code> &amp; đơn vị <code>fr</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>grid-template-columns</code> khai báo <strong>số cột</strong> và <strong>bề rộng từng cột</strong>.
+         Đơn vị <code>fr</code> (fraction — phần) chia <em>không gian còn lại</em> theo tỉ lệ, giúp lưới co giãn mềm mại.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · tỉ lệ 1fr : 2fr : 1fr (cột giữa rộng gấp đôi)</div>
+        <div class="demo-body">
+          <div class="d-fr d-frame">
+            <div class="d-cell">1fr</div>
+            <div class="d-cell alt">2fr</div>
+            <div class="d-cell">1fr</div>
+          </div>
+          <div class="d-fr2 d-frame">
+            <div class="d-cell alt2">150px (cố định)</div>
+            <div class="d-cell">1fr (phần còn lại)</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* 3 cột tỉ lệ 1 : 2 : 1 — cột giữa rộng gấp đôi hai cột bên */</span>
+.a { <span class="k">grid-template-columns</span>: <span class="v">1fr 2fr 1fr</span>; }
+
+<span class="c">/* trộn đơn vị: cột trái cố định 150px, cột phải ăn hết phần còn lại */</span>
+.b { <span class="k">grid-template-columns</span>: <span class="v">150px 1fr</span>; }
+
+<span class="c">/* dùng px / % / fr / auto đều được */</span>
+.c { <span class="k">grid-template-columns</span>: <span class="v">200px 25% 1fr auto</span>; }</code></pre>
+
+      <table class="syntax">
+        <caption>Đơn vị thường dùng cho kích thước cột/hàng</caption>
+        <thead><tr><th>Đơn vị</th><th>Ý nghĩa</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>fr</code></td><td>Một phần của <strong>không gian còn lại</strong> (linh hoạt, responsive).</td><td><code>1fr 2fr</code></td></tr>
+          <tr><td><code>px</code></td><td>Bề rộng cố định, không co giãn.</td><td><code>200px</code></td></tr>
+          <tr><td><code>%</code></td><td>Phần trăm bề rộng của container.</td><td><code>25%</code></td></tr>
+          <tr><td><code>auto</code></td><td>Tự khít theo nội dung của cột.</td><td><code>auto</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout tip"><p>Dùng <code>fr</code> thay cho <code>%</code> khi muốn lưới <strong>tự cân</strong> mà không phải tự trừ phần
+        <code>gap</code> — <code>fr</code> đã tính khoảng cách giúp bạn rồi.</p></div>
+    </section>
+
+    <!-- ==========  3. REPEAT()  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> <code>repeat()</code> — rút gọn lặp cột <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Khi nhiều cột giống nhau, gõ <code>1fr 1fr 1fr 1fr</code> rất dài. Hàm <code>repeat(số_lần, kích_thước)</code>
+         viết gọn lại. Có thể trộn với cột thường.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · repeat(4, 1fr) và repeat(2, 1fr) 2fr</div>
+        <div class="demo-body">
+          <div class="d-repeat d-frame">
+            <div class="d-cell">01</div>
+            <div class="d-cell">02</div>
+            <div class="d-cell">03</div>
+            <div class="d-cell">04</div>
+          </div>
+          <div class="d-repeat-mix d-frame">
+            <div class="d-cell alt">1fr</div>
+            <div class="d-cell alt">1fr</div>
+            <div class="d-cell alt3">2fr (rộng hơn)</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Hai cách viết tương đương: */</span>
+.a { <span class="k">grid-template-columns</span>: <span class="v">1fr 1fr 1fr 1fr</span>; }
+.b { <span class="k">grid-template-columns</span>: <span class="v">repeat(4, 1fr)</span>; }   <span class="c">/* gọn hơn ✓ */</span>
+
+<span class="c">/* Trộn: hai cột đầu 1fr, cột cuối 2fr */</span>
+.c { <span class="k">grid-template-columns</span>: <span class="v">repeat(2, 1fr) 2fr</span>; }
+
+<span class="c">/* Lặp một cụm mẫu: 1fr 2fr lặp lại 2 lần → 4 cột */</span>
+.d { <span class="k">grid-template-columns</span>: <span class="v">repeat(2, 1fr 2fr)</span>; }</code></pre>
+      <div class="callout info"><p><code>repeat()</code> dùng được cho cả <code>grid-template-rows</code>. Đặc biệt, kết hợp với
+        <code>auto-fit</code>/<code>auto-fill</code> ở mục sau sẽ tạo lưới responsive tự động — phần quan trọng nhất của bài.</p></div>
+    </section>
+
+    <!-- ==========  4. MINMAX + AUTO-FIT (RESPONSIVE) ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> <code>minmax()</code> + <code>auto-fit</code> — lưới responsive <span class="tag-adv">Quan trọng</span></h2>
+      <p class="lead">Đây là <strong>kỹ thuật responsive đắt giá nhất</strong> của Grid:
+         <code>repeat(auto-fit, minmax(200px, 1fr))</code> tạo lưới <strong>tự đổi số cột theo bề rộng màn hình</strong> —
+         <u>KHÔNG cần một dòng media query nào</u>. Thử thu/phóng cửa sổ để thấy số cột thay đổi.</p>
+
+      <div class="note">
+        <p><code>minmax(min, max)</code> = mỗi cột rộng <strong>tối thiểu <code>min</code></strong> và <strong>tối đa <code>max</code></strong>.
+           Ở đây <code>minmax(200px, 1fr)</code>: mỗi cột không hẹp hơn 200px, nhưng được phép giãn ra chia đều (1fr).</p>
+        <p><code>auto-fit</code> = trình duyệt tự tính <em>nhét được bao nhiêu cột 200px</em> trên hàng rồi giãn chúng lấp đầy.
+           Màn rộng → nhiều cột; màn hẹp → ít cột; rất hẹp → 1 cột.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · gallery tự đổi số cột (auto-fit + minmax)</div>
+        <div class="demo-body">
+          <div class="d-gallery d-frame">
+            <div class="ph">Ảnh 1</div>
+            <div class="ph">Ảnh 2</div>
+            <div class="ph">Ảnh 3</div>
+            <div class="ph">Ảnh 4</div>
+            <div class="ph">Ảnh 5</div>
+            <div class="ph">Ảnh 6</div>
+            <div class="ph">Ảnh 7</div>
+            <div class="ph">Ảnh 8</div>
+          </div>
+          <p class="muted" style="margin:12px 0 0">▸ Khung dưới đặt <code>minmax(180px, 1fr)</code> để dễ thấy ô to hơn:</p>
+          <div class="d-auto-fit d-frame" style="margin-top:8px">
+            <div class="d-cell">Card 1</div>
+            <div class="d-cell">Card 2</div>
+            <div class="d-cell">Card 3</div>
+            <div class="d-cell">Card 4</div>
+            <div class="d-cell">Card 5</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* LƯỚI RESPONSIVE — không cần media query */</span>
+.gallery {
+  <span class="k">display</span>: <span class="v">grid</span>;
+  <span class="k">gap</span>: <span class="v">12px</span>;
+  <span class="k">grid-template-columns</span>: <span class="v">repeat(auto-fit, minmax(200px, 1fr))</span>;
+}
+<span class="c">/* Đọc là: "lặp cột bao nhiêu lần cũng được; mỗi cột rộng ít nhất 200px,
+   nhiều nhất chia đều 1fr". Trình duyệt tự tăng/giảm số cột theo bề rộng. */</span></code></pre>
+
+      <table class="syntax">
+        <caption>auto-fit khác auto-fill thế nào?</caption>
+        <thead><tr><th>Từ khoá</th><th>Khi còn dư chỗ (ít item, màn rộng)</th></tr></thead>
+        <tbody>
+          <tr><td><code>auto-fit</code></td><td><strong>Co</strong> các cột rỗng về 0 → các item hiện có <em>giãn ra lấp đầy</em> hàng.</td></tr>
+          <tr><td><code>auto-fill</code></td><td><strong>Giữ</strong> các cột rỗng (kích thước min) → item không giãn, để lại khoảng trống bên phải.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout tip"><p>Mặc định nên dùng <code>auto-fit</code> cho gallery/card để các phần tử luôn lấp đầy hàng đẹp mắt.
+        Chỉ dùng <code>auto-fill</code> khi muốn giữ nguyên "ô" cho dù chưa có nội dung.</p></div>
+    </section>
+
+    <!-- ==========  5. GAP  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> <code>gap</code> — khoảng cách giữa các ô <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>gap</code> tạo rãnh giữa các hàng và cột mà <strong>không sinh khoảng thừa ở mép ngoài</strong>
+         (khác với dùng <code>margin</code>). Có thể tách riêng <code>row-gap</code> và <code>column-gap</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · row-gap:24px (dọc lớn) · column-gap:6px (ngang nhỏ)</div>
+        <div class="demo-body">
+          <div class="d-gap d-frame">
+            <div class="d-cell">01</div>
+            <div class="d-cell">02</div>
+            <div class="d-cell">03</div>
+            <div class="d-cell">04</div>
+            <div class="d-cell">05</div>
+            <div class="d-cell">06</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.a { <span class="k">gap</span>: <span class="v">10px</span>; }            <span class="c">/* hàng & cột đều 10px */</span>
+.b { <span class="k">gap</span>: <span class="v">24px 6px</span>; }         <span class="c">/* row-gap 24px, column-gap 6px */</span>
+.c { <span class="k">row-gap</span>: <span class="v">24px</span>;
+     <span class="k">column-gap</span>: <span class="v">6px</span>; }        <span class="c">/* viết tách riêng cũng được */</span></code></pre>
+      <div class="callout info"><p><code>gap</code> còn dùng được cho cả Flexbox. Trước đây nó tên là <code>grid-gap</code>;
+        nay <code>gap</code> là chuẩn — cứ dùng <code>gap</code>.</p></div>
+    </section>
+
+    <!-- ==========  6. ROWS & LƯỚI NGẦM  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> <code>grid-template-rows</code> &amp; lưới ngầm (<code>auto-rows</code>) <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>grid-template-rows</code> đặt chiều cao cho các hàng <em>tường minh</em>. Khi item nhiều hơn số hàng đã khai báo,
+         Grid tự sinh thêm hàng <strong>ngầm (implicit)</strong>; chiều cao của chúng do <code>grid-auto-rows</code> quyết định.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · 2 hàng tường minh (80px, 40px) + hàng ngầm 60px</div>
+        <div class="demo-body">
+          <div class="d-rows d-frame">
+            <div class="d-cell">80px</div>
+            <div class="d-cell">80px</div>
+            <div class="d-cell">80px</div>
+            <div class="d-cell alt">40px</div>
+            <div class="d-cell alt">40px</div>
+            <div class="d-cell alt">40px</div>
+            <div class="d-cell alt2">ngầm 60px</div>
+            <div class="d-cell alt2">ngầm 60px</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.grid {
+  <span class="k">display</span>: <span class="v">grid</span>;
+  <span class="k">grid-template-columns</span>: <span class="v">repeat(3, 1fr)</span>;
+  <span class="k">grid-template-rows</span>: <span class="v">80px 40px</span>;   <span class="c">/* chỉ định 2 hàng đầu */</span>
+  <span class="k">grid-auto-rows</span>: <span class="v">60px</span>;          <span class="c">/* mọi hàng phát sinh thêm cao 60px */</span>
+}</code></pre>
+      <div class="callout tip"><p>Để các hàng tự cao theo nội dung mà vẫn có chiều cao tối thiểu, dùng
+        <code>grid-auto-rows: minmax(60px, auto)</code>.</p></div>
+    </section>
+
+    <!-- ==========  7. GRID-TEMPLATE-AREAS  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> <code>grid-template-areas</code> — vẽ bố cục trang <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Cách trực quan nhất để dàn cả trang: <strong>đặt tên cho từng vùng</strong> rồi "vẽ" bố cục bằng chữ.
+         Mỗi chuỗi là một hàng; mỗi tên là một ô; tên lặp lại = vùng trải rộng nhiều ô.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · header trải ngang · sidebar | main · footer trải ngang</div>
+        <div class="demo-body">
+          <div class="d-page">
+            <header class="h">Header</header>
+            <aside class="s">Sidebar</aside>
+            <main class="m">Main content</main>
+            <footer class="f">Footer</footer>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.page {
+  <span class="k">display</span>: <span class="v">grid</span>;
+  <span class="k">grid-template-areas</span>:
+    <span class="s">"header  header"</span>     <span class="c">/* hàng 1: header trải 2 cột */</span>
+    <span class="s">"sidebar main"</span>       <span class="c">/* hàng 2: sidebar | main   */</span>
+    <span class="s">"footer  footer"</span>;    <span class="c">/* hàng 3: footer trải 2 cột */</span>
+  <span class="k">grid-template-columns</span>: <span class="v">200px 1fr</span>;
+  <span class="k">grid-template-rows</span>: <span class="v">56px 1fr 44px</span>;
+}
+<span class="c">/* Gán mỗi phần tử vào vùng theo TÊN */</span>
+.page .header  { <span class="k">grid-area</span>: <span class="v">header</span>; }
+.page .sidebar { <span class="k">grid-area</span>: <span class="v">sidebar</span>; }
+.page .main    { <span class="k">grid-area</span>: <span class="v">main</span>; }
+.page .footer  { <span class="k">grid-area</span>: <span class="v">footer</span>; }</code></pre>
+      <div class="callout info"><p>Số tên trên mỗi hàng phải bằng số cột; số hàng phải bằng số dòng chuỗi. Dùng dấu chấm
+        <code>"."</code> để chừa một ô trống. Đây là cách dễ đọc nhất để mô tả layout — nhìn CSS là thấy ngay bố cục.</p></div>
+    </section>
+
+    <!-- ==========  8. ĐỔI AREAS THEO @MEDIA  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Đổi bố cục <code>areas</code> theo <code>@media</code> <span class="tag-adv">Responsive</span></h2>
+      <p class="lead">Ưu điểm lớn của <code>grid-template-areas</code>: muốn responsive chỉ cần <strong>vẽ lại sơ đồ vùng</strong> trong
+         media query — không phải đụng tới HTML. Dưới đây màn rộng xếp 3 cột, màn hẹp (≤600px) dồn về 1 cột xếp dọc.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · thu cửa sổ ≤ 600px để thấy dồn 1 cột</div>
+        <div class="demo-body">
+          <div class="d-page-rwd">
+            <header class="n">Nav</header>
+            <aside class="sb">Sidebar</aside>
+            <main class="mn">Main</main>
+            <footer class="ft">Footer</footer>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Mặc định (màn rộng): nav trên · sidebar | main · footer */</span>
+.page {
+  <span class="k">grid-template-areas</span>:
+    <span class="s">"nav  nav  nav"</span>
+    <span class="s">"side main main"</span>
+    <span class="s">"foot foot foot"</span>;
+  <span class="k">grid-template-columns</span>: <span class="v">1fr 1fr 1fr</span>;
+}
+
+<span class="c">/* Màn hẹp: vẽ lại sơ đồ → tất cả xếp DỌC trên 1 cột */</span>
+<span class="k">@media</span> (max-width: 600px) {
+  .page {
+    <span class="k">grid-template-areas</span>:
+      <span class="s">"nav"</span>
+      <span class="s">"main"</span>
+      <span class="s">"side"</span>
+      <span class="s">"foot"</span>;
+    <span class="k">grid-template-columns</span>: <span class="v">1fr</span>;
+  }
+}</code></pre>
+      <div class="callout tip"><p>Để ý thứ tự trong mobile: <code>main</code> được đưa lên trên <code>side</code> dù trong HTML sidebar đứng trước —
+        Grid cho phép <strong>đổi thứ tự hiển thị</strong> mà không sửa cấu trúc HTML, rất tiện cho responsive.</p></div>
+    </section>
+
+    <!-- ==========  9. GRID-COLUMN / GRID-ROW / SPAN  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Đặt vị trí item: <code>grid-column</code> / <code>grid-row</code> / <code>span</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Mỗi item có thể được "ghim" vào vị trí cụ thể hoặc cho <strong>chiếm nhiều ô</strong>.
+         Lưới đánh số <em>đường kẻ (line)</em> từ 1; <code>grid-column: 1 / 3</code> nghĩa là từ đường 1 đến đường 3 (chiếm 2 cột).
+         Hoặc dùng <code>span N</code> để nói "chiếm N ô" mà không cần đếm đường.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · ô hồng chiếm 2 cột, ô xanh chiếm 2 hàng, ô cam trải cả hàng</div>
+        <div class="demo-body">
+          <div class="d-place d-frame">
+            <div class="d-cell big">A · 2 cột</div>
+            <div class="d-cell tall">B · 2 hàng</div>
+            <div class="d-cell">C</div>
+            <div class="d-cell">D</div>
+            <div class="d-cell">E</div>
+            <div class="d-cell">F</div>
+            <div class="d-cell wide">G · span 4 (cả hàng)</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Cách 1: chỉ định đường kẻ bắt đầu / kết thúc */</span>
+.big  { <span class="k">grid-column</span>: <span class="v">1 / 3</span>; }   <span class="c">/* từ đường 1 → 3 = chiếm 2 cột */</span>
+
+<span class="c">/* Cách 2: dùng span — gọn, không phải đếm đường */</span>
+.tall { <span class="k">grid-row</span>: <span class="v">span 2</span>; }   <span class="c">/* chiếm 2 hàng */</span>
+.wide { <span class="k">grid-column</span>: <span class="v">span 4</span>; } <span class="c">/* trải hết 4 cột */</span>
+
+<span class="c">/* Viết gộp cả hàng & cột bằng grid-area: row-start / col-start / row-end / col-end */</span>
+.box  { <span class="k">grid-area</span>: <span class="v">1 / 1 / 3 / 3</span>; } <span class="c">/* ô 2×2 ở góc trên-trái */</span></code></pre>
+      <div class="callout info"><p>Dùng số âm để đếm ngược từ mép phải: <code>grid-column: 1 / -1</code> nghĩa là
+        "trải từ cột đầu đến cột cuối cùng" — mẹo hay để một phần tử chiếm trọn chiều ngang lưới.</p></div>
+    </section>
+
+    <!-- ==========  10. BẢNG THUỘC TÍNH  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Thuộc tính của container vs item <span class="tag-base">Tra cứu</span></h2>
+      <p class="lead">Ghi nhớ then chốt: thuộc tính nào đặt trên <strong>cha (container)</strong>, thuộc tính nào đặt trên <strong>con (item)</strong>.</p>
+
+      <table class="syntax">
+        <caption>Đặt trên CONTAINER (phần tử cha có display:grid)</caption>
+        <thead><tr><th>Thuộc tính</th><th>Công dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>display: grid</code></td><td>Bật chế độ lưới.</td></tr>
+          <tr><td><code>grid-template-columns</code></td><td>Số cột &amp; bề rộng từng cột (dùng <code>fr</code>, <code>repeat()</code>, <code>minmax()</code>).</td></tr>
+          <tr><td><code>grid-template-rows</code></td><td>Số hàng &amp; chiều cao từng hàng.</td></tr>
+          <tr><td><code>grid-template-areas</code></td><td>Vẽ bố cục bằng tên vùng.</td></tr>
+          <tr><td><code>gap</code> / <code>row-gap</code> / <code>column-gap</code></td><td>Khoảng cách giữa các ô.</td></tr>
+          <tr><td><code>grid-auto-rows</code> / <code>grid-auto-columns</code></td><td>Kích thước các hàng/cột phát sinh ngầm.</td></tr>
+          <tr><td><code>justify-items</code> / <code>align-items</code></td><td>Căn item bên trong ô (ngang / dọc).</td></tr>
+          <tr><td><code>justify-content</code> / <code>align-content</code></td><td>Căn cả lưới trong container khi còn dư chỗ.</td></tr>
+        </tbody>
+      </table>
+
+      <table class="syntax">
+        <caption>Đặt trên ITEM (từng con của lưới)</caption>
+        <thead><tr><th>Thuộc tính</th><th>Công dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>grid-column</code></td><td>Vị trí/độ rộng theo cột: <code>1 / 3</code> hoặc <code>span 2</code>.</td></tr>
+          <tr><td><code>grid-row</code></td><td>Vị trí/độ cao theo hàng: <code>1 / 3</code> hoặc <code>span 2</code>.</td></tr>
+          <tr><td><code>grid-area</code></td><td>Gán vào vùng có tên, hoặc viết gộp 4 đường kẻ.</td></tr>
+          <tr><td><code>justify-self</code> / <code>align-self</code></td><td>Căn riêng item này trong ô của nó.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  11. MẸO & GHI NHỚ  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Mẹo &amp; ghi nhớ <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout tip"><p><strong>Gallery responsive.</strong> Cần lưới ảnh/card tự đổi số cột theo màn hình mà không viết media query?
+        Một dòng là đủ: <code>grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))</code>.</p></div>
+      <div class="callout tip"><p><strong>Layout cả trang.</strong> Header / Sidebar / Main / Footer → dùng <code>grid-template-areas</code>;
+        muốn responsive thì vẽ lại sơ đồ vùng trong <code>@media</code>, không phải sửa HTML.</p></div>
+      <div class="callout info"><p><strong>Flex hay Grid?</strong> Một <em>dãy</em> phần tử theo 1 chiều (navbar, hàng nút) → <code>flex</code>.
+        Khung <em>2 chiều</em> hàng × cột (bố cục trang, gallery) → <code>grid</code>. Hai cái thường dùng <u>chung</u> trong một trang.</p></div>
+      <div class="callout warn"><p><strong>Lưu ý.</strong> Chỉ <em>con trực tiếp</em> mới là grid item. Nếu phần tử cần dàn nằm sâu hơn một cấp,
+        lưới sẽ không "thấy" chúng — hãy bọc đúng cấp hoặc cho lớp trung gian cũng là grid.</p></div>
+      <div class="callout danger"><p><strong>Dễ nhầm.</strong> <code>1fr</code> chia <em>không gian còn lại</em> chứ không phải toàn bộ;
+        nếu trong lưới có cột <code>px</code> cố định, các cột <code>fr</code> chỉ chia phần dư sau khi trừ cột cố định và <code>gap</code>.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="03-flexbox.html"><small>← Bài trước</small>2.3.4 · Flexbox</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="05-hinh-anh.html"><small>Bài tiếp →</small>2.3.6 · Hình ảnh responsive</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

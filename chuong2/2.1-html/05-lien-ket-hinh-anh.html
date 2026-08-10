@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.1.6 — HTML LIÊN KẾT & HÌNH ẢNH (bản toàn diện)
+  ------------------------------------------------------------
+  Siêu liên kết và hình ảnh là "xương sống" của web. Bài này đi
+  từ cơ bản → nâng cao, tham khảo theo W3Schools:
+    "HTML Links", "HTML Images", "HTML Image Maps".
+     1) <a href> & văn bản liên kết   7) Trạng thái LVHA
+     2) target (_blank/_self/...)      8) <img> src/alt/size/lazy
+     3) Đường dẫn tuyệt đối/tương đối  9) Ảnh làm liên kết
+     4) Liên kết neo (anchor #id)     10) <figure>/<figcaption>
+     5) mailto: và tel:               11) Image map <map>/<area>
+     6) download & title              12) Mẹo: alt · SEO · favicon
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.1.6 · Liên kết &amp; hình ảnh</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+    html { scroll-behavior: smooth; }            /* cuộn mượt khi nhảy anchor */
+
+    /* khung quan sát đường dẫn / bố cục thư mục */
+    .d-tree {
+      font-family: "Cascadia Code", Consolas, monospace; font-size: .9rem;
+      background: #0f172a; color: #e6edf3; border-radius: 10px;
+      padding: 14px 18px; line-height: 1.7; margin: 12px 0; white-space: pre;
+    }
+    .d-tree .me { color: #ffa657; }
+    .d-tree .dir { color: #79c0ff; }
+
+    /* "spacer" minh hoạ anchor nhảy trong trang */
+    .d-spacer {
+      height: 200px; margin: 12px 0; border-radius: 10px;
+      background: repeating-linear-gradient(45deg,#f1f5f9,#f1f5f9 18px,#e9eef6 18px,#e9eef6 36px);
+      display: flex; align-items: center; justify-content: center;
+      color: #94a3b8; font-weight: 700; letter-spacing: .5px;
+    }
+    .d-anchor-target {
+      background: #eafaf3; border: 2px solid #04AA6D; border-radius: 10px;
+      padding: 14px 18px; color: #0b6b48; font-weight: 600;
+    }
+    .d-back { font-size: .9rem; }
+
+    /* hàng nút/liên kết demo */
+    .d-links a {
+      display: inline-block; margin: 4px 8px 4px 0; padding: 8px 14px;
+      background: #eaf1fb; color: #1D559F; border: 1px solid #cfe0f5;
+      border-radius: 8px; text-decoration: none; font-weight: 600; font-size: .92rem;
+    }
+    .d-links a:hover { background: #1D559F; color: #fff; }
+
+    /* 7) trạng thái LVHA — link demo dùng riêng để tô màu được mọi trạng thái */
+    .d-lvha a {
+      font-weight: 700; font-size: 1rem; padding: 4px 8px; border-radius: 6px;
+      text-decoration: none; display: inline-block; margin: 4px;
+    }
+    .d-lvha a:link    { color: #1D559F; }                 /* chưa bấm */
+    .d-lvha a:visited { color: #6c5ce7; }                 /* đã bấm */
+    .d-lvha a:hover   { color: #fff; background: #04AA6D; }/* rê chuột */
+    .d-lvha a:active  { color: #fff; background: #E63946; }/* đang nhấn */
+
+    /* 8) ảnh cơ bản */
+    .d-img { border-radius: 10px; border: 1px solid #e3e8f0; display: block; }
+
+    /* 9) ảnh làm liên kết */
+    .d-imglink { display: inline-block; border-radius: 12px; overflow: hidden;
+      border: 2px solid transparent; transition: border-color .15s, transform .15s; }
+    .d-imglink:hover { border-color: #1D559F; transform: translateY(-2px); }
+
+    /* 10) figure */
+    figure.d-fig { margin: 0; max-width: 360px; border: 1px solid #e3e8f0;
+      border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(20,40,80,.06); }
+    figure.d-fig img { display: block; width: 100%; height: auto; }
+    figure.d-fig figcaption {
+      padding: 10px 14px; font-size: .9rem; color: #5b6472;
+      background: #f8fafc; border-top: 1px solid #e3e8f0; font-style: italic;
+    }
+
+    /* 11) image map — khung minh hoạ vùng click */
+    .d-map-wrap { position: relative; display: inline-block; }
+    .d-map-wrap img { display: block; border-radius: 10px; border: 1px solid #e3e8f0; }
+    .d-map-legend span { display: inline-block; margin: 4px 10px 0 0; font-size: .9rem; }
+    .d-dot { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top" id="top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.1 HTML</a><span>›</span>
+        Liên kết &amp; hình ảnh
+      </nav>
+      <h1>Siêu liên kết &amp; hình ảnh
+        (<code style="color:#fff;background:rgba(255,255,255,.18)">&lt;a&gt;</code> &amp;
+         <code style="color:#fff;background:rgba(255,255,255,.18)">&lt;img&gt;</code>)</h1>
+      <p class="sub">Liên kết nối các trang lại thành "web"; hình ảnh làm trang sống động. Đi từ
+         <code>&lt;a href&gt;</code>, target, đường dẫn, anchor trong trang đến ảnh, figure và image map.</p>
+      <div class="chips">
+        <span class="chip solid">2.1.6</span>
+        <span class="chip">HTML cơ bản</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Liên kết &lt;a href&gt; cơ bản</a></li>
+        <li><a href="#s2">Thuộc tính target</a></li>
+        <li><a href="#s3">Đường dẫn tuyệt đối / tương đối</a></li>
+        <li><a href="#s4">Liên kết neo (anchor #id)</a></li>
+        <li><a href="#s5">mailto: và tel:</a></li>
+        <li><a href="#s6">download &amp; title</a></li>
+        <li><a href="#s7">Trạng thái liên kết (LVHA)</a></li>
+        <li><a href="#s8">Ảnh &lt;img&gt; — src/alt/size/lazy</a></li>
+        <li><a href="#s9">Ảnh làm liên kết</a></li>
+        <li><a href="#s10">&lt;figure&gt; / &lt;figcaption&gt;</a></li>
+        <li><a href="#s11">Image map &lt;map&gt;/&lt;area&gt;</a></li>
+        <li><a href="#s12">Mẹo: alt · SEO · favicon</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. LIÊN KẾT CƠ BẢN  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Liên kết <code>&lt;a href&gt;</code> cơ bản <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Thẻ <code>&lt;a&gt;</code> (anchor) tạo siêu liên kết. Thuộc tính
+         <code>href</code> (hypertext reference) cho biết <strong>đích đến</strong>; phần
+         <strong>văn bản giữa hai thẻ</strong> là chữ mà người dùng nhìn thấy và bấm vào.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <p>Truy cập <a href="https://www.w3schools.com/" target="_blank" rel="noopener">W3Schools</a>
+             để học thêm — đây là liên kết ra trang ngoài.</p>
+          <p>Hoặc xem lại <a href="04-danh-sach.html">bài Danh sách</a> trong cùng dự án (liên kết nội bộ).</p>
+        </div>
+      </div>
+
+      <div class="syntax-wrap">
+      <pre class="code"><code><span class="c">&lt;!-- href = đích đến · văn bản giữa 2 thẻ = chữ hiển thị --&gt;</span>
+<span class="k">&lt;a</span> <span class="v">href</span>=<span class="s">"https://www.w3schools.com/"</span><span class="k">&gt;</span>W3Schools<span class="k">&lt;/a&gt;</span>
+<span class="k">&lt;a</span> <span class="v">href</span>=<span class="s">"04-danh-sach.html"</span><span class="k">&gt;</span>bài Danh sách<span class="k">&lt;/a&gt;</span></code></pre>
+      </div>
+
+      <div class="note">
+        <p><strong>Văn bản liên kết</strong> nên <em>mô tả rõ đích đến</em>. Tránh viết "bấm vào đây", "click here" —
+           vừa khó hiểu, vừa kém cho SEO và trình đọc màn hình.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Thuộc tính chính của thẻ &lt;a&gt;</caption>
+        <thead><tr><th>Thuộc tính</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>href</code></td><td>URL/đường dẫn đích (bắt buộc để thành liên kết).</td></tr>
+          <tr><td><code>target</code></td><td>Mở đích ở đâu (xem mục 2).</td></tr>
+          <tr><td><code>title</code></td><td>Chú thích hiện khi rê chuột (xem mục 6).</td></tr>
+          <tr><td><code>download</code></td><td>Tải tệp về thay vì mở (xem mục 6).</td></tr>
+          <tr><td><code>rel</code></td><td>Quan hệ với đích, vd <code>noopener</code>, <code>nofollow</code>.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  2. TARGET  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Thuộc tính <code>target</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Mặc định liên kết mở <strong>ngay tại tab hiện tại</strong>. Thuộc tính
+         <code>target</code> đổi nơi mở đích đến.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · thử bấm để thấy khác biệt</div>
+        <div class="demo-body d-links">
+          <a href="https://www.w3schools.com/html/" target="_blank" rel="noopener">_blank → tab mới</a>
+          <a href="04-danh-sach.html" target="_self">_self → tab này</a>
+          <a href="https://www.w3schools.com/" target="_top" rel="noopener">_top → cửa sổ đầy đủ</a>
+        </div>
+      </div>
+
+      <div class="syntax-wrap">
+      <pre class="code"><code><span class="c">&lt;!-- _blank: mở tab/cửa sổ mới --&gt;</span>
+<span class="k">&lt;a</span> <span class="v">href</span>=<span class="s">"https://w3schools.com"</span> <span class="v">target</span>=<span class="s">"_blank"</span> <span class="v">rel</span>=<span class="s">"noopener"</span><span class="k">&gt;</span>...<span class="k">&lt;/a&gt;</span></code></pre>
+      </div>
+
+      <table class="syntax">
+        <caption>Các giá trị của target</caption>
+        <thead><tr><th>Giá trị</th><th>Mở ở đâu</th></tr></thead>
+        <tbody>
+          <tr><td><code>_self</code></td><td>Tab/khung hiện tại (<strong>mặc định</strong>).</td></tr>
+          <tr><td><code>_blank</code></td><td>Tab hoặc cửa sổ <strong>mới</strong>.</td></tr>
+          <tr><td><code>_parent</code></td><td>Khung cha (frame chứa khung hiện tại).</td></tr>
+          <tr><td><code>_top</code></td><td>Toàn bộ cửa sổ, phá hết khung lồng nhau.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn"><p>Khi dùng <code>target="_blank"</code> hãy thêm <code>rel="noopener"</code>
+        (hoặc <code>noopener noreferrer</code>). Nếu thiếu, trang mới có thể truy cập đối tượng
+        <code>window.opener</code> của trang gốc và gây rủi ro bảo mật/hiệu năng.</p></div>
+    </section>
+
+    <!-- ==========  3. ĐƯỜNG DẪN  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Đường dẫn: tuyệt đối vs tương đối <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><strong>URL tuyệt đối</strong> ghi đầy đủ (có <code>https://</code>...) — dùng cho trang ngoài.
+         <strong>URL tương đối</strong> tính từ vị trí của file hiện tại — gọn và bền khi đổi tên miền.</p>
+
+      <p class="muted" style="margin-bottom:6px">Giả sử cấu trúc thư mục dự án:</p>
+      <div class="d-tree"><span class="dir">chuong2/</span>
+├─ <span class="dir">2.1-html/</span>
+│  ├─ <span class="me">05-lien-ket-hinh-anh.html</span>   ← file hiện tại
+│  └─ 04-danh-sach.html
+├─ <span class="dir">2.2-css/</span>
+│  └─ 07-layout-display.html
+└─ <span class="dir">assets/</span>
+   └─ photo.svg</div>
+
+      <table class="syntax">
+        <caption>Cách viết đường dẫn (so với file hiện tại ở trên)</caption>
+        <thead><tr><th>Cú pháp</th><th>Loại</th><th>Trỏ tới</th></tr></thead>
+        <tbody>
+          <tr><td><code>04-danh-sach.html</code></td><td>tương đối</td><td>cùng thư mục <code>2.1-html/</code></td></tr>
+          <tr><td><code>./04-danh-sach.html</code></td><td>tương đối</td><td><code>./</code> = thư mục hiện tại (giống trên)</td></tr>
+          <tr><td><code>../../assets/photo.svg</code></td><td>tương đối</td><td><code>../</code> lùi 1 cấp rồi vào <code>assets/</code></td></tr>
+          <tr><td><code>../2.2-css/07-layout-display.html</code></td><td>tương đối</td><td>lùi 1 cấp, sang thư mục khác</td></tr>
+          <tr><td><code>/chuong2/index.html</code></td><td>gốc site</td><td>bắt đầu bằng <code>/</code> = từ thư mục gốc website</td></tr>
+          <tr><td><code>https://w3schools.com/</code></td><td>tuyệt đối</td><td>trang web bên ngoài</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · các liên kết tương đối chạy thật</div>
+        <div class="demo-body d-links">
+          <a href="04-danh-sach.html">cùng thư mục</a>
+          <a href="../2.2-css/07-layout-display.html">../2.2-css/...</a>
+          <a href="../index.html">../index.html</a>
+        </div>
+      </div>
+
+      <div class="callout tip"><p><strong>Mẹo:</strong> ưu tiên đường dẫn <em>tương đối</em> trong dự án để khi
+        chuyển tên miền hay thư mục, liên kết vẫn không hỏng. <code>./</code> nghĩa là "thư mục này",
+        <code>../</code> nghĩa là "lùi một cấp" và có thể lặp lại (<code>../../</code>).</p></div>
+    </section>
+
+    <!-- ==========  4. ANCHOR  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Liên kết neo trong trang (anchor / bookmark) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Đặt <code>id</code> cho một phần tử, rồi dùng <code>href="#id"</code> để
+         <strong>nhảy thẳng tới phần tử đó</strong> ngay trong trang — rất hợp cho mục lục, FAQ, "về đầu trang".</p>
+
+      <div class="syntax-wrap">
+      <pre class="code"><code><span class="c">&lt;!-- 1) đánh dấu điểm đến bằng id --&gt;</span>
+<span class="k">&lt;h2</span> <span class="v">id</span>=<span class="s">"lienhe"</span><span class="k">&gt;</span>Liên hệ<span class="k">&lt;/h2&gt;</span>
+
+<span class="c">&lt;!-- 2) liên kết tới nó bằng # + id --&gt;</span>
+<span class="k">&lt;a</span> <span class="v">href</span>=<span class="s">"#lienhe"</span><span class="k">&gt;</span>Tới phần Liên hệ<span class="k">&lt;/a&gt;</span></code></pre>
+      </div>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · bấm để nhảy xuống rồi quay lại</div>
+        <div class="demo-body">
+          <p class="d-links"><a href="#s4-cuoi">↓ Nhảy xuống điểm neo bên dưới</a></p>
+          <div class="d-spacer">… khoảng trống minh hoạ — cuộn xuống …</div>
+          <p id="s4-cuoi" class="d-anchor-target">Bạn vừa nhảy tới đây bằng <code>href="#s4-cuoi"</code>.</p>
+          <p class="d-back"><a href="#top">↑ Về đầu trang (href="#top")</a></p>
+        </div>
+      </div>
+
+      <div class="callout info"><p>Liên kết <code>href="#top"</code> trỏ tới phần tử có <code>id="top"</code>.
+        Riêng <code>href="#"</code> (không có id) sẽ nhảy về <em>đầu trang</em>. Thêm
+        <code>html { scroll-behavior: smooth; }</code> để cuộn mượt thay vì nhảy giật.</p></div>
+    </section>
+
+    <!-- ==========  5. MAILTO & TEL  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Liên kết <code>mailto:</code> và <code>tel:</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Ngoài http(s), <code>href</code> còn nhận các "scheme" khác:
+         <code>mailto:</code> mở trình soạn email, <code>tel:</code> gọi điện (trên điện thoại).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · bấm để mở app tương ứng</div>
+        <div class="demo-body d-links">
+          <a href="mailto:khoavoviet@gmail.com"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> Gửi email</a>
+          <a href="mailto:khoavoviet@gmail.com?subject=Phản%20hồi&amp;body=Chào%20thầy"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> Email kèm tiêu đề + nội dung</a>
+          <a href="tel:+84909123456"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"/></svg> Gọi 0909 123 456</a>
+        </div>
+      </div>
+
+      <div class="syntax-wrap">
+      <pre class="code"><code><span class="c">&lt;!-- email đơn giản --&gt;</span>
+<span class="k">&lt;a</span> <span class="v">href</span>=<span class="s">"mailto:ten@vidu.com"</span><span class="k">&gt;</span>Gửi email<span class="k">&lt;/a&gt;</span>
+
+<span class="c">&lt;!-- email kèm tiêu đề (subject) &amp; nội dung (body) --&gt;</span>
+<span class="k">&lt;a</span> <span class="v">href</span>=<span class="s">"mailto:ten@vidu.com?subject=Phản hồi&amp;body=Chào thầy"</span><span class="k">&gt;</span>...<span class="k">&lt;/a&gt;</span>
+
+<span class="c">&lt;!-- gọi điện: nên ghi số dạng quốc tế +84... --&gt;</span>
+<span class="k">&lt;a</span> <span class="v">href</span>=<span class="s">"tel:+84909123456"</span><span class="k">&gt;</span>Gọi ngay<span class="k">&lt;/a&gt;</span></code></pre>
+      </div>
+
+      <div class="callout warn"><p>Các tham số <code>?subject=</code> &amp; <code>&amp;body=</code> nên được
+        <em>mã hoá URL</em> (dấu cách → <code>%20</code>). <code>tel:</code> chỉ thực sự gọi được trên thiết bị có chức năng gọi.</p></div>
+    </section>
+
+    <!-- ==========  6. DOWNLOAD & TITLE  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Thuộc tính <code>download</code> &amp; <code>title</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>download</code> buộc trình duyệt <strong>tải tệp về</strong> thay vì mở.
+         <code>title</code> tạo dòng chú thích nhỏ hiện khi <strong>rê chuột</strong> lên liên kết.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · rê chuột lên link đầu để thấy title</div>
+        <div class="demo-body d-links">
+          <a href="../../assets/logo.svg" title="Tệp logo định dạng SVG, ~0.5KB">Rê chuột xem title</a>
+          <a href="../../assets/logo.svg" download>⬇ Tải logo.svg về máy</a>
+          <a href="../../assets/logo.svg" download="logo-truong.svg">⬇ Tải &amp; đổi tên khi lưu</a>
+        </div>
+      </div>
+
+      <div class="syntax-wrap">
+      <pre class="code"><code><span class="c">&lt;!-- title: chú thích khi hover --&gt;</span>
+<span class="k">&lt;a</span> <span class="v">href</span>=<span class="s">"logo.svg"</span> <span class="v">title</span>=<span class="s">"Tệp logo SVG"</span><span class="k">&gt;</span>Logo<span class="k">&lt;/a&gt;</span>
+
+<span class="c">&lt;!-- download: tải về (có thể đặt tên file lưu) --&gt;</span>
+<span class="k">&lt;a</span> <span class="v">href</span>=<span class="s">"logo.svg"</span> <span class="v">download</span><span class="k">&gt;</span>Tải về<span class="k">&lt;/a&gt;</span>
+<span class="k">&lt;a</span> <span class="v">href</span>=<span class="s">"logo.svg"</span> <span class="v">download</span>=<span class="s">"logo-truong.svg"</span><span class="k">&gt;</span>Tải &amp; đổi tên<span class="k">&lt;/a&gt;</span></code></pre>
+      </div>
+
+      <div class="callout info"><p><code>download</code> hoạt động tốt nhất với tệp <em>cùng nguồn gốc (same-origin)</em>.
+        Với tệp từ máy chủ khác, một số trình duyệt sẽ bỏ qua và mở bình thường.</p></div>
+    </section>
+
+    <!-- ==========  7. LVHA  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Trạng thái liên kết: <code>:link :visited :hover :active</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Một liên kết có 4 trạng thái CSS. Phải khai báo đúng thứ tự
+         <strong>L-V-H-A</strong> ("LoVe-HAte") để không trạng thái nào bị ghi đè nhầm.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · rê chuột &amp; nhấn giữ để thấy đổi màu</div>
+        <div class="demo-body d-lvha">
+          <a href="#s7">Liên kết mẫu — thử rê chuột rồi nhấn giữ</a>
+        </div>
+      </div>
+
+      <div class="syntax-wrap">
+      <pre class="code"><code><span class="c">/* Thứ tự bắt buộc: Link → Visited → Hover → Active */</span>
+a<span class="k">:link</span>    { <span class="k">color</span>: <span class="v">#1D559F</span>; }                 <span class="c">/* chưa bấm */</span>
+a<span class="k">:visited</span> { <span class="k">color</span>: <span class="v">#6c5ce7</span>; }                 <span class="c">/* đã bấm */</span>
+a<span class="k">:hover</span>   { <span class="k">color</span>: <span class="v">#fff</span>; <span class="k">background</span>: <span class="v">#04AA6D</span>; } <span class="c">/* rê chuột */</span>
+a<span class="k">:active</span>  { <span class="k">color</span>: <span class="v">#fff</span>; <span class="k">background</span>: <span class="v">#E63946</span>; } <span class="c">/* đang nhấn */</span></code></pre>
+      </div>
+
+      <table class="syntax">
+        <caption>Bốn trạng thái của liên kết</caption>
+        <thead><tr><th>Trạng thái</th><th>Khi nào</th></tr></thead>
+        <tbody>
+          <tr><td><code>:link</code></td><td>Liên kết bình thường, người dùng <strong>chưa</strong> truy cập.</td></tr>
+          <tr><td><code>:visited</code></td><td>Liên kết người dùng <strong>đã</strong> truy cập.</td></tr>
+          <tr><td><code>:hover</code></td><td>Khi con trỏ <strong>rê lên</strong> liên kết.</td></tr>
+          <tr><td><code>:active</code></td><td>Đúng lúc <strong>đang nhấn</strong> chuột.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn"><p>Sai thứ tự (vd để <code>:hover</code> trước <code>:visited</code>) sẽ khiến
+        một số quy tắc <em>không có hiệu lực</em> do độ ưu tiên (specificity) bằng nhau — quy tắc sau đè quy tắc trước.</p></div>
+    </section>
+
+    <!-- ==========  8. ẢNH IMG  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Hình ảnh <code>&lt;img&gt;</code> — src · alt · kích thước · lazy <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Thẻ <code>&lt;img&gt;</code> là thẻ <em>rỗng</em> (không có thẻ đóng). Hai thuộc tính
+         <strong>bắt buộc</strong>: <code>src</code> (nguồn ảnh) và <code>alt</code> (mô tả thay thế).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <img class="d-img" src="../../assets/photo.svg"
+               alt="Phong cảnh bầu trời chuyển sắc xanh tím (ảnh minh hoạ)"
+               width="320" height="210" loading="lazy">
+          <p class="muted" style="margin-top:10px">Ảnh trên là <code>../../assets/photo.svg</code> (gốc 640×420),
+             hiển thị ở <code>width="320" height="210"</code>.</p>
+        </div>
+      </div>
+
+      <div class="syntax-wrap">
+      <pre class="code"><code><span class="k">&lt;img</span> <span class="v">src</span>=<span class="s">"../../assets/photo.svg"</span>
+     <span class="v">alt</span>=<span class="s">"Phong cảnh bầu trời xanh tím"</span>
+     <span class="v">width</span>=<span class="s">"320"</span> <span class="v">height</span>=<span class="s">"210"</span>
+     <span class="v">loading</span>=<span class="s">"lazy"</span><span class="k">&gt;</span></code></pre>
+      </div>
+
+      <table class="syntax">
+        <caption>Thuộc tính của &lt;img&gt;</caption>
+        <thead><tr><th>Thuộc tính</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>src</code></td><td>Đường dẫn ảnh (bắt buộc).</td></tr>
+          <tr><td><code>alt</code></td><td>Văn bản thay thế khi ảnh lỗi/cho trình đọc màn hình (bắt buộc).</td></tr>
+          <tr><td><code>width</code> / <code>height</code></td><td>Kích thước (px) — đặt sẵn để <strong>giữ chỗ</strong>, tránh "nhảy" layout.</td></tr>
+          <tr><td><code>loading="lazy"</code></td><td>Hoãn tải ảnh tới khi gần cuộn đến → trang nhẹ, nhanh hơn.</td></tr>
+          <tr><td><code>title</code></td><td>Chú thích hiện khi rê chuột (tuỳ chọn).</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info"><p>Luôn đặt <code>width</code> &amp; <code>height</code> để trình duyệt dành sẵn ô trống đúng tỉ lệ.
+        Nếu thiếu, khi ảnh tải xong nội dung bên dưới sẽ bị đẩy giật (layout shift).</p></div>
+    </section>
+
+    <!-- ==========  9. ẢNH LÀM LIÊN KẾT  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Ảnh làm liên kết <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Đặt thẻ <code>&lt;img&gt;</code> <strong>bên trong</strong> thẻ <code>&lt;a&gt;</code> →
+         bấm vào ảnh sẽ mở liên kết. Rất phổ biến cho logo, banner, thẻ sản phẩm.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · bấm vào logo để mở W3Schools (tab mới)</div>
+        <div class="demo-body">
+          <a class="d-imglink" href="https://www.w3schools.com/" target="_blank" rel="noopener">
+            <img src="../../assets/logo.svg" alt="Logo (bấm để tới W3Schools)" width="120" height="120">
+          </a>
+        </div>
+      </div>
+
+      <div class="syntax-wrap">
+      <pre class="code"><code><span class="c">&lt;!-- img nằm trong a → cả ảnh trở thành vùng bấm --&gt;</span>
+<span class="k">&lt;a</span> <span class="v">href</span>=<span class="s">"https://www.w3schools.com/"</span> <span class="v">target</span>=<span class="s">"_blank"</span> <span class="v">rel</span>=<span class="s">"noopener"</span><span class="k">&gt;</span>
+  <span class="k">&lt;img</span> <span class="v">src</span>=<span class="s">"logo.svg"</span> <span class="v">alt</span>=<span class="s">"Logo"</span> <span class="v">width</span>=<span class="s">"120"</span> <span class="v">height</span>=<span class="s">"120"</span><span class="k">&gt;</span>
+<span class="k">&lt;/a&gt;</span></code></pre>
+      </div>
+
+      <div class="callout tip"><p>Với ảnh-liên kết, <code>alt</code> nên mô tả <em>đích đến</em> (vd "Trang chủ W3Schools")
+        chứ không chỉ tả ảnh — vì đó là điều trình đọc màn hình sẽ đọc cho người dùng.</p></div>
+    </section>
+
+    <!-- ==========  10. FIGURE & FIGCAPTION  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> <code>&lt;figure&gt;</code> &amp; <code>&lt;figcaption&gt;</code> — ảnh có chú thích <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>&lt;figure&gt;</code> gói một nội dung minh hoạ (ảnh, biểu đồ, đoạn code...) kèm
+         <code>&lt;figcaption&gt;</code> làm <strong>chú thích ngữ nghĩa</strong> đi liền với nó.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <figure class="d-fig">
+            <img src="../../assets/rose.svg" alt="Bông hồng cách điệu màu hồng trên nền tối">
+            <figcaption><strong>Hình 1.</strong> Bông hồng (rose.svg) — ảnh có chú thích đi kèm.</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="syntax-wrap">
+      <pre class="code"><code><span class="k">&lt;figure&gt;</span>
+  <span class="k">&lt;img</span> <span class="v">src</span>=<span class="s">"rose.svg"</span> <span class="v">alt</span>=<span class="s">"Bông hồng cách điệu"</span><span class="k">&gt;</span>
+  <span class="k">&lt;figcaption&gt;</span>Hình 1. Bông hồng.<span class="k">&lt;/figcaption&gt;</span>
+<span class="k">&lt;/figure&gt;</span></code></pre>
+      </div>
+
+      <div class="callout info"><p>Khác với <code>alt</code> (mô tả ẩn cho máy/trình đọc), <code>figcaption</code> là
+        <strong>chú thích hiển thị</strong> cho mọi người đọc. Hai thứ bổ sung cho nhau, không thay thế nhau.</p></div>
+    </section>
+
+    <!-- ==========  11. IMAGE MAP  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Image map — <code>&lt;map&gt;</code> / <code>&lt;area&gt;</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Image map cho phép tạo <strong>nhiều vùng bấm khác nhau</strong> trên cùng một ảnh.
+         Ảnh khai báo <code>usemap="#tên"</code>, mỗi vùng là một <code>&lt;area&gt;</code> với hình dạng + toạ độ.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · rê/bấm vào các vùng khác nhau trên ảnh (mở tab mới)</div>
+        <div class="demo-body">
+          <div class="d-map-wrap">
+            <img src="../../assets/sky.svg" alt="Bầu trời chuyển sắc — ảnh có nhiều vùng bấm"
+                 width="360" height="240" usemap="#skymap">
+          </div>
+          <map name="skymap">
+            <area shape="rect" coords="0,0,180,240" alt="Nửa trái → HTML"
+                  href="https://www.w3schools.com/html/" target="_blank" rel="noopener">
+            <area shape="circle" coords="270,120,70" alt="Vòng tròn phải → CSS"
+                  href="https://www.w3schools.com/css/" target="_blank" rel="noopener">
+          </map>
+          <p class="d-map-legend">
+            <span><i class="d-dot" style="background:#1D559F"></i>Nửa trái → bài HTML</span>
+            <span><i class="d-dot" style="background:#04AA6D"></i>Vòng tròn phải → bài CSS</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="syntax-wrap">
+      <pre class="code"><code><span class="c">&lt;!-- ảnh liên kết tới map qua usemap="#tên" --&gt;</span>
+<span class="k">&lt;img</span> <span class="v">src</span>=<span class="s">"sky.svg"</span> <span class="v">alt</span>=<span class="s">"Bầu trời"</span> <span class="v">width</span>=<span class="s">"360"</span> <span class="v">height</span>=<span class="s">"240"</span> <span class="v">usemap</span>=<span class="s">"#skymap"</span><span class="k">&gt;</span>
+
+<span class="k">&lt;map</span> <span class="v">name</span>=<span class="s">"skymap"</span><span class="k">&gt;</span>
+  <span class="k">&lt;area</span> <span class="v">shape</span>=<span class="s">"rect"</span>   <span class="v">coords</span>=<span class="s">"0,0,180,240"</span>  <span class="v">alt</span>=<span class="s">"Nửa trái"</span>  <span class="v">href</span>=<span class="s">"html/"</span><span class="k">&gt;</span>
+  <span class="k">&lt;area</span> <span class="v">shape</span>=<span class="s">"circle"</span> <span class="v">coords</span>=<span class="s">"270,120,70"</span> <span class="v">alt</span>=<span class="s">"Vòng phải"</span> <span class="v">href</span>=<span class="s">"css/"</span><span class="k">&gt;</span>
+<span class="k">&lt;/map&gt;</span></code></pre>
+      </div>
+
+      <table class="syntax">
+        <caption>Hình dạng vùng &amp; ý nghĩa coords</caption>
+        <thead><tr><th><code>shape</code></th><th><code>coords</code></th></tr></thead>
+        <tbody>
+          <tr><td><code>rect</code> (chữ nhật)</td><td><code>x1,y1,x2,y2</code> — góc trái-trên &amp; phải-dưới</td></tr>
+          <tr><td><code>circle</code> (tròn)</td><td><code>x,y,r</code> — tâm (x,y) và bán kính r</td></tr>
+          <tr><td><code>poly</code> (đa giác)</td><td><code>x1,y1,x2,y2,...</code> — các đỉnh nối nhau</td></tr>
+          <tr><td><code>default</code></td><td>toàn bộ vùng còn lại của ảnh</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn"><p>Toạ độ tính theo <strong>pixel của ảnh</strong> (từ góc trên-trái). Nếu phóng to/thu nhỏ ảnh bằng CSS,
+        vùng bấm có thể lệch. Image map khó làm responsive — với UI hiện đại thường thay bằng nhiều thẻ <code>&lt;a&gt;</code> + CSS.</p></div>
+    </section>
+
+    <!-- ==========  12. MẸO TỔNG KẾT  ========== -->
+    <section class="block" id="s12">
+      <h2><span class="num">12</span> Mẹo: <code>alt</code> · SEO · khả năng tiếp cận · favicon <span class="tag-base">Tổng kết</span></h2>
+      <p class="lead">Vài điểm "vàng" về liên kết &amp; hình ảnh giúp trang vừa thân thiện SEO, vừa dễ tiếp cận.</p>
+
+      <div class="callout tip"><p><strong>alt rất quan trọng.</strong> Khi ảnh lỗi, <code>alt</code> hiện ra thay ảnh;
+        với người khiếm thị, trình đọc màn hình đọc <code>alt</code>; với SEO, công cụ tìm kiếm "hiểu" ảnh qua <code>alt</code>.
+        Hãy viết <em>mô tả ngắn, đúng nội dung</em>. Ảnh thuần trang trí thì để <code>alt=""</code> (rỗng) để bỏ qua.</p></div>
+
+      <div class="callout info"><p><strong>Favicon.</strong> Biểu tượng nhỏ trên tab trình duyệt, khai báo trong
+        <code>&lt;head&gt;</code>: <code>&lt;link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg"&gt;</code>
+        — chính là dòng bài học này đang dùng.</p></div>
+
+      <div class="callout tip"><p><strong>Mẹo đường dẫn.</strong> Dùng đường dẫn <em>tương đối</em> trong dự án (gọn, dễ di chuyển),
+        nhớ <code>./</code> = thư mục này, <code>../</code> = lùi một cấp. Kiểm tra hoa/thường trong tên file vì server Linux phân biệt
+        <code>Logo.svg</code> với <code>logo.svg</code>.</p></div>
+
+      <div class="callout warn"><p><strong>An toàn liên kết.</strong> Mọi <code>target="_blank"</code> hãy kèm <code>rel="noopener"</code>;
+        văn bản liên kết nên mô tả đích đến (đừng "bấm vào đây").</p></div>
+
+      <table class="syntax">
+        <caption>Bảng tra nhanh — khi nào dùng gì</caption>
+        <thead><tr><th>Tình huống</th><th>Dùng</th></tr></thead>
+        <tbody>
+          <tr><td>Mở trang ngoài ở tab mới</td><td><code>&lt;a href="..." target="_blank" rel="noopener"&gt;</code></td></tr>
+          <tr><td>Nhảy trong cùng trang</td><td><code>id="x"</code> + <code>href="#x"</code></td></tr>
+          <tr><td>Gửi email / gọi điện</td><td><code>mailto:</code> · <code>tel:</code></td></tr>
+          <tr><td>Tải tệp về máy</td><td><code>&lt;a href="file" download&gt;</code></td></tr>
+          <tr><td>Ảnh kèm chú thích hiển thị</td><td><code>&lt;figure&gt;</code> + <code>&lt;figcaption&gt;</code></td></tr>
+          <tr><td>Nhiều vùng bấm trên 1 ảnh</td><td><code>&lt;map&gt;</code> + <code>&lt;area&gt;</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="04-danh-sach.html"><small>← Bài trước</small>2.1.5 · Danh sách</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="06-bang.html"><small>Bài tiếp →</small>2.1.7 · Bảng</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

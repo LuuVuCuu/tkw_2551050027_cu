@@ -1,0 +1,242 @@
+/* ============================================================
+   lesson.css — HỆ THỐNG GIAO DIỆN DÙNG CHUNG CHO TRANG BÀI HỌC
+   ------------------------------------------------------------
+   Chỉ tạo "khung trang" (header, mục lục, khối Demo, khối ghi
+   chú, bảng cú pháp, callout, điều hướng). Phần CSS minh hoạ
+   của TỪNG bài vẫn để trong <style> riêng của file đó, để sinh
+   viên đọc được trọn vẹn kỹ thuật đang học.
+   Bảng màu: #1D559F (xanh chủ đạo) · #04AA6D (xanh lá nhấn)
+             #6c5ce7 (tím) · #FFC107 (vàng) · #E63946 (đỏ)
+   ============================================================ */
+
+:root {
+  --blue:    #1D559F;
+  --blue-d:  #16407a;
+  --green:   #04AA6D;
+  --purple:  #6c5ce7;
+  --amber:   #FFC107;
+  --red:     #E63946;
+  --ink:     #1a1f29;
+  --muted:   #5b6472;
+  --line:    #e3e8f0;
+  --bg:      #f4f6fb;
+  --card:    #ffffff;
+  --code-bg: #0f172a;
+  --radius:  14px;
+  --shadow:  0 2px 10px rgba(20,40,80,.06);
+  --shadow-h:0 12px 28px rgba(29,85,159,.16);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- liên kết bỏ qua (accessibility) ---------- */
+.skip {
+  position: absolute; left: -9999px; top: 0;
+  background: var(--blue); color: #fff; padding: 10px 16px; z-index: 999;
+  border-radius: 0 0 8px 0;
+}
+.skip:focus { left: 0; }
+
+/* ====================  HEADER BÀI HỌC  ==================== */
+.lesson-top {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
+  color: #fff;
+  padding: 28px 24px 34px;
+}
+.lesson-top .inner { max-width: 1080px; margin: 0 auto; }
+
+.crumbs { font-size: .85rem; opacity: .9; margin-bottom: 14px; }
+.crumbs a { color: #fff; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,.6); }
+.crumbs a:hover { border-bottom-style: solid; }
+.crumbs span { margin: 0 6px; opacity: .6; }
+
+.lesson-top h1 {
+  margin: 0 0 8px;
+  font-size: clamp(1.5rem, 3.6vw, 2.3rem);
+  line-height: 1.2;
+}
+.lesson-top .sub { margin: 0; opacity: .92; max-width: 70ch; }
+
+.chips { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-block;
+  font-size: .74rem; font-weight: 700; letter-spacing: .4px;
+  padding: 4px 11px; border-radius: 999px;
+  background: rgba(255,255,255,.16); color: #fff;
+  border: 1px solid rgba(255,255,255,.25);
+}
+.chip.solid { background: var(--green); border-color: transparent; }
+
+/* ====================  KHUNG NỘI DUNG  ==================== */
+.lesson { max-width: 1080px; margin: 0 auto; padding: 28px 24px 60px; }
+
+/* ---------- Mục lục (table of contents) ---------- */
+.toc {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 16px 20px; margin-bottom: 30px;
+  box-shadow: var(--shadow);
+}
+.toc h2 {
+  margin: 0 0 10px; font-size: .8rem; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--muted);
+}
+.toc ol {
+  margin: 0; padding: 0; list-style: none;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px 18px;
+  counter-reset: toc;
+}
+.toc li { counter-increment: toc; }
+.toc a {
+  text-decoration: none; color: var(--ink); display: block;
+  padding: 5px 8px; border-radius: 8px; font-size: .92rem;
+}
+.toc a::before {
+  content: counter(toc); display: inline-block; width: 1.6em; height: 1.6em;
+  line-height: 1.6em; text-align: center; margin-right: 8px; font-size: .78rem;
+  font-weight: 700; color: var(--blue); background: #eaf1fb; border-radius: 6px;
+}
+.toc a:hover { background: #eaf1fb; color: var(--blue); }
+
+/* ---------- Khối mỗi mục con ---------- */
+.block { margin: 0 0 34px; scroll-margin-top: 16px; }
+.block > h2 {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 1.3rem; color: var(--blue); margin: 0 0 6px;
+  padding-bottom: 10px; border-bottom: 2px solid var(--line);
+}
+.block > h2 .num {
+  flex: none; width: 30px; height: 30px; border-radius: 9px;
+  display: grid; place-items: center; font-size: .95rem; font-weight: 700;
+  color: #fff; background: linear-gradient(135deg, var(--blue), var(--purple));
+}
+.block > h3 { color: var(--blue-d); margin: 22px 0 8px; font-size: 1.05rem; }
+.lead { color: var(--muted); margin: 6px 0 16px; }
+.tag-adv, .tag-base {
+  font-size: .68rem; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 999px; vertical-align: middle; margin-left: 4px;
+}
+.tag-base { background: #eaf1fb; color: var(--blue); }
+.tag-adv  { background: #fdeaf0; color: #c2185b; }
+
+/* ---------- Khối DEMO (kết quả chạy thật) ---------- */
+.demo {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  margin: 14px 0; overflow: hidden;
+}
+.demo > .demo-bar {
+  display: flex; align-items: center; gap: 8px;
+  background: #f8fafc; border-bottom: 1px solid var(--line);
+  padding: 8px 14px; font-size: .76rem; font-weight: 700;
+  letter-spacing: .5px; text-transform: uppercase; color: var(--muted);
+}
+.demo > .demo-bar::before {
+  content: "●●●"; letter-spacing: 2px; color: #cfd8e6; font-size: .7rem;
+}
+.demo > .demo-body { padding: 18px; }
+
+/* ---------- Khối GHI CHÚ giải thích ---------- */
+.note {
+  background: #fbfdff; border: 1px solid var(--line);
+  border-left: 4px solid var(--blue);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 14px 18px; margin: 14px 0;
+}
+.note p:first-child { margin-top: 0; }
+.note p:last-child  { margin-bottom: 0; }
+
+/* ---------- Bảng cú pháp / tham chiếu ---------- */
+.syntax {
+  width: 100%; border-collapse: collapse; margin: 14px 0;
+  background: var(--card); border-radius: var(--radius); overflow: hidden;
+  box-shadow: var(--shadow); font-size: .92rem;
+}
+.syntax caption {
+  text-align: left; font-size: .8rem; color: var(--muted);
+  padding: 0 0 8px; font-weight: 600;
+}
+.syntax th, .syntax td {
+  text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.syntax thead th {
+  background: var(--blue); color: #fff; font-weight: 600;
+  border-bottom: none; position: sticky; top: 0;
+}
+.syntax tbody tr:nth-child(even) { background: #f6f9fe; }
+.syntax tbody tr:hover { background: #eef4fc; }
+.syntax td code { white-space: nowrap; }
+
+/* ---------- Callout (mẹo / lưu ý / cảnh báo) ---------- */
+.callout {
+  border-radius: 10px; padding: 12px 16px; margin: 14px 0;
+  position: relative; font-size: .94rem; border: 1px solid; border-left-width: 5px;
+}
+.callout p:first-child { margin-top: 0; } .callout p:last-child { margin-bottom: 0; }
+.callout.tip   { background: #eafaf933; border-color: #b7ebd9; border-left-color: #14b88a; }
+.callout.info  { background: #eef4fc; border-color: #cfe0f5; border-left-color: #4b83d4; }
+.callout.warn  { background: #fff8e6; border-color: #ffe39a; border-left-color: #e0a92a; }
+.callout.danger{ background: #fdecee; border-color: #f7b9c0; border-left-color: #e0566a; }
+.callout b, .callout strong { color: var(--ink); }
+
+/* ---------- Code & mã nguồn ---------- */
+code {
+  font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+  background: #eef1f7; color: #b3257a; padding: 1px 6px;
+  border-radius: 5px; font-size: .9em;
+}
+pre.code {
+  background: var(--code-bg); color: #e6edf3; border-radius: 10px;
+  padding: 14px 16px; margin: 12px 0; overflow: auto; font-size: .86rem;
+  line-height: 1.55;
+}
+pre.code code { background: none; color: inherit; padding: 0; }
+pre.code .c { color: #7d8aa3; font-style: italic; }   /* comment   */
+pre.code .k { color: #79c0ff; }                        /* keyword   */
+pre.code .s { color: #7ee787; }                        /* string    */
+pre.code .v { color: #ffa657; }                        /* value     */
+
+kbd {
+  font-family: inherit; font-size: .82em; background: #fff; color: var(--ink);
+  border: 1px solid #cbd5e1; border-bottom-width: 2px; border-radius: 6px;
+  padding: 1px 7px;
+}
+
+/* ---------- Lưới demo 2 cột (nếu cần) ---------- */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+@media (max-width: 720px) { .split { grid-template-columns: 1fr; } }
+
+/* ====================  ĐIỀU HƯỚNG CUỐI TRANG  ==================== */
+.lesson-nav {
+  max-width: 1080px; margin: 10px auto 0; padding: 0 24px;
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.lesson-nav a {
+  flex: 1; min-width: 200px; text-decoration: none; color: var(--ink);
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 12px 16px; box-shadow: var(--shadow);
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+.lesson-nav a:hover { transform: translateY(-3px); box-shadow: var(--shadow-h); border-color: var(--blue); }
+.lesson-nav a small { color: var(--muted); display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .5px; }
+.lesson-nav a.next { text-align: right; }
+.lesson-nav a.home { flex: none; min-width: auto; text-align: center; align-self: center;
+  background: var(--blue); color: #fff; border-color: transparent; }
+
+.lesson-foot {
+  text-align: center; color: var(--muted); font-size: .82rem; padding: 28px 24px 40px;
+}
+
+/* ---------- tiện ích nhỏ ---------- */
+.muted { color: var(--muted); }
+.center { text-align: center; }
+hr.soft { border: none; border-top: 1px solid var(--line); margin: 24px 0; }

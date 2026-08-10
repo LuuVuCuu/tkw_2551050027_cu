@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.2.6 — OVERFLOW · FLOAT · POSITION (bản toàn diện)
+  ------------------------------------------------------------
+  Ba nhóm thuộc tính kiểm soát "tràn nội dung" và "định vị" của
+  phần tử. Bài đi từ cơ bản → nâng cao, tham khảo W3Schools:
+    1) overflow visible/hidden/scroll/auto   7) position: relative
+    2) overflow-x & overflow-y               8) position: absolute
+    3) float: left/right/none                9) position: fixed
+    4) clear: left/right/both               10) position: sticky
+    5) Clearfix (::after)                    11) z-index + offset
+    6) position: static                      12) Mẹo & lỗi
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.2.6 · Overflow · Float · Position</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* 1) overflow — khung nhỏ cố định để nội dung tràn */
+    .d-ovf {
+      width: 200px; height: 96px; padding: 8px;
+      background: #eaf1fb; border: 2px solid #1D559F; color: #16407a;
+      border-radius: 8px; font-size: .88rem;
+    }
+    .d-visible { overflow: visible; }
+    .d-hidden  { overflow: hidden; }
+    .d-scroll  { overflow: scroll; }
+    .d-auto    { overflow: auto; }
+    .d-ovf-grid { display: flex; flex-wrap: wrap; gap: 36px 24px; }
+    .d-ovf-grid figure { margin: 0; }
+    .d-ovf-grid figcaption { margin-top: 6px; font-size: .82rem; color: #5b6472; font-weight: 600; }
+
+    /* 2) overflow-x / overflow-y riêng */
+    .d-ovfxy {
+      width: 220px; height: 110px; padding: 8px;
+      background: #f0fdf4; border: 2px solid #04AA6D; color: #14532d;
+      border-radius: 8px; font-size: .86rem;
+    }
+    .d-ovfx { overflow-x: scroll; overflow-y: hidden; white-space: nowrap; }
+    .d-ovfy { overflow-x: hidden; overflow-y: scroll; }
+
+    /* 3) float — chữ chảy quanh ảnh / khối */
+    .d-floatbox { background: #f8fafc; border: 1px solid #e3e8f0; border-radius: 8px; padding: 14px; }
+    .d-floatbox::after { content: ""; display: block; clear: both; }  /* tự bao để demo gọn */
+    .d-img-right { float: right; margin: 0 0 8px 14px; border-radius: 8px; }
+    .d-img-left  { float: left;  margin: 0 14px 8px 0; border-radius: 8px; }
+    .d-fblk {
+      width: 120px; height: 80px; background: #6c5ce7; color: #fff; border-radius: 8px;
+      display: grid; place-items: center; font-weight: 700; text-align: center;
+    }
+
+    /* 4) clear */
+    .d-clearbox { background: #f8fafc; border: 1px solid #e3e8f0; border-radius: 8px; padding: 12px; }
+    .d-clearbox::after { content: ""; display: block; clear: both; }
+    .d-cf-left  { float: left;  width: 110px; height: 56px; background: #1D559F; color: #fff;
+                  border-radius: 8px; display: grid; place-items: center; font-weight: 700; }
+    .d-cf-right { float: right; width: 110px; height: 56px; background: #04AA6D; color: #fff;
+                  border-radius: 8px; display: grid; place-items: center; font-weight: 700; }
+    .d-after-none { background: #fde68a; padding: 6px 10px; border-radius: 6px; font-weight: 600; }
+    .d-after-both { clear: both; background: #fbcfe8; padding: 6px 10px; border-radius: 6px; font-weight: 600; }
+
+    /* 5) clearfix */
+    .d-parent { border: 2px solid #1D559F; border-radius: 8px; padding: 8px; background: #eaf1fb; }
+    .d-parent.fixed::after { content: ""; display: block; clear: both; }  /* clearfix */
+    .d-child-f { float: left; width: 90px; height: 58px; margin: 4px; border-radius: 8px;
+                 background: #04AA6D; color: #fff; display: grid; place-items: center; font-weight: 700; }
+
+    /* 6→11) khung sân khấu cho relative/absolute/fixed/sticky */
+    .d-stage {
+      position: relative; height: 200px; overflow: auto;
+      background: repeating-linear-gradient(45deg, #f8fafc, #f8fafc 12px, #eef2f9 12px, #eef2f9 24px);
+      border: 2px dashed #1D559F; border-radius: 10px; padding: 12px;
+    }
+    .d-tall { height: 460px; }                       /* nội dung cao để cuộn được */
+    .d-line { margin: 0 0 8px; color: #5b6472; }
+
+    /* 6) static */
+    .d-static-row > span {
+      display: inline-block; padding: 10px 14px; margin: 4px; border-radius: 8px;
+      background: #cbd5e1; color: #1a1f29; font-weight: 700;
+    }
+    .d-static-row .moved { position: static; top: 40px; left: 40px;  /* top/left bị bỏ qua vì static */
+                           background: #FFC107; }
+
+    /* 7) relative */
+    .d-rel-row > span {
+      display: inline-block; padding: 10px 14px; margin: 4px; border-radius: 8px;
+      background: #cbd5e1; color: #1a1f29; font-weight: 700;
+    }
+    .d-rel-row .moved {
+      position: relative; top: 18px; left: 26px;     /* dịch theo CHÍNH NÓ, vị trí cũ vẫn được giữ chỗ */
+      background: #6c5ce7; color: #fff;
+    }
+
+    /* 8) absolute */
+    .d-abs-box {
+      width: 90px; height: 90px; background: #04AA6D; color: #fff; border-radius: 8px;
+      display: grid; place-items: center; font-weight: 700; text-align: center;
+    }
+    .d-abs-tr { position: absolute; top: 12px;  right: 12px; }
+    .d-abs-bl { position: absolute; bottom: 12px; left: 12px; background: #E63946; }
+
+    /* 9) fixed — neo theo khung cuộn (containing block) của .d-stage có transform */
+    .d-fixed-stage { transform: translateZ(0); }     /* tạo containing block để 'fixed' neo trong khung */
+    .d-fixed {
+      position: fixed; top: 12px; right: 12px;
+      background: #E63946; color: #fff; padding: 8px 12px; border-radius: 8px; font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0,0,0,.2); z-index: 5;
+    }
+
+    /* 10) sticky */
+    .d-sticky {
+      position: sticky; top: 0;
+      background: #1D559F; color: #fff; padding: 8px 12px; border-radius: 8px;
+      font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,.15); z-index: 3;
+    }
+
+    /* 11) z-index */
+    .d-z-stage { position: relative; height: 150px; }
+    .d-zbox { position: absolute; width: 110px; height: 90px; border-radius: 10px; color: #fff;
+              display: grid; place-items: center; font-weight: 700; box-shadow: 0 6px 16px rgba(0,0,0,.18); }
+    .d-z1 { top: 16px;  left: 16px;  background: #1D559F; z-index: 1; }
+    .d-z2 { top: 40px;  left: 64px;  background: #04AA6D; z-index: 2; }
+    .d-z3 { top: 64px;  left: 112px; background: #E63946; z-index: 3; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.2 CSS</a><span>›</span>
+        Overflow · Float · Position
+      </nav>
+      <h1>Overflow, Float &amp; <code style="color:#fff;background:rgba(255,255,255,.18)">position</code></h1>
+      <p class="sub">Kiểm soát phần nội dung bị tràn (<em>overflow</em>), cho chữ chảy quanh ảnh
+         (<em>float</em>/<em>clear</em>) và định vị phần tử theo nhiều cách (<em>static, relative,
+         absolute, fixed, sticky</em>) cùng việc xếp lớp bằng <code>z-index</code>.</p>
+      <div class="chips">
+        <span class="chip solid">2.2.6</span>
+        <span class="chip">CSS cơ bản</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">overflow: visible · hidden · scroll · auto</a></li>
+        <li><a href="#s2">overflow-x &amp; overflow-y</a></li>
+        <li><a href="#s3">float: left · right · none</a></li>
+        <li><a href="#s4">clear: left · right · both</a></li>
+        <li><a href="#s5">Clearfix — cha tự bao con float</a></li>
+        <li><a href="#s6">position: static</a></li>
+        <li><a href="#s7">position: relative</a></li>
+        <li><a href="#s8">position: absolute</a></li>
+        <li><a href="#s9">position: fixed</a></li>
+        <li><a href="#s10">position: sticky</a></li>
+        <li><a href="#s11">z-index + top/right/bottom/left</a></li>
+        <li><a href="#s12">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. OVERFLOW  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> overflow: visible · hidden · scroll · auto <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>overflow</code> quyết định điều gì xảy ra khi nội dung <strong>tràn</strong> khỏi khung
+         có kích thước cố định. Thuộc tính chỉ có tác dụng khi khối có chiều cao (hoặc chiều rộng) giới hạn.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · cùng một khung nhỏ, đổi giá trị overflow</div>
+        <div class="demo-body">
+          <div class="d-ovf-grid">
+            <figure>
+              <div class="d-ovf d-visible">visible (mặc định): nội dung dài sẽ tràn ra ngoài khung, không bị cắt và cũng không có thanh cuộn.</div>
+              <figcaption>overflow: visible</figcaption>
+            </figure>
+            <figure>
+              <div class="d-ovf d-hidden">hidden: phần tràn bị CẮT bỏ, không nhìn thấy, không có thanh cuộn để xem tiếp.</div>
+              <figcaption>overflow: hidden</figcaption>
+            </figure>
+            <figure>
+              <div class="d-ovf d-scroll">scroll: LUÔN hiển thị thanh cuộn dù nội dung ngắn hay dài.</div>
+              <figcaption>overflow: scroll</figcaption>
+            </figure>
+            <figure>
+              <div class="d-ovf d-auto">auto: chỉ hiện thanh cuộn KHI nội dung thật sự tràn — lựa chọn hay dùng nhất.</div>
+              <figcaption>overflow: auto</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>visible</strong> là mặc định: nội dung tràn ra ngoài và có thể đè lên phần khác.</p>
+        <p><strong>auto</strong> thông minh nhất: nội dung vừa khung thì không có thanh cuộn, tràn mới hiện — nên dùng thay cho <code>scroll</code>.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Bốn giá trị overflow (theo W3Schools)</caption>
+        <thead><tr><th>Giá trị</th><th>Cắt nội dung?</th><th>Thanh cuộn?</th><th>Khi nào dùng</th></tr></thead>
+        <tbody>
+          <tr><td><code>visible</code></td><td>Không</td><td>Không</td><td>Mặc định; để nội dung tràn tự nhiên.</td></tr>
+          <tr><td><code>hidden</code></td><td>Có</td><td>Không</td><td>Cắt gọn phần dư; bao con float (xem mục 5).</td></tr>
+          <tr><td><code>scroll</code></td><td>Có</td><td>Luôn luôn</td><td>Muốn thanh cuộn cố định để bố cục không "nhảy".</td></tr>
+          <tr><td><code>auto</code></td><td>Có</td><td>Chỉ khi tràn</td><td>Khuyên dùng cho hộp cuộn nội dung.</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* overflow chỉ có tác dụng khi khung bị giới hạn kích thước */</span>
+.hop {
+  <span class="k">width</span>:  <span class="v">200px</span>;
+  <span class="k">height</span>: <span class="v">96px</span>;
+  <span class="k">overflow</span>: <span class="v">auto</span>;   <span class="c">/* visible | hidden | scroll | auto */</span>
+}</code></pre>
+    </section>
+
+    <!-- ==========  2. OVERFLOW-X & OVERFLOW-Y  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> overflow-x &amp; overflow-y <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Có thể điều khiển <strong>riêng</strong> chiều ngang (<code>overflow-x</code>) và chiều dọc
+         (<code>overflow-y</code>). <code>overflow</code> chỉ là cách viết tắt cho cả hai chiều một lúc.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · một khung cuộn ngang, một khung cuộn dọc</div>
+        <div class="demo-body">
+          <div class="d-ovf-grid">
+            <figure>
+              <div class="d-ovfxy d-ovfx">Cuộn NGANG: dòng chữ rất dài này không được xuống dòng nên tràn theo chiều ngang, sinh thanh cuộn ngang.</div>
+              <figcaption>overflow-x: scroll · overflow-y: hidden</figcaption>
+            </figure>
+            <figure>
+              <div class="d-ovfxy d-ovfy">Cuộn DỌC: nội dung nhiều dòng vượt chiều cao khung nên xuất hiện thanh cuộn dọc, còn chiều ngang thì bị ẩn (không cuộn). Dòng 1. Dòng 2. Dòng 3. Dòng 4. Dòng 5. Dòng 6.</div>
+              <figcaption>overflow-x: hidden · overflow-y: scroll</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Thuộc tính theo trục</caption>
+        <thead><tr><th>Thuộc tính</th><th>Tác dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>overflow-x</code></td><td>Xử lý phần tràn theo chiều <strong>ngang</strong> (trái–phải).</td></tr>
+          <tr><td><code>overflow-y</code></td><td>Xử lý phần tràn theo chiều <strong>dọc</strong> (trên–dưới).</td></tr>
+          <tr><td><code>overflow</code></td><td>Viết tắt đặt cả hai trục cùng lúc.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p>Khi đặt <code>overflow-x</code> và <code>overflow-y</code> khác nhau (ví dụ một bên
+        <code>hidden</code>, một bên <code>scroll</code>), nhiều trình duyệt sẽ tự coi giá trị <code>visible</code> như
+        <code>auto</code> ở trục còn lại — nên dùng cặp giá trị rõ ràng để tránh bất ngờ.</p></div>
+    </section>
+
+    <!-- ==========  3. FLOAT  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> float: left · right · none <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>float</code> kéo một phần tử (thường là ảnh) sang trái hoặc phải, để các dòng văn bản
+         <strong>chảy quanh</strong> nó. Đây vẫn là công dụng chính của float trong web hiện đại.</p>
+
+      <h3>3.1 — float: right (ảnh nổi sang phải)</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · chữ bao quanh ảnh bên phải</div>
+        <div class="demo-body">
+          <div class="d-floatbox">
+            <img class="d-img-right" src="../../assets/photo.svg" alt="ảnh minh hoạ" width="150" height="100">
+            Khi đặt <code>float:right</code> cho ảnh, ảnh trôi sát mép phải và các dòng văn bản phía sau
+            sẽ dồn lên bao quanh nó. Văn bản tiếp tục chảy quanh ảnh cho đến khi vượt qua chiều cao của
+            ảnh thì mới trở lại chiếm trọn chiều rộng. Đây chính là kiểu trình bày kinh điển của báo và
+            tạp chí: ảnh đặt một bên, chữ ôm lấy phần còn lại của khung.
+          </div>
+        </div>
+      </div>
+
+      <h3>3.2 — float: left (khối nổi sang trái)</h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · chữ bao quanh khối bên trái</div>
+        <div class="demo-body">
+          <div class="d-floatbox">
+            <div class="d-img-left d-fblk">float<br>left</div>
+            Với <code>float:left</code>, khối tím trôi sát mép trái và văn bản bao quanh nó từ phía phải.
+            Phần tử float bị tách khỏi luồng bình thường (normal flow) nhưng vẫn ảnh hưởng tới văn bản
+            xung quanh — đó là điểm khác biệt so với <code>position:absolute</code> (vốn tách hẳn). Giá trị
+            <code>float:none</code> là mặc định: phần tử nằm đúng vị trí trong luồng, không trôi đi đâu cả.
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Giá trị của float</caption>
+        <thead><tr><th>Giá trị</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>left</code></td><td>Phần tử trôi sang trái, nội dung sau bao quanh bên phải.</td></tr>
+          <tr><td><code>right</code></td><td>Phần tử trôi sang phải, nội dung sau bao quanh bên trái.</td></tr>
+          <tr><td><code>none</code></td><td>Mặc định — không trôi, nằm đúng vị trí trong luồng.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn"><p>Phần tử đã <code>float</code> sẽ <strong>tách khỏi luồng</strong> nên khối cha có
+        thể bị "sụp" chiều cao (không bao được con). Cách xử lý là <em>clear</em> (mục 4) hoặc <em>clearfix</em> (mục 5).</p></div>
+    </section>
+
+    <!-- ==========  4. CLEAR  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> clear: left · right · both <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>clear</code> buộc một phần tử <strong>không được nằm cạnh</strong> phần tử float trước đó,
+         mà phải tụt xuống dưới. Thường dùng để "ngắt" dòng chảy quanh float.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · so sánh không clear vs clear:both</div>
+        <div class="demo-body">
+          <div class="d-clearbox">
+            <div class="d-cf-left">float: left</div>
+            <div class="d-cf-right">float: right</div>
+            <p class="d-after-none">Đoạn KHÔNG clear: cố chen vào giữa hai khối float, dễ bị bóp méo.</p>
+            <p class="d-after-both">Đoạn có <code>clear: both</code>: tụt hẳn xuống DƯỚI cả hai khối float bên trên.</p>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Giá trị của clear</caption>
+        <thead><tr><th>Giá trị</th><th>Không cho nằm cạnh float ở phía…</th></tr></thead>
+        <tbody>
+          <tr><td><code>left</code></td><td>Bên trái — phần tử tụt xuống dưới mọi float trái.</td></tr>
+          <tr><td><code>right</code></td><td>Bên phải — tụt xuống dưới mọi float phải.</td></tr>
+          <tr><td><code>both</code></td><td>Cả hai bên — tụt xuống dưới tất cả float (hay dùng nhất).</td></tr>
+          <tr><td><code>none</code></td><td>Mặc định — cho phép nằm cạnh float.</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* Bắt phần tử tụt xuống dưới mọi float trước đó */</span>
+.ngat-dong { <span class="k">clear</span>: <span class="v">both</span>; }</code></pre>
+    </section>
+
+    <!-- ==========  5. CLEARFIX  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Clearfix — cha tự bao các con float <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Khi mọi con đều <code>float</code>, khối cha bị "sụp" (chiều cao = 0, viền không bao được con).
+         <strong>Clearfix</strong> là mẹo dùng <code>::after</code> chèn một phần tử ảo <code>clear:both</code> để cha tự bao trọn.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">CHƯA clearfix — cha bị sụp</div>
+          <div class="demo-body">
+            <div class="d-parent">
+              <div class="d-child-f">1</div>
+              <div class="d-child-f">2</div>
+              <div class="d-child-f">3</div>
+            </div>
+            <p class="muted" style="font-size:.84rem">↑ Viền xanh không bao được 3 ô vì chúng đều float.</p>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">CÓ clearfix — cha bao trọn con</div>
+          <div class="demo-body">
+            <div class="d-parent fixed">
+              <div class="d-child-f">1</div>
+              <div class="d-child-f">2</div>
+              <div class="d-child-f">3</div>
+            </div>
+            <p class="muted" style="font-size:.84rem">↑ Có <code>::after{clear:both}</code> nên viền bao đủ.</p>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Kỹ thuật clearfix kinh điển */</span>
+.clearfix<span class="k">::after</span> {
+  <span class="k">content</span>: <span class="s">""</span>;
+  <span class="k">display</span>: <span class="v">block</span>;
+  <span class="k">clear</span>: <span class="v">both</span>;
+}</code></pre>
+      <div class="callout tip"><p>Có thể thay clearfix bằng cách đặt <code>overflow:auto</code> (hoặc <code>hidden</code>)
+        lên khối cha — nó cũng tạo "block formatting context" để bao con float. Nhưng cách hiện đại nhất là
+        đừng dùng float để dàn cột nữa, mà chuyển sang <strong>Flexbox/Grid</strong>.</p></div>
+    </section>
+
+    <!-- ==========  6. POSITION: STATIC  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> position: static (mặc định) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Mọi phần tử mặc định là <code>position:static</code>: nằm đúng theo luồng tài liệu,
+         <strong>không</strong> chịu ảnh hưởng của <code>top/right/bottom/left</code> hay <code>z-index</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · ô vàng có top/left nhưng KHÔNG dịch (vì static)</div>
+        <div class="demo-body">
+          <div class="d-static-row">
+            <span>A</span>
+            <span class="moved">B (static + top:40px left:40px)</span>
+            <span>C</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>Đặt <code>top</code>, <code>left</code>… cho phần tử <code>static</code> sẽ <strong>không có tác dụng gì</strong>.
+           Muốn dịch chuyển, phải đổi <code>position</code> sang một trong: <code>relative</code>, <code>absolute</code>,
+           <code>fixed</code>, <code>sticky</code>.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Năm giá trị của position (theo W3Schools)</caption>
+        <thead><tr><th>Giá trị</th><th>Neo theo</th><th>Còn chiếm chỗ?</th></tr></thead>
+        <tbody>
+          <tr><td><code>static</code></td><td>Luồng tài liệu (mặc định)</td><td>Có</td></tr>
+          <tr><td><code>relative</code></td><td>Chính vị trí gốc của nó</td><td>Có (giữ chỗ cũ)</td></tr>
+          <tr><td><code>absolute</code></td><td>Tổ tiên đã định vị gần nhất</td><td>Không</td></tr>
+          <tr><td><code>fixed</code></td><td>Khung nhìn (viewport)</td><td>Không</td></tr>
+          <tr><td><code>sticky</code></td><td>Lai giữa relative &amp; fixed</td><td>Có, rồi "dính"</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  7. POSITION: RELATIVE  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> position: relative <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>relative</code> dịch phần tử <strong>theo chính vị trí gốc của nó</strong> bằng
+         <code>top/left/…</code>, nhưng <em>chỗ cũ vẫn được giữ</em> (các phần tử khác không dồn vào).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · ô tím dịch xuống 18px, sang phải 26px nhưng chỗ cũ vẫn để trống</div>
+        <div class="demo-body">
+          <div class="d-rel-row">
+            <span>A</span>
+            <span class="moved">B (relative · top:18px · left:26px)</span>
+            <span>C</span>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.hop {
+  <span class="k">position</span>: <span class="v">relative</span>;
+  <span class="k">top</span>:  <span class="v">18px</span>;   <span class="c">/* đẩy xuống 18px so với vị trí gốc */</span>
+  <span class="k">left</span>: <span class="v">26px</span>;   <span class="c">/* đẩy sang phải 26px */</span>
+}</code></pre>
+      <div class="callout info"><p>Công dụng phổ biến nhất của <code>relative</code> là làm <strong>"mỏ neo"</strong>:
+        đặt <code>position:relative</code> lên cha để các con <code>position:absolute</code> định vị theo cha đó (xem mục 8).</p></div>
+    </section>
+
+    <!-- ==========  8. POSITION: ABSOLUTE  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> position: absolute <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>absolute</code> tách phần tử <strong>khỏi luồng</strong> (không còn chiếm chỗ) và định vị nó
+         theo <strong>tổ tiên đã định vị gần nhất</strong> (cha có <code>position</code> khác <code>static</code>).
+         Nếu không có tổ tiên nào, nó neo theo cả trang.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · khung này có position:relative; hai ô absolute neo vào 2 góc</div>
+        <div class="demo-body">
+          <div class="d-stage" style="height:160px">
+            <p class="d-line">Khung cha có <code>position:relative</code> → trở thành mốc neo.</p>
+            <div class="d-abs-box d-abs-tr">top<br>right</div>
+            <div class="d-abs-box d-abs-bl">bottom<br>left</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.cha   { <span class="k">position</span>: <span class="v">relative</span>; }   <span class="c">/* mỏ neo */</span>
+.con   { <span class="k">position</span>: <span class="v">absolute</span>;
+         <span class="k">top</span>: <span class="v">12px</span>; <span class="k">right</span>: <span class="v">12px</span>; }  <span class="c">/* neo vào góc trên–phải của cha */</span></code></pre>
+      <div class="callout warn"><p>Nếu quên đặt <code>position</code> cho cha, phần tử <code>absolute</code> sẽ "nhảy" ra
+        neo theo cả trang (hoặc tổ tiên định vị xa hơn) — đây là lỗi định vị hay gặp nhất.</p></div>
+    </section>
+
+    <!-- ==========  9. POSITION: FIXED  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> position: fixed <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>fixed</code> ghim phần tử theo <strong>khung nhìn</strong> — cuộn trang nó vẫn đứng yên một chỗ.
+         Hay dùng cho thanh điều hướng cố định, nút "lên đầu trang", banner cookie.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · CUỘN bên trong khung — huy hiệu đỏ luôn dính góc trên–phải khung</div>
+        <div class="demo-body">
+          <div class="d-stage d-fixed-stage">
+            <div class="d-fixed">FIXED · luôn ở đây</div>
+            <div class="d-tall">
+              <p class="d-line"><strong>Cuộn khung này xuống.</strong> Huy hiệu đỏ ở góc trên–phải vẫn đứng yên.</p>
+              <p class="d-line">Dòng nội dung… (1)</p>
+              <p class="d-line">Dòng nội dung… (2)</p>
+              <p class="d-line">Dòng nội dung… (3)</p>
+              <p class="d-line">Dòng nội dung… (4)</p>
+              <p class="d-line">Dòng nội dung… (5)</p>
+              <p class="d-line">Dòng nội dung… (6)</p>
+              <p class="d-line">Dòng nội dung… (7)</p>
+              <p class="d-line">Dòng nội dung… (8) — kết thúc.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Thanh ghim luôn cố định ở đáy màn hình */</span>
+.nut-len-dau {
+  <span class="k">position</span>: <span class="v">fixed</span>;
+  <span class="k">right</span>: <span class="v">20px</span>;
+  <span class="k">bottom</span>: <span class="v">20px</span>;
+}</code></pre>
+      <div class="note">
+        <p>Bình thường <code>fixed</code> neo theo viewport (toàn màn hình). Trong bài này, để minh hoạ gọn,
+           khung demo được đặt một <code>transform</code> nhỏ — kỹ thuật khiến <code>fixed</code> neo trong khung
+           thay vì cả trang, nhờ vậy huy hiệu đỏ chỉ dính trong khung cuộn chứ không "chạy" ra toàn trang.</p>
+      </div>
+    </section>
+
+    <!-- ==========  10. POSITION: STICKY  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> position: sticky <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>sticky</code> là <strong>lai</strong> giữa relative và fixed: ban đầu cuộn bình thường,
+         đến khi chạm ngưỡng (ví dụ <code>top:0</code>) thì <strong>"dính"</strong> lại. Bắt buộc phải đặt
+         một trong <code>top/bottom/left/right</code> thì sticky mới hoạt động.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · CUỘN khung — tiêu đề xanh dính lên đỉnh khi chạm top:0</div>
+        <div class="demo-body">
+          <div class="d-stage">
+            <div class="d-tall">
+              <div class="d-sticky">STICKY · dính khi chạm đỉnh khung</div>
+              <p class="d-line"><strong>Cuộn khung này xuống.</strong> Lúc đầu tiêu đề xanh cuộn theo, đến đỉnh thì dính lại.</p>
+              <p class="d-line">Mục A — nội dung…</p>
+              <p class="d-line">Mục B — nội dung…</p>
+              <p class="d-line">Mục C — nội dung…</p>
+              <p class="d-line">Mục D — nội dung…</p>
+              <p class="d-line">Mục E — nội dung…</p>
+              <p class="d-line">Mục F — nội dung…</p>
+              <p class="d-line">Mục G — nội dung…</p>
+              <p class="d-line">Mục H — nội dung… kết thúc.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.tieu-de {
+  <span class="k">position</span>: <span class="v">sticky</span>;
+  <span class="k">top</span>: <span class="v">0</span>;   <span class="c">/* BẮT BUỘC: ngưỡng để bắt đầu dính */</span>
+}</code></pre>
+      <div class="callout tip"><p>Sticky rất hợp cho <strong>tiêu đề mục</strong> trong danh sách dài, thanh menu phụ,
+        hoặc tiêu đề cột trong bảng. Khác với <code>fixed</code>, sticky chỉ dính trong phạm vi khối cha của nó.</p></div>
+    </section>
+
+    <!-- ==========  11. Z-INDEX  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> z-index + top/right/bottom/left <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>z-index</code> quyết định phần tử nào <strong>nằm trên</strong> khi chồng lên nhau: số càng lớn càng nổi
+         lên trước. Nó chỉ có tác dụng với phần tử đã định vị (khác <code>static</code>).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · ba khối chồng nhau, z-index lớn hơn nằm trên</div>
+        <div class="demo-body">
+          <div class="d-z-stage">
+            <div class="d-zbox d-z1">z-index: 1</div>
+            <div class="d-zbox d-z2">z-index: 2</div>
+            <div class="d-zbox d-z3">z-index: 3</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Thuộc tính định vị offset</caption>
+        <thead><tr><th>Thuộc tính</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>top</code> / <code>bottom</code></td><td>Khoảng cách từ mép trên / dưới của mốc neo.</td></tr>
+          <tr><td><code>left</code> / <code>right</code></td><td>Khoảng cách từ mép trái / phải của mốc neo.</td></tr>
+          <tr><td><code>z-index</code></td><td>Thứ tự xếp lớp; số lớn hơn nằm đè lên số nhỏ hơn.</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code>.lop-tren { <span class="k">position</span>: <span class="v">absolute</span>; <span class="k">z-index</span>: <span class="v">3</span>; }
+.lop-duoi { <span class="k">position</span>: <span class="v">absolute</span>; <span class="k">z-index</span>: <span class="v">1</span>; }</code></pre>
+      <div class="callout warn"><p><code>z-index</code> <strong>không chạy</strong> với <code>position:static</code>.
+        Nếu đặt z-index mà không thấy hiệu lực, hãy kiểm tra phần tử đã có <code>position</code> khác <code>static</code> chưa.</p></div>
+    </section>
+
+    <!-- ==========  12. MẸO & LỖI  ========== -->
+    <section class="block" id="s12">
+      <h2><span class="num">12</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout info"><p><strong>float ngày nay.</strong> Chỉ nên dùng float cho mục đích gốc của nó:
+        cho chữ chảy quanh ảnh. Để dàn bố cục nhiều cột, hãy ưu tiên <code>display:flex</code> hoặc <code>display:grid</code>.</p></div>
+      <div class="callout warn"><p><strong>absolute cần "mỏ neo".</strong> Luôn đặt <code>position:relative</code> lên khối cha
+        thì con <code>absolute</code> mới neo đúng vào cha, tránh việc nó nhảy ra neo theo cả trang.</p></div>
+      <div class="callout danger"><p><strong>sticky không hoạt động?</strong> Hai nguyên nhân hay gặp: (1) quên đặt
+        <code>top</code> (hoặc bottom/left/right); (2) một tổ tiên có <code>overflow:hidden/auto</code> cắt mất phạm vi dính.</p></div>
+      <div class="callout tip"><p><strong>Ghi nhớ.</strong> Tràn nội dung → <code>overflow:auto</code>; chữ quanh ảnh →
+        <code>float</code> + clearfix; định vị trong cha → <code>relative</code> (cha) + <code>absolute</code> (con);
+        ghim màn hình → <code>fixed</code>; dính khi cuộn → <code>sticky</code> + <code>top</code>; xếp lớp → <code>z-index</code>.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="05-list-table-link.html"><small>← Bài trước</small>2.2.5 · List · Table · Link</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="07-layout-display.html"><small>Bài tiếp →</small>2.2.8 · Layout · display</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.2.1 — BA CÁCH CHÈN CSS + CASCADE (bản toàn diện)
+  ------------------------------------------------------------
+  Bài tham khảo đi từ cơ bản → nâng cao, theo W3Schools:
+    "CSS How To", "CSS Syntax", "CSS Comments", "CSS Specificity".
+    1) CSS là gì + cú pháp     6) Cascade (xếp chồng)
+    2) Inline CSS              7) Kế thừa (inheritance)
+    3) Internal CSS            8) Độ ưu tiên (specificity)
+    4) External CSS            9) !important
+    5) Bảng so sánh 3 cách     10) Khuyến nghị
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.2.1 · 3 cách chèn CSS</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* 1) sơ đồ cú pháp selector { property: value; } */
+    .d-syntax-map {
+      display: flex; flex-wrap: wrap; align-items: stretch; gap: 0;
+      font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+      font-size: 1.05rem; border-radius: 10px; overflow: hidden;
+      border: 1px solid #cfd8e6;
+    }
+    .d-syntax-map > span { padding: 14px 16px; display: grid; place-items: center; position: relative; }
+    .d-syntax-map .sel  { background: #dbeafe; color: #16407a; font-weight: 700; }
+    .d-syntax-map .br    { background: #e2e8f0; color: #475569; font-weight: 700; }
+    .d-syntax-map .prop  { background: #dcfce7; color: #166534; font-weight: 700; }
+    .d-syntax-map .colon { background: #f1f5f9; color: #94a3b8; }
+    .d-syntax-map .val   { background: #fef9c3; color: #854d0e; font-weight: 700; }
+    .d-syntax-map .semi  { background: #f1f5f9; color: #94a3b8; }
+    .d-syntax-map .lbl {
+      position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%);
+      font-size: .62rem; font-family: "Segoe UI", sans-serif; white-space: nowrap;
+      text-transform: uppercase; letter-spacing: .5px; color: #5b6472; font-weight: 700;
+    }
+    .d-syntax-wrap { padding: 6px 4px 30px; }
+
+    /* khối kết quả demo dùng chung */
+    .d-card { border: 1px solid #cfd8e6; border-radius: 10px; padding: 14px 16px; background: #fff; }
+
+    /* 2) inline demo */
+    .d-inline-box { padding: 10px 14px; border-radius: 8px; }
+
+    /* 3) internal demo */
+    .d-internal-h  { color: #6c5ce7; }
+    .d-internal-p  { background: #ede9fe; border-left: 4px solid #6c5ce7; padding: 10px 14px; border-radius: 0 8px 8px 0; }
+
+    /* 4) external — mô phỏng "file riêng" */
+    .d-ext-btn {
+      display: inline-block; background: #04AA6D; color: #fff; text-decoration: none;
+      padding: 10px 18px; border-radius: 8px; font-weight: 700;
+    }
+    .d-ext-btn:hover { background: #038a58; }
+
+    /* 6) cascade — cùng 1 phần tử nhiều quy tắc */
+    .d-cas { padding: 10px 14px; border-radius: 8px; font-weight: 700; }
+    .d-cas { background: #dbeafe; color: #16407a; }   /* quy tắc trước */
+    .d-cas { background: #fde68a; color: #854d0e; }   /* quy tắc sau (thắng) — cùng độ ưu tiên */
+
+    /* 7) inheritance */
+    .d-inherit-parent {
+      color: #1D559F; font-family: Georgia, "Times New Roman", serif; font-style: italic;
+      border: 1px dashed #1D559F; padding: 12px 16px; border-radius: 8px; background: #f4f8ff;
+    }
+    .d-inherit-parent .reset { color: initial; font-style: initial; }
+    .d-inherit-box {
+      border: 1px solid #cfd8e6; padding: 12px 16px; border-radius: 8px; background: #fff;
+    }
+
+    /* 8) specificity */
+    #d-spec     { color: #E63946; }                 /* id: thắng cao nhất */
+    .d-spec-cls { color: #04AA6D; }                 /* class */
+    p.d-spec-p  { color: #6c5ce7; }                 /* element (trong demo) */
+    .d-spec-demo p { padding: 8px 12px; border-radius: 8px; background: #f8fafc; border: 1px solid #e3e8f0; font-weight: 700; }
+
+    /* 9) !important */
+    .d-imp { color: #1D559F; }
+    .d-imp-strong { color: #04AA6D !important; }     /* đè cả inline */
+    .d-imp-demo p { padding: 8px 12px; border-radius: 8px; background: #f8fafc; border: 1px solid #e3e8f0; font-weight: 700; }
+
+    /* nhãn nhỏ chú thích thắng/thua */
+    .d-win  { font-size: .72rem; background: #04AA6D; color: #fff; padding: 1px 8px; border-radius: 999px; font-weight: 700; margin-left: 6px; }
+    .d-lose { font-size: .72rem; background: #e3e8f0; color: #5b6472; padding: 1px 8px; border-radius: 999px; font-weight: 700; margin-left: 6px; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.2 CSS</a><span>›</span>
+        3 cách chèn CSS
+      </nav>
+      <h1>Ba cách chèn <code style="color:#fff;background:rgba(255,255,255,.18)">CSS</code> &amp; quy tắc Cascade</h1>
+      <p class="sub">CSS quy định cách trình bày của trang web. Bài này học 3 cách gắn CSS vào HTML
+         (inline · internal · external) cùng cơ chế khi nhiều quy tắc xung đột: cascade, kế thừa,
+         độ ưu tiên (specificity) và <code style="color:#fff;background:rgba(255,255,255,.18)">!important</code>.</p>
+      <div class="chips">
+        <span class="chip solid">2.2.1</span>
+        <span class="chip">CSS cơ bản</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">CSS là gì &amp; cú pháp</a></li>
+        <li><a href="#s2">Cách 1 — Inline CSS</a></li>
+        <li><a href="#s3">Cách 2 — Internal CSS</a></li>
+        <li><a href="#s4">Cách 3 — External CSS</a></li>
+        <li><a href="#s5">So sánh 3 cách</a></li>
+        <li><a href="#s6">Cascade — xếp chồng</a></li>
+        <li><a href="#s7">Tính kế thừa</a></li>
+        <li><a href="#s8">Độ ưu tiên (specificity)</a></li>
+        <li><a href="#s9">!important</a></li>
+        <li><a href="#s10">Khuyến nghị</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. CSS LÀ GÌ + CÚ PHÁP  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> CSS là gì &amp; cú pháp <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><strong>CSS</strong> (Cascading Style Sheets) là ngôn ngữ mô tả <em>cách trình bày</em>
+         của tài liệu HTML: màu sắc, phông chữ, kích thước, bố cục… HTML lo <strong>nội dung</strong>,
+         còn CSS lo <strong>hình thức</strong>. Một quy tắc CSS gồm <em>bộ chọn</em> (selector) và một
+         hoặc nhiều cặp <em>thuộc tính: giá trị</em> đặt trong dấu ngoặc nhọn.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Sơ đồ cú pháp một quy tắc CSS</div>
+        <div class="demo-body">
+          <div class="d-syntax-wrap">
+            <div class="d-syntax-map">
+              <span class="sel">h1<span class="lbl">bộ chọn (selector)</span></span>
+              <span class="br">{</span>
+              <span class="prop">color<span class="lbl">thuộc tính (property)</span></span>
+              <span class="colon">:</span>
+              <span class="val">blue<span class="lbl">giá trị (value)</span></span>
+              <span class="semi">;</span>
+              <span class="br">}</span>
+            </div>
+          </div>
+          <p class="muted" style="margin-bottom:0">Đọc là: "Mọi thẻ <code>&lt;h1&gt;</code> sẽ có chữ màu xanh."
+             Cặp <code>thuộc tính: giá trị</code> gọi là một <em>khai báo</em> (declaration), kết thúc bằng dấu chấm phẩy.</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Bộ chọn</strong> chỉ ra <em>phần tử nào</em> được tạo kiểu (vd <code>h1</code>, <code>.card</code>, <code>#menu</code>).</p>
+        <p><strong>Khối khai báo</strong> nằm trong <code>{ }</code>, chứa các khai báo phân tách bằng dấu <code>;</code>.
+           Mỗi khai báo là một cặp <code>property: value;</code>.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Các thành phần của một quy tắc CSS</caption>
+        <thead><tr><th>Thành phần</th><th>Ví dụ</th><th>Vai trò</th></tr></thead>
+        <tbody>
+          <tr><td>Selector (bộ chọn)</td><td><code>h1</code></td><td>Chọn phần tử cần tạo kiểu</td></tr>
+          <tr><td>Property (thuộc tính)</td><td><code>color</code></td><td>Tên đặc tính muốn thay đổi</td></tr>
+          <tr><td>Value (giá trị)</td><td><code>blue</code></td><td>Giá trị gán cho thuộc tính</td></tr>
+          <tr><td>Declaration (khai báo)</td><td><code>color: blue;</code></td><td>Một cặp property + value, kết bằng <code>;</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Chú thích trong CSS</h3>
+      <p>Chú thích đặt giữa <code>/*</code> và <code>*/</code> — có thể trên một hoặc nhiều dòng, dùng để ghi giải thích.
+         CSS <strong>không</strong> hỗ trợ kiểu chú thích <code>//</code> như JavaScript.</p>
+      <pre class="code"><code><span class="c">/* Đây là một chú thích một dòng */</span>
+p {
+  <span class="k">color</span>: <span class="v">red</span>; <span class="c">/* chú thích cuối dòng cũng hợp lệ */</span>
+}
+
+<span class="c">/* Chú thích
+   nhiều dòng
+   cũng được */</span></code></pre>
+      <div class="callout info"><p>CSS bỏ qua khoảng trắng và xuống dòng, nên có thể viết quy tắc trên một dòng hay
+        nhiều dòng tuỳ ý. Nên thụt lề rõ ràng để dễ đọc.</p></div>
+    </section>
+
+    <!-- ==========  2. INLINE CSS  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Cách 1 — Inline CSS (thuộc tính <code>style</code>) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Viết CSS <em>ngay trên phần tử</em> qua thuộc tính <code>style</code>. Chỉ ảnh hưởng đúng
+         phần tử đó. Không cần selector vì đã gắn trực tiếp; các khai báo phân tách bằng dấu <code>;</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả — màu &amp; nền đặt thẳng trên thẻ</div>
+        <div class="demo-body">
+          <p style="color:#16407a; background:#dbeafe; padding:10px 14px; border-radius:8px;">
+            Đoạn này có CSS inline: chữ xanh đậm, nền xanh nhạt, có bo góc.</p>
+          <p style="color:#fff; background:#E63946; padding:10px 14px; border-radius:8px; margin-bottom:0;">
+            Đoạn này dùng style inline khác hẳn: chữ trắng, nền đỏ.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;p</span> <span class="v">style</span>=<span class="s">"color:#16407a; background:#dbeafe; padding:10px 14px;"</span><span class="k">&gt;</span>
+  Đoạn này có CSS inline.
+<span class="k">&lt;/p&gt;</span></code></pre>
+
+      <table class="syntax">
+        <caption>Ưu &amp; nhược của Inline CSS</caption>
+        <thead><tr><th>Ưu điểm</th><th>Nhược điểm</th></tr></thead>
+        <tbody>
+          <tr><td>Nhanh, áp dụng tức thì cho 1 phần tử</td><td>Trộn lẫn nội dung &amp; trình bày → khó đọc, khó bảo trì</td></tr>
+          <tr><td>Độ ưu tiên cao, hữu ích để thử nhanh</td><td>Không tái sử dụng được; lặp lại nếu nhiều phần tử</td></tr>
+          <tr><td>Không cần selector</td><td>Không dùng được pseudo-class (<code>:hover</code>) hay media query</td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn"><p>Hạn chế dùng inline trong dự án thật. Nó khó bảo trì và có độ ưu tiên rất cao
+        nên dễ "vô tình đè" các quy tắc khác (xem mục 6 &amp; 8).</p></div>
+    </section>
+
+    <!-- ==========  3. INTERNAL CSS  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Cách 2 — Internal CSS (thẻ <code>&lt;style&gt;</code>) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Đặt toàn bộ CSS trong một thẻ <code>&lt;style&gt;</code> nằm ở <code>&lt;head&gt;</code>.
+         Áp dụng cho <strong>cả một trang</strong> đó. Phù hợp khi trang có style riêng không chia sẻ với trang khác.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả — quy tắc lấy từ thẻ &lt;style&gt; của trang này</div>
+        <div class="demo-body">
+          <h4 class="d-internal-h" style="margin:0 0 10px">Tiêu đề định kiểu bằng internal CSS</h4>
+          <p class="d-internal-p" style="margin:0">Đoạn này dùng class <code>.d-internal-p</code> được định nghĩa
+             trong <code>&lt;style&gt;</code> ở đầu trang — nền tím nhạt, viền trái tím.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;head&gt;</span>
+  <span class="k">&lt;style&gt;</span>
+    h1   { <span class="k">color</span>: <span class="v">#6c5ce7</span>; }
+    .ghi-chu { <span class="k">background</span>: <span class="v">#ede9fe</span>;
+               <span class="k">border-left</span>: <span class="v">4px solid #6c5ce7</span>; }
+  <span class="k">&lt;/style&gt;</span>
+<span class="k">&lt;/head&gt;</span></code></pre>
+
+      <div class="note">
+        <p><strong>Khi nào dùng internal?</strong> Trang đơn lẻ, trang demo/landing nhỏ, email HTML, hoặc khi
+           muốn gom tất cả vào một file duy nhất. Một thay đổi áp dụng cho toàn trang nhưng <em>không</em>
+           dùng lại được cho các trang khác.</p>
+      </div>
+      <div class="callout info"><p>Internal CSS tách trình bày khỏi từng thẻ (gọn hơn inline) nhưng vẫn nằm chung
+        file với HTML, nên khi website nhiều trang sẽ phải lặp lại ở mỗi file.</p></div>
+    </section>
+
+    <!-- ==========  4. EXTERNAL CSS  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Cách 3 — External CSS (file <code>.css</code> riêng) <span class="tag-base">Khuyến nghị</span></h2>
+      <p class="lead">Viết CSS trong một file <code>.css</code> riêng rồi nhúng vào HTML bằng thẻ
+         <code>&lt;link&gt;</code> trong <code>&lt;head&gt;</code>. Đây là cách <strong>phổ biến và được khuyến nghị</strong>:
+         nhiều trang dùng chung một file, sửa một nơi là cả site đổi theo.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả — nút này định kiểu trong file CSS dùng chung</div>
+        <div class="demo-body">
+          <p style="margin-top:0">Chính trang bài học bạn đang đọc dùng external CSS:
+             file <code>../../assets/lesson.css</code> tạo toàn bộ khung giao diện.</p>
+          <a href="#s4" class="d-ext-btn">Nút mẫu (.d-ext-btn)</a>
+        </div>
+      </div>
+
+      <h3>Bước 1 — tạo file CSS riêng, ví dụ <code>main.css</code></h3>
+      <pre class="code"><code><span class="c">/* main.css — file CSS ngoài, KHÔNG có thẻ HTML nào */</span>
+body { <span class="k">font-family</span>: <span class="v">Arial, sans-serif</span>; }
+h1   { <span class="k">color</span>: <span class="v">#1D559F</span>; }
+.btn { <span class="k">background</span>: <span class="v">#04AA6D</span>; <span class="k">color</span>: <span class="v">#fff</span>; }</code></pre>
+
+      <h3>Bước 2 — nhúng vào HTML bằng <code>&lt;link&gt;</code></h3>
+      <pre class="code"><code><span class="k">&lt;head&gt;</span>
+  <span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"stylesheet"</span> <span class="v">href</span>=<span class="s">"main.css"</span><span class="k">&gt;</span>
+<span class="k">&lt;/head&gt;</span></code></pre>
+
+      <table class="syntax">
+        <caption>Các thuộc tính của thẻ &lt;link&gt; tải CSS</caption>
+        <thead><tr><th>Thuộc tính</th><th>Giá trị</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>rel</code></td><td><code>stylesheet</code></td><td>Cho biết file liên kết là bảng định kiểu</td></tr>
+          <tr><td><code>href</code></td><td><code>main.css</code></td><td>Đường dẫn tới file CSS (tương đối hoặc tuyệt đối)</td></tr>
+          <tr><td><code>type</code> (tuỳ chọn)</td><td><code>text/css</code></td><td>Kiểu MIME; HTML5 có thể bỏ qua</td></tr>
+          <tr><td><code>media</code> (tuỳ chọn)</td><td><code>print</code>, <code>screen</code>…</td><td>Chỉ áp dụng cho thiết bị tương ứng</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <p>File <code>.css</code> ngoài <strong>không chứa</strong> thẻ HTML, không có <code>&lt;style&gt;</code> —
+           chỉ có các quy tắc CSS thuần. Đường dẫn <code>href</code> có thể là tương đối
+           (<code>css/main.css</code>, <code>../../assets/style.css</code>) hoặc tuyệt đối (URL đầy đủ).</p>
+      </div>
+      <div class="callout tip"><p><strong>Vì sao nên ưu tiên external?</strong> Tách hẳn nội dung (HTML) khỏi trình bày (CSS);
+        nhiều trang dùng chung; trình duyệt cache file CSS nên tải nhanh hơn ở lần sau; sửa một chỗ, cả site cập nhật.</p></div>
+    </section>
+
+    <!-- ==========  5. SO SÁNH 3 CÁCH  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> So sánh 3 cách chèn CSS <span class="tag-base">Tổng hợp</span></h2>
+      <p class="lead">Cả ba cách đều hợp lệ. Chọn cách nào tuỳ phạm vi áp dụng và khả năng bảo trì.</p>
+
+      <table class="syntax">
+        <caption>Bảng so sánh Inline · Internal · External</caption>
+        <thead><tr><th>Tiêu chí</th><th>Inline</th><th>Internal</th><th>External</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Vị trí</td>
+            <td>Thuộc tính <code>style</code> trên thẻ</td>
+            <td><code>&lt;style&gt;</code> trong <code>&lt;head&gt;</code></td>
+            <td>File <code>.css</code> riêng + <code>&lt;link&gt;</code></td>
+          </tr>
+          <tr>
+            <td>Phạm vi áp dụng</td>
+            <td>Đúng 1 phần tử</td>
+            <td>Cả 1 trang</td>
+            <td>Nhiều trang (cả website)</td>
+          </tr>
+          <tr>
+            <td>Ưu điểm</td>
+            <td>Nhanh, ưu tiên cao</td>
+            <td>Gọn hơn inline, 1 file</td>
+            <td>Tái sử dụng, cache, dễ bảo trì</td>
+          </tr>
+          <tr>
+            <td>Nhược điểm</td>
+            <td>Khó bảo trì, không tái dùng</td>
+            <td>Không dùng lại cho trang khác</td>
+            <td>Thêm 1 request tải file</td>
+          </tr>
+          <tr>
+            <td>Khi nào dùng</td>
+            <td>Thử nhanh, ghi đè đặc biệt</td>
+            <td>Trang đơn lẻ, email HTML</td>
+            <td><strong>Hầu hết dự án thật ✓</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p>Có thể kết hợp cả ba trong một trang. Khi đó nếu cùng nhắm một phần tử mà xung đột,
+        kết quả do <strong>cascade</strong> &amp; <strong>specificity</strong> quyết định — xem các mục tiếp theo.</p></div>
+    </section>
+
+    <!-- ==========  6. CASCADE  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Cascade — thứ tự xếp chồng &amp; ưu tiên <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">"Cascading" (xếp chồng) nghĩa là khi nhiều quy tắc cùng nhắm một phần tử, trình duyệt
+         áp dụng tất cả rồi <em>chọn người thắng</em> cho mỗi thuộc tính theo các nguyên tắc: (1) độ quan trọng
+         (<code>!important</code>), (2) độ ưu tiên (specificity), (3) thứ tự khai báo (cái viết <strong>sau</strong> đè cái trước).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Cùng class .d-cas có 2 quy tắc — quy tắc viết sau thắng</div>
+        <div class="demo-body">
+          <p class="d-cas" style="margin:0">Tôi được khai báo nền xanh rồi nền vàng. Vì hai quy tắc cùng độ ưu tiên,
+             quy tắc <strong>viết sau</strong> (nền vàng) thắng.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code>.d-cas { <span class="k">background</span>: <span class="v">#dbeafe</span>; } <span class="c">/* quy tắc TRƯỚC — bị đè */</span>
+.d-cas { <span class="k">background</span>: <span class="v">#fde68a</span>; } <span class="c">/* quy tắc SAU  — THẮNG  */</span></code></pre>
+
+      <div class="note">
+        <p><strong>Thứ tự ưu tiên giữa 3 cách chèn</strong> (khi cùng specificity): inline thắng internal/external,
+           còn internal vs external thì cái nào <em>khai báo sau</em> trong tài liệu sẽ thắng. Thông thường người ta
+           đặt <code>&lt;link&gt;</code> rồi mới tới <code>&lt;style&gt;</code> nên internal đè external.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Thứ tự cascade tổng quát (từ thấp → cao)</caption>
+        <thead><tr><th>Mức ưu tiên</th><th>Nguồn quy tắc</th></tr></thead>
+        <tbody>
+          <tr><td>1 (thấp nhất)</td><td>Mặc định của trình duyệt</td></tr>
+          <tr><td>2</td><td>External CSS (<code>&lt;link&gt;</code>)</td></tr>
+          <tr><td>3</td><td>Internal CSS (<code>&lt;style&gt;</code>) — nếu đặt sau link</td></tr>
+          <tr><td>4</td><td>Inline CSS (thuộc tính <code>style</code>)</td></tr>
+          <tr><td>5 (cao nhất)</td><td><code>!important</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout tip"><p>Nguyên tắc dễ nhớ: <strong>!important</strong> &gt; <strong>inline</strong> &gt;
+        specificity cao &gt; specificity thấp &gt; <strong>quy tắc viết sau</strong> (khi mọi thứ ngang nhau).</p></div>
+    </section>
+
+    <!-- ==========  7. KẾ THỪA  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Tính kế thừa (inheritance) <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Một số thuộc tính (chủ yếu về văn bản: <code>color</code>, <code>font-family</code>,
+         <code>font-size</code>, <code>line-height</code>…) <strong>tự truyền xuống</strong> các phần tử con.
+         Nhờ đó chỉ cần khai báo một lần ở phần tử cha (vd <code>body</code>).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Con thừa hưởng color &amp; font của cha; .reset dùng initial để gỡ</div>
+        <div class="demo-body">
+          <div class="d-inherit-parent">
+            Đoạn cha: chữ xanh, font Georgia in nghiêng.
+            <div class="d-inherit-box" style="margin-top:10px">
+              Hộp con: tự <strong>kế thừa</strong> màu xanh &amp; font nghiêng của cha, dù không khai báo gì.
+            </div>
+            <p class="reset" style="margin:10px 0 0; padding:8px 12px; background:#fff; border-radius:8px;">
+              Đoạn này dùng <code>color: initial</code> và <code>font-style: initial</code> → trở về mặc định (chữ đen, không nghiêng).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Kế thừa &amp; hai từ khoá điều khiển</caption>
+        <thead><tr><th>Loại / từ khoá</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td>Thuộc tính <em>kế thừa</em></td><td><code>color</code>, <code>font-*</code>, <code>line-height</code>, <code>text-align</code>, <code>visibility</code>…</td></tr>
+          <tr><td>Thuộc tính <em>không</em> kế thừa</td><td><code>margin</code>, <code>padding</code>, <code>border</code>, <code>background</code>, <code>width</code>…</td></tr>
+          <tr><td><code>inherit</code></td><td>Ép phần tử <strong>lấy giá trị của cha</strong> (kể cả thuộc tính vốn không kế thừa)</td></tr>
+          <tr><td><code>initial</code></td><td>Đưa thuộc tính về <strong>giá trị mặc định gốc</strong> của CSS</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code>.con   { <span class="k">color</span>: <span class="v">inherit</span>; }  <span class="c">/* ép lấy màu của phần tử cha */</span>
+.go-bo { <span class="k">color</span>: <span class="v">initial</span>; } <span class="c">/* trả color về mặc định (đen) */</span></code></pre>
+      <div class="callout info"><p>Kế thừa giúp viết CSS ngắn gọn: đặt <code>font-family</code> một lần ở <code>body</code>,
+        toàn trang dùng chung. Muốn cắt kế thừa cho một nhánh, dùng <code>initial</code> hoặc đặt giá trị mới.</p></div>
+    </section>
+
+    <!-- ==========  8. SPECIFICITY  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Độ ưu tiên — Specificity <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Khi nhiều quy tắc <em>cùng độ quan trọng</em> nhắm một phần tử, quy tắc có <strong>specificity cao hơn</strong>
+         thắng. Quy tắc nhớ: <code>id</code> &gt; <code>class</code> &gt; <code>element</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Cùng 1 đoạn bị 3 selector nhắm — id (#d-spec) thắng → chữ đỏ</div>
+        <div class="demo-body d-spec-demo">
+          <p id="d-spec" class="d-spec-cls d-spec-p" style="margin:0">
+            Đoạn này khớp cả <code>p</code> (tím), <code>.d-spec-cls</code> (xanh lá) và <code>#d-spec</code> (đỏ)
+            → <code>#id</code> có điểm cao nhất nên chữ hiển thị <strong>đỏ</strong>.</p>
+        </div>
+      </div>
+
+      <h3>Cách tính điểm (a, b, c)</h3>
+      <p>Mỗi selector quy thành bộ ba điểm <strong>(a, b, c)</strong>, so từ trái sang phải:</p>
+      <table class="syntax">
+        <caption>Quy đổi điểm specificity</caption>
+        <thead><tr><th>Cột</th><th>Đếm thành phần</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><strong>a</strong></td><td>Số <code>#id</code></td><td><code>#menu</code> → (1,0,0)</td></tr>
+          <tr><td><strong>b</strong></td><td>Số <code>.class</code>, <code>[attr]</code>, pseudo-class (<code>:hover</code>)</td><td><code>.btn:hover</code> → (0,2,0)</td></tr>
+          <tr><td><strong>c</strong></td><td>Số tên thẻ &amp; pseudo-element (<code>::before</code>)</td><td><code>ul li a</code> → (0,0,3)</td></tr>
+        </tbody>
+      </table>
+
+      <table class="syntax">
+        <caption>So điểm các selector nhắm cùng phần tử ở demo trên</caption>
+        <thead><tr><th>Selector</th><th>Điểm (a,b,c)</th><th>Kết quả</th></tr></thead>
+        <tbody>
+          <tr><td><code>p</code></td><td>(0,0,1)</td><td>thua <span class="d-lose">bị đè</span></td></tr>
+          <tr><td><code>.d-spec-cls</code></td><td>(0,1,0)</td><td>thua <span class="d-lose">bị đè</span></td></tr>
+          <tr><td><code>#d-spec</code></td><td>(1,0,0)</td><td>thắng <span class="d-win">áp dụng</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn"><p>So sánh theo thứ tự a → b → c: <code>(1,0,0)</code> luôn lớn hơn <code>(0,99,99)</code>.
+        Một <code>#id</code> mạnh hơn bất kỳ số lượng class nào. Inline còn được tính như cột cao hơn nữa.</p></div>
+    </section>
+
+    <!-- ==========  9. !IMPORTANT  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> <code>!important</code> — đè mọi thứ <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Thêm <code>!important</code> sau giá trị làm khai báo đó <strong>thắng tất cả</strong> — kể cả
+         inline và specificity cao hơn. Là "lá bài tẩy" nhưng <em>nên hạn chế</em> vì phá vỡ trật tự cascade tự nhiên.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Inline đặt màu xanh dương, nhưng !important (xanh lá) vẫn thắng</div>
+        <div class="demo-body d-imp-demo">
+          <p class="d-imp-strong" style="color:#1D559F; margin:0">
+            Đoạn này có inline <code>color:#1D559F</code> (xanh dương) nhưng class dùng
+            <code>color:#04AA6D !important</code> → hiển thị <strong>xanh lá</strong>.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* CSS */</span>
+.d-imp-strong { <span class="k">color</span>: <span class="v">#04AA6D</span> <span class="k">!important</span>; } <span class="c">/* đè cả inline */</span>
+
+<span class="c">&lt;!-- HTML --&gt;</span>
+<span class="k">&lt;p</span> <span class="v">class</span>=<span class="s">"d-imp-strong"</span> <span class="v">style</span>=<span class="s">"color:#1D559F"</span><span class="k">&gt;</span> ... <span class="k">&lt;/p&gt;</span></code></pre>
+
+      <table class="syntax">
+        <caption>Trật tự ưu tiên đầy đủ (cao nhất → thấp nhất)</caption>
+        <thead><tr><th>Hạng</th><th>Quy tắc</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><code>!important</code> (trong CSS)</td></tr>
+          <tr><td>2</td><td>Inline <code>style</code></td></tr>
+          <tr><td>3</td><td><code>#id</code></td></tr>
+          <tr><td>4</td><td><code>.class</code> · <code>[attr]</code> · <code>:pseudo-class</code></td></tr>
+          <tr><td>5</td><td>Tên thẻ · <code>::pseudo-element</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout danger"><p><strong>Vì sao hạn chế <code>!important</code>?</strong> Nó "đóng băng" giá trị, khiến về sau
+        rất khó ghi đè (phải dùng tiếp một <code>!important</code> khác có specificity cao hơn). Code trở nên rối,
+        khó gỡ lỗi. Chỉ nên dùng khi thật cần (vd ghi đè CSS của thư viện bên thứ ba).</p></div>
+    </section>
+
+    <!-- ==========  10. KHUYẾN NGHỊ  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Khuyến nghị &amp; tổng kết <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout tip"><p><strong>Ưu tiên External CSS.</strong> Đặt CSS trong file <code>.css</code> riêng nhúng qua
+        <code>&lt;link&gt;</code>: tách nội dung khỏi trình bày, tái sử dụng cho nhiều trang, dễ bảo trì và được cache.</p></div>
+      <div class="callout warn"><p><strong>Hạn chế Inline.</strong> Chỉ dùng để thử nhanh; tránh trộn <code>style="..."</code> khắp nơi
+        vì khó bảo trì và có độ ưu tiên cao gây khó ghi đè.</p></div>
+      <div class="callout danger"><p><strong>Tránh lạm dụng <code>!important</code>.</strong> Hãy giải quyết xung đột bằng selector
+        rõ ràng và specificity hợp lý thay vì "ép" bằng <code>!important</code>.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ luồng quyết định khi xung đột:</strong>
+        <code>!important</code> → inline → specificity (id &gt; class &gt; element) → quy tắc viết sau. Còn các thuộc tính
+        văn bản thì <em>kế thừa</em> xuống con nếu không khai báo lại.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="../2.1-html/09-da-phuong-tien.html"><small>← Bài trước</small>2.1.9 · Đa phương tiện</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="02-selector.html"><small>Bài tiếp →</small>2.2.2 · Selector</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

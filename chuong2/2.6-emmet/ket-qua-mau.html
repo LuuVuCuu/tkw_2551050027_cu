@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.6 — EMMET: KẾT QUẢ BUNG MẪU
+  Đây là kết quả khi bung các cú pháp Emmet trong README (mục 3).
+  Sinh viên tự gõ cú pháp trong VS Code + Tab, rồi MỞ FILE NÀY
+  để đối chiếu. Xem mã nguồn (Ctrl+U) để thấy cấu trúc thẻ.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emmet · kết quả mẫu</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 760px; margin: 24px auto; padding: 0 16px; line-height:1.6; }
+    h1, h2 { color:#1D559F; }
+    code { background:#f4f4f4; padding:2px 6px; border-radius:4px; }
+    section { border:1px solid #e0e0e0; border-radius:8px; padding:12px 16px; margin:12px 0; }
+  </style>
+</head>
+<body>
+  <h1>Emmet — kết quả bung mẫu</h1>
+
+  <section>
+    <h2>BT2 · <code>ul.menu&gt;li*4&gt;a[href="#"]{Mục $}</code></h2>
+    <ul class="menu">
+      <li><a href="#">Mục 1</a></li>
+      <li><a href="#">Mục 2</a></li>
+      <li><a href="#">Mục 3</a></li>
+      <li><a href="#">Mục 4</a></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>BT4 · <code>.card*3&gt;img+h3{Tiêu đề $}+p&gt;lorem8</code></h2>
+    <div class="card">
+      <img src="../../assets/photo.svg" alt="" width="120">
+      <h3>Tiêu đề 1</h3>
+      <p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed.</p>
+    </div>
+    <div class="card">
+      <img src="../../assets/rose.svg" alt="" width="120">
+      <h3>Tiêu đề 2</h3>
+      <p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed.</p>
+    </div>
+    <div class="card">
+      <img src="../../assets/sky.svg" alt="" width="120">
+      <h3>Tiêu đề 3</h3>
+      <p>Lorem ipsum dolor sit amet consectetur adipiscing elit sed.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>BT5 · <code>form&gt;(label+input)*3+button{Gửi}</code></h2>
+    <form>
+      <label>Trường 1</label><input>
+      <label>Trường 2</label><input>
+      <label>Trường 3</label><input>
+      <button>Gửi</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>BT6 · <code>table&gt;tr*3&gt;td*4</code></h2>
+    <table border="1" cellpadding="6">
+      <tr><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+      <tr><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+      <tr><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+    </table>
+  </section>
+
+  <p style="background:#fff8e1;border-left:4px solid #ffb300;padding:10px 14px;">
+    Nhấn <code>Ctrl+U</code> (xem mã nguồn) để thấy đúng cấu trúc thẻ mà Emmet đã sinh ra.</p>
+</body>
+</html>

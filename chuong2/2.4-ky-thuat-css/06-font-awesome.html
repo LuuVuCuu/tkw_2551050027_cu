@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.4.6 — FONT AWESOME (bộ icon qua CDN) · bản toàn diện
+  ------------------------------------------------------------
+  Nhúng CDN → dùng icon bằng class <i class="fa-..."> → đổi cỡ,
+  màu, xoay/lật, animation, xếp chồng, icon trong nút/navbar.
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ ở <style>
+  (tiền tố .d-). CẦN INTERNET để tải icon từ CDN.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.4.6 · Font Awesome — bộ icon qua CDN</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <!-- CDN Font Awesome 6 (free). Cần Internet để tải. -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG (tiền tố d-) ===== */
+    .d-iconwrap { display:flex; flex-wrap:wrap; gap:22px; align-items:flex-end; font-size:26px; color:#1D559F; }
+    .d-iconwrap figure { margin:0; text-align:center; width:90px; }
+    .d-iconwrap figcaption { font-size:12px; color:#5b6472; margin-top:6px; }
+
+    .d-sizes { display:flex; align-items:baseline; gap:18px; color:#16407a; flex-wrap:wrap; }
+
+    .d-colors i { margin-right:14px; }
+    .d-colors .heart   { color:#E63946; }
+    .d-colors .leaf    { color:#04AA6D; }
+    .d-colors .star    { color:#FFC107; }
+    .d-colors .shadow  { color:#6c5ce7; text-shadow:2px 2px 4px rgba(108,92,231,.4); }
+
+    .d-fw-list { list-style:none; padding:0; margin:0; }
+    .d-fw-list li { padding:4px 0; }
+    .d-fw-list i { color:#1D559F; }
+
+    .d-anim { display:flex; gap:30px; font-size:30px; color:#1D559F; flex-wrap:wrap; }
+    .d-anim figure { margin:0; text-align:center; width:90px; }
+    .d-anim figcaption { font-size:12px; color:#5b6472; margin-top:8px; }
+
+    .d-rotate { display:flex; gap:28px; font-size:30px; color:#16407a; flex-wrap:wrap; }
+    .d-rotate figure { margin:0; text-align:center; width:96px; }
+    .d-rotate figcaption { font-size:12px; color:#5b6472; margin-top:8px; }
+
+    /* nút có icon */
+    .d-btn { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border:none;
+             border-radius:8px; color:#fff; font-size:15px; cursor:pointer; text-decoration:none; }
+    .d-btn.primary { background:#1D559F; } .d-btn.primary:hover { background:#16407a; }
+    .d-btn.danger  { background:#E63946; } .d-btn.success { background:#04AA6D; }
+
+    /* navbar có icon */
+    .d-nav { list-style:none; margin:0; padding:0; display:flex; background:#16407a; border-radius:8px; overflow:hidden; }
+    .d-nav a { display:flex; align-items:center; gap:8px; color:#fff; text-decoration:none; padding:12px 18px; }
+    .d-nav a:hover { background:#1D559F; }
+
+    .d-stack { font-size:26px; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.4 Kỹ thuật CSS</a><span>›</span>
+        Font Awesome
+      </nav>
+      <h1>Bộ icon <code style="color:#fff;background:rgba(255,255,255,.18)">Font&nbsp;Awesome</code></h1>
+      <p class="sub">Hàng nghìn icon vector chỉ với một dòng CDN và một thẻ <code>&lt;i&gt;</code>.
+         Đổi cỡ, màu, xoay/lật, làm động, xếp chồng — tất cả bằng class CSS.</p>
+      <div class="chips">
+        <span class="chip solid">2.4.6</span>
+        <span class="chip">Icon Font</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <div class="callout warn">
+      <p><strong>Cần Internet.</strong> Trang này tải icon từ CDN Font Awesome. Nếu mở offline (hoặc CDN bị chặn),
+         icon sẽ không hiện — phần khung bài học vẫn đầy đủ. Có thể tự host (mục 10).</p>
+    </div>
+
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Font Awesome &amp; cách nhúng</a></li>
+        <li><a href="#s2">Cú pháp icon &amp; 3 nhóm</a></li>
+        <li><a href="#s3">Kích thước icon</a></li>
+        <li><a href="#s4">Màu &amp; tạo kiểu</a></li>
+        <li><a href="#s5">Fixed-width &amp; list</a></li>
+        <li><a href="#s6">Hiệu ứng động</a></li>
+        <li><a href="#s7">Xoay &amp; lật</a></li>
+        <li><a href="#s8">Xếp chồng icon</a></li>
+        <li><a href="#s9">Icon trong nút &amp; navbar</a></li>
+        <li><a href="#s10">Tra cứu &amp; mẹo</a></li>
+      </ol>
+    </nav>
+
+    <!-- 1 -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Font Awesome &amp; cách nhúng <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Font Awesome là thư viện icon dạng <em>icon font / SVG</em> phổ biến nhất. Chỉ cần thêm 1 thẻ
+         <code>&lt;link&gt;</code> CDN vào <code>&lt;head&gt;</code> là dùng được mọi icon.</p>
+      <pre class="code"><code><span class="c">&lt;!-- Đặt trong &lt;head&gt; --&gt;</span>
+<span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"stylesheet"</span>
+      <span class="v">href</span>=<span class="s">"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"</span><span class="k">&gt;</span></code></pre>
+      <div class="note">
+        <p>Sau khi nhúng, mỗi icon là một thẻ <code>&lt;i&gt;</code> (hoặc <code>&lt;span&gt;</code>) mang class của icon đó.
+           Tìm tên icon tại trang chính thức <code>fontawesome.com/icons</code>.</p>
+      </div>
+      <div class="callout info"><p>Bản <strong>Free</strong> đủ cho học tập (hàng nghìn icon). Một số icon &amp; nhóm
+        <code>fa-regular</code> nét mảnh thuộc gói Pro.</p></div>
+    </section>
+
+    <!-- 2 -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Cú pháp icon &amp; 3 nhóm style <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Mỗi icon cần <strong>2 class</strong>: class <em>nhóm style</em> + class <em>tên icon</em>.</p>
+      <pre class="code"><code><span class="k">&lt;i</span> <span class="v">class</span>=<span class="s">"fa-solid fa-house"</span><span class="k">&gt;&lt;/i&gt;</span>     <span class="c">/* đặc (mặc định) */</span>
+<span class="k">&lt;i</span> <span class="v">class</span>=<span class="s">"fa-regular fa-heart"</span><span class="k">&gt;&lt;/i&gt;</span>   <span class="c">/* nét rỗng */</span>
+<span class="k">&lt;i</span> <span class="v">class</span>=<span class="s">"fa-brands fa-github"</span><span class="k">&gt;&lt;/i&gt;</span>   <span class="c">/* thương hiệu */</span></code></pre>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="d-iconwrap">
+            <figure><i class="fa-solid fa-house"></i><figcaption>fa-solid fa-house</figcaption></figure>
+            <figure><i class="fa-solid fa-user"></i><figcaption>fa-solid fa-user</figcaption></figure>
+            <figure><i class="fa-regular fa-heart"></i><figcaption>fa-regular fa-heart</figcaption></figure>
+            <figure><i class="fa-regular fa-star"></i><figcaption>fa-regular fa-star</figcaption></figure>
+            <figure><i class="fa-brands fa-github"></i><figcaption>fa-brands fa-github</figcaption></figure>
+            <figure><i class="fa-brands fa-facebook"></i><figcaption>fa-brands fa-facebook</figcaption></figure>
+          </div>
+        </div>
+      </div>
+      <table class="syntax">
+        <thead><tr><th>Nhóm</th><th>Class</th><th>Dùng cho</th></tr></thead>
+        <tbody>
+          <tr><td>Solid</td><td><code>fa-solid</code></td><td>Icon đặc — phổ biến nhất (free đầy đủ).</td></tr>
+          <tr><td>Regular</td><td><code>fa-regular</code></td><td>Icon nét rỗng (free có giới hạn).</td></tr>
+          <tr><td>Brands</td><td><code>fa-brands</code></td><td>Logo thương hiệu: GitHub, Facebook, YouTube…</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 3 -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Kích thước icon <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Icon kế thừa <code>font-size</code> của chữ xung quanh. Phóng to nhanh bằng class
+         <code>fa-xs</code> → <code>fa-2xl</code>, hoặc bội số <code>fa-2x</code> … <code>fa-10x</code>.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · fa-xs → fa-5x</div>
+        <div class="demo-body">
+          <div class="d-sizes">
+            <span><i class="fa-solid fa-camera fa-xs"></i> xs</span>
+            <span><i class="fa-solid fa-camera"></i> 1x</span>
+            <span><i class="fa-solid fa-camera fa-lg"></i> lg</span>
+            <span><i class="fa-solid fa-camera fa-2x"></i> 2x</span>
+            <span><i class="fa-solid fa-camera fa-3x"></i> 3x</span>
+            <span><i class="fa-solid fa-camera fa-5x"></i> 5x</span>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;i</span> <span class="v">class</span>=<span class="s">"fa-solid fa-camera fa-3x"</span><span class="k">&gt;&lt;/i&gt;</span>
+<span class="c">/* hoặc tự đặt cỡ bằng CSS: */</span>
+.icon { <span class="k">font-size</span>: <span class="v">48px</span>; }</code></pre>
+    </section>
+
+    <!-- 4 -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Màu &amp; tạo kiểu <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Icon ăn theo <code>color</code> như chữ thường — đổi màu, đổ bóng… đều qua CSS.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body d-colors" style="font-size:34px">
+          <i class="fa-solid fa-heart heart"></i>
+          <i class="fa-solid fa-leaf leaf"></i>
+          <i class="fa-solid fa-star star"></i>
+          <i class="fa-solid fa-bell shadow"></i>
+        </div>
+      </div>
+      <pre class="code"><code>.heart  { <span class="k">color</span>: <span class="v">#E63946</span>; }
+.shadow { <span class="k">color</span>: <span class="v">#6c5ce7</span>; <span class="k">text-shadow</span>: <span class="v">2px 2px 4px rgba(108,92,231,.4)</span>; }</code></pre>
+    </section>
+
+    <!-- 5 -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Fixed-width &amp; danh sách icon <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>fa-fw</code> ép mọi icon cùng bề rộng để thẳng hàng. <code>fa-ul</code>/<code>fa-li</code> thay chấm
+         đầu dòng bằng icon.</p>
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">fa-fw — thẳng cột</div>
+          <div class="demo-body">
+            <ul class="d-fw-list">
+              <li><i class="fa-solid fa-house fa-fw"></i> Trang chủ</li>
+              <li><i class="fa-solid fa-magnifying-glass fa-fw"></i> Tìm kiếm</li>
+              <li><i class="fa-solid fa-gear fa-fw"></i> Cài đặt</li>
+            </ul>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">fa-ul / fa-li</div>
+          <div class="demo-body">
+            <ul class="fa-ul">
+              <li><span class="fa-li"><i class="fa-solid fa-check"></i></span> Hoàn thành</li>
+              <li><span class="fa-li"><i class="fa-solid fa-spinner"></i></span> Đang chạy</li>
+              <li><span class="fa-li"><i class="fa-solid fa-xmark"></i></span> Bị huỷ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Hiệu ứng động <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Thêm 1 class là icon tự chuyển động — rất hợp làm loading, chuông thông báo, nút yêu thích.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả · các icon đang chuyển động</div>
+        <div class="demo-body">
+          <div class="d-anim">
+            <figure><i class="fa-solid fa-spinner fa-spin"></i><figcaption>fa-spin</figcaption></figure>
+            <figure><i class="fa-solid fa-circle-notch fa-spin"></i><figcaption>fa-spin (loader)</figcaption></figure>
+            <figure><i class="fa-solid fa-heart fa-beat"></i><figcaption>fa-beat</figcaption></figure>
+            <figure><i class="fa-solid fa-bell fa-shake"></i><figcaption>fa-shake</figcaption></figure>
+            <figure><i class="fa-solid fa-arrow-down fa-bounce"></i><figcaption>fa-bounce</figcaption></figure>
+            <figure><i class="fa-regular fa-star fa-fade"></i><figcaption>fa-fade</figcaption></figure>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;i</span> <span class="v">class</span>=<span class="s">"fa-solid fa-spinner fa-spin"</span><span class="k">&gt;&lt;/i&gt;</span>   <span class="c">/* xoay tròn */</span>
+<span class="k">&lt;i</span> <span class="v">class</span>=<span class="s">"fa-solid fa-heart fa-beat"</span><span class="k">&gt;&lt;/i&gt;</span>     <span class="c">/* đập nhịp */</span></code></pre>
+    </section>
+
+    <!-- 7 -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Xoay &amp; lật <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Xoay 90/180/270° với <code>fa-rotate-*</code>, lật gương với <code>fa-flip-*</code>.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="d-rotate">
+            <figure><i class="fa-solid fa-paper-plane"></i><figcaption>gốc</figcaption></figure>
+            <figure><i class="fa-solid fa-paper-plane fa-rotate-90"></i><figcaption>rotate-90</figcaption></figure>
+            <figure><i class="fa-solid fa-paper-plane fa-rotate-180"></i><figcaption>rotate-180</figcaption></figure>
+            <figure><i class="fa-solid fa-paper-plane fa-flip-horizontal"></i><figcaption>flip-horizontal</figcaption></figure>
+            <figure><i class="fa-solid fa-paper-plane fa-flip-vertical"></i><figcaption>flip-vertical</figcaption></figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Xếp chồng icon (fa-stack) <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Đặt một icon nhỏ lên trên một icon lớn — ví dụ icon trong vòng tròn, dấu cấm.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body" style="display:flex; gap:30px; align-items:center">
+          <span class="fa-stack d-stack">
+            <i class="fa-solid fa-circle fa-stack-2x" style="color:#1D559F"></i>
+            <i class="fa-solid fa-flag fa-stack-1x" style="color:#fff"></i>
+          </span>
+          <span class="fa-stack d-stack">
+            <i class="fa-solid fa-camera fa-stack-1x"></i>
+            <i class="fa-solid fa-ban fa-stack-2x" style="color:#E63946"></i>
+          </span>
+          <span class="fa-stack d-stack">
+            <i class="fa-solid fa-circle fa-stack-2x" style="color:#04AA6D"></i>
+            <i class="fa-solid fa-check fa-stack-1x" style="color:#fff"></i>
+          </span>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;span</span> <span class="v">class</span>=<span class="s">"fa-stack"</span><span class="k">&gt;</span>
+  <span class="k">&lt;i</span> <span class="v">class</span>=<span class="s">"fa-solid fa-circle fa-stack-2x"</span><span class="k">&gt;&lt;/i&gt;</span>  <span class="c">/* nền lớn */</span>
+  <span class="k">&lt;i</span> <span class="v">class</span>=<span class="s">"fa-solid fa-check fa-stack-1x"</span><span class="k">&gt;&lt;/i&gt;</span>  <span class="c">/* icon nhỏ phía trên */</span>
+<span class="k">&lt;/span&gt;</span></code></pre>
+    </section>
+
+    <!-- 9 -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Icon trong nút &amp; navbar <span class="tag-base">Ứng dụng</span></h2>
+      <p class="lead">Đặt icon cạnh chữ làm nút/menu trực quan hơn. Dùng <code>display:inline-flex; gap</code> để icon &amp; chữ canh đều.</p>
+      <div class="demo">
+        <div class="demo-bar">Nút có icon</div>
+        <div class="demo-body" style="display:flex; gap:12px; flex-wrap:wrap">
+          <a href="#s9" class="d-btn primary"><i class="fa-solid fa-download"></i> Tải về</a>
+          <a href="#s9" class="d-btn success"><i class="fa-solid fa-cart-shopping"></i> Mua ngay</a>
+          <a href="#s9" class="d-btn danger"><i class="fa-solid fa-trash"></i> Xoá</a>
+        </div>
+      </div>
+      <div class="demo">
+        <div class="demo-bar">Navbar có icon</div>
+        <div class="demo-body">
+          <ul class="d-nav">
+            <li><a href="#s9"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
+            <li><a href="#s9"><i class="fa-solid fa-user"></i> Tài khoản</a></li>
+            <li><a href="#s9"><i class="fa-solid fa-envelope"></i> Liên hệ</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Tra cứu &amp; mẹo <span class="tag-base">Tổng kết</span></h2>
+      <table class="syntax">
+        <caption>Bảng tra nhanh class hay dùng</caption>
+        <thead><tr><th>Class</th><th>Tác dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>fa-solid / fa-regular / fa-brands</code></td><td>Chọn nhóm style của icon.</td></tr>
+          <tr><td><code>fa-2x … fa-10x</code>, <code>fa-lg</code>, <code>fa-xs</code></td><td>Phóng to/thu nhỏ icon.</td></tr>
+          <tr><td><code>fa-fw</code></td><td>Bề rộng cố định — icon thẳng cột.</td></tr>
+          <tr><td><code>fa-spin</code>, <code>fa-beat</code>, <code>fa-bounce</code>, <code>fa-shake</code>, <code>fa-fade</code></td><td>Hiệu ứng động.</td></tr>
+          <tr><td><code>fa-rotate-90/180/270</code>, <code>fa-flip-horizontal/vertical</code></td><td>Xoay &amp; lật.</td></tr>
+          <tr><td><code>fa-stack</code> + <code>fa-stack-1x</code>/<code>fa-stack-2x</code></td><td>Xếp chồng icon.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout tip"><p><strong>Mẹo.</strong> Icon chỉ để trang trí nên thêm <code>aria-hidden="true"</code>; icon mang nghĩa
+        thì kèm chữ hoặc <code>title</code>/<code>aria-label</code> cho người dùng trình đọc màn hình.</p></div>
+      <div class="callout info"><p><strong>Tự host (không cần CDN).</strong> Tải gói Font Awesome về, đặt vào thư mục dự án rồi
+        <code>&lt;link&gt;</code> tới <code>css/all.min.css</code> cục bộ — chạy được cả khi offline.</p></div>
+      <div class="callout warn"><p><strong>Lưu ý.</strong> Icon không hiện thường do: sai tên icon, thiếu class nhóm (<code>fa-solid</code>…),
+        chưa nhúng CDN, hoặc icon đó thuộc gói Pro.</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="05-object-fit.html"><small>← Bài trước</small>2.4.5 · object-fit</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="../2.5-phong-cach-thiet-ke/index.html"><small>Bài tiếp →</small>2.5 · 8 phong cách thiết kế</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

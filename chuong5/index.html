@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="Bộ code mẫu minh hoạ Chương 5 - Tuỳ biến giao diện với Tailwind CSS v4 (môn Thiết kế Web INTE03010).">
+  <title>Chương 5 · Code mẫu Tailwind CSS</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/site.css">
+  <style>
+    .note {
+      background: #fff8e6; border-left: 5px solid #e0a92a;
+      padding: 12px 16px; border-radius: 8px; margin: 0 0 24px; font-size: .92rem;
+    }
+    .badge-ver {
+      display: inline-block; background: #6c5ce7; color: #fff; font-size: .72rem;
+      font-weight: 700; padding: 2px 10px; border-radius: 999px; margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <h1>Chương 5 — Tuỳ biến giao diện với Tailwind CSS</h1>
+    <p>Bộ code mẫu theo từng mục · triết lý <strong>utility-first</strong> · mỗi bài có <strong>demo trực tiếp</strong> dựng bằng chính Tailwind</p>
+    <span class="badge-ver">Tailwind v4.3 · Buổi 4</span>
+  </header>
+
+  <main>
+    <p class="note"><strong>Cần internet:</strong> chương này nạp <strong>Tailwind v4 qua CDN trình duyệt</strong>
+       (<code>@tailwindcss/browser@4</code>) — biên dịch class ngay trong trình duyệt, tiện học/prototype.
+       Dự án thật dùng <strong>npm/CLI</strong> (xem bài 5.1). Mở bằng <em>VS Code + Live Server</em> hoặc khi có mạng.</p>
+
+    <section class="group">
+      <h2>Nền tảng &amp; Core (5.1 – 5.2)</h2>
+      <div class="cards">
+        <a class="card" href="01-tong-quan-tailwind.html"><span class="tag">5.1</span><h3>Tổng quan &amp; cài đặt</h3><p>Utility-first, ưu/khuyết, vs Bootstrap, cài v4 (CDN/npm), <code>@theme</code>.</p></a>
+        <a class="card" href="02-core-concepts.html"><span class="tag">Core</span><h3>Core concepts</h3><p>Giá trị tuỳ chỉnh [ ], variants (hover/group/peer/has), dark mode, <code>@apply</code>/directives.</p></a>
+        <a class="card" href="03-co-ban-mau-spacing.html"><span class="tag">5.2</span><h3>Màu · kích thước · khoảng cách</h3><p>Bảng màu (thang 50→950), sizing, spacing (1=4px), responsive mobile-first, đối chiếu CSS.</p></a>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>Bố cục &amp; Trang trí (5.3)</h2>
+      <div class="cards">
+        <a class="card" href="04-layout-flex-grid.html"><span class="tag">5.3</span><h3>Layout · Flex · Grid</h3><p>Display, position/sticky, sizing, container, Flexbox &amp; Grid — đối chiếu CSS thuần.</p></a>
+        <a class="card" href="05-typography-nen-vien.html"><span class="tag">5.3+</span><h3>Typography · Nền · Viền</h3><p>Chữ, gradient <code>bg-linear-*</code>, <code>bg-clip-text</code>, border/outline/ring (focus).</p></a>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>Hiệu ứng &amp; Tương tác (5.4 – 5.5)</h2>
+      <div class="cards">
+        <a class="card" href="06-hieu-ung-filter.html"><span class="tag">5.4–5.5</span><h3>Hiệu ứng &amp; Filter</h3><p>States, transition, transform 2D/3D, animation, shadow/opacity, filter &amp; backdrop.</p></a>
+        <a class="card" href="07-tuong-tac-a11y.html"><span class="tag">Bổ trợ</span><h3>Tương tác · SVG · Bảng · A11y</h3><p>Cursor, select, scroll-snap, SVG fill/stroke, bảng, <code>sr-only</code>.</p></a>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>Củng cố</h2>
+      <div class="cards">
+        <a class="card" href="08-du-an-bai-tap.html"><span class="tag">Dự án</span><h3>"Góc Cà Phê" + 10 bài tập</h3><p>Dựng lại landing bằng Tailwind (sticky header, hero gradient, grid card, form) + đề bài.</p></a>
+        <a class="card" href="09-trac-nghiem.html"><span class="tag">30 câu</span><h3>Trắc nghiệm tương tác</h3><p>30 câu trắc nghiệm chấm điểm ngay (bám giáo trình + docs v4).</p></a>
+        <a class="card" href="../index.html"><span class="tag">←</span><h3>Về mục lục môn</h3><p>Quay lại trang chủ cả môn Thiết kế Web.</p></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 5 — Tailwind CSS v4
+  </footer>
+</body>
+</html>

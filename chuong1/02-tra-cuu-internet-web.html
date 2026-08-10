@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  1.1–1.5 — TRA CỨU: INTERNET · TÊN MIỀN · HTTP · WWW · WEB
+  ------------------------------------------------------------
+  Trang tra cứu/tham khảo nhanh cho phần lý thuyết Chương 1.
+    1) Internet & tên miền (DNS)   5) Các thế hệ Web (1.0→4.0)
+    2) Vòng đời một request        6) Máy tìm kiếm & SEO
+    3) Cấu trúc URL                7) DevTools & Lighthouse
+    4) HTTP/HTTPS & mã trạng thái
+  Khung trang dùng ../assets/lesson.css; sơ đồ minh hoạ vẽ
+  bằng HTML+CSS (tiền tố .d-), không cần ảnh, chạy hoàn toàn
+  ngoại tuyến (không CDN, không framework).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="Tra cứu Chương 1 môn Thiết kế Web (INTE03010): Internet &amp; tên miền (DNS), vòng đời một request client–server, cấu trúc URL, giao thức HTTP/HTTPS và bảng mã trạng thái, các thế hệ Web 1.0 đến 4.0, cơ chế máy tìm kiếm &amp; checklist SEO, thực hành DevTools &amp; Lighthouse.">
+  <title>1.1–1.5 · Tra cứu: Internet, HTTP &amp; Web — Chương 1</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== SƠ ĐỒ MINH HOẠ RIÊNG CỦA BÀI (tiền tố .d-) ===== */
+
+    /* Khung chung cho các sơ đồ hộp + mũi tên */
+    .d-diagram {
+      background: #f8fafc; border: 1px solid #e3e8f0; border-radius: 14px;
+      padding: 18px 18px 20px; margin: 16px 0;
+    }
+    .d-row { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; }
+
+    /* Hộp (node) */
+    .d-node {
+      flex: 1 1 150px; min-width: 130px; background: #fff; border: 1px solid #d6deeb;
+      border-radius: 12px; padding: 11px 13px; text-align: center;
+      box-shadow: 0 1px 3px rgba(20,40,80,.06);
+    }
+    .d-node .d-tag {
+      display: inline-block; font-size: .62rem; font-weight: 800; letter-spacing: .6px;
+      padding: 2px 8px; border-radius: 999px; margin-bottom: 6px; text-transform: uppercase;
+    }
+    .d-node strong { display: block; font-size: .96rem; color: #1a1f29; }
+    .d-node small  { display: block; color: #5b6472; font-size: .78rem; margin-top: 2px; }
+    .d-node.blue   { border-top: 3px solid #1D559F; } .d-node.blue   .d-tag { background: #eaf1fb; color: #1D559F; }
+    .d-node.purple { border-top: 3px solid #6c5ce7; } .d-node.purple .d-tag { background: #f0eefb; color: #5a4bd0; }
+    .d-node.green  { border-top: 3px solid #04AA6D; } .d-node.green  .d-tag { background: #e5f6ee; color: #04794f; }
+    .d-node.amber  { border-top: 3px solid #FFC107; } .d-node.amber  .d-tag { background: #fff6da; color: #8a6d00; }
+    .d-node.red    { border-top: 3px solid #E63946; } .d-node.red    .d-tag { background: #fdeaf0; color: #c2185b; }
+
+    /* Mũi tên nối (dùng ký tự →, tô màu bằng CSS) */
+    .d-arrow {
+      flex: 0 0 auto; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 2px; min-width: 72px; color: #5b6472;
+    }
+    .d-arrow small { font-size: .72rem; text-align: center; line-height: 1.2; }
+    .d-arrow .d-sym { font-size: 1.6rem; color: #1D559F; font-weight: 700; line-height: 1; }
+
+    /* Nhãn "phản hồi trả về" */
+    .d-back {
+      margin-top: 12px; font-size: .9rem; color: #04794f; background: #e5f6ee;
+      border-radius: 8px; padding: 8px 12px; display: inline-block;
+    }
+    .d-back .d-sym { font-size: 1.2rem; font-weight: 700; margin-right: 5px; }
+    .d-back code { background: #d3efe0; color: #04794f; }
+
+    /* ===== Sơ đồ vòng đời request: dòng chảy có đánh số ===== */
+    .d-flow { counter-reset: step; list-style: none; margin: 18px 0 6px; padding: 0; }
+    .d-flow > li { position: relative; padding: 1px 0 20px 60px; min-height: 42px; }
+    .d-flow > li::before {
+      counter-increment: step; content: counter(step);
+      position: absolute; left: 0; top: 0; width: 38px; height: 38px; border-radius: 11px;
+      display: grid; place-items: center; font-weight: 700; color: #fff; font-size: 1rem;
+      background: linear-gradient(135deg, #1D559F, #6c5ce7);
+      box-shadow: 0 3px 8px rgba(29,85,159,.25);
+    }
+    .d-flow > li::after {
+      content: ""; position: absolute; left: 18px; top: 40px; bottom: 0; width: 2px;
+      background: linear-gradient(#c9d6ec, #e3e8f0);
+    }
+    .d-flow > li:last-child::after { display: none; }
+    .d-flow h4 { margin: 5px 0 2px; font-size: 1rem; color: #16407a; }
+    .d-flow p  { margin: 0; color: #5b6472; font-size: .92rem; }
+
+    /* ===== Mổ xẻ URL: từng phần tô màu ===== */
+    .d-url {
+      background: #0f172a; border-radius: 12px; padding: 16px 18px; margin: 16px 0;
+      font-family: "Cascadia Code", Consolas, monospace; font-size: 1.02rem;
+      overflow-x: auto; line-height: 2.2; white-space: nowrap;
+    }
+    .d-url .seg { padding: 3px 5px; border-radius: 5px; color: #fff; font-weight: 700; }
+    .d-url .punc { color: #7d8aa3; }
+    .d-url .s-scheme { background: #4b83d4; }
+    .d-url .s-host   { background: #04AA6D; }
+    .d-url .s-port   { background: #e0a92a; color: #3a2c00; }
+    .d-url .s-path   { background: #6c5ce7; }
+    .d-url .s-query  { background: #E63946; }
+    .d-url .s-frag   { background: #b3257a; }
+
+    .d-legend { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin: 12px 0 4px; }
+    .d-legend .d-item { border: 1px solid #e3e8f0; border-radius: 10px; padding: 9px 12px; background: #fff; }
+    .d-legend .d-sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
+    .d-legend b { font-size: .9rem; }
+    .d-legend small { display: block; color: #5b6472; margin-top: 2px; font-size: .82rem; }
+
+    /* ===== Nhãn mã trạng thái HTTP theo nhóm ===== */
+    .d-code { font-weight: 700; font-family: "Cascadia Code", Consolas, monospace; padding: 1px 7px; border-radius: 6px; white-space: nowrap; }
+    .d-1xx { background: #f0eefb; color: #5a4bd0; }
+    .d-2xx { background: #e5f6ee; color: #04794f; }
+    .d-3xx { background: #eaf1fb; color: #1D559F; }
+    .d-4xx { background: #fdeaf0; color: #c2185b; }
+    .d-5xx { background: #fdecee; color: #b3253a; }
+
+    /* ===== Checklist SEO: dấu tích vẽ bằng CSS (không phải emoji) ===== */
+    .d-check { list-style: none; margin: 14px 0 4px; padding: 0; display: grid; gap: 8px; }
+    .d-check li { position: relative; padding-left: 30px; }
+    .d-check li::before {
+      content: ""; position: absolute; left: 6px; top: 4px; width: 7px; height: 12px;
+      border: solid #04AA6D; border-width: 0 3px 3px 0; transform: rotate(45deg);
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 1 · Tổng quan Internet</a><span>›</span>
+        Tra cứu Internet &amp; Web
+      </nav>
+      <h1>Tra cứu: Internet · Tên miền · HTTP · WWW · Web</h1>
+      <p class="sub">Trang tra cứu nhanh những khái niệm nền của Chương 1: Internet hoạt động ra sao,
+         DNS phân giải tên miền thế nào, một yêu cầu (request) đi từ trình duyệt tới máy chủ ra sao,
+         cấu trúc một URL, giao thức HTTP/HTTPS cùng bảng mã trạng thái, các thế hệ Web và cơ chế
+         của máy tìm kiếm.</p>
+      <div class="chips">
+        <span class="chip solid">1.1–1.5</span>
+        <span class="chip">Tra cứu</span>
+        <span class="chip">Internet · HTTP · Web</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Internet &amp; tên miền (DNS)</a></li>
+        <li><a href="#s2">Vòng đời một request (client–server)</a></li>
+        <li><a href="#s3">Cấu trúc URL</a></li>
+        <li><a href="#s4">HTTP/HTTPS &amp; mã trạng thái</a></li>
+        <li><a href="#s5">Các thế hệ Web (1.0 → 4.0)</a></li>
+        <li><a href="#s6">Máy tìm kiếm &amp; SEO</a></li>
+        <li><a href="#s7">Thực hành: DevTools &amp; Lighthouse</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. INTERNET & TÊN MIỀN  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Internet &amp; tên miền (DNS) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Internet là <strong>"mạng của các mạng"</strong> — vô số mạng máy tính trên toàn cầu
+         nối với nhau và trao đổi dữ liệu theo chung một bộ giao thức (TCP/IP).</p>
+
+      <p>Mỗi máy trên Internet được nhận diện bằng một <strong>địa chỉ IP</strong> (ví dụ
+         <code>203.0.113.10</code> theo IPv4, hoặc dạng dài hơn theo IPv6). Con người khó nhớ dãy số này,
+         nên ta dùng <strong>tên miền</strong> (domain name) dễ đọc. Việc "dịch" tên miền &harr; địa chỉ IP
+         do hệ thống <strong>DNS (Domain Name System)</strong> đảm nhiệm — có thể hình dung DNS như một
+         <em>danh bạ điện thoại</em> khổng lồ của Internet.</p>
+
+      <h3>Cấu trúc một tên miền</h3>
+      <p>Đọc <strong>từ phải sang trái</strong>, một tên miền thường có dạng
+         <code>sub.domain.TLD</code>. Ví dụ <code>www.dhmo.edu.vn</code>:</p>
+
+      <div class="d-url">
+        <span class="seg s-host">www</span><span class="punc">.</span><span class="seg s-path">dhmo</span><span class="punc">.</span><span class="seg s-scheme">edu.vn</span>
+      </div>
+      <div class="d-legend">
+        <div class="d-item"><span class="d-sw" style="background:#04AA6D"></span><b>www</b> — tên miền phụ (subdomain)<small>Một "nhánh" của tên miền chính; có thể là <code>mail</code>, <code>blog</code>… hoặc lược bỏ.</small></div>
+        <div class="d-item"><span class="d-sw" style="background:#6c5ce7"></span><b>dhmo</b> — tên miền chính (SLD)<small>Phần do tổ chức đăng ký và sở hữu (second-level domain).</small></div>
+        <div class="d-item"><span class="d-sw" style="background:#4b83d4"></span><b>edu.vn</b> — tên miền cấp cao (TLD)<small>Ở Việt Nam là TLD ghép: <code>.edu.vn</code> dành cho giáo dục, nằm dưới ccTLD <code>.vn</code>.</small></div>
+      </div>
+
+      <h3>Một số TLD phổ biến</h3>
+      <table class="syntax">
+        <thead><tr><th>TLD</th><th>Loại</th><th>Dành cho</th></tr></thead>
+        <tbody>
+          <tr><td><code>.com</code></td><td>Chung (gTLD)</td><td>Thương mại — phổ biến nhất, ai cũng đăng ký được</td></tr>
+          <tr><td><code>.org</code></td><td>Chung (gTLD)</td><td>Tổ chức phi lợi nhuận, cộng đồng</td></tr>
+          <tr><td><code>.net</code></td><td>Chung (gTLD)</td><td>Hạ tầng mạng, nhà cung cấp dịch vụ (nay dùng rộng rãi)</td></tr>
+          <tr><td><code>.edu</code></td><td>Chung (hạn chế)</td><td>Cơ sở giáo dục (chủ yếu Hoa Kỳ)</td></tr>
+          <tr><td><code>.gov</code></td><td>Chung (hạn chế)</td><td>Cơ quan chính phủ</td></tr>
+          <tr><td><code>.vn</code></td><td>Quốc gia (ccTLD)</td><td>Việt Nam</td></tr>
+          <tr><td><code>.edu.vn</code></td><td>Quốc gia (ghép)</td><td>Cơ sở giáo dục tại Việt Nam</td></tr>
+        </tbody>
+      </table>
+
+      <h3>DNS phân giải tên miền ra sao?</h3>
+      <div class="d-diagram">
+        <div class="d-row">
+          <div class="d-node blue">
+            <span class="d-tag">Client</span><strong>Trình duyệt</strong>
+            <small>gõ www.dhmo.edu.vn</small>
+          </div>
+          <div class="d-arrow"><small>1 · "IP ở đâu?"</small><span class="d-sym">&rarr;</span></div>
+          <div class="d-node purple">
+            <span class="d-tag">Resolver</span><strong>DNS Resolver</strong>
+            <small>của nhà mạng / 8.8.8.8</small>
+          </div>
+          <div class="d-arrow"><small>2 · truy vấn</small><span class="d-sym">&rarr;</span></div>
+          <div class="d-node green">
+            <span class="d-tag">DNS</span><strong>Máy chủ DNS</strong>
+            <small>Root &rarr; TLD &rarr; Authoritative</small>
+          </div>
+        </div>
+        <div class="d-back"><span class="d-sym">&larr;</span> 3 · trả về địa chỉ IP <code>203.0.113.10</code> cho trình duyệt</div>
+        <div class="d-row" style="margin-top:14px">
+          <div class="d-node blue">
+            <span class="d-tag">Client</span><strong>Trình duyệt</strong>
+            <small>đã biết IP</small>
+          </div>
+          <div class="d-arrow"><small>4 · kết nối bằng IP</small><span class="d-sym">&rarr;</span></div>
+          <div class="d-node amber">
+            <span class="d-tag">Server</span><strong>Web Server</strong>
+            <small>203.0.113.10 : 443</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p><strong>Mẹo.</strong> Kết quả DNS được <em>lưu tạm (cache)</em> ở nhiều tầng — trong trình duyệt,
+        hệ điều hành và resolver — nên lần truy cập sau thường không phải hỏi lại từ đầu, trang mở nhanh hơn.</p>
+      </div>
+    </section>
+
+    <!-- ==========  2. VÒNG ĐỜI MỘT REQUEST  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Vòng đời một request (client–server) <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Từ lúc bạn gõ địa chỉ đến lúc thấy trang hiện ra là một chuỗi bước tuần tự giữa
+         <strong>client</strong> (trình duyệt) và <strong>server</strong> (máy chủ).</p>
+
+      <ol class="d-flow">
+        <li>
+          <h4>Gõ URL &amp; nhấn Enter</h4>
+          <p>Người dùng nhập địa chỉ, ví dụ <code>https://www.dhmo.edu.vn/</code>, vào thanh địa chỉ.</p>
+        </li>
+        <li>
+          <h4>Phân giải DNS ra IP</h4>
+          <p>Trình duyệt hỏi DNS để đổi tên miền thành địa chỉ IP của máy chủ (xem sơ đồ ở mục 1).</p>
+        </li>
+        <li>
+          <h4>Bắt tay TCP + TLS</h4>
+          <p>Thiết lập kết nối TCP tới server; với <strong>HTTPS</strong> có thêm bước bắt tay <strong>TLS</strong>
+             để thoả thuận khoá mã hoá, bảo mật đường truyền.</p>
+        </li>
+        <li>
+          <h4>Gửi HTTP request</h4>
+          <p>Trình duyệt gửi yêu cầu, gồm phương thức (thường là <code>GET</code>), đường dẫn và các
+             <em>header</em> (loại trình duyệt, ngôn ngữ, cookie…).</p>
+        </li>
+        <li>
+          <h4>Server xử lý</h4>
+          <p>Máy chủ nhận yêu cầu, có thể truy vấn cơ sở dữ liệu, chạy mã phía server, dựng nội dung trả về.</p>
+        </li>
+        <li>
+          <h4>Trả HTTP response</h4>
+          <p>Server gửi lại phản hồi: dòng trạng thái (ví dụ <code>200 OK</code>), các header, và phần thân
+             chứa <strong>HTML</strong> (kèm liên kết tới CSS, JS, ảnh…).</p>
+        </li>
+        <li>
+          <h4>Trình duyệt render</h4>
+          <p>Phân tích HTML thành cây <strong>DOM</strong>, phân tích CSS thành <strong>CSSOM</strong>,
+             kết hợp lại rồi <strong>layout</strong> (tính vị trí – kích thước) và <strong>paint</strong> (vẽ ra màn hình).
+             JS được tải và thực thi để thêm phần tương tác.</p>
+        </li>
+      </ol>
+
+      <div class="callout info">
+        <p><strong>Ghi nhớ.</strong> Một trang web thường không chỉ là <em>một</em> request: sau khi nhận HTML,
+        trình duyệt phát sinh thêm nhiều request nữa để tải CSS, JavaScript, phông chữ và hình ảnh —
+        quan sát được rõ ở tab <strong>Network</strong> của DevTools (mục 7).</p>
+      </div>
+    </section>
+
+    <!-- ==========  3. CẤU TRÚC URL  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Cấu trúc URL <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">URL (Uniform Resource Locator) là "địa chỉ" đầy đủ trỏ tới một tài nguyên trên Web.
+         Hãy mổ xẻ một URL ví dụ:</p>
+
+      <div class="d-url">
+        <span class="seg s-scheme">https</span><span class="punc">://</span><span class="seg s-host">www.example.com</span><span class="punc">:</span><span class="seg s-port">443</span><span class="seg s-path">/san-pham</span><span class="punc"></span><span class="seg s-query">?id=5&amp;sort=gia</span><span class="seg s-frag">#danh-gia</span>
+      </div>
+
+      <div class="d-legend">
+        <div class="d-item"><span class="d-sw" style="background:#4b83d4"></span><b>scheme</b> — <code>https</code><small>Giao thức dùng để truy cập (http, https, ftp, mailto…).</small></div>
+        <div class="d-item"><span class="d-sw" style="background:#04AA6D"></span><b>host</b> — <code>www.example.com</code><small>Gồm subdomain (<code>www</code>) + domain (<code>example</code>) + TLD (<code>com</code>).</small></div>
+        <div class="d-item"><span class="d-sw" style="background:#e0a92a"></span><b>port</b> — <code>443</code><small>Cổng dịch vụ trên server; thường ẩn đi (80 cho HTTP, 443 cho HTTPS).</small></div>
+        <div class="d-item"><span class="d-sw" style="background:#6c5ce7"></span><b>path</b> — <code>/san-pham</code><small>Đường dẫn tới tài nguyên cụ thể trên máy chủ.</small></div>
+        <div class="d-item"><span class="d-sw" style="background:#E63946"></span><b>query string</b> — <code>?id=5&amp;sort=gia</code><small>Tham số truyền kèm, dạng <code>khoá=giá_trị</code> nối bằng <code>&amp;</code>.</small></div>
+        <div class="d-item"><span class="d-sw" style="background:#b3257a"></span><b>fragment</b> — <code>#danh-gia</code><small>Neo tới một phần trong trang (không gửi lên server).</small></div>
+      </div>
+
+      <div class="callout tip">
+        <p><strong>Mẹo.</strong> Cổng mặc định thường được lược bỏ: <code>https://www.example.com/</code>
+        đã ngầm hiểu là cổng <code>443</code>. Chỉ ghi rõ cổng khi dịch vụ chạy ở cổng khác thường
+        (ví dụ máy chủ lập trình <code>localhost:3000</code>).</p>
+      </div>
+    </section>
+
+    <!-- ==========  4. HTTP/HTTPS & MÃ TRẠNG THÁI  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Giao thức HTTP/HTTPS &amp; mã trạng thái <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">HTTP (HyperText Transfer Protocol) là giao thức để client và server trao đổi dữ liệu Web.
+         <strong>HTTPS</strong> là HTTP có thêm lớp mã hoá <strong>TLS</strong>.</p>
+
+      <table class="syntax">
+        <thead><tr><th>Tiêu chí</th><th>HTTP</th><th>HTTPS</th></tr></thead>
+        <tbody>
+          <tr><td>Mã hoá đường truyền</td><td>Không — dữ liệu đi ở dạng thô, dễ bị nghe lén</td><td><strong>Có</strong> — mã hoá bằng TLS</td></tr>
+          <tr><td>Cổng mặc định</td><td>80</td><td>443</td></tr>
+          <tr><td>Biểu tượng trên trình duyệt</td><td>Cảnh báo "Không bảo mật"</td><td>Ổ khoá</td></tr>
+          <tr><td>Khuyến nghị ngày nay</td><td>Không nên dùng</td><td><strong>Bắt buộc</strong> (SEO, bảo mật, quyền riêng tư)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Các phương thức HTTP thường gặp</h3>
+      <table class="syntax">
+        <thead><tr><th>Phương thức</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>GET</code></td><td>Lấy (đọc) dữ liệu — an toàn, không làm thay đổi trạng thái trên server.</td></tr>
+          <tr><td><code>POST</code></td><td>Gửi dữ liệu để tạo mới (ví dụ nộp form, thêm bản ghi).</td></tr>
+          <tr><td><code>PUT</code></td><td>Cập nhật / thay thế toàn bộ một tài nguyên đã có.</td></tr>
+          <tr><td><code>DELETE</code></td><td>Xoá một tài nguyên.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Mã trạng thái (status code) theo nhóm</h3>
+      <table class="syntax">
+        <thead><tr><th>Nhóm</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><span class="d-code d-1xx">1xx</span></td><td>Thông tin — yêu cầu đã nhận, tiến trình đang tiếp tục.</td></tr>
+          <tr><td><span class="d-code d-2xx">2xx</span></td><td>Thành công — yêu cầu được xử lý trọn vẹn.</td></tr>
+          <tr><td><span class="d-code d-3xx">3xx</span></td><td>Chuyển hướng — cần thao tác thêm (đi tới URL khác / dùng cache).</td></tr>
+          <tr><td><span class="d-code d-4xx">4xx</span></td><td>Lỗi phía client — yêu cầu sai hoặc không được phép.</td></tr>
+          <tr><td><span class="d-code d-5xx">5xx</span></td><td>Lỗi phía server — máy chủ gặp trục trặc khi xử lý.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Các mã hay gặp</h3>
+      <table class="syntax">
+        <thead><tr><th>Mã</th><th>Tên</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><span class="d-code d-2xx">200</span></td><td>OK</td><td>Thành công; server trả về nội dung yêu cầu.</td></tr>
+          <tr><td><span class="d-code d-2xx">201</span></td><td>Created</td><td>Tạo mới thành công (thường sau <code>POST</code>/<code>PUT</code>).</td></tr>
+          <tr><td><span class="d-code d-2xx">204</span></td><td>No Content</td><td>Thành công nhưng không có nội dung trả về trong thân.</td></tr>
+          <tr><td><span class="d-code d-3xx">301</span></td><td>Moved Permanently</td><td>Chuyển hướng <strong>vĩnh viễn</strong> sang URL mới (quan trọng cho SEO khi đổi link).</td></tr>
+          <tr><td><span class="d-code d-3xx">302</span></td><td>Found</td><td>Chuyển hướng <strong>tạm thời</strong> sang URL khác.</td></tr>
+          <tr><td><span class="d-code d-3xx">304</span></td><td>Not Modified</td><td>Tài nguyên không đổi &rarr; trình duyệt dùng lại bản trong cache (tiết kiệm băng thông).</td></tr>
+          <tr><td><span class="d-code d-4xx">400</span></td><td>Bad Request</td><td>Yêu cầu sai cú pháp / không hợp lệ.</td></tr>
+          <tr><td><span class="d-code d-4xx">401</span></td><td>Unauthorized</td><td>Chưa xác thực — cần đăng nhập.</td></tr>
+          <tr><td><span class="d-code d-4xx">403</span></td><td>Forbidden</td><td>Đã xác thực nhưng không có quyền truy cập.</td></tr>
+          <tr><td><span class="d-code d-4xx">404</span></td><td>Not Found</td><td>Không tìm thấy tài nguyên tại đường dẫn yêu cầu.</td></tr>
+          <tr><td><span class="d-code d-4xx">429</span></td><td>Too Many Requests</td><td>Gửi quá nhiều yêu cầu trong thời gian ngắn (bị giới hạn tần suất).</td></tr>
+          <tr><td><span class="d-code d-5xx">500</span></td><td>Internal Server Error</td><td>Lỗi nội bộ chung của máy chủ.</td></tr>
+          <tr><td><span class="d-code d-5xx">502</span></td><td>Bad Gateway</td><td>Server trung gian nhận phản hồi lỗi từ server phía sau.</td></tr>
+          <tr><td><span class="d-code d-5xx">503</span></td><td>Service Unavailable</td><td>Máy chủ quá tải hoặc đang bảo trì, tạm thời không phục vụ.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn">
+        <p><strong>Phân biệt.</strong> Mã <strong>4xx = lỗi phía client</strong> (yêu cầu sai, thiếu quyền,
+        gõ nhầm địa chỉ) — sửa ở phía người gửi. Mã <strong>5xx = lỗi phía server</strong> — vấn đề nằm ở
+        máy chủ, người dùng thường chỉ có thể thử lại sau.</p>
+      </div>
+    </section>
+
+    <!-- ==========  5. CÁC THẾ HỆ WEB  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Các thế hệ Web (1.0 → 4.0) <span class="tag-adv">Mở rộng</span></h2>
+      <p class="lead">Web tiến hoá qua nhiều "thế hệ", mỗi thế hệ đổi cách người dùng tương tác với thông tin.</p>
+
+      <table class="syntax">
+        <thead><tr><th>Thế hệ</th><th>Đặc trưng</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Web 1.0</strong><br><small class="muted">"Web chỉ đọc"</small></td>
+            <td>Trang <strong>tĩnh</strong>, chủ yếu để <em>đọc</em>; ít tương tác; người dùng là người tiêu thụ nội dung.</td>
+            <td>Trang tin/giới thiệu tĩnh, danh bạ web, các website công ty đời đầu.</td>
+          </tr>
+          <tr>
+            <td><strong>Web 2.0</strong><br><small class="muted">"Web đọc – ghi"</small></td>
+            <td><strong>Mạng xã hội</strong>, nội dung <strong>do người dùng tạo</strong> (UGC), tương tác cao;
+                kỹ thuật <strong>AJAX</strong> cập nhật nội dung mà không tải lại trang.</td>
+            <td>Facebook, YouTube, Wikipedia, blog, các nền tảng bình luận/chia sẻ.</td>
+          </tr>
+          <tr>
+            <td><strong>Web 3.0</strong><br><small class="muted">"Web ngữ nghĩa"</small></td>
+            <td>Web <strong>ngữ nghĩa (semantic)</strong> — máy "hiểu" dữ liệu; ứng dụng <strong>AI</strong>;
+                xu hướng <strong>phi tập trung</strong> (blockchain), người dùng làm chủ dữ liệu.</td>
+            <td>Ứng dụng phi tập trung (dApp), trợ lý AI, tiền mã hoá / NFT.</td>
+          </tr>
+          <tr>
+            <td><strong>Web 4.0</strong><br><small class="muted">"Web thông minh"</small></td>
+            <td>Web <strong>thông minh</strong>: <strong>AI khắp nơi</strong>, kết nối <strong>IoT</strong>,
+                tương tác tự nhiên (giọng nói, ngữ cảnh), cá nhân hoá sâu.</td>
+            <td>Trợ lý ảo thông minh, nhà thông minh, thiết bị đeo và cảm biến kết nối.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout info">
+        <p><strong>Lưu ý.</strong> Ranh giới giữa các "thế hệ" chỉ mang tính tương đối và có phần trùng lấn;
+        đây là cách phân loại để dễ hình dung xu hướng, không phải các mốc thời gian cứng.</p>
+      </div>
+    </section>
+
+    <!-- ==========  6. MÁY TÌM KIẾM & SEO  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Máy tìm kiếm &amp; SEO <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Máy tìm kiếm (Google, Bing…) hoạt động qua ba giai đoạn cốt lõi:
+         <strong>crawl → index → rank</strong>.</p>
+
+      <div class="d-diagram">
+        <div class="d-row">
+          <div class="d-node blue">
+            <span class="d-tag">Bước 1</span><strong>Crawl</strong>
+            <small>Bọ dò (bot) đi theo liên kết, tải các trang về</small>
+          </div>
+          <div class="d-arrow"><span class="d-sym">&rarr;</span></div>
+          <div class="d-node purple">
+            <span class="d-tag">Bước 2</span><strong>Index</strong>
+            <small>Phân tích &amp; lập chỉ mục nội dung vào kho dữ liệu</small>
+          </div>
+          <div class="d-arrow"><span class="d-sym">&rarr;</span></div>
+          <div class="d-node green">
+            <span class="d-tag">Bước 3</span><strong>Rank</strong>
+            <small>Xếp hạng kết quả theo hàng trăm tiêu chí</small>
+          </div>
+        </div>
+      </div>
+
+      <p><strong>SEO (Search Engine Optimization)</strong> là tập hợp kỹ thuật giúp trang được thu thập,
+         lập chỉ mục và xếp hạng tốt hơn. Dưới đây là checklist <em>SEO on-page</em> căn bản:</p>
+
+      <ul class="d-check">
+        <li>Thẻ <code>&lt;title&gt;</code> súc tích, chứa từ khoá chính (khoảng 50–60 ký tự).</li>
+        <li>Thẻ <code>&lt;meta name="description"&gt;</code> hấp dẫn, mô tả đúng nội dung (~150–160 ký tự).</li>
+        <li>Cấu trúc heading đúng cấp: một <code>&lt;h1&gt;</code> duy nhất, rồi <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>… không nhảy cấp.</li>
+        <li>URL thân thiện: ngắn gọn, có nghĩa, dùng dấu gạch nối, không tham số rối rắm.</li>
+        <li>Ảnh có thuộc tính <code>alt</code> mô tả nội dung.</li>
+        <li>Tốc độ tải nhanh: nén ảnh, tận dụng cache, giảm tài nguyên chặn hiển thị.</li>
+        <li>Thân thiện thiết bị di động (responsive).</li>
+        <li>Dùng <strong>HTTPS</strong>.</li>
+        <li>Có <code>sitemap.xml</code> và <code>robots.txt</code> hợp lý.</li>
+        <li>Nội dung chất lượng, độc nhất; liên kết nội bộ mạch lạc.</li>
+      </ul>
+
+      <div class="callout info">
+        <p><strong>Xem thêm.</strong> Phần <strong>code</strong> cụ thể của các thẻ meta, thẻ OpenGraph
+        và favicon nằm ở bài <a href="01-seo-meta-opengraph.html">SEO · meta · OpenGraph</a> — trang đó cho
+        mẫu <code>&lt;head&gt;</code> chuẩn để copy dùng.</p>
+      </div>
+    </section>
+
+    <!-- ==========  7. DEVTOOLS & LIGHTHOUSE  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Thực hành: DevTools &amp; Lighthouse <span class="tag-adv">Thực hành</span></h2>
+      <p class="lead">Toàn bộ những gì trình bày ở trên đều <em>quan sát được</em> ngay trong trình duyệt bằng
+         bộ công cụ dành cho lập trình viên (DevTools).</p>
+
+      <h3>Mở DevTools</h3>
+      <ul>
+        <li>Nhấn phím <kbd>F12</kbd> (hoặc <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd>;
+            trên macOS là <kbd>Cmd</kbd>+<kbd>Option</kbd>+<kbd>I</kbd>).</li>
+        <li>Hoặc chuột phải vào trang &rarr; chọn <em>Inspect</em> / <em>Kiểm tra phần tử</em>.</li>
+      </ul>
+
+      <h3>Tab Network — xem từng request</h3>
+      <p>Mở tab <strong>Network</strong> rồi tải lại trang (<kbd>Ctrl</kbd>+<kbd>R</kbd>) để thấy <em>mọi</em>
+         request mà trang phát sinh. Các cột đáng chú ý:</p>
+      <table class="syntax">
+        <thead><tr><th>Cột</th><th>Cho biết</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Status</strong></td><td>Mã trạng thái HTTP: phân biệt <span class="d-code d-2xx">200</span> (tải mới), <span class="d-code d-3xx">304</span> (dùng lại cache), <span class="d-code d-4xx">404</span> (thiếu file).</td></tr>
+          <tr><td><strong>Type</strong></td><td>Loại tài nguyên: document, stylesheet, script, image, font…</td></tr>
+          <tr><td><strong>Size</strong></td><td>Kích thước tải về (hoặc <em>from cache</em> nếu lấy từ bộ nhớ đệm).</td></tr>
+          <tr><td><strong>Time</strong></td><td>Thời gian hoàn tất request.</td></tr>
+          <tr><td><strong>Waterfall</strong></td><td>Biểu đồ thác nước: thứ tự và thời điểm từng request diễn ra.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Tab Lighthouse — chấm điểm trang</h3>
+      <p>Chọn tab <strong>Lighthouse</strong>, tích các hạng mục cần đánh giá rồi bấm
+         <em>Analyze page load</em>. Công cụ chấm điểm 0–100 cho:</p>
+      <table class="syntax">
+        <thead><tr><th>Hạng mục</th><th>Đánh giá điều gì</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Performance</strong></td><td>Tốc độ tải và độ mượt hiển thị.</td></tr>
+          <tr><td><strong>Accessibility</strong></td><td>Khả năng tiếp cận (alt ảnh, tương phản màu, thẻ ngữ nghĩa…).</td></tr>
+          <tr><td><strong>Best Practices</strong></td><td>Chuẩn mực chung (HTTPS, không lỗi console, ảnh đúng tỉ lệ…).</td></tr>
+          <tr><td><strong>SEO</strong></td><td>Các yếu tố tối ưu tìm kiếm cơ bản (title, description, mobile-friendly…).</td></tr>
+        </tbody>
+      </table>
+      <p>Báo cáo còn liệt kê danh sách <em>gợi ý cải thiện</em> (Opportunities / Diagnostics) kèm mức tác động,
+         giúp bạn biết nên sửa gì trước.</p>
+
+      <div class="callout tip">
+        <p><strong>Mẹo.</strong> Hãy chạy Lighthouse cho <em>chính trang của bạn</em> sau mỗi lần chỉnh sửa để
+        tự đánh giá và theo dõi tiến bộ — đây là cách khách quan để "chấm điểm" bài thực hành trước khi nộp.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="01-seo-meta-opengraph.html"><small>← Bài trước</small>SEO · meta · OpenGraph</a>
+    <a class="home" href="index.html">Mục lục</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 1 — Tổng quan Internet &amp; công nghệ Web
+  </footer>
+</body>
+</html>

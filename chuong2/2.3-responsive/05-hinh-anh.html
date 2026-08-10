@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.3.6 — HÌNH ẢNH RESPONSIVE (bản toàn diện)
+  ------------------------------------------------------------
+  Ảnh thường là tài nguyên NẶNG NHẤT của trang. Bài này đi từ
+  cơ bản → nâng cao, tham khảo theo W3Schools ("RWD Images" +
+  "HTML Responsive"):
+    1) Vì sao ảnh cần responsive   7) srcset + sizes
+    2) max-width:100% + height     8) <picture> + art direction
+    3) width:100% vs max-width     9) loading=lazy + webp/avif
+    4) Ảnh nền responsive         10) Bảng tổng hợp kỹ thuật
+    5) aspect-ratio               11) Mẹo & lỗi thường gặp
+    6) object-fit
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  MẸO: thu hẹp / mở rộng cửa sổ rồi nạp lại trang để thấy ảnh
+  SMALL / MEDIUM / LARGE đổi nhau (mục 7 & 8).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.3.6 · Hình ảnh responsive</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* 2) quy tắc vàng — ảnh co theo khung mẹ, không tràn */
+    .d-frame { background: #f1f5f9; border: 2px dashed #1D559F; padding: 10px; border-radius: 10px; }
+    .d-fluid { max-width: 100%; height: auto; display: block; border-radius: 8px; }
+
+    /* khung hẹp để thấy rõ ảnh co lại theo cha */
+    .d-narrow { max-width: 280px; }
+
+    /* 3) width:100% (kéo giãn quá cỡ gốc) vs max-width:100% */
+    .d-stretch { width: 100%; height: auto; display: block; border-radius: 8px; }
+    .d-cap     { max-width: 100%; height: auto; display: block; border-radius: 8px; }
+
+    /* 4) ảnh nền responsive */
+    .d-bg { height: 200px; border-radius: 10px; color: #fff; font-weight: 700;
+            display: grid; place-items: end center; padding: 12px;
+            text-shadow: 0 1px 4px rgba(0,0,0,.5);
+            background-image: url("../../assets/sky.svg"); background-repeat: no-repeat; }
+    .d-bg-cover   { background-size: cover;   background-position: center; }
+    .d-bg-contain { background-size: contain; background-position: center; background-color: #16407a; }
+
+    /* 5) aspect-ratio — giữ tỉ lệ khung ảnh */
+    .d-ratio { display: block; width: 100%; object-fit: cover; border-radius: 8px;
+               background: #eef1f7; }
+    .d-r-169 { aspect-ratio: 16 / 9; }
+    .d-r-11  { aspect-ratio: 1 / 1; }
+    .d-r-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 560px) { .d-r-grid { grid-template-columns: 1fr; } }
+
+    /* 6) object-fit — ảnh trong khung CỐ ĐỊNH 100%×160 */
+    .d-fit-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    @media (max-width: 720px) { .d-fit-grid { grid-template-columns: repeat(2, 1fr); } }
+    .d-fit-cell { text-align: center; }
+    .d-fit-cell figcaption { font-size: .8rem; color: #5b6472; margin-top: 6px; }
+    .d-fit { width: 100%; height: 160px; border-radius: 8px; background: #fde2e9;
+             border: 1px solid #f7b9c0; display: block; }
+    .d-fill    { object-fit: fill; }
+    .d-contain { object-fit: contain; }
+    .d-cover   { object-fit: cover; }
+    .d-none    { object-fit: none; }
+
+    /* 7) & 8) ảnh responsive lớn */
+    .d-respimg { max-width: 100%; height: auto; display: block; border-radius: 10px;
+                 box-shadow: 0 2px 10px rgba(20,40,80,.12); }
+
+    /* lưới thumbnail đồng đều ở mục 5 */
+    .d-thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .d-thumbs img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; border-radius: 8px; }
+    @media (max-width: 560px) { .d-thumbs { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.3 Responsive</a><span>›</span>
+        Hình ảnh responsive
+      </nav>
+      <h1>Hình ảnh <code style="color:#fff;background:rgba(255,255,255,.18)">responsive</code></h1>
+      <p class="sub">Ảnh thường là tài nguyên nặng nhất của trang. Học cách để ảnh co theo khung,
+         giữ tỉ lệ, lấp đầy ô cố định, và để trình duyệt tự chọn đúng cỡ ảnh theo màn hình —
+         từ <code>max-width:100%</code> cơ bản đến <code>srcset</code> &amp; <code>&lt;picture&gt;</code> nâng cao.</p>
+      <div class="chips">
+        <span class="chip solid">2.3.6</span>
+        <span class="chip">Responsive</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Vì sao ảnh cần responsive</a></li>
+        <li><a href="#s2">max-width:100% + height:auto</a></li>
+        <li><a href="#s3">width:100% khác max-width:100%</a></li>
+        <li><a href="#s4">Ảnh nền responsive</a></li>
+        <li><a href="#s5">aspect-ratio — giữ tỉ lệ</a></li>
+        <li><a href="#s6">object-fit</a></li>
+        <li><a href="#s7">srcset + sizes</a></li>
+        <li><a href="#s8">&lt;picture&gt; — art direction</a></li>
+        <li><a href="#s9">loading=lazy &amp; định dạng mới</a></li>
+        <li><a href="#s10">Bảng tổng hợp kỹ thuật</a></li>
+        <li><a href="#s11">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. VÌ SAO ẢNH CẦN RESPONSIVE  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Vì sao ảnh cần responsive <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Một bức ảnh để nguyên kích thước gốc sẽ gây <strong>hai vấn đề</strong> trên màn hình nhỏ:
+         (1) <em>tràn ra ngoài</em> làm vỡ bố cục và sinh thanh cuộn ngang; (2) <em>tốn băng thông</em> vì
+         điện thoại vẫn tải nguyên ảnh khổ lớn dù chỉ hiển thị bé tí.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Ảnh không kiểm soát — tràn ra khỏi khung mẹ</div>
+        <div class="demo-body" style="overflow:auto">
+          <div style="max-width:280px; border:2px dashed #E63946; border-radius:10px; padding:8px; background:#fdecee">
+            <p class="muted" style="margin:0 0 8px">Khung mẹ chỉ rộng 280px, nhưng ảnh gốc 640px ⇒ tràn ra ngoài (kéo ngang để thấy):</p>
+            <img src="../../assets/photo.svg" alt="Ảnh tràn khung" style="display:block; border-radius:8px">
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Ảnh là thẻ <code>inline</code></strong> và mặc định hiển thị đúng kích thước pixel gốc.
+           Nếu ảnh rộng hơn khung chứa, nó sẽ đẩy bố cục và tạo cuộn ngang trên di động.</p>
+        <p>Mục tiêu của "ảnh responsive": ảnh <strong>không bao giờ rộng hơn khung mẹ</strong>, và trình duyệt
+           chỉ tải cỡ ảnh <strong>vừa đủ</strong> cho thiết bị — nhanh hơn, đỡ tốn dữ liệu, điểm Core Web Vitals tốt hơn.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Hậu quả khi ảnh không responsive</caption>
+        <thead><tr><th>Vấn đề</th><th>Biểu hiện</th><th>Cách chữa (xem mục)</th></tr></thead>
+        <tbody>
+          <tr><td>Vỡ bố cục</td><td>Ảnh tràn ra, có thanh cuộn ngang</td><td><code>max-width:100%</code> (mục 2)</td></tr>
+          <tr><td>Tốn băng thông</td><td>Di động tải ảnh khổ desktop</td><td><code>srcset</code> / <code>&lt;picture&gt;</code> (mục 7–8)</td></tr>
+          <tr><td>Nhảy layout (CLS)</td><td>Trang giật khi ảnh tải xong</td><td><code>aspect-ratio</code> / <code>width&amp;height</code> (mục 5, 9)</td></tr>
+          <tr><td>Méo ảnh</td><td>Ảnh bị kéo giãn sai tỉ lệ</td><td><code>object-fit</code> (mục 6)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  2. MAX-WIDTH 100% + HEIGHT AUTO  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Quy tắc vàng: <code>max-width:100%</code> + <code>height:auto</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Đây là kỹ thuật quan trọng nhất. <code>max-width:100%</code> đảm bảo ảnh <strong>không bao giờ
+         rộng hơn khung mẹ</strong>; <code>height:auto</code> giữ ảnh <strong>đúng tỉ lệ</strong> khi co lại.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Cùng một ảnh trong hai khung mẹ rộng khác nhau — ảnh tự co vừa</div>
+        <div class="demo-body">
+          <div class="split">
+            <div class="d-frame">
+              <p class="muted" style="margin:0 0 8px">Khung mẹ rộng (đầy cột):</p>
+              <img class="d-fluid" src="../../assets/photo.svg" alt="Ảnh co theo khung rộng">
+            </div>
+            <div class="d-frame d-narrow">
+              <p class="muted" style="margin:0 0 8px">Khung mẹ hẹp (280px):</p>
+              <img class="d-fluid" src="../../assets/photo.svg" alt="Ảnh co theo khung hẹp">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Quy tắc vàng — áp cho mọi ảnh nội dung */</span>
+img {
+  <span class="k">max-width</span>: <span class="v">100%</span>;   <span class="c">/* không bao giờ rộng hơn khung mẹ */</span>
+  <span class="k">height</span>:    <span class="v">auto</span>;   <span class="c">/* giữ đúng tỉ lệ khi co lại  */</span>
+  <span class="k">display</span>:   <span class="v">block</span>;  <span class="c">/* bỏ khe trắng dưới ảnh (do baseline) */</span>
+}</code></pre>
+
+      <div class="note">
+        <p>Vì sao cần <code>height:auto</code>? Nếu chỉ đặt <code>max-width:100%</code> mà ảnh đã có thuộc tính
+           <code>height</code> cố định trong HTML, khi bề ngang co lại chiều cao vẫn giữ nguyên ⇒ ảnh bị <strong>méo</strong>.
+           <code>height:auto</code> để trình duyệt tự tính chiều cao theo tỉ lệ.</p>
+      </div>
+
+      <div class="callout tip"><p><strong>Mẹo.</strong> Đặt quy tắc này một lần cho cả trang
+        (<code>img { max-width:100%; height:auto; }</code>) là phần lớn ảnh đã "an toàn" mọi màn hình.</p></div>
+    </section>
+
+    <!-- ==========  3. WIDTH 100% vs MAX-WIDTH 100%  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> <code>width:100%</code> khác <code>max-width:100%</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Hai cái nghe giống nhau nhưng khác hẳn: <code>width:100%</code> <strong>luôn ép</strong> ảnh bằng
+         bề ngang khung mẹ — kể cả khi khung rộng hơn ảnh gốc ⇒ ảnh bị <strong>phóng to vỡ nét</strong>.
+         <code>max-width:100%</code> chỉ <strong>giới hạn trên</strong>, ảnh không bao giờ to quá cỡ gốc.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Khung mẹ rộng 100%, ảnh gốc chỉ 400px — so sánh hai cách</div>
+        <div class="demo-body">
+          <div class="d-frame" style="margin-bottom:14px">
+            <p class="muted" style="margin:0 0 8px"><code>width:100%</code> ⇒ ảnh bị KÉO GIÃN to hơn cỡ gốc (vỡ nét):</p>
+            <img class="d-stretch" src="../../assets/img-small.svg" alt="width 100% phóng to quá cỡ">
+          </div>
+          <div class="d-frame">
+            <p class="muted" style="margin:0 0 8px"><code>max-width:100%</code> ⇒ ảnh dừng ở cỡ gốc 400px, KHÔNG phóng to:</p>
+            <img class="d-cap" src="../../assets/img-small.svg" alt="max-width 100% giữ cỡ gốc">
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <thead><tr><th>Tiêu chí</th><th><code>width: 100%</code></th><th><code>max-width: 100%</code></th></tr></thead>
+        <tbody>
+          <tr><td>Khung MẸ hẹp hơn ảnh</td><td>Ảnh co lại</td><td>Ảnh co lại</td></tr>
+          <tr><td>Khung MẸ rộng hơn ảnh</td><td><strong>Phóng to</strong> quá cỡ gốc (vỡ nét)</td><td>Dừng ở cỡ gốc (sắc nét)</td></tr>
+          <tr><td>Khi nào nên dùng</td><td>Banner/hero muốn ảnh luôn lấp đầy bề ngang</td><td>Ảnh nội dung thông thường</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn"><p><strong>Lưu ý.</strong> Đừng phóng to ảnh vượt cỡ gốc — chữ và chi tiết sẽ rỗ.
+        Nếu cần ảnh lấp đầy khung lớn, hãy chuẩn bị một ảnh độ phân giải cao hơn (hoặc dùng SVG co giãn vô hạn).</p></div>
+    </section>
+
+    <!-- ==========  4. ẢNH NỀN RESPONSIVE  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Ảnh nền responsive: <code>background-size</code> &amp; <code>position</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Với ảnh nền (<code>background-image</code>), điều khiển cách lấp khung bằng
+         <code>background-size</code>: <code>cover</code> (phủ kín, có thể cắt bớt) hoặc <code>contain</code> (hiện trọn ảnh,
+         có thể chừa khoảng trống); và <code>background-position</code> để chọn phần ảnh được ưu tiên.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Cùng ảnh nền sky.svg trong khung cao 200px</div>
+        <div class="demo-body">
+          <div class="split">
+            <div class="d-bg d-bg-cover">cover (phủ kín, cắt bớt mép)</div>
+            <div class="d-bg d-bg-contain">contain (hiện trọn ảnh)</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.hero {
+  <span class="k">background-image</span>:    <span class="v">url("sky.svg")</span>;
+  <span class="k">background-size</span>:     <span class="v">cover</span>;     <span class="c">/* phủ kín khung, có thể cắt mép */</span>
+  <span class="k">background-position</span>: <span class="v">center</span>;    <span class="c">/* ưu tiên giữ phần giữa ảnh */</span>
+  <span class="k">background-repeat</span>:   <span class="v">no-repeat</span>;
+}</code></pre>
+
+      <table class="syntax">
+        <thead><tr><th>Giá trị</th><th>Hành vi</th></tr></thead>
+        <tbody>
+          <tr><td><code>cover</code></td><td>Phóng để <strong>phủ kín</strong> khung; phần thừa bị cắt. Hay dùng cho hero/banner.</td></tr>
+          <tr><td><code>contain</code></td><td>Thu để <strong>hiện trọn</strong> ảnh trong khung; có thể chừa khoảng trống.</td></tr>
+          <tr><td><code>auto</code></td><td>Giữ kích thước gốc của ảnh nền.</td></tr>
+          <tr><td><code>background-position</code></td><td><code>center</code> / <code>top</code> / <code>50% 30%</code>… chọn phần ảnh ưu tiên khi bị cắt.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p>Ảnh nền tiện cho trang trí nhưng <strong>không có <code>alt</code></strong> và khó tối ưu tải.
+        Ảnh là <em>nội dung</em> (logo, hình minh hoạ bài viết) nên dùng thẻ <code>&lt;img&gt;</code> để có alt &amp; <code>srcset</code>.</p></div>
+    </section>
+
+    <!-- ==========  5. ASPECT-RATIO  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> <code>aspect-ratio</code> — giữ tỉ lệ khung ảnh <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Đặt một <strong>tỉ lệ cố định</strong> (rộng/cao) cho khung ảnh, ví dụ <code>16/9</code> hay <code>1/1</code>.
+         Khung luôn đúng tỉ lệ dù bề ngang thay đổi ⇒ trang <strong>không nhảy layout</strong> khi ảnh tải xong.</p>
+
+      <div class="demo">
+        <div class="demo-bar">aspect-ratio 16/9 và 1/1 (kết hợp object-fit:cover)</div>
+        <div class="demo-body">
+          <div class="d-r-grid">
+            <figure style="margin:0">
+              <img class="d-ratio d-r-169" src="../../assets/sky.svg" alt="Ảnh tỉ lệ 16:9">
+              <figcaption class="muted" style="font-size:.82rem;margin-top:6px">aspect-ratio: 16 / 9</figcaption>
+            </figure>
+            <figure style="margin:0">
+              <img class="d-ratio d-r-11" src="../../assets/sky.svg" alt="Ảnh tỉ lệ 1:1">
+              <figcaption class="muted" style="font-size:.82rem;margin-top:6px">aspect-ratio: 1 / 1</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <h3>Lưới thumbnail vuông đồng đều</h3>
+      <div class="demo">
+        <div class="demo-bar">3 ô vuông bằng nhau — aspect-ratio:1/1 + object-fit:cover</div>
+        <div class="demo-body">
+          <div class="d-thumbs">
+            <img src="../../assets/photo.svg" alt="Thumbnail 1">
+            <img src="../../assets/rose.svg"  alt="Thumbnail 2">
+            <img src="../../assets/sky.svg"   alt="Thumbnail 3">
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.thumb {
+  <span class="k">width</span>:        <span class="v">100%</span>;
+  <span class="k">aspect-ratio</span>: <span class="v">1 / 1</span>;     <span class="c">/* khung luôn vuông */</span>
+  <span class="k">object-fit</span>:   <span class="v">cover</span>;     <span class="c">/* lấp đầy ô, cắt phần thừa */</span>
+}</code></pre>
+      <div class="callout tip"><p><strong>Vì sao quan trọng?</strong> Khi khung đã có tỉ lệ cố định, trình duyệt biết
+        trước chiều cao ảnh ⇒ không bị <em>giật bố cục</em> (CLS) lúc ảnh tải xong — điểm cộng lớn cho trải nghiệm &amp; SEO.</p></div>
+    </section>
+
+    <!-- ==========  6. OBJECT-FIT  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> <code>object-fit</code> — lấp khung cố định không méo ảnh <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Khi ép ảnh vào một khung <strong>kích thước cố định</strong> (vd 100%×160px), mặc định ảnh sẽ bị <em>kéo méo</em>.
+         <code>object-fit</code> quyết định ảnh lấp khung thế nào — giống <code>background-size</code> nhưng cho thẻ <code>&lt;img&gt;</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Cùng ảnh rose.svg (vuông) trong khung 100%×160px — 4 giá trị object-fit</div>
+        <div class="demo-body">
+          <div class="d-fit-grid">
+            <figure class="d-fit-cell" style="margin:0">
+              <img class="d-fit d-fill" src="../../assets/rose.svg" alt="object-fit fill">
+              <figcaption>fill (mặc định — méo)</figcaption>
+            </figure>
+            <figure class="d-fit-cell" style="margin:0">
+              <img class="d-fit d-contain" src="../../assets/rose.svg" alt="object-fit contain">
+              <figcaption>contain (trọn ảnh)</figcaption>
+            </figure>
+            <figure class="d-fit-cell" style="margin:0">
+              <img class="d-fit d-cover" src="../../assets/rose.svg" alt="object-fit cover">
+              <figcaption>cover (phủ kín, cắt)</figcaption>
+            </figure>
+            <figure class="d-fit-cell" style="margin:0">
+              <img class="d-fit d-none" src="../../assets/rose.svg" alt="object-fit none">
+              <figcaption>none (cỡ gốc, cắt)</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <thead><tr><th>Giá trị</th><th>Hành vi trong khung cố định</th></tr></thead>
+        <tbody>
+          <tr><td><code>fill</code></td><td>Mặc định. Kéo giãn lấp đầy khung — <strong>dễ méo</strong> nếu tỉ lệ khác.</td></tr>
+          <tr><td><code>contain</code></td><td>Thu vừa để <strong>hiện trọn</strong> ảnh, giữ tỉ lệ; có thể chừa viền trống.</td></tr>
+          <tr><td><code>cover</code></td><td>Phóng để <strong>phủ kín</strong> khung, giữ tỉ lệ; cắt bớt phần thừa. Hay dùng nhất.</td></tr>
+          <tr><td><code>none</code></td><td>Giữ <strong>kích thước gốc</strong>; ảnh bị cắt nếu lớn hơn khung.</td></tr>
+          <tr><td><code>object-position</code></td><td>Đi kèm để chọn phần ảnh ưu tiên khi bị cắt (vd <code>object-position: top</code>).</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p><code>object-fit</code> được học kỹ ở bài
+        <a href="../2.4-ky-thuat-css/05-object-fit.html">2.4.5 · object-fit</a>. Ở đây ta dùng nó như công cụ
+        để dựng thư viện ảnh đồng đều mà không méo.</p></div>
+    </section>
+
+    <!-- ==========  7. SRCSET + SIZES  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> <code>srcset</code> + <code>sizes</code> — trình duyệt tự chọn ảnh <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Cung cấp <strong>nhiều phiên bản</strong> cùng một ảnh ở các độ rộng khác nhau; trình duyệt tự chọn
+         file <strong>vừa đủ</strong> cho màn hình &amp; mật độ điểm ảnh. Cùng một bức ảnh, chỉ khác độ phân giải.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Thu hẹp / mở rộng cửa sổ rồi NẠP LẠI trang — ảnh SMALL/MEDIUM/LARGE đổi</div>
+        <div class="demo-body">
+          <img class="d-respimg"
+               src="../../assets/img-medium.svg"
+               srcset="../../assets/img-small.svg 400w,
+                       ../../assets/img-medium.svg 800w,
+                       ../../assets/img-large.svg 1200w"
+               sizes="(max-width: 600px) 400px,
+                      (max-width: 1200px) 800px,
+                      1200px"
+               alt="Ảnh srcset đổi theo độ rộng màn hình">
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">&lt;!-- w = bề rộng thực (px) của mỗi file ảnh --&gt;</span>
+&lt;<span class="k">img</span> <span class="v">src</span>=<span class="s">"img-medium.svg"</span>          <span class="c">&lt;!-- ảnh dự phòng cho trình duyệt cũ --&gt;</span>
+     <span class="v">srcset</span>=<span class="s">"img-small.svg 400w,
+             img-medium.svg 800w,
+             img-large.svg 1200w"</span>
+     <span class="v">sizes</span>=<span class="s">"(max-width: 600px) 400px,
+            (max-width: 1200px) 800px,
+            1200px"</span>
+     <span class="v">alt</span>=<span class="s">"Ảnh minh hoạ"</span>&gt;</code></pre>
+
+      <table class="syntax">
+        <thead><tr><th>Thành phần</th><th>Vai trò</th></tr></thead>
+        <tbody>
+          <tr><td><code>srcset</code> + <code>w</code></td><td>Danh sách file kèm <strong>bề rộng thực</strong> của ảnh (đơn vị <code>w</code>).</td></tr>
+          <tr><td><code>sizes</code></td><td>Cho trình duyệt biết ảnh sẽ <strong>hiển thị rộng bao nhiêu</strong> ở mỗi breakpoint.</td></tr>
+          <tr><td><code>src</code></td><td>Ảnh dự phòng nếu trình duyệt không hiểu <code>srcset</code>.</td></tr>
+          <tr><td><code>2x</code> (density)</td><td>Cách rút gọn: <code>srcset="a.png 1x, a@2x.png 2x"</code> cho màn Retina.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn"><p><strong>Quan trọng.</strong> <code>srcset</code> dùng để phục vụ <em>cùng một ảnh</em> ở nhiều
+        độ phân giải (tiết kiệm băng thông). Nếu muốn <em>đổi hẳn nội dung/khung ảnh</em> theo màn hình thì dùng
+        <code>&lt;picture&gt;</code> ở mục 8.</p></div>
+    </section>
+
+    <!-- ==========  8. PICTURE + ART DIRECTION  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> <code>&lt;picture&gt;</code> + <code>&lt;source media&gt;</code> — art direction <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Khi muốn <strong>đổi hẳn ảnh</strong> theo breakpoint (vd ảnh ngang trên desktop, ảnh dọc cắt cận trên mobile),
+         dùng <code>&lt;picture&gt;</code>. Trình duyệt duyệt các <code>&lt;source&gt;</code> từ trên xuống, chọn cái đầu tiên có
+         <code>media</code> khớp; nếu không khớp cái nào thì dùng <code>&lt;img&gt;</code> cuối.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Thu hẹp / mở rộng cửa sổ rồi NẠP LẠI — ảnh đổi hẳn theo breakpoint</div>
+        <div class="demo-body">
+          <picture>
+            <source media="(max-width: 600px)"  srcset="../../assets/img-small.svg">
+            <source media="(max-width: 1200px)" srcset="../../assets/img-medium.svg">
+            <img class="d-respimg" src="../../assets/img-large.svg" alt="Ảnh đổi hẳn theo breakpoint">
+          </picture>
+        </div>
+      </div>
+
+      <pre class="code"><code>&lt;<span class="k">picture</span>&gt;
+  <span class="c">&lt;!-- duyệt từ trên xuống, chọn source đầu tiên khớp media --&gt;</span>
+  &lt;<span class="k">source</span> <span class="v">media</span>=<span class="s">"(max-width: 600px)"</span>  <span class="v">srcset</span>=<span class="s">"img-small.svg"</span>&gt;
+  &lt;<span class="k">source</span> <span class="v">media</span>=<span class="s">"(max-width: 1200px)"</span> <span class="v">srcset</span>=<span class="s">"img-medium.svg"</span>&gt;
+  &lt;<span class="k">img</span> <span class="v">src</span>=<span class="s">"img-large.svg"</span> <span class="v">alt</span>=<span class="s">"Ảnh minh hoạ"</span>&gt;  <span class="c">&lt;!-- mặc định / dự phòng --&gt;</span>
+&lt;/<span class="k">picture</span>&gt;</code></pre>
+
+      <table class="syntax">
+        <thead><tr><th>So sánh</th><th><code>srcset</code> trên <code>&lt;img&gt;</code></th><th><code>&lt;picture&gt;</code> + <code>source media</code></th></tr></thead>
+        <tbody>
+          <tr><td>Mục đích</td><td><strong>Đổi độ phân giải</strong> cùng một ảnh</td><td><strong>Đổi hẳn ảnh</strong> (art direction)</td></tr>
+          <tr><td>Ai quyết định</td><td>Trình duyệt (theo độ rộng &amp; DPR)</td><td>Bạn (qua điều kiện <code>media</code>)</td></tr>
+          <tr><td>Đổi định dạng được không?</td><td>Không</td><td>Có (<code>&lt;source type="image/webp"&gt;</code>)</td></tr>
+          <tr><td>Ví dụ dùng</td><td>Ảnh bài viết, thumbnail</td><td>Hero ngang→dọc, crop khác nhau theo màn hình</td></tr>
+        </tbody>
+      </table>
+      <div class="callout tip"><p><code>&lt;picture&gt;</code> còn dùng để cung cấp định dạng mới mà vẫn an toàn:
+        đặt <code>&lt;source type="image/avif"&gt;</code>, rồi <code>&lt;source type="image/webp"&gt;</code>, cuối cùng
+        <code>&lt;img&gt;</code> dạng JPG/PNG dự phòng.</p></div>
+    </section>
+
+    <!-- ==========  9. LOADING LAZY & ĐỊNH DẠNG MỚI  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> <code>loading="lazy"</code> &amp; định dạng ảnh hiện đại <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Hai tối ưu cuối cùng để ảnh nhanh &amp; nhẹ: <strong>trì hoãn tải</strong> ảnh ngoài màn hình đầu, và
+         dùng <strong>định dạng nén tốt</strong> (WebP/AVIF) thay cho JPG/PNG.</p>
+
+      <pre class="code"><code><span class="c">&lt;!-- lazy: chỉ tải khi người dùng cuộn gần tới ảnh --&gt;</span>
+&lt;<span class="k">img</span> <span class="v">src</span>=<span class="s">"anh.webp"</span> <span class="v">alt</span>=<span class="s">"…"</span>
+     <span class="v">width</span>=<span class="s">"800"</span> <span class="v">height</span>=<span class="s">"450"</span>   <span class="c">&lt;!-- khai báo kích thước → tránh nhảy layout --&gt;</span>
+     <span class="v">loading</span>=<span class="s">"lazy"</span>&gt;
+
+<span class="c">&lt;!-- ưu tiên định dạng mới, có dự phòng --&gt;</span>
+&lt;<span class="k">picture</span>&gt;
+  &lt;<span class="k">source</span> <span class="v">type</span>=<span class="s">"image/avif"</span> <span class="v">srcset</span>=<span class="s">"anh.avif"</span>&gt;
+  &lt;<span class="k">source</span> <span class="v">type</span>=<span class="s">"image/webp"</span> <span class="v">srcset</span>=<span class="s">"anh.webp"</span>&gt;
+  &lt;<span class="k">img</span> <span class="v">src</span>=<span class="s">"anh.jpg"</span> <span class="v">alt</span>=<span class="s">"…"</span>&gt;
+&lt;/<span class="k">picture</span>&gt;</code></pre>
+
+      <table class="syntax">
+        <thead><tr><th>Kỹ thuật</th><th>Lợi ích</th><th>Lưu ý</th></tr></thead>
+        <tbody>
+          <tr><td><code>loading="lazy"</code></td><td>Hoãn tải ảnh dưới màn hình đầu ⇒ trang mở nhanh hơn</td><td><strong>Đừng</strong> lazy ảnh hero/đầu trang (nên <code>loading="eager"</code>).</td></tr>
+          <tr><td><code>width</code> &amp; <code>height</code></td><td>Trình duyệt giữ chỗ ⇒ không nhảy layout (CLS)</td><td>Vẫn đi kèm CSS <code>height:auto</code> để co tỉ lệ.</td></tr>
+          <tr><td>WebP / AVIF</td><td>Nhẹ hơn JPG/PNG 25–50% cùng chất lượng</td><td>Dùng <code>&lt;picture&gt;</code> để dự phòng trình duyệt cũ.</td></tr>
+          <tr><td>SVG</td><td>Co giãn vô hạn không vỡ, file rất nhẹ</td><td>Hợp với icon/logo/biểu đồ, không hợp ảnh chụp.</td></tr>
+          <tr><td><code>decoding="async"</code></td><td>Giải mã ảnh không chặn hiển thị</td><td>Thường thêm cùng <code>loading="lazy"</code>.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p>Ảnh thường là tài nguyên nặng nhất ⇒ ảnh hưởng trực tiếp chỉ số <strong>LCP</strong>
+        (Largest Contentful Paint) trong Core Web Vitals. Tối ưu ảnh là cách nhanh nhất để tăng tốc trang.</p></div>
+    </section>
+
+    <!-- ==========  10. BẢNG TỔNG HỢP  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Bảng tổng hợp kỹ thuật ảnh responsive <span class="tag-base">Tra cứu</span></h2>
+      <p class="lead">Một bảng để chọn nhanh công cụ phù hợp với từng tình huống.</p>
+
+      <table class="syntax">
+        <caption>Kỹ thuật ảnh responsive (theo W3Schools)</caption>
+        <thead><tr><th>Kỹ thuật</th><th>Cú pháp cốt lõi</th><th>Dùng để</th></tr></thead>
+        <tbody>
+          <tr><td>Quy tắc vàng</td><td><code>max-width:100%; height:auto</code></td><td>Ảnh không tràn khung, giữ tỉ lệ. <strong>Luôn dùng.</strong></td></tr>
+          <tr><td>Lấp đầy bề ngang</td><td><code>width:100%</code></td><td>Banner/hero muốn ảnh phủ kín cột (cẩn thận vỡ nét).</td></tr>
+          <tr><td>Ảnh nền</td><td><code>background-size: cover | contain</code></td><td>Nền trang trí, hero có chữ đè lên.</td></tr>
+          <tr><td>Giữ tỉ lệ khung</td><td><code>aspect-ratio: 16/9</code></td><td>Khung ảnh ổn định, tránh nhảy layout.</td></tr>
+          <tr><td>Lấp ô cố định</td><td><code>object-fit: cover</code></td><td>Thư viện ảnh / avatar đồng đều, không méo.</td></tr>
+          <tr><td>Đổi độ phân giải</td><td><code>srcset</code> + <code>sizes</code></td><td>Tiết kiệm băng thông; cùng ảnh nhiều cỡ.</td></tr>
+          <tr><td>Đổi hẳn ảnh</td><td><code>&lt;picture&gt;</code> + <code>source media</code></td><td>Art direction: crop/ảnh khác theo màn hình.</td></tr>
+          <tr><td>Đổi định dạng</td><td><code>&lt;source type="image/webp"&gt;</code></td><td>Phục vụ WebP/AVIF, có dự phòng.</td></tr>
+          <tr><td>Trì hoãn tải</td><td><code>loading="lazy"</code></td><td>Ảnh ngoài màn hình đầu ⇒ mở trang nhanh.</td></tr>
+          <tr><td>Tránh CLS</td><td><code>width</code> &amp; <code>height</code> trên <code>&lt;img&gt;</code></td><td>Giữ chỗ trước, trang không giật.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  11. MẸO & LỖI THƯỜNG GẶP  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout tip"><p><strong>Mẹo 1.</strong> Đặt sẵn quy tắc toàn cục
+        <code>img { max-width:100%; height:auto; }</code> — phần lớn ảnh đã an toàn mọi màn hình.</p></div>
+      <div class="callout tip"><p><strong>Mẹo 2.</strong> Dùng <code>aspect-ratio</code> (hoặc <code>width</code>+<code>height</code>)
+        để khung ảnh ổn định ⇒ <strong>tránh nhảy layout</strong> (CLS) khi ảnh tải xong.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 3.</strong> <code>width:100%</code> sẽ <em>phóng to</em> ảnh quá cỡ gốc làm vỡ nét.
+        Ảnh nội dung nên dùng <code>max-width:100%</code>.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 4.</strong> Quên nén ảnh — gửi ảnh 3000px cho ô hiển thị 300px rất phí.
+        Hãy <strong>nén &amp; xuất nhiều cỡ</strong>, rồi dùng <code>srcset</code> cho ảnh lớn.</p></div>
+      <div class="callout danger"><p><strong>Lỗi 5.</strong> Thiếu <code>alt</code>. Mọi ảnh nội dung cần <code>alt</code> mô tả
+        (ảnh trang trí thuần thì để <code>alt=""</code>) — quan trọng cho người khiếm thị và SEO.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> Co theo khung → <code>max-width:100%</code>;
+        giữ tỉ lệ → <code>aspect-ratio</code>; lấp ô không méo → <code>object-fit:cover</code>;
+        tiết kiệm băng thông → <code>srcset</code>; đổi hẳn ảnh → <code>&lt;picture&gt;</code>.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="04-grid.html"><small>← Bài trước</small>2.3.5 · Grid</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="../2.4-ky-thuat-css/01-bien-css.html"><small>Bài tiếp →</small>2.4.1 · Biến CSS</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.1.7 — HTML TABLES · BẢNG (bản tham khảo toàn diện)
+  ------------------------------------------------------------
+  Bảng <table> dùng để trình bày DỮ LIỆU dạng hàng × cột. Bài
+  này đi từ cơ bản → nâng cao, tham khảo theo W3Schools:
+    1) Bảng cơ bản table/tr/td/th   7) colgroup / col
+    2) Tiêu đề bảng <caption>        8) Zebra & hover
+    3) Viền & border-collapse        9) Bề rộng & cuộn ngang
+    4) Padding · align · v-align    10) Bảng tra cứu thẻ
+    5) colspan & rowspan            11) Đừng dùng bảng dàn layout
+    6) thead / tbody / tfoot
+  Khung trang dùng ../../assets/lesson.css. CSS minh hoạ để trong
+  <style> bên dưới với TIỀN TỐ .d- (vd .d-table) để sinh viên
+  thấy rõ cách TỰ STYLE bảng — KHÔNG dùng class .syntax (class
+  .syntax chỉ dùng cho các bảng TRA CỨU thuộc tính).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.1.7 · Bảng — HTML Tables</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ============================================================
+       CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố .d-)
+       Đây là cách TỰ STYLE bảng <table> — sinh viên đọc được trọn
+       vẹn kỹ thuật. KHÔNG dùng class .syntax cho các bảng minh hoạ.
+       ============================================================ */
+
+    /* ----- 1) Bảng minh hoạ cơ bản ----- */
+    .d-table {
+      border-collapse: collapse;          /* gộp viền đôi thành 1 đường */
+      margin: 6px 0;
+      font-size: .94rem;
+    }
+    .d-table th,
+    .d-table td {
+      border: 1px solid #b9c6da;          /* viền cho từng ô */
+      padding: 8px 14px;
+      text-align: left;
+    }
+    .d-table th {
+      background: #1D559F;                 /* ô tiêu đề nổi bật */
+      color: #fff;
+      font-weight: 600;
+    }
+    .d-table caption {
+      caption-side: top;
+      text-align: left;
+      font-weight: 700;
+      color: #16407a;
+      padding: 0 0 8px;
+    }
+
+    /* ----- 3) So sánh có / không border-collapse ----- */
+    .d-cmp { font-size: .92rem; margin: 4px 0; }
+    .d-cmp th, .d-cmp td { border: 1px solid #1D559F; padding: 6px 12px; }
+    .d-cmp th { background: #eaf1fb; color: #16407a; }
+    .d-separate { border-collapse: separate; border-spacing: 4px; }   /* mặc định: viền đôi tách rời */
+    .d-collapse { border-collapse: collapse; }                        /* gộp thành 1 đường mảnh */
+
+    /* ----- 4) Padding · text-align · vertical-align ----- */
+    .d-align { border-collapse: collapse; width: 100%; font-size: .92rem; }
+    .d-align th, .d-align td { border: 1px solid #b9c6da; }
+    .d-align th { background: #04AA6D; color: #fff; padding: 8px; }
+    .d-align td { padding: 16px 12px; height: 64px; }                 /* ô cao để thấy rõ canh dọc */
+    .d-align .t-left   { text-align: left; }
+    .d-align .t-center { text-align: center; }
+    .d-align .t-right  { text-align: right; }
+    .d-align .v-top    { vertical-align: top;    background: #f6f9fe; }
+    .d-align .v-middle { vertical-align: middle; background: #eef6ef; }
+    .d-align .v-bottom { vertical-align: bottom; background: #fff8e6; }
+
+    /* ----- 5) colspan & rowspan ----- */
+    .d-merge { border-collapse: collapse; font-size: .92rem; }
+    .d-merge th, .d-merge td { border: 1px solid #6c5ce7; padding: 8px 14px; text-align: center; }
+    .d-merge thead th { background: #6c5ce7; color: #fff; }
+    .d-merge .name { background: #ede9fe; font-weight: 600; }
+    .d-merge .best { background: #d1fae5; font-weight: 700; }
+
+    /* ----- 6) thead / tbody / tfoot ----- */
+    .d-group { border-collapse: collapse; width: 100%; font-size: .92rem; }
+    .d-group th, .d-group td { border: 1px solid #b9c6da; padding: 8px 14px; }
+    .d-group thead th { background: #1D559F; color: #fff; text-align: left; }
+    .d-group tbody td:last-child,
+    .d-group tfoot td:last-child { text-align: right; }
+    .d-group tfoot td { background: #fff8e6; font-weight: 700; color: #16407a; }
+
+    /* ----- 7) colgroup / col — tô màu cả cột ----- */
+    .d-col { border-collapse: collapse; width: 100%; font-size: .92rem; }
+    .d-col th, .d-col td { border: 1px solid #b9c6da; padding: 8px 14px; text-align: left; }
+    .d-col thead th { background: #16407a; color: #fff; }
+    /* col chỉ nhận được vài thuộc tính: background, width, border, visibility */
+    .d-col .col-id    { background: #eaf1fb; }
+    .d-col .col-price { background: #fef3c7; }
+
+    /* ----- 8) Zebra (xen kẽ) + hover ----- */
+    .d-zebra { border-collapse: collapse; width: 100%; font-size: .92rem; }
+    .d-zebra th, .d-zebra td { border: 1px solid #e3e8f0; padding: 9px 14px; text-align: left; }
+    .d-zebra thead th { background: #04AA6D; color: #fff; }
+    .d-zebra tbody tr:nth-child(even) { background: #eef6ef; }        /* tô hàng chẵn */
+    .d-zebra tbody tr:hover { background: #d1fae5; }                  /* sáng lên khi rê chuột */
+
+    /* ----- 9) Bề rộng & cuộn ngang ----- */
+    .d-wrap { overflow-x: auto; border: 1px solid #e3e8f0; border-radius: 10px; }
+    .d-wide { border-collapse: collapse; min-width: 760px; width: 100%; font-size: .9rem; }
+    .d-wide th, .d-wide td { border: 1px solid #b9c6da; padding: 8px 12px; white-space: nowrap; text-align: left; }
+    .d-wide thead th { background: #1D559F; color: #fff; }
+    /* ví dụ chỉ định bề rộng từng cột */
+    .d-wide .w-narrow { width: 60px; }
+    .d-fixed { border-collapse: collapse; width: 320px; font-size: .92rem; margin-top: 12px; }
+    .d-fixed th, .d-fixed td { border: 1px solid #b9c6da; padding: 7px 12px; }
+    .d-fixed th { background: #eaf1fb; color: #16407a; text-align: left; }
+
+    /* khối chú thích nhỏ cạnh demo */
+    .d-cap { font-size: .8rem; color: #5b6472; margin: 0 0 6px; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.1 HTML</a><span>›</span>
+        Bảng
+      </nav>
+      <h1>Bảng dữ liệu với <code style="color:#fff;background:rgba(255,255,255,.18)">&lt;table&gt;</code></h1>
+      <p class="sub">Bảng dùng để trình bày <strong>dữ liệu dạng hàng × cột</strong>: bảng điểm, bảng giá,
+         thời khoá biểu… Bài này đi từ cấu trúc cơ bản <code>table/tr/td/th</code> đến gộp ô, nhóm bảng,
+         tô màu cột và bảng cuộn ngang.</p>
+      <div class="chips">
+        <span class="chip solid">2.1.7</span>
+        <span class="chip">HTML cơ bản</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Bảng cơ bản: table · tr · td · th</a></li>
+        <li><a href="#s2">Tiêu đề bảng &lt;caption&gt;</a></li>
+        <li><a href="#s3">Viền &amp; border-collapse</a></li>
+        <li><a href="#s4">Padding · align · vertical-align</a></li>
+        <li><a href="#s5">Gộp ô: colspan &amp; rowspan</a></li>
+        <li><a href="#s6">Nhóm bảng: thead · tbody · tfoot</a></li>
+        <li><a href="#s7">Nhóm cột: colgroup · col</a></li>
+        <li><a href="#s8">Tô màu xen kẽ (zebra) &amp; hover</a></li>
+        <li><a href="#s9">Bề rộng &amp; bảng cuộn ngang</a></li>
+        <li><a href="#s10">Bảng tra cứu các thẻ</a></li>
+        <li><a href="#s11">Đừng dùng bảng để dàn layout</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. BẢNG CƠ BẢN  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Bảng cơ bản: <code>table · tr · td · th</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Một bảng gồm các <strong>hàng</strong> <code>&lt;tr&gt;</code> (table row), trong mỗi hàng có các
+         <strong>ô dữ liệu</strong> <code>&lt;td&gt;</code> (table data). Ô <strong>tiêu đề</strong> dùng
+         <code>&lt;th&gt;</code> (table header) — chữ <em>in đậm &amp; canh giữa</em> mặc định, có ý nghĩa ngữ nghĩa cho trình đọc màn hình.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <table class="d-table">
+            <tr>
+              <th>STT</th><th>Họ tên</th><th>MSSV</th>
+            </tr>
+            <tr>
+              <td>1</td><td>Dương Hải Đăng</td><td>0712031</td>
+            </tr>
+            <tr>
+              <td>2</td><td>Dương Kiều Lam</td><td>0712036</td>
+            </tr>
+            <tr>
+              <td>3</td><td>Lê Ngọc Trân</td><td>0712044</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Thứ tự ghi nhớ:</strong> <code>&lt;table&gt;</code> → bên trong là các <code>&lt;tr&gt;</code> (hàng) →
+           bên trong mỗi hàng là các <code>&lt;th&gt;</code>/<code>&lt;td&gt;</code> (ô). Số ô của các hàng nên bằng nhau.</p>
+        <p><code>&lt;th&gt;</code> dùng cho <em>ô tiêu đề</em> (đầu cột hoặc đầu hàng), <code>&lt;td&gt;</code> cho <em>ô dữ liệu</em> thường.</p>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;table&gt;</span>
+  <span class="k">&lt;tr&gt;</span>                              <span class="c">&lt;!-- hàng tiêu đề --&gt;</span>
+    <span class="k">&lt;th&gt;</span>STT<span class="k">&lt;/th&gt;</span> <span class="k">&lt;th&gt;</span>Họ tên<span class="k">&lt;/th&gt;</span> <span class="k">&lt;th&gt;</span>MSSV<span class="k">&lt;/th&gt;</span>
+  <span class="k">&lt;/tr&gt;</span>
+  <span class="k">&lt;tr&gt;</span>                              <span class="c">&lt;!-- một hàng dữ liệu --&gt;</span>
+    <span class="k">&lt;td&gt;</span>1<span class="k">&lt;/td&gt;</span> <span class="k">&lt;td&gt;</span>Dương Hải Đăng<span class="k">&lt;/td&gt;</span> <span class="k">&lt;td&gt;</span>0712031<span class="k">&lt;/td&gt;</span>
+  <span class="k">&lt;/tr&gt;</span>
+<span class="k">&lt;/table&gt;</span></code></pre>
+
+      <div class="callout info"><p>Bảng "trần" không có viền vì viền do <strong>CSS</strong> tạo ra. Thuộc tính HTML cũ
+        <code>border="1"</code> hay <code>cellpadding</code> đã <strong>lỗi thời</strong> — ở mục 3 ta sẽ thêm viền đúng cách bằng CSS.</p></div>
+    </section>
+
+    <!-- ==========  2. CAPTION  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Tiêu đề bảng <code>&lt;caption&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>&lt;caption&gt;</code> đặt một <strong>tên/chú thích cho cả bảng</strong>. Nó phải là phần tử
+         <em>đầu tiên</em> ngay sau <code>&lt;table&gt;</code>. Caption tốt cho khả năng truy cập (a11y) vì giúp người dùng hiểu bảng nói về gì.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · caption ở phía trên bảng</div>
+        <div class="demo-body">
+          <table class="d-table">
+            <caption>Bảng 1 — Điểm thi cuối kỳ lớp Thiết kế Web</caption>
+            <tr><th>Họ tên</th><th>Điểm</th></tr>
+            <tr><td>Nguyễn Đình Huy</td><td>9.0</td></tr>
+            <tr><td>Trần Thị Mai</td><td>8.5</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;table&gt;</span>
+  <span class="k">&lt;caption&gt;</span>Bảng 1 — Điểm thi cuối kỳ<span class="k">&lt;/caption&gt;</span>   <span class="c">&lt;!-- phải đứng ĐẦU TIÊN --&gt;</span>
+  <span class="k">&lt;tr&gt;</span>...<span class="k">&lt;/tr&gt;</span>
+<span class="k">&lt;/table&gt;</span>
+
+<span class="c">/* CSS: đổi vị trí caption */</span>
+table caption { <span class="k">caption-side</span>: <span class="v">bottom</span>; }   <span class="c">/* top (mặc định) | bottom */</span></code></pre>
+
+      <div class="callout tip"><p>Dùng CSS <code>caption-side: bottom</code> để đưa chú thích xuống <em>dưới</em> bảng,
+        và <code>text-align</code> để canh trái/giữa/phải theo ý.</p></div>
+    </section>
+
+    <!-- ==========  3. VIỀN & BORDER-COLLAPSE  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Viền &amp; gộp viền: <code>border</code> · <code>border-collapse</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Mặc định mỗi ô và cả bảng có viền riêng nên xuất hiện <strong>viền đôi</strong> và có khe hở giữa các ô.
+         Thuộc tính <code>border-collapse</code> quyết định các viền đó <em>tách rời</em> hay <em>gộp làm một</em>.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">separate (mặc định) — viền đôi, có khe</div>
+          <div class="demo-body">
+            <table class="d-cmp d-separate">
+              <tr><th>A</th><th>B</th></tr>
+              <tr><td>1</td><td>2</td></tr>
+            </table>
+            <p class="d-cap">border-collapse: separate; border-spacing: 4px;</p>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">collapse — gộp thành 1 đường mảnh</div>
+          <div class="demo-body">
+            <table class="d-cmp d-collapse">
+              <tr><th>A</th><th>B</th></tr>
+              <tr><td>1</td><td>2</td></tr>
+            </table>
+            <p class="d-cap">border-collapse: collapse;</p>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Cần ĐẶT VIỀN cho cả TABLE và từng Ô (th, td) */</span>
+table { <span class="k">border-collapse</span>: <span class="v">collapse</span>; }   <span class="c">/* gộp viền đôi → 1 đường */</span>
+th, td { <span class="k">border</span>: <span class="v">1px solid #b9c6da</span>; }
+
+<span class="c">/* Nếu để 'separate', điều khiển khe hở bằng: */</span>
+table { <span class="k">border-collapse</span>: <span class="v">separate</span>; <span class="k">border-spacing</span>: <span class="v">4px</span>; }</code></pre>
+
+      <div class="callout info"><p>Đa số bảng dữ liệu nên dùng <code>border-collapse: collapse</code> cho gọn, sạch.
+        Chỉ đặt <code>border</code> lên <code>&lt;table&gt;</code> thôi <strong>chưa đủ</strong> — phải đặt cả cho <code>th, td</code> mới có lưới ô.</p></div>
+    </section>
+
+    <!-- ==========  4. PADDING · ALIGN · VERTICAL-ALIGN  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Khoảng đệm &amp; canh chữ trong ô <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Trong mỗi ô, dùng <code>padding</code> để tạo khoảng đệm, <code>text-align</code> để canh
+         <em>ngang</em> (left/center/right) và <code>vertical-align</code> để canh <em>dọc</em> (top/middle/bottom).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · các ô cố ý cao 64px để thấy rõ canh dọc</div>
+        <div class="demo-body">
+          <table class="d-align">
+            <tr>
+              <th>Canh trái</th><th>Canh giữa</th><th>Canh phải</th>
+            </tr>
+            <tr>
+              <td class="t-left v-top">left · top</td>
+              <td class="t-center v-middle">center · middle</td>
+              <td class="t-right v-bottom">right · bottom</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <pre class="code"><code>th, td { <span class="k">padding</span>: <span class="v">10px 14px</span>; }       <span class="c">/* khoảng đệm trong ô */</span>
+
+td.gia    { <span class="k">text-align</span>: <span class="v">right</span>; }      <span class="c">/* số/tiền canh phải cho dễ đọc */</span>
+td.tieude { <span class="k">text-align</span>: <span class="v">center</span>; }
+td.ghichu { <span class="k">vertical-align</span>: <span class="v">top</span>; }    <span class="c">/* canh đỉnh khi ô cao */</span></code></pre>
+
+      <div class="callout tip"><p><strong>Quy ước trình bày dữ liệu:</strong> chữ canh trái, số/tiền/ngày canh phải,
+        tiêu đề cột canh giữa. Điều này giúp mắt dò cột số liệu nhanh hơn.</p></div>
+    </section>
+
+    <!-- ==========  5. COLSPAN & ROWSPAN  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Gộp ô: <code>colspan</code> &amp; <code>rowspan</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Một ô có thể trải ra nhiều cột hoặc nhiều hàng:
+         <code>colspan="n"</code> gộp <strong>n cột</strong> (mở rộng theo chiều ngang),
+         <code>rowspan="n"</code> gộp <strong>n hàng</strong> (mở rộng theo chiều dọc).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · "Họ tên" gộp 2 hàng, "Điểm" gộp 3 cột</div>
+        <div class="demo-body">
+          <table class="d-merge">
+            <thead>
+              <tr>
+                <th rowspan="2">Họ tên</th>
+                <th colspan="3">Điểm các môn</th>
+              </tr>
+              <tr>
+                <th>Môn 1</th><th>Môn 2</th><th>Môn 3</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="name">Dương Hữu Thành</td>
+                <td>9.0</td><td>9.5</td><td class="best">10</td>
+              </tr>
+              <tr>
+                <td class="name">Trần Thị Mai</td>
+                <td>8.0</td><td class="best">9.5</td><td>8.5</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;tr&gt;</span>
+  <span class="k">&lt;th</span> <span class="v">rowspan=<span class="s">"2"</span></span><span class="k">&gt;</span>Họ tên<span class="k">&lt;/th&gt;</span>   <span class="c">&lt;!-- ô này cao bằng 2 hàng --&gt;</span>
+  <span class="k">&lt;th</span> <span class="v">colspan=<span class="s">"3"</span></span><span class="k">&gt;</span>Điểm các môn<span class="k">&lt;/th&gt;</span>  <span class="c">&lt;!-- rộng bằng 3 cột --&gt;</span>
+<span class="k">&lt;/tr&gt;</span>
+<span class="k">&lt;tr&gt;</span>                              <span class="c">&lt;!-- hàng này chỉ còn 3 ô (vì cột Họ tên đã bị chiếm) --&gt;</span>
+  <span class="k">&lt;th&gt;</span>Môn 1<span class="k">&lt;/th&gt;</span> <span class="k">&lt;th&gt;</span>Môn 2<span class="k">&lt;/th&gt;</span> <span class="k">&lt;th&gt;</span>Môn 3<span class="k">&lt;/th&gt;</span>
+<span class="k">&lt;/tr&gt;</span></code></pre>
+
+      <div class="callout warn"><p><strong>Lưu ý đếm ô:</strong> khi một ô đã <code>colspan/rowspan</code>, các hàng/cột bị nó chiếm chỗ
+        sẽ <em>bớt đi</em> số <code>&lt;td&gt;</code> tương ứng. Đếm sai là nguyên nhân số 1 khiến bảng "vỡ" lệch.</p></div>
+    </section>
+
+    <!-- ==========  6. THEAD / TBODY / TFOOT  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Nhóm bảng: <code>&lt;thead&gt;</code> · <code>&lt;tbody&gt;</code> · <code>&lt;tfoot&gt;</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Ba thẻ này chia bảng thành <strong>đầu bảng</strong> (tiêu đề), <strong>thân bảng</strong> (dữ liệu) và
+         <strong>chân bảng</strong> (tổng kết). Chúng giúp code rõ ràng, dễ style theo từng vùng và hỗ trợ trình duyệt
+         lặp lại tiêu đề khi in nhiều trang.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · chân bảng tô vàng để tổng kết</div>
+        <div class="demo-body">
+          <table class="d-group">
+            <thead>
+              <tr><th>Sản phẩm</th><th>Số lượng</th><th>Thành tiền</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Bàn phím</td><td>2</td><td>700.000đ</td></tr>
+              <tr><td>Chuột</td><td>3</td><td>450.000đ</td></tr>
+              <tr><td>Tai nghe</td><td>1</td><td>500.000đ</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td colspan="2">Tổng cộng</td><td>1.650.000đ</td></tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;table&gt;</span>
+  <span class="k">&lt;thead&gt;</span> <span class="c">&lt;!-- hàng tiêu đề --&gt;</span>
+    <span class="k">&lt;tr&gt;&lt;th&gt;</span>Sản phẩm<span class="k">&lt;/th&gt;&lt;th&gt;</span>SL<span class="k">&lt;/th&gt;&lt;th&gt;</span>Thành tiền<span class="k">&lt;/th&gt;&lt;/tr&gt;</span>
+  <span class="k">&lt;/thead&gt;</span>
+  <span class="k">&lt;tbody&gt;</span> <span class="c">&lt;!-- dữ liệu chính --&gt;</span>
+    <span class="k">&lt;tr&gt;&lt;td&gt;</span>Bàn phím<span class="k">&lt;/td&gt;&lt;td&gt;</span>2<span class="k">&lt;/td&gt;&lt;td&gt;</span>700.000đ<span class="k">&lt;/td&gt;&lt;/tr&gt;</span>
+  <span class="k">&lt;/tbody&gt;</span>
+  <span class="k">&lt;tfoot&gt;</span> <span class="c">&lt;!-- tổng kết / chân bảng --&gt;</span>
+    <span class="k">&lt;tr&gt;&lt;td</span> <span class="v">colspan=<span class="s">"2"</span></span><span class="k">&gt;</span>Tổng cộng<span class="k">&lt;/td&gt;&lt;td&gt;</span>1.650.000đ<span class="k">&lt;/td&gt;&lt;/tr&gt;</span>
+  <span class="k">&lt;/tfoot&gt;</span>
+<span class="k">&lt;/table&gt;</span></code></pre>
+
+      <div class="callout info"><p>Bạn cứ viết theo thứ tự tự nhiên <code>thead → tbody → tfoot</code>; trình duyệt vẫn luôn
+        hiển thị <code>tfoot</code> ở cuối. Mỗi bảng nên có 1 <code>thead</code> &amp; 1 <code>tfoot</code>, nhưng có thể có nhiều <code>tbody</code>.</p></div>
+    </section>
+
+    <!-- ==========  7. COLGROUP / COL  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Nhóm cột: <code>&lt;colgroup&gt;</code> · <code>&lt;col&gt;</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Muốn định dạng <strong>cả một cột</strong> (vd tô màu cột giá) mà không phải sửa từng ô?
+         Dùng <code>&lt;colgroup&gt;</code> chứa các <code>&lt;col&gt;</code> đặt <em>ngay sau</em> <code>&lt;caption&gt;</code> (trước <code>&lt;thead&gt;</code>).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · cột "Mã" và cột "Giá" được tô riêng</div>
+        <div class="demo-body">
+          <table class="d-col">
+            <colgroup>
+              <col class="col-id">
+              <col>
+              <col class="col-price">
+            </colgroup>
+            <thead>
+              <tr><th>Mã</th><th>Sản phẩm</th><th>Giá</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>SP01</td><td>Bàn phím cơ</td><td>350.000đ</td></tr>
+              <tr><td>SP02</td><td>Chuột không dây</td><td>150.000đ</td></tr>
+              <tr><td>SP03</td><td>Tai nghe</td><td>500.000đ</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">&lt;table&gt;</span>
+  <span class="k">&lt;colgroup&gt;</span>
+    <span class="k">&lt;col</span> <span class="v">class=<span class="s">"col-id"</span></span><span class="k">&gt;</span>     <span class="c">&lt;!-- cột 1 --&gt;</span>
+    <span class="k">&lt;col&gt;</span>                  <span class="c">&lt;!-- cột 2: để mặc định --&gt;</span>
+    <span class="k">&lt;col</span> <span class="v">class=<span class="s">"col-price"</span></span><span class="k">&gt;</span>  <span class="c">&lt;!-- cột 3 --&gt;</span>
+  <span class="k">&lt;/colgroup&gt;</span>
+  ...
+<span class="k">&lt;/table&gt;</span>
+
+.col-id    { <span class="k">background</span>: <span class="v">#eaf1fb</span>; }
+.col-price { <span class="k">background</span>: <span class="v">#fef3c7</span>; }</code></pre>
+
+      <div class="callout warn"><p><code>&lt;col&gt;</code> chỉ nhận được một vài thuộc tính CSS: <code>background</code>, <code>width</code>,
+        <code>border</code>, <code>visibility</code>. Các thuộc tính khác (như <code>color</code> chữ, <code>text-align</code>)
+        <strong>không</strong> áp được qua <code>&lt;col&gt;</code> — phải style trực tiếp ở <code>td</code>.</p></div>
+    </section>
+
+    <!-- ==========  8. ZEBRA & HOVER  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Tô màu xen kẽ (zebra) &amp; hiệu ứng hover <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Bảng nhiều hàng dễ đọc hơn khi <strong>tô màu xen kẽ</strong> — gọi là "zebra striping".
+         Dùng bộ chọn <code>tr:nth-child(even)</code> và thêm <code>tr:hover</code> để làm nổi hàng đang trỏ tới.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · rê chuột lên từng hàng để thấy hover</div>
+        <div class="demo-body">
+          <table class="d-zebra">
+            <thead>
+              <tr><th>STT</th><th>Quốc gia</th><th>Thủ đô</th><th>Dân số (triệu)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>Việt Nam</td><td>Hà Nội</td><td>99</td></tr>
+              <tr><td>2</td><td>Nhật Bản</td><td>Tokyo</td><td>125</td></tr>
+              <tr><td>3</td><td>Hàn Quốc</td><td>Seoul</td><td>52</td></tr>
+              <tr><td>4</td><td>Thái Lan</td><td>Bangkok</td><td>70</td></tr>
+              <tr><td>5</td><td>Pháp</td><td>Paris</td><td>68</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Tô màu các hàng CHẴN trong thân bảng */</span>
+tbody tr:nth-child(<span class="v">even</span>) { <span class="k">background</span>: <span class="v">#eef6ef</span>; }
+
+<span class="c">/* Làm sáng hàng khi rê chuột */</span>
+tbody tr:<span class="k">hover</span> { <span class="k">background</span>: <span class="v">#d1fae5</span>; }</code></pre>
+
+      <div class="callout tip"><p>Dùng <code>:nth-child(odd)</code> để tô hàng <em>lẻ</em> thay vì chẵn. Chỉ nhắm vào
+        <code>tbody tr</code> để không tô nhầm hàng tiêu đề ở <code>thead</code>.</p></div>
+    </section>
+
+    <!-- ==========  9. BỀ RỘNG & CUỘN NGANG  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Bề rộng bảng/ô &amp; bảng cuộn ngang <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Đặt bề rộng bằng CSS <code>width</code> trên <code>table</code> hoặc từng cột. Khi bảng có nhiều cột
+         và màn hình hẹp, bọc bảng trong một <code>&lt;div&gt;</code> có <code>overflow-x: auto</code> để
+         <strong>cuộn ngang</strong> thay vì vỡ trang.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Bảng rộng (min-width 760px) trong khung cuộn ngang →</div>
+        <div class="demo-body">
+          <div class="d-wrap">
+            <table class="d-wide">
+              <thead>
+                <tr>
+                  <th class="w-narrow">ID</th><th>Họ tên</th><th>Email</th>
+                  <th>Số điện thoại</th><th>Thành phố</th><th>Ngày đăng ký</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>01</td><td>Nguyễn Văn An</td><td>an.nguyen@example.com</td>
+                  <td>0901 234 567</td><td>Hồ Chí Minh</td><td>2026-01-15</td>
+                </tr>
+                <tr>
+                  <td>02</td><td>Trần Thị Bình</td><td>binh.tran@example.com</td>
+                  <td>0902 345 678</td><td>Hà Nội</td><td>2026-02-20</td>
+                </tr>
+                <tr>
+                  <td>03</td><td>Lê Hoàng Cường</td><td>cuong.le@example.com</td>
+                  <td>0903 456 789</td><td>Đà Nẵng</td><td>2026-03-05</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="d-cap" style="margin-top:14px">Bảng có bề rộng cố định 320px:</p>
+          <table class="d-fixed">
+            <tr><th>Khoá học</th><th>Tín chỉ</th></tr>
+            <tr><td>Thiết kế Web</td><td>3</td></tr>
+            <tr><td>Cơ sở dữ liệu</td><td>4</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Bọc bảng để cuộn ngang trên màn hình hẹp */</span>
+.bao-bang { <span class="k">overflow-x</span>: <span class="v">auto</span>; }
+.bao-bang table { <span class="k">min-width</span>: <span class="v">760px</span>; }   <span class="c">/* không co nhỏ hơn 760px */</span>
+
+<span class="c">/* Chỉ định bề rộng từng cột */</span>
+table  { <span class="k">width</span>: <span class="v">100%</span>; }
+.id    { <span class="k">width</span>: <span class="v">60px</span>; }
+td     { <span class="k">white-space</span>: <span class="v">nowrap</span>; }   <span class="c">/* không xuống dòng giữa ô */</span></code></pre>
+
+      <div class="callout tip"><p>Mẹo "responsive table" phổ biến: bọc <code>&lt;table&gt;</code> trong
+        <code>&lt;div style="overflow-x:auto"&gt;</code>. Đơn giản, không cần thư viện, hoạt động trên mọi trình duyệt.</p></div>
+    </section>
+
+    <!-- ==========  10. BẢNG TRA CỨU  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Bảng tra cứu các thẻ &amp; thuộc tính <span class="tag-base">Tổng hợp</span></h2>
+      <p class="lead">Bảng dưới đây (dạng <code>.syntax</code>) tổng hợp các thẻ &amp; thuộc tính của bảng để tra cứu nhanh.</p>
+
+      <table class="syntax">
+        <caption>Các thẻ tạo bảng trong HTML</caption>
+        <thead><tr><th>Thẻ</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;table&gt;</code></td><td>Bao toàn bộ bảng.</td></tr>
+          <tr><td><code>&lt;caption&gt;</code></td><td>Tiêu đề/chú thích của bảng (đặt đầu tiên).</td></tr>
+          <tr><td><code>&lt;tr&gt;</code></td><td>Một <strong>hàng</strong> (table row).</td></tr>
+          <tr><td><code>&lt;th&gt;</code></td><td>Ô <strong>tiêu đề</strong> (in đậm, canh giữa mặc định).</td></tr>
+          <tr><td><code>&lt;td&gt;</code></td><td>Ô <strong>dữ liệu</strong> thường.</td></tr>
+          <tr><td><code>&lt;thead&gt;</code> / <code>&lt;tbody&gt;</code> / <code>&lt;tfoot&gt;</code></td><td>Nhóm đầu / thân / chân bảng.</td></tr>
+          <tr><td><code>&lt;colgroup&gt;</code> / <code>&lt;col&gt;</code></td><td>Nhóm &amp; định dạng theo <strong>cột</strong>.</td></tr>
+        </tbody>
+      </table>
+
+      <table class="syntax">
+        <caption>Thuộc tính &amp; CSS hay dùng cho bảng</caption>
+        <thead><tr><th>Thuộc tính</th><th>Tác dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>colspan="n"</code> (HTML)</td><td>Ô gộp <strong>n cột</strong> theo chiều ngang.</td></tr>
+          <tr><td><code>rowspan="n"</code> (HTML)</td><td>Ô gộp <strong>n hàng</strong> theo chiều dọc.</td></tr>
+          <tr><td><code>border-collapse</code></td><td><code>collapse</code> gộp viền | <code>separate</code> tách rời.</td></tr>
+          <tr><td><code>border-spacing</code></td><td>Khe hở giữa các ô (khi separate).</td></tr>
+          <tr><td><code>padding</code></td><td>Khoảng đệm bên trong ô.</td></tr>
+          <tr><td><code>text-align</code></td><td>Canh ngang: <code>left</code> / <code>center</code> / <code>right</code>.</td></tr>
+          <tr><td><code>vertical-align</code></td><td>Canh dọc: <code>top</code> / <code>middle</code> / <code>bottom</code>.</td></tr>
+          <tr><td><code>caption-side</code></td><td>Vị trí caption: <code>top</code> / <code>bottom</code>.</td></tr>
+          <tr><td><code>:nth-child(even/odd)</code></td><td>Tô màu hàng xen kẽ (zebra).</td></tr>
+          <tr><td><code>overflow-x: auto</code> (ở div bọc)</td><td>Cho bảng rộng cuộn ngang.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  11. ĐỪNG DÙNG BẢNG ĐỂ DÀN LAYOUT  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Đừng dùng bảng để dàn layout <span class="tag-base">Lưu ý quan trọng</span></h2>
+      <p class="lead">Đây là quy tắc <strong>bắt buộc nhớ</strong>: <code>&lt;table&gt;</code> chỉ dùng để trình bày
+         <strong>DỮ LIỆU</strong> dạng bảng (bảng điểm, bảng giá, thống kê…). Tuyệt đối <em>không</em> dùng bảng để chia
+         cột, đặt menu, dàn bố cục trang.</p>
+
+      <div class="callout danger"><p><strong>KHÔNG</strong> dùng <code>&lt;table&gt;</code> để dàn bố cục (header, sidebar, lưới ảnh…).
+        Cách làm cũ này khiến HTML rối, khó bảo trì, kém truy cập (a11y) và <em>không</em> responsive.</p></div>
+
+      <div class="callout tip"><p><strong>NÊN</strong> dùng <strong>CSS Flexbox</strong> (dãy 1 chiều) và <strong>CSS Grid</strong>
+        (lưới 2 chiều) để dàn trang. Học chi tiết ở <a href="../index.html">mục 2.2 CSS</a> &amp; 2.3 Responsive.</p></div>
+
+      <div class="note">
+        <p><strong>Phân biệt nhanh:</strong></p>
+        <p>• Đang trình bày <em>dữ liệu</em> có hàng &amp; cột rõ ràng (mỗi ô là một mẩu dữ liệu)? → dùng <code>&lt;table&gt;</code>.</p>
+        <p>• Đang <em>sắp đặt vị trí</em> các khối giao diện trên trang? → dùng <code>display: flex</code> hoặc <code>display: grid</code>.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="05-lien-ket-hinh-anh.html"><small>← Bài trước</small>2.1.6 · Liên kết &amp; hình ảnh</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="07-form.html"><small>Bài tiếp →</small>2.1.8 · Form</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

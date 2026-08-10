@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  3.12 — JSON · BẤT ĐỒNG BỘ · GỌI API VỚI FETCH
+  ------------------------------------------------------------
+    1) Web động & API là gì?       6) fetch + async/await (demo)
+    2) JSON: parse / stringify     7) Render dữ liệu ra DOM
+    3) Bất đồng bộ là gì? (demo)   8) POST · HTTP status · CORS
+    4) callback → Promise → await  9) An toàn: API key
+    5) Promise cơ bản             10) Mẹo & lỗi thường gặp
+  Demo fetch("menu.json") cần chạy qua Live Server (http://);
+    mở bằng file:// sẽ bị chặn — bản thân điều đó cũng là bài học,
+    demo sẽ hiện giải thích trong phần catch.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.12 · JSON · fetch · async/await</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI ===== */
+    .d-btn { background:#1D559F; color:#fff; border:none; border-radius:8px;
+             padding:9px 16px; font-size:.92rem; font-weight:600; cursor:pointer;
+             margin:3px 4px 3px 0; }
+    .d-btn:hover { background:#16407a; }
+    .d-btn.green { background:#04AA6D; } .d-btn.green:hover { background:#03875a; }
+    .d-btn:disabled { opacity:.5; cursor:wait; }
+    .d-out { background:#0f172a; color:#e6edf3; border-radius:10px;
+             font-family:"Cascadia Code",Consolas,monospace; font-size:.88rem;
+             padding:12px 14px; margin-top:12px; min-height:20px; white-space:pre-wrap; }
+    .d-out .ok { color:#7ee787; } .d-out .hl { color:#ffa657; } .d-out .bad { color:#ff7b72; }
+    textarea.d-field { width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid #cbd5e1;
+             border-radius:8px; font-family:Consolas,monospace; font-size:.9rem; margin-top:6px; }
+    .d-menu { list-style:none; margin:12px 0 0; padding:0; }
+    .d-menu li { display:flex; justify-content:space-between; background:#fff;
+                 border:1px solid #e3e8f0; border-radius:8px; padding:8px 14px; margin-bottom:6px; }
+    .d-menu .gia { color:#04AA6D; font-weight:700; }
+    .d-menu .nhom { color:#5b6472; font-size:.85rem; margin-right:auto; margin-left:10px; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        3.12 JSON · fetch · async/await
+      </nav>
+      <h1>JSON · Bất đồng bộ · <code style="color:#fff;background:rgba(255,255,255,.18)">fetch</code></h1>
+      <p class="sub">Web thật không tĩnh: menu, sản phẩm, thời tiết… đều lấy từ máy chủ qua API.
+         Đây là cầu nối lớn nhất giữa bài học và nghề — và là kỹ năng nhà tuyển dụng kiểm tra.</p>
+      <div class="chips">
+        <span class="chip solid">3.12</span>
+        <span class="chip">JSON · Promise · fetch</span>
+        <span class="chip">Bổ sung hiện đại</span>
+        <span class="chip">CLO3 · CLO5</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Web động &amp; API là gì?</a></li>
+        <li><a href="#s2">JSON: parse · stringify</a></li>
+        <li><a href="#s3">Bất đồng bộ là gì?</a></li>
+        <li><a href="#s4">callback → Promise → async/await</a></li>
+        <li><a href="#s5">fetch + async/await</a></li>
+        <li><a href="#s6">Render dữ liệu ra DOM</a></li>
+        <li><a href="#s7">POST · HTTP status · CORS</a></li>
+        <li><a href="#s8">An toàn: API key</a></li>
+        <li><a href="#s9">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. WEB ĐỘNG & API  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Web động &amp; API là gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><strong>API</strong> (Application Programming Interface) phía web thường là
+         một <strong>địa chỉ URL trả về dữ liệu</strong> (thay vì trang HTML). Trình tự quen thuộc:</p>
+      <pre class="code"><code>Trang web ──fetch(url)──▶ Máy chủ API
+Trang web ◀──JSON──────── Máy chủ API
+JS parse JSON → render ra DOM (map + template literal)</code></pre>
+      <div class="note">
+        <p>Ví dụ ứng dụng trong dự án "Góc Cà Phê": danh sách món không viết cứng trong HTML mà
+        nạp từ <code>menu.json</code> — sửa menu chỉ cần sửa file dữ liệu, không đụng vào code.</p>
+      </div>
+    </section>
+
+    <!-- ==========  2. JSON  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> JSON: <code>parse</code> · <code>stringify</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><strong>JSON</strong> (JavaScript Object Notation) — định dạng trao đổi dữ
+         liệu phổ biến nhất, trông gần giống object JS nhưng là <strong>chuỗi văn bản</strong>
+         (key bắt buộc trong nháy kép).</p>
+
+      <pre class="code"><code><span class="k">let</span> obj  = JSON.parse(text);       <span class="c">// chuỗi JSON → object JS (để dùng)</span>
+<span class="k">let</span> text = JSON.stringify(obj);    <span class="c">// object JS → chuỗi JSON (để gửi/lưu)</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — máy chuyển đổi 2 chiều</div>
+        <div class="demo-body">
+          <textarea class="d-field" id="d-json" rows="3">{ "ten": "Cà phê sữa", "gia": 25000, "conHang": true }</textarea>
+          <button class="d-btn" id="d-btn-parse">JSON.parse rồi đọc thuộc tính</button>
+          <button class="d-btn green" id="d-btn-stringify">JSON.stringify object mẫu</button>
+          <div class="d-out" id="d-out-json">// thử xoá một dấu nháy kép rồi parse để thấy JSON khó tính thế nào</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  3. BẤT ĐỒNG BỘ  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Bất đồng bộ là gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Tải dữ liệu mất thời gian (mạng chậm, server xa). <strong>Đồng bộ</strong> =
+         đứng chờ, trang "đơ". <strong>Bất đồng bộ</strong> = đặt việc chạy nền, trang vẫn mượt,
+         xong việc thì báo.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — thứ tự chạy bất đồng bộ khiến người mới bối rối</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-async">Chạy 3 dòng lệnh</button>
+          <div class="d-out" id="d-out-async">// đố bạn: log "1", setTimeout(log "2", 0), log "3" — in ra theo thứ tự nào?</div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>Kết quả <strong>1 → 3 → 2</strong>: dù hẹn <code>0ms</code>, callback của
+        <code>setTimeout</code> vẫn phải <em>xếp hàng</em> đợi code chính chạy xong.
+        Đó là cách JavaScript (đơn luồng) xử lý việc chờ đợi — và là lý do cần
+        Promise/async-await để "viết code chờ" cho dễ đọc.</p>
+      </div>
+    </section>
+
+    <!-- ==========  4. LỊCH SỬ 3 THẾ HỆ  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> callback → Promise → async/await <span class="tag-adv">Nâng cao</span></h2>
+
+      <pre class="code"><code><span class="c">// ① CALLBACK (cũ): lồng nhau nhiều tầng → "callback hell"</span>
+taiMenu(<span class="k">function</span> (menu) {
+  taiGia(menu, <span class="k">function</span> (gia) {
+    taiKhuyenMai(gia, <span class="k">function</span> (km) { <span class="c">/* ... lồng nữa ... */</span> });
+  });
+});
+
+<span class="c">// ② PROMISE (ES6): phẳng hơn, nối bằng .then()</span>
+fetch(<span class="s">"menu.json"</span>)
+  .then(res =&gt; res.json())
+  .then(data =&gt; render(data))
+  .catch(err =&gt; console.error(err));
+
+<span class="c">// ③ ASYNC/AWAIT (ES2017): đọc như code thường — CHUẨN HIỆN NAY ✓</span>
+<span class="k">async function</span> loadMenu() {
+  <span class="k">const</span> res  = <span class="k">await</span> fetch(<span class="s">"menu.json"</span>);
+  <span class="k">const</span> data = <span class="k">await</span> res.json();
+  render(data);
+}</code></pre>
+
+      <div class="callout tip">
+        <p><strong>Tự kiểm tra (giáo trình):</strong> vì sao dùng <code>async/await</code> thay vì
+        lồng callback? — <em>Tránh "callback hell": code phẳng, đọc từ trên xuống như code đồng bộ,
+        và bắt lỗi gọn bằng <code>try/catch</code>.</em></p>
+      </div>
+    </section>
+
+    <!-- ==========  5. FETCH  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> <code>fetch</code> + <code>async/await</code> + <code>try/catch</code> <span class="tag-adv">Trọng tâm</span></h2>
+
+      <pre class="code"><code><span class="k">async function</span> loadMenu() {
+  <span class="k">try</span> {
+    <span class="k">const</span> res = <span class="k">await</span> fetch(<span class="s">"menu.json"</span>);       <span class="c">// 1. chờ phản hồi</span>
+    <span class="k">if</span> (!res.ok) <span class="k">throw new</span> Error(res.status);    <span class="c">// 2. kiểm tra mã trạng thái (404, 500…)</span>
+    <span class="k">const</span> data = <span class="k">await</span> res.json();               <span class="c">// 3. đọc & parse JSON</span>
+    render(data);                                 <span class="c">// 4. hiển thị ra DOM</span>
+  } <span class="k">catch</span> (err) {
+    console.error(<span class="s">"Lỗi tải menu:"</span>, err);         <span class="c">// mạng đứt / file không có / JSON hỏng</span>
+  }
+}</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — 2 nguồn dữ liệu thật</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-local">① fetch("menu.json") — file cục bộ</button>
+          <button class="d-btn green" id="d-btn-api">② fetch API công khai (cần mạng)</button>
+          <div class="d-out" id="d-out-fetch">// ① cần mở bằng Live Server (http://) — mở kiểu file:// sẽ rơi vào catch, đọc thông báo để hiểu vì sao
+// ② gọi https://jsonplaceholder.typicode.com — API giả lập miễn phí cho người học</div>
+          <ul class="d-menu" id="d-ketqua"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  6. RENDER  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Render dữ liệu ra DOM <span class="tag-adv">Chuẩn nghề</span></h2>
+      <p class="lead">Đúng công thức đã học ở bài Mảng: <code>map</code> mỗi object thành chuỗi
+         <code>&lt;li&gt;</code>, <code>join</code> lại, gán <code>innerHTML</code> một lần.</p>
+
+      <pre class="code"><code><span class="k">function</span> render(menu) {
+  ul.innerHTML = menu
+    .map(m =&gt; `&lt;li&gt;${m.ten} — ${m.gia.toLocaleString(<span class="s">"vi-VN"</span>)}đ&lt;/li&gt;`)
+    .join(<span class="s">""</span>);
+}
+<span class="c">// ⚠ dữ liệu từ NGUỒN NGOÀI: nếu không chắc nội dung sạch, dựng phần tử
+//   bằng createElement + textContent để tránh XSS (bài 3.8)</span></code></pre>
+    </section>
+
+    <!-- ==========  7. POST / STATUS / CORS  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> POST · HTTP status · CORS <span class="tag-adv">Nâng cao</span></h2>
+
+      <pre class="code"><code><span class="c">// GET (mặc định): LẤY dữ liệu → fetch(url)
+// POST: GỬI dữ liệu lên server:</span>
+<span class="k">const</span> res = <span class="k">await</span> fetch(url, {
+  method: <span class="s">"POST"</span>,
+  headers: { <span class="s">"Content-Type"</span>: <span class="s">"application/json"</span> },
+  body: JSON.stringify({ ten: <span class="s">"Trà vải"</span>, gia: 39000 }),
+});</code></pre>
+
+      <table class="syntax">
+        <thead><tr><th>Khái niệm</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>res.ok</code></td><td><code>true</code> khi status 200–299; <code>fetch</code> <strong>không</strong> tự ném lỗi khi 404/500 — phải tự kiểm tra!</td></tr>
+          <tr><td>Status quen thuộc</td><td>200 OK · 404 Not Found · 500 Server Error (đã học Chương 1)</td></tr>
+          <tr><td><strong>CORS</strong></td><td>Cơ chế bảo mật: trình duyệt <strong>chặn</strong> gọi API khác domain nếu server không cấp phép. Gặp lỗi CORS khi học là chuyện thường — hiểu rằng đó là server chưa cho phép, không phải code sai cú pháp.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  8. AN TOÀN  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> An toàn: API key <span class="tag-adv">CLO4</span></h2>
+      <div class="callout danger">
+        <p><strong>Không bao giờ để lộ API key/secret trong JS phía client</strong> — ai mở
+        DevTools cũng đọc được (View Source, tab Network). Khoá bí mật phải nằm ở
+        <strong>back-end</strong>; client chỉ gọi qua server trung gian của mình. Kết hợp cảnh
+        báo XSS (3.8) và localStorage (3.9): mọi thứ ở client đều <em>công khai</em>.</p>
+      </div>
+    </section>
+
+    <!-- ==========  9. MẸO & LỖI  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout warn"><p><strong>Lỗi 1.</strong> Quên <code>await</code> trước
+        <code>fetch</code>/<code>res.json()</code> → nhận về <code>Promise {&lt;pending&gt;}</code>
+        thay vì dữ liệu.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> Tưởng <code>fetch</code> tự báo lỗi khi
+        404 — không! Phải kiểm tra <code>res.ok</code> rồi <code>throw</code>.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 3.</strong> <code>await</code> chỉ dùng được trong
+        hàm có chữ <code>async</code> (hoặc module) — quên là SyntaxError ngay.</p></div>
+      <div class="callout tip"><p><strong>Mẹo.</strong> Học/demo fetch file cục bộ → luôn chạy qua
+        <strong>Live Server</strong>. Xem request thật trong DevTools → tab <em>Network</em>.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> JSON = chuỗi (parse/stringify) ·
+        async/await + try/catch là chuẩn viết · kiểm tra <code>res.ok</code> · CORS là bảo mật
+        trình duyệt · key bí mật ở back-end.</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="12-jquery.html"><small>← Bài trước</small>3.11 · jQuery</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="14-bai-tap-tong-hop.html"><small>Bài tiếp →</small>Bài tập tổng hợp</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- ===== JS MINH HOẠ CỦA BÀI (cuối body) ===== -->
+  <script>
+    'use strict';
+
+    /* ---- Mục 2: JSON parse/stringify ---- */
+    document.getElementById("d-btn-parse").addEventListener("click", () => {
+      const out = document.getElementById("d-out-json");
+      try {
+        const obj = JSON.parse(document.getElementById("d-json").value);   // chuỗi → object
+        out.innerHTML =
+`JSON.parse thành công → object JS:
+obj.ten     → <span class="ok">"${obj.ten}"</span>
+obj.gia     → <span class="ok">${obj.gia}</span>   (kiểu ${typeof obj.gia} — không còn là chuỗi!)
+obj.conHang → <span class="ok">${obj.conHang}</span>`;
+      } catch (err) {
+        out.innerHTML = `<span class="bad">✗ JSON không hợp lệ: ${err.message}</span>\n(JSON khó tính: key phải trong nháy kép, không dấu phẩy thừa)`;
+      }
+    });
+    document.getElementById("d-btn-stringify").addEventListener("click", () => {
+      const gioHang = [{ ten: "Bạc xỉu", gia: 29000 }, { ten: "Trà đào", gia: 35000 }];
+      document.getElementById("d-out-json").innerHTML =
+`object JS → chuỗi JSON (sẵn sàng gửi đi / lưu localStorage):
+<span class="ok">${JSON.stringify(gioHang)}</span>
+
+bản đẹp để đọc — JSON.stringify(obj, null, 2):
+${JSON.stringify(gioHang, null, 2)}`;
+    });
+
+    /* ---- Mục 3: thứ tự bất đồng bộ ---- */
+    document.getElementById("d-btn-async").addEventListener("click", () => {
+      const out = document.getElementById("d-out-async");
+      out.textContent = "";
+      const ghi = (t) => out.textContent += t + "\n";
+      ghi('console.log("1")            → in 1');
+      setTimeout(() => ghi('setTimeout(..., 0)         → in 2  (CUỐI CÙNG — dù hẹn 0ms, vẫn phải xếp hàng!)'), 0);
+      ghi('console.log("3")            → in 3');
+    });
+
+    /* ---- Mục 5: fetch 2 nguồn ---- */
+    const outFetch = document.getElementById("d-out-fetch");
+    const ulKq = document.getElementById("d-ketqua");
+
+    // render menu Góc Cà Phê (dữ liệu mình tạo — tin cậy → dùng innerHTML được)
+    function renderMenu(menu) {
+      ulKq.innerHTML = menu.map(m =>
+        `<li><span>${m.ten}</span><span class="nhom">${m.nhom}</span><span class="gia">${m.gia.toLocaleString("vi-VN")}đ</span></li>`
+      ).join("");
+    }
+
+    // ① file cục bộ — cần chạy qua http:// (Live Server)
+    document.getElementById("d-btn-local").addEventListener("click", async (e) => {
+      const nut = e.target;
+      nut.disabled = true;
+      outFetch.textContent = "Đang fetch menu.json…";
+      ulKq.innerHTML = "";
+      try {
+        const res = await fetch("menu.json");                 // 1. chờ phản hồi
+        if (!res.ok) throw new Error("HTTP " + res.status);   // 2. kiểm tra status
+        const data = await res.json();                        // 3. parse JSON
+        renderMenu(data);                                     // 4. render
+        outFetch.innerHTML = `<span class="ok">✓ Tải xong ${data.length} món từ menu.json — render bằng map + join + innerHTML.</span>`;
+      } catch (err) {
+        outFetch.innerHTML =
+`<span class="bad">✗ Lỗi tải menu: ${err.message}</span>` +
+(location.protocol === "file:"
+  ? `\n<span class="hl">Bạn đang mở trang kiểu file:// — trình duyệt chặn fetch file cục bộ (chính sách bảo mật, họ hàng với CORS).
+Cách chạy đúng: VS Code → chuột phải file → "Open with Live Server" (địa chỉ http://127.0.0.1:5500/…).</span>`
+  : "\nKiểm tra: file menu.json có nằm cùng thư mục không? Xem thêm tab Network (F12).");
+      } finally {
+        nut.disabled = false;
+      }
+    });
+
+    // ② API công khai — jsonplaceholder cho phép CORS, cần internet
+    document.getElementById("d-btn-api").addEventListener("click", async (e) => {
+      const nut = e.target;
+      nut.disabled = true;
+      outFetch.textContent = "Đang gọi https://jsonplaceholder.typicode.com/users …";
+      ulKq.innerHTML = "";
+      try {
+        const res = await fetch("https://jsonplaceholder.typicode.com/users?_limit=4");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const users = await res.json();
+        // dữ liệu NGUỒN NGOÀI → dựng bằng createElement + textContent (chống XSS)
+        users.forEach(u => {
+          const li = document.createElement("li");
+          const ten = document.createElement("span");
+          const mail = document.createElement("span");
+          ten.textContent = u.name;
+          mail.className = "nhom";
+          mail.textContent = u.email;
+          li.append(ten, mail);
+          ulKq.appendChild(li);
+        });
+        outFetch.innerHTML = `<span class="ok">✓ API trả về ${users.length} user — chú ý: dữ liệu nguồn ngoài nên render bằng textContent.</span>`;
+      } catch (err) {
+        outFetch.innerHTML = `<span class="bad">✗ Không gọi được API: ${err.message}</span>\n(Kiểm tra kết nối mạng — hoặc API đang bảo trì.)`;
+      } finally {
+        nut.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

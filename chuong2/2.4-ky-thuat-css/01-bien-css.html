@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.4.1 — BIẾN CSS · CSS Variables (Custom Properties)
+  ------------------------------------------------------------
+  Bài tham khảo toàn diện (cơ bản → nâng cao) theo W3Schools.
+  Cú pháp: khai báo --name, dùng var(--name), giá trị dự phòng,
+  phạm vi (scope), kế thừa/cascade, theme, dark mode, calc(),
+  và đổi biến bằng JavaScript (getComputedStyle/setProperty).
+
+  Khung trang dùng ../../assets/lesson.css. CSS minh hoạ để trong
+  <style> bên dưới, MỌI class & biến tự đặt tiền tố .d- / --d-
+  để KHÔNG đụng biến/khung của lesson.css. Dark-mode demo chỉ
+  áp trong khung .d-theme.dark, KHÔNG đổi :root toàn trang.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.4.1 · Biến CSS (CSS Variables)</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ============================================================
+       CSS MINH HOẠ RIÊNG CỦA BÀI
+       - Tất cả CLASS có tiền tố .d-
+       - Tất cả BIẾN minh hoạ có tiền tố --d- (tránh đụng --blue,
+         --green... của lesson.css). Khai báo tập trung ở :root
+         nhưng dùng TÊN RIÊNG nên an toàn cho khung bài học.
+       ============================================================ */
+
+    /* ----- Bộ biến minh hoạ toàn cục (tiền tố --d-) ----- */
+    :root {
+      --d-primary:  #1D559F;   /* màu chủ đạo demo   */
+      --d-primary-d:#16407a;   /* màu chủ đạo đậm    */
+      --d-accent:   #e84393;   /* màu nhấn           */
+      --d-gap:      10px;      /* khoảng cách demo   */
+      --d-radius:   10px;      /* bo góc demo        */
+      --d-shadow:   0 2px 8px rgba(20,40,80,.12);
+    }
+
+    /* ----- Hộp minh hoạ dùng chung ----- */
+    .d-card {
+      background: #fff;
+      border: 2px solid var(--d-primary);
+      border-radius: var(--d-radius);
+      padding: 14px 16px;
+      box-shadow: var(--d-shadow);
+    }
+    .d-btn {
+      display: inline-block; border: none; cursor: pointer;
+      background: var(--d-primary); color: #fff;
+      padding: 10px 18px; border-radius: var(--d-radius);
+      font: inherit; font-weight: 700;
+    }
+    .d-btn.accent { background: var(--d-accent); }
+    .d-swatch {
+      display: inline-block; width: 64px; height: 38px; border-radius: 6px;
+      vertical-align: middle; margin-right: 6px; border: 1px solid #d7deea;
+    }
+
+    /* 3) PHẠM VI (scope) — biến cục bộ trong một selector/nhánh DOM */
+    .d-scope { border: 1px dashed #c7d0de; border-radius: var(--d-radius); padding: 12px; }
+    .d-scope .d-tag {
+      display: inline-block; padding: 6px 12px; border-radius: 6px; color: #fff;
+      background: var(--d-local, #94a3b8);   /* dùng biến local, có dự phòng xám */
+    }
+    .d-box-a { --d-local: #04AA6D; }          /* nhánh A đặt biến local riêng */
+    .d-box-b { --d-local: #6c5ce7; }          /* nhánh B đặt giá trị khác     */
+
+    /* 4) Giá trị dự phòng var(--x, mặc-định) */
+    .d-fallback span {
+      display: inline-block; padding: 8px 14px; border-radius: 6px; margin: 2px; color: #fff;
+    }
+    .d-fb1 { background: var(--d-khong-ton-tai, #E63946); }  /* biến chưa khai báo → dùng đỏ */
+    .d-fb2 { background: var(--d-primary, #999); }           /* biến có thật → dùng nó */
+
+    /* 5) Kế thừa & cascade — con kế thừa biến của cha */
+    .d-inherit { --d-color: #1D559F; border: 1px solid #cfe0f5; border-radius: var(--d-radius); padding: 12px; }
+    .d-inherit p { color: var(--d-color); margin: 4px 0; font-weight: 600; }
+    .d-inherit .d-child { --d-color: #E63946; }              /* ghi đè ở nhánh con */
+
+    /* 6) THEME — đổi --d-primary cho cả một khung áp lên nhiều phần tử */
+    .d-theme {
+      border: 1px solid #e3e8f0; border-radius: var(--d-radius);
+      padding: 14px; background: #fbfdff;
+      /* biến của theme — đổi ở đây là đổi cả khung */
+      --d-t-primary: #1D559F;
+      --d-t-text:    #1a1f29;
+      --d-t-bg:      #ffffff;
+      --d-t-muted:   #5b6472;
+      color: var(--d-t-text); background: var(--d-t-bg);
+    }
+    .d-theme .d-th-title { color: var(--d-t-primary); margin: 0 0 8px; }
+    .d-theme .d-th-btn {
+      background: var(--d-t-primary); color: #fff; border: none;
+      padding: 8px 14px; border-radius: 6px; font: inherit; font-weight: 700; cursor: pointer;
+    }
+    .d-theme .d-th-bar { height: 8px; border-radius: 999px; background: var(--d-t-primary); margin: 10px 0; }
+    .d-theme .d-th-link { color: var(--d-t-primary); font-weight: 700; }
+    .d-theme .d-th-muted { color: var(--d-t-muted); font-size: .9rem; }
+    /* các "bảng màu" theme — chỉ đổi BIẾN, không sửa từng phần tử */
+    .d-theme.green  { --d-t-primary: #04AA6D; }
+    .d-theme.purple { --d-t-primary: #6c5ce7; }
+    .d-theme.amber  { --d-t-primary: #d97706; }
+
+    /* 7) DARK MODE — đổi NHÓM biến chỉ trong .d-theme.dark (KHÔNG đụng :root) */
+    .d-theme.dark {
+      --d-t-primary: #74b9ff;
+      --d-t-text:    #e6edf3;
+      --d-t-bg:      #0f172a;
+      --d-t-muted:   #93a4bd;
+      border-color: #1e2a44;
+    }
+    /* công tắc dark mode thuần CSS bằng checkbox */
+    .d-darkbox { display: none; }
+    .d-darkbox:checked ~ .d-theme {            /* khi tích → ánh xạ sang bộ biến tối */
+      --d-t-primary: #74b9ff;
+      --d-t-text:    #e6edf3;
+      --d-t-bg:      #0f172a;
+      --d-t-muted:   #93a4bd;
+      border-color: #1e2a44;
+    }
+    .d-darklabel {
+      display: inline-block; cursor: pointer; user-select: none;
+      background: #FFC107; color: #16407a; font-weight: 700;
+      padding: 8px 14px; border-radius: 6px; margin-bottom: 10px;
+    }
+
+    /* 8) Biến + calc() */
+    .d-calc { border: 1px dashed #c7d0de; border-radius: var(--d-radius); }
+    .d-calc .row { background: #eaf1fb; color: #16407a; margin-bottom: 8px; border-radius: 6px; }
+    .d-calc .p1 { padding: var(--d-gap); }                 /* = 10px            */
+    .d-calc .p2 { padding: calc(var(--d-gap) * 2); }       /* = 20px            */
+    .d-calc .p3 { padding: calc(var(--d-gap) * 3); }       /* = 30px            */
+    .d-calc .gapdemo { display: flex; gap: calc(var(--d-gap) * 1.5); }
+    .d-calc .gapdemo > div { flex: 1; background: var(--d-primary); color: #fff; padding: 12px; border-radius: 6px; text-align: center; }
+
+    /* 9) Đổi biến bằng JS — khung có biến điều khiển bởi nút */
+    .d-jsbox { --d-js-h: 200; }                            /* hue 0..360 */
+    .d-jschip {
+      display: inline-block; width: 100%; height: 60px; border-radius: var(--d-radius);
+      background: hsl(var(--d-js-h), 70%, 50%);
+      color: #fff; text-align: center; line-height: 60px; font-weight: 700;
+    }
+    .d-jsval { font-weight: 700; color: var(--d-primary); }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.4 Kỹ thuật CSS</a><span>›</span>
+        Biến CSS
+      </nav>
+      <h1>Biến CSS — <code style="color:#fff;background:rgba(255,255,255,.18)">var()</code> &amp; Custom Properties</h1>
+      <p class="sub">Khai báo giá trị một lần (màu, spacing, bo góc…) rồi dùng lại khắp trang bằng
+         <code style="color:#fff;background:rgba(255,255,255,.18)">var(--ten)</code>. Sửa một chỗ — đổi đồng loạt.
+         Đi từ cú pháp cơ bản đến theme, dark mode, calc() và điều khiển bằng JavaScript.</p>
+      <div class="chips">
+        <span class="chip solid">2.4.1</span>
+        <span class="chip">CSS Variables</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Biến CSS là gì &amp; lợi ích</a></li>
+        <li><a href="#s2">Khai báo ở :root (toàn cục)</a></li>
+        <li><a href="#s3">Phạm vi (scope) &amp; biến cục bộ</a></li>
+        <li><a href="#s4">Giá trị dự phòng var(--x, mặc-định)</a></li>
+        <li><a href="#s5">Kế thừa &amp; cascade</a></li>
+        <li><a href="#s6">Theme — đổi bảng màu đồng loạt</a></li>
+        <li><a href="#s7">Dark mode</a></li>
+        <li><a href="#s8">Biến + calc()</a></li>
+        <li><a href="#s9">Đổi biến bằng JavaScript</a></li>
+        <li><a href="#s10">Bảng cú pháp tổng hợp</a></li>
+        <li><a href="#s11">Mẹo đặt tên &amp; tổ chức biến</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. BIẾN CSS LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Biến CSS là gì &amp; lợi ích <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><strong>Biến CSS</strong> (Custom Properties) là nơi lưu một giá trị có thể tái sử dụng.
+         Thay vì gõ <code>#1D559F</code> ở 20 chỗ, ta đặt tên <code>--primary</code> một lần rồi dùng lại.
+         Muốn đổi màu cả trang? Sửa <strong>đúng một dòng</strong>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · cả hai nút lấy màu từ cùng một biến</div>
+        <div class="demo-body">
+          <button class="d-btn">Nút chính (--d-primary)</button>
+          <button class="d-btn accent">Nút nhấn (--d-accent)</button>
+          <div class="d-card" style="margin-top:12px">
+            Thẻ này cũng dùng <code>var(--d-primary)</code> cho viền và
+            <code>var(--d-radius)</code> cho bo góc. Cùng nguồn — thống nhất giao diện.
+          </div>
+        </div>
+      </div>
+
+      <h3>Cú pháp: khai báo &amp; sử dụng</h3>
+      <pre class="code"><code><span class="c">/* 1) KHAI BÁO biến: tên BẮT BUỘC bắt đầu bằng hai gạch -- */</span>
+<span class="k">:root</span> {
+  <span class="v">--d-primary</span>: <span class="s">#1D559F</span>;   <span class="c">/* tên biến phân biệt hoa/thường */</span>
+  <span class="v">--d-radius</span>:  <span class="s">10px</span>;
+}
+
+<span class="c">/* 2) SỬ DỤNG biến bằng hàm var() */</span>
+.btn {
+  <span class="k">background</span>: <span class="v">var(--d-primary)</span>;
+  <span class="k">border-radius</span>: <span class="v">var(--d-radius)</span>;
+}</code></pre>
+
+      <div class="note">
+        <p><strong>Vì sao nên dùng?</strong></p>
+        <p>• <strong>Đổi một chỗ, áp mọi nơi</strong> — bảo trì cực nhanh.<br>
+           • <strong>Dễ đọc</strong> — <code>var(--primary)</code> rõ nghĩa hơn một mã màu khó nhớ.<br>
+           • <strong>Động</strong> — biến CSS sống trong DOM, có thể đổi theo nhánh hoặc bằng JavaScript (khác hẳn biến của Sass chỉ tồn tại lúc biên dịch).</p>
+      </div>
+
+      <div class="callout info"><p>Tên biến <strong>phân biệt chữ hoa/thường</strong>: <code>--primary</code> và <code>--Primary</code>
+        là hai biến khác nhau. Quy ước phổ biến: viết thường, nối bằng gạch ngang (<em>kebab-case</em>).</p></div>
+    </section>
+
+    <!-- ==========  2. KHAI BÁO Ở :root  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Khai báo ở <code>:root</code> — phạm vi toàn cục <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>:root</code> là bộ chọn trỏ tới phần tử gốc <code>&lt;html&gt;</code>. Biến đặt ở đây
+         có <strong>phạm vi toàn cục</strong>: mọi phần tử trong trang đều dùng được.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · bốn ô màu lấy từ biến toàn cục</div>
+        <div class="demo-body">
+          <span class="d-swatch" style="background:var(--d-primary)"></span> <code>--d-primary</code><br>
+          <span class="d-swatch" style="background:var(--d-primary-d)"></span> <code>--d-primary-d</code><br>
+          <span class="d-swatch" style="background:var(--d-accent)"></span> <code>--d-accent</code><br>
+          <span class="d-swatch" style="background:#fff;border-color:#94a3b8"></span>
+          bo góc <code>--d-radius</code> = <strong>10px</strong>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Gom toàn bộ "design token" của trang vào :root */</span>
+<span class="k">:root</span> {
+  <span class="v">--d-primary</span>:   <span class="s">#1D559F</span>;
+  <span class="v">--d-primary-d</span>: <span class="s">#16407a</span>;
+  <span class="v">--d-accent</span>:    <span class="s">#e84393</span>;
+  <span class="v">--d-gap</span>:       <span class="s">10px</span>;
+  <span class="v">--d-radius</span>:    <span class="s">10px</span>;
+}</code></pre>
+
+      <div class="callout tip"><p>Đặt biến chung ở <code>:root</code> thay vì rải rác. Muốn đổi tông màu thương hiệu cả trang,
+        bạn chỉ cần sửa vài dòng trong <code>:root</code> là xong.</p></div>
+    </section>
+
+    <!-- ==========  3. PHẠM VI (SCOPE)  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Phạm vi (scope) — biến cục bộ <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Biến không bắt buộc phải ở <code>:root</code>. Khai báo trong một bộ chọn bất kỳ thì biến đó
+         <strong>chỉ sống bên trong phần tử đó và con cháu của nó</strong>. Nhờ vậy mỗi nhánh DOM có thể có giá trị riêng.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · cùng một class .d-tag nhưng màu khác nhau theo nhánh</div>
+        <div class="demo-body">
+          <div class="d-scope d-box-a" style="margin-bottom:10px">
+            Nhánh A — <code>--d-local: #04AA6D</code>:
+            <span class="d-tag">Thẻ trong A</span>
+            <span class="d-tag">Thẻ trong A</span>
+          </div>
+          <div class="d-scope d-box-b" style="margin-bottom:10px">
+            Nhánh B — <code>--d-local: #6c5ce7</code>:
+            <span class="d-tag">Thẻ trong B</span>
+          </div>
+          <div class="d-scope">
+            Ngoài cả hai nhánh — <code>--d-local</code> chưa được đặt, dùng giá trị dự phòng xám:
+            <span class="d-tag">Thẻ "mồ côi"</span>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Cùng một class, màu lấy từ biến local của nhánh cha */</span>
+.d-tag   { <span class="k">background</span>: <span class="v">var(--d-local, #94a3b8)</span>; } <span class="c">/* dự phòng xám */</span>
+.d-box-a { <span class="v">--d-local</span>: <span class="s">#04AA6D</span>; }  <span class="c">/* chỉ áp cho con của A */</span>
+.d-box-b { <span class="v">--d-local</span>: <span class="s">#6c5ce7</span>; }  <span class="c">/* chỉ áp cho con của B */</span></code></pre>
+
+      <div class="callout info"><p>Biến cục bộ rất hợp với <strong>component</strong>: mỗi thẻ card/nút tự định nghĩa biến riêng
+        (vd <code>--card-pad</code>), không lo ảnh hưởng phần khác của trang.</p></div>
+    </section>
+
+    <!-- ==========  4. GIÁ TRỊ DỰ PHÒNG  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Giá trị dự phòng <code>var(--x, mặc-định)</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Hàm <code>var()</code> nhận tham số thứ hai làm <strong>giá trị dự phòng</strong>: nếu biến
+         chưa được khai báo (hoặc không hợp lệ), trình duyệt dùng giá trị mặc định này thay vì bỏ qua.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · biến không tồn tại → dùng dự phòng</div>
+        <div class="demo-body d-fallback">
+          <span class="d-fb1">var(--d-khong-ton-tai, <b>#E63946</b>) → đỏ</span>
+          <span class="d-fb2">var(--d-primary, #999) → xanh (biến có thật)</span>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Tham số sau dấu phẩy = giá trị dùng KHI biến chưa có */</span>
+.a { <span class="k">background</span>: <span class="v">var(--chua-khai-bao, #E63946)</span>; } <span class="c">/* → đỏ dự phòng */</span>
+.b { <span class="k">background</span>: <span class="v">var(--d-primary, #999)</span>; }       <span class="c">/* → xanh: biến có thật */</span>
+
+<span class="c">/* Dự phòng có thể lồng nhau */</span>
+.c { <span class="k">color</span>: <span class="v">var(--x, var(--y, black))</span>; }</code></pre>
+
+      <div class="callout tip"><p>Luôn cân nhắc giá trị dự phòng cho các biến "có thể chưa được set" — giúp giao diện
+        không bị vỡ khi thiếu biến (ví dụ component dùng lại ở nơi chưa định nghĩa theme).</p></div>
+    </section>
+
+    <!-- ==========  5. KẾ THỪA & CASCADE  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Kế thừa &amp; cascade của biến <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Biến CSS <strong>được kế thừa</strong>: phần tử con tự động nhận biến của cha. Nếu con khai báo lại
+         cùng tên, giá trị mới <strong>ghi đè</strong> cho nhánh con đó (theo cơ chế cascade từ trên xuống).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · con kế thừa --d-color, nhánh con ghi đè sang đỏ</div>
+        <div class="demo-body">
+          <div class="d-inherit">
+            <p>Đoạn này kế thừa <code>--d-color = #1D559F</code> (xanh) từ cha.</p>
+            <p>Đoạn này cũng vậy — vẫn xanh.</p>
+            <div class="d-child">
+              <p>Nhánh con đặt lại <code>--d-color = #E63946</code> → đoạn này thành đỏ.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.d-inherit         { <span class="v">--d-color</span>: <span class="s">#1D559F</span>; }   <span class="c">/* cha đặt biến */</span>
+.d-inherit p       { <span class="k">color</span>: <span class="v">var(--d-color)</span>; }  <span class="c">/* mọi p kế thừa */</span>
+.d-inherit .d-child{ <span class="v">--d-color</span>: <span class="s">#E63946</span>; }   <span class="c">/* nhánh con ghi đè */</span></code></pre>
+
+      <div class="callout info"><p>Đây là điểm mạnh nhất của biến CSS so với biến Sass: chúng <strong>động theo DOM</strong>.
+        Cùng một component, đặt trong nhánh có biến khác nhau sẽ tự đổi diện mạo — nền tảng của theme &amp; dark mode.</p></div>
+    </section>
+
+    <!-- ==========  6. THEME  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Theme — đổi bảng màu đồng loạt <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Khi nhiều phần tử cùng đọc một biến, chỉ cần đổi <strong>biến đó</strong> là cả khung đổi theo.
+         Mỗi "theme" chỉ là một bộ giá trị biến khác nhau — không phải sửa từng phần tử.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · 4 khung giống hệt, chỉ khác giá trị --d-t-primary</div>
+        <div class="demo-body">
+          <div class="split">
+            <div class="d-theme">
+              <h4 class="d-th-title">Theme mặc định</h4>
+              <p class="d-th-muted">--d-t-primary: #1D559F</p>
+              <div class="d-th-bar"></div>
+              <button class="d-th-btn">Nút</button> <a href="#s6" class="d-th-link">liên kết</a>
+            </div>
+            <div class="d-theme green">
+              <h4 class="d-th-title">Theme xanh lá</h4>
+              <p class="d-th-muted">--d-t-primary: #04AA6D</p>
+              <div class="d-th-bar"></div>
+              <button class="d-th-btn">Nút</button> <a href="#s6" class="d-th-link">liên kết</a>
+            </div>
+            <div class="d-theme purple">
+              <h4 class="d-th-title">Theme tím</h4>
+              <p class="d-th-muted">--d-t-primary: #6c5ce7</p>
+              <div class="d-th-bar"></div>
+              <button class="d-th-btn">Nút</button> <a href="#s6" class="d-th-link">liên kết</a>
+            </div>
+            <div class="d-theme amber">
+              <h4 class="d-th-title">Theme vàng</h4>
+              <p class="d-th-muted">--d-t-primary: #d97706</p>
+              <div class="d-th-bar"></div>
+              <button class="d-th-btn">Nút</button> <a href="#s6" class="d-th-link">liên kết</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Khung theme: tiêu đề, nút, thanh, link đều đọc --d-t-primary */</span>
+.d-theme        { <span class="v">--d-t-primary</span>: <span class="s">#1D559F</span>; }
+.d-th-title     { <span class="k">color</span>: <span class="v">var(--d-t-primary)</span>; }
+.d-th-btn       { <span class="k">background</span>: <span class="v">var(--d-t-primary)</span>; }
+
+<span class="c">/* Đổi theme = đổi DUY NHẤT một biến */</span>
+.d-theme.green  { <span class="v">--d-t-primary</span>: <span class="s">#04AA6D</span>; }
+.d-theme.purple { <span class="v">--d-t-primary</span>: <span class="s">#6c5ce7</span>; }</code></pre>
+
+      <div class="callout tip"><p>Mô hình "đổi biến để đổi theme" giúp tách <strong>giá trị</strong> khỏi <strong>cách dùng</strong>.
+        Thêm theme mới chỉ là thêm một bộ biến, không phải viết lại CSS của từng thành phần.</p></div>
+    </section>
+
+    <!-- ==========  7. DARK MODE  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Dark mode — đổi nhóm biến <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Dark mode chỉ là một theme đặc biệt: đổi cả <strong>nhóm</strong> biến (nền, chữ, màu chủ đạo) sang tông tối.
+         Ở đây ta đổi biến <strong>chỉ trong khung <code>.d-theme.dark</code></strong> — không động tới <code>:root</code> nên khung bài học vẫn sáng bình thường.</p>
+
+      <h3>7.1 — Bật/tắt bằng checkbox thuần CSS</h3>
+      <div class="demo">
+        <div class="demo-bar">Tích vào nút để chuyển nền/chữ của riêng khung dưới</div>
+        <div class="demo-body">
+          <input type="checkbox" id="d-dark" class="d-darkbox">
+          <label class="d-darklabel" for="d-dark"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><path d="M12 3a6.36 6.36 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg> Bật / tắt Dark mode (chỉ khung này)</label>
+          <div class="d-theme" style="padding:18px">
+            <h4 class="d-th-title">Bảng điều khiển</h4>
+            <p class="d-th-muted">Nền, chữ, màu chủ đạo đều lấy từ nhóm biến --d-t-*.</p>
+            <div class="d-th-bar"></div>
+            <button class="d-th-btn">Hành động</button>
+            <a href="#s7" class="d-th-link">Xem thêm</a>
+          </div>
+        </div>
+      </div>
+
+      <h3>7.2 — Khung đặt sẵn lớp <code>.dark</code></h3>
+      <div class="demo">
+        <div class="demo-bar">Khung này gắn sẵn class .dark — luôn ở chế độ tối</div>
+        <div class="demo-body">
+          <div class="d-theme dark" style="padding:18px">
+            <h4 class="d-th-title">Thẻ nền tối</h4>
+            <p class="d-th-muted">--d-t-bg, --d-t-text, --d-t-primary đã đảo sang tông tối.</p>
+            <div class="d-th-bar"></div>
+            <button class="d-th-btn">Hành động</button>
+            <a href="#s7" class="d-th-link">Xem thêm</a>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Bộ biến sáng (mặc định) đặt trên khung */</span>
+.d-theme {
+  <span class="v">--d-t-bg</span>:      <span class="s">#ffffff</span>;
+  <span class="v">--d-t-text</span>:    <span class="s">#1a1f29</span>;
+  <span class="v">--d-t-primary</span>: <span class="s">#1D559F</span>;
+  <span class="k">background</span>: <span class="v">var(--d-t-bg)</span>; <span class="k">color</span>: <span class="v">var(--d-t-text)</span>;
+}
+
+<span class="c">/* Dark mode: chỉ ĐỔI NHÓM BIẾN — không sửa từng phần tử */</span>
+.d-theme.dark {
+  <span class="v">--d-t-bg</span>:      <span class="s">#0f172a</span>;
+  <span class="v">--d-t-text</span>:    <span class="s">#e6edf3</span>;
+  <span class="v">--d-t-primary</span>: <span class="s">#74b9ff</span>;
+}
+
+<span class="c">/* Toggle thuần CSS: checkbox tích → ánh xạ sang bộ biến tối */</span>
+.d-darkbox:checked ~ .d-theme { <span class="v">--d-t-bg</span>: <span class="s">#0f172a</span>; <span class="c">/* ... */</span> }</code></pre>
+
+      <div class="note">
+        <p><strong>Trong dự án thật</strong> thường dùng một trong hai cách:</p>
+        <p>• Theo cài đặt hệ điều hành: <code>@media (prefers-color-scheme: dark) { :root { ... } }</code>.<br>
+           • Cho người dùng tự bật: JavaScript thêm class <code>data-theme="dark"</code> (hoặc <code>.dark</code>) lên <code>&lt;html&gt;</code>,
+           rồi CSS đổi biến theo <code>html.dark { --bg: ...; }</code>.</p>
+      </div>
+      <div class="callout warn"><p>Trong bài này dark mode <strong>cố tình bị giới hạn trong khung <code>.d-theme</code></strong>
+        để không phá giao diện trang học. Khi tự làm, bạn mới đổi biến ở <code>:root</code>/<code>html</code> cho toàn trang.</p></div>
+    </section>
+
+    <!-- ==========  8. BIẾN + CALC()  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Biến + <code>calc()</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Có thể tính toán trên biến bằng <code>calc()</code>. Rất hợp để xây <strong>thang spacing</strong>
+         từ một đơn vị gốc: padding = bội số của một biến gap chung.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · padding = bội số của --d-gap (10px)</div>
+        <div class="demo-body d-calc" style="padding:12px">
+          <div class="row p1">padding: var(--d-gap) → 10px</div>
+          <div class="row p2">padding: calc(var(--d-gap) * 2) → 20px</div>
+          <div class="row p3">padding: calc(var(--d-gap) * 3) → 30px</div>
+          <div class="gapdemo">
+            <div>gap = </div><div>calc(</div><div>--d-gap</div><div>×1.5)</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">:root</span> { <span class="v">--d-gap</span>: <span class="s">10px</span>; }
+
+.p1 { <span class="k">padding</span>: <span class="v">var(--d-gap)</span>; }              <span class="c">/* 10px */</span>
+.p2 { <span class="k">padding</span>: <span class="v">calc(var(--d-gap) * 2)</span>; }    <span class="c">/* 20px */</span>
+.p3 { <span class="k">padding</span>: <span class="v">calc(var(--d-gap) * 3)</span>; }    <span class="c">/* 30px */</span>
+
+<span class="c">/* Lưu ý: bên trong calc() phải có khoảng trắng quanh dấu * và / */</span>
+.box { <span class="k">width</span>: <span class="v">calc(100% - var(--d-gap) * 2)</span>; }</code></pre>
+
+      <div class="callout warn"><p>Trong <code>calc()</code> phải có <strong>khoảng trắng</strong> quanh các phép <code>+ - * /</code>
+        (vd <code>calc(var(--g) * 2)</code>, không phải <code>calc(var(--g)*2)</code>). Đơn vị cũng phải hợp lệ khi cộng/trừ.</p></div>
+    </section>
+
+    <!-- ==========  9. ĐỔI BIẾN BẰNG JAVASCRIPT  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Đổi biến bằng JavaScript <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Vì biến CSS sống trong DOM, JavaScript có thể <strong>đọc</strong> bằng
+         <code>getComputedStyle()</code> và <strong>ghi</strong> bằng <code>style.setProperty()</code> — giao diện đổi ngay tức thì.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · kéo thanh để đổi biến --d-js-h (màu HSL)</div>
+        <div class="demo-body">
+          <div class="d-jsbox" id="d-jsbox">
+            <div class="d-jschip" id="d-jschip">Màu nền lấy từ var(--d-js-h)</div>
+            <p style="margin:10px 0 4px">
+              <label for="d-jsrange">Hue (--d-js-h): <span class="d-jsval" id="d-jsout">200</span></label>
+            </p>
+            <input type="range" id="d-jsrange" min="0" max="360" value="200" style="width:100%">
+            <p class="muted" style="font-size:.86rem;margin:6px 0 0">
+              JS gọi <code>setProperty('--d-js-h', ...)</code> → CSS <code>hsl(var(--d-js-h),70%,50%)</code> cập nhật theo.</p>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">// ĐỌC giá trị biến (lưu ý cần .trim())</span>
+<span class="k">const</span> root = getComputedStyle(document.documentElement);
+<span class="k">const</span> mau  = root.getPropertyValue(<span class="s">'--d-primary'</span>).trim();
+
+<span class="c">// GHI / đổi giá trị biến trên một phần tử</span>
+element.style.setProperty(<span class="s">'--d-js-h'</span>, <span class="s">'120'</span>);
+
+<span class="c">// Ví dụ thanh trượt đổi màu theo thời gian thực</span>
+range.addEventListener(<span class="s">'input'</span>, () =&gt; {
+  box.style.setProperty(<span class="s">'--d-js-h'</span>, range.value);
+});</code></pre>
+
+      <div class="callout info"><p><code>getPropertyValue()</code> trả về chuỗi, thường có khoảng trắng đầu — nhớ <code>.trim()</code>.
+        Đặt biến bằng <code>setProperty</code> trên <code>document.documentElement</code> (tức <code>:root</code>) sẽ áp cho toàn trang.</p></div>
+    </section>
+
+    <!-- ==========  10. BẢNG CÚ PHÁP TỔNG HỢP  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Bảng cú pháp tổng hợp <span class="tag-base">Tra cứu</span></h2>
+      <table class="syntax">
+        <caption>Cú pháp &amp; thao tác với biến CSS (theo W3Schools)</caption>
+        <thead><tr><th>Mục đích</th><th>Cú pháp</th><th>Ghi chú</th></tr></thead>
+        <tbody>
+          <tr><td>Khai báo toàn cục</td><td><code>:root { --primary: #1D559F; }</code></td><td>Dùng được mọi nơi</td></tr>
+          <tr><td>Khai báo cục bộ</td><td><code>.card { --pad: 20px; }</code></td><td>Chỉ trong <code>.card</code> &amp; con cháu</td></tr>
+          <tr><td>Sử dụng biến</td><td><code>color: var(--primary);</code></td><td>Hàm <code>var()</code></td></tr>
+          <tr><td>Giá trị dự phòng</td><td><code>var(--x, #ccc)</code></td><td>Dùng <code>#ccc</code> nếu <code>--x</code> chưa có</td></tr>
+          <tr><td>Dự phòng lồng nhau</td><td><code>var(--x, var(--y, red))</code></td><td>Thử lần lượt</td></tr>
+          <tr><td>Kết hợp tính toán</td><td><code>calc(var(--gap) * 2)</code></td><td>Cần khoảng trắng quanh <code>* /</code></td></tr>
+          <tr><td>Kế thừa</td><td>tự động</td><td>Con nhận biến của cha; con đặt lại sẽ ghi đè</td></tr>
+          <tr><td>Đọc bằng JS</td><td><code>getComputedStyle(el).getPropertyValue('--x')</code></td><td>Nhớ <code>.trim()</code></td></tr>
+          <tr><td>Ghi bằng JS</td><td><code>el.style.setProperty('--x', '12px')</code></td><td>Đổi tức thì</td></tr>
+          <tr><td>Tên biến</td><td><code>--ten-bien</code></td><td>Bắt đầu bằng <code>--</code>, phân biệt hoa/thường</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p>Biến CSS được mọi trình duyệt hiện đại hỗ trợ. Với trình duyệt rất cũ (IE11), biến không hoạt động —
+        khi cần, đặt một giá trị cố định <em>trước</em> dòng dùng <code>var()</code> để làm phương án dự phòng.</p></div>
+    </section>
+
+    <!-- ==========  11. MẸO ĐẶT TÊN & TỔ CHỨC  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Mẹo đặt tên &amp; tổ chức biến <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout tip"><p><strong>Gom vào <code>:root</code>.</strong> Đặt toàn bộ "design token" — màu, spacing, radius, shadow,
+        cỡ chữ — ở một chỗ. Khi cần đổi tông cả trang, bạn chỉ sửa vài dòng.</p></div>
+      <div class="callout tip"><p><strong>Đặt tên có ý nghĩa.</strong> Ưu tiên tên theo <em>vai trò</em> (<code>--primary</code>,
+        <code>--text</code>, <code>--bg</code>, <code>--radius</code>, <code>--gap</code>) hơn theo <em>giá trị</em> (<code>--xanh-1</code>),
+        để khi đổi màu vẫn giữ nguyên ý nghĩa.</p></div>
+      <div class="callout info"><p><strong>Nhóm theo loại.</strong> Tách thành các nhóm: màu (<code>--c-*</code>),
+        khoảng cách (<code>--space-*</code>), bo góc (<code>--radius-*</code>), bóng (<code>--shadow-*</code>) — dễ tra cứu &amp; mở rộng.</p></div>
+      <div class="callout warn"><p><strong>Luôn nghĩ tới dự phòng.</strong> Với biến có thể thiếu, dùng
+        <code>var(--x, mặc-định)</code> để giao diện không vỡ.</p></div>
+      <div class="callout danger"><p><strong>Đừng đổi <code>:root</code> bừa bãi trong component dùng chung.</strong> Đổi biến toàn cục
+        sẽ ảnh hưởng mọi nơi. Muốn riêng cho một khu vực, hãy đặt biến <em>cục bộ</em> ngay trên phần tử cha của khu vực đó.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="../2.3-responsive/05-hinh-anh.html"><small>← Bài trước</small>2.3.6 · Hình ảnh responsive</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="02-mask.html"><small>Bài tiếp →</small>2.4.2 · Mask</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+
+  <!-- JS minh hoạ mục 9: đổi biến CSS bằng setProperty (chỉ trong khung demo) -->
+  <script>
+    (function () {
+      var range = document.getElementById('d-jsrange');
+      var box   = document.getElementById('d-jsbox');
+      var out   = document.getElementById('d-jsout');
+      if (range && box && out) {
+        range.addEventListener('input', function () {
+          box.style.setProperty('--d-js-h', range.value);
+          out.textContent = range.value;
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

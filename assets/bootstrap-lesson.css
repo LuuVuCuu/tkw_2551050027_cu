@@ -1,0 +1,58 @@
+/* ============================================================
+   bootstrap-lesson.css — chrome bổ sung cho các bài Chương 4.
+   Bootstrap 5 lo phần lớn giao diện; file này chỉ thêm:
+   khối mã nguồn (dark), hộp "Kết quả", hero, đánh số mục.
+   Nạp SAU bootstrap.min.css để ghi đè vài chỗ nhỏ.
+   ============================================================ */
+:root { --c4: #1D559F; --c4-accent: #6c5ce7; }
+
+body { padding-bottom: 8px; }
+
+/* ---------- Hero đầu bài ---------- */
+.hero4 {
+  background: linear-gradient(135deg, var(--c4), var(--c4-accent));
+  color: #fff;
+}
+.hero4 a { color: #fff; }
+
+/* ---------- Đánh số mục ---------- */
+.sec-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.7em; height: 1.7em; border-radius: 50%;
+  background: var(--c4); color: #fff; font-size: .9rem; font-weight: 700;
+  margin-right: .45rem; flex: 0 0 auto;
+}
+
+/* ---------- Khối mã nguồn ---------- */
+pre.code {
+  background: #0d1117; color: #e6edf3; border-radius: 10px;
+  padding: 14px 16px; margin: 12px 0; overflow: auto;
+  font-size: .85rem; line-height: 1.55;
+  font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+}
+pre.code code { background: none; color: inherit; padding: 0; font-family: inherit; }
+pre.code .c { color: #7d8aa3; font-style: italic; }  /* comment   */
+pre.code .k { color: #79c0ff; }                       /* thẻ/thuộc tính */
+pre.code .s { color: #7ee787; }                       /* chuỗi/giá trị  */
+pre.code .v { color: #ffa657; }                       /* value      */
+pre.code .t { color: #f0883e; }                       /* tên thẻ    */
+
+/* mã nội dòng nhỏ */
+:not(pre) > code {
+  background: #eef1f7; color: #b3257a; padding: 1px 6px;
+  border-radius: 5px; font-size: .9em;
+}
+
+/* ---------- Hộp "Kết quả" (demo trực tiếp) ---------- */
+.demo {
+  border: 1px solid #dee2e6; border-radius: 10px;
+  margin: 12px 0 16px; overflow: hidden; background: #fff;
+}
+.demo-bar {
+  background: #eef4fc; color: var(--c4); font-weight: 600; font-size: .82rem;
+  padding: 6px 14px; border-bottom: 1px solid #dee2e6;
+}
+.demo-body { padding: 16px; }
+
+/* ---------- Footer điều hướng ---------- */
+.foot4 { border-top: 1px solid #e3e8f0; margin-top: 40px; }

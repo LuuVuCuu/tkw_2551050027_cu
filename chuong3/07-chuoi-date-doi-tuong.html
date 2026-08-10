@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  3.6.2 – 3.6.4 — CHUỖI (STRING) · NGÀY THÁNG (DATE) · ĐỐI TƯỢNG (OBJECT)
+  ------------------------------------------------------------
+    1) Chuỗi: truy cập cơ bản     6) Date: tạo & bẫy "tháng từ 0"
+    2) Hoa/thường · tìm kiếm      7) Date: đọc/định dạng (demo)
+    3) Cắt · tách · thay thế      8) Object: key/value · this
+    4) Số ↔ chuỗi                 9) Destructuring object · with
+    5) Template literal (demo)   10) Mẹo & lỗi thường gặp
+  JS minh hoạ đặt cuối <body>.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.6.2-4 · Chuỗi · Date · Object</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI ===== */
+    .d-btn { background:#1D559F; color:#fff; border:none; border-radius:8px;
+             padding:9px 16px; font-size:.92rem; font-weight:600; cursor:pointer;
+             margin:3px 4px 3px 0; }
+    .d-btn:hover { background:#16407a; }
+    .d-field { padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px;
+               font-size:.95rem; margin:3px 4px 3px 0; }
+    .d-out { background:#0f172a; color:#e6edf3; border-radius:10px;
+             font-family:"Cascadia Code",Consolas,monospace; font-size:.88rem;
+             padding:12px 14px; margin-top:12px; min-height:20px; white-space:pre-wrap; }
+    .d-out .ok  { color:#7ee787; }
+    .d-out .bad { color:#ff7b72; }
+    .d-out .hl  { color:#ffa657; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        3.6.2-4 Chuỗi · Date · Object
+      </nav>
+      <h1>Chuỗi · Date · Object</h1>
+      <p class="sub">Ba kiểu dữ liệu "chạm mặt mỗi ngày": xử lý chuỗi với template literal,
+         ngày tháng với cái bẫy "tháng đếm từ 0" trứ danh, và object — trái tim của JavaScript
+         cùng từ khoá <code>this</code>.</p>
+      <div class="chips">
+        <span class="chip solid">3.6.2-4</span>
+        <span class="chip">String · Date · Object</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Chuỗi: truy cập cơ bản</a></li>
+        <li><a href="#s2">Hoa/thường · tìm kiếm</a></li>
+        <li><a href="#s3">Cắt · tách · thay thế</a></li>
+        <li><a href="#s4">Số ↔ chuỗi</a></li>
+        <li><a href="#s5">Template literal</a></li>
+        <li><a href="#s6">Date: tạo &amp; bẫy tháng từ 0</a></li>
+        <li><a href="#s7">Date: đọc &amp; định dạng</a></li>
+        <li><a href="#s8">Object: key/value · this</a></li>
+        <li><a href="#s9">Destructuring · with</a></li>
+        <li><a href="#s10">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. CHUỖI CƠ BẢN  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Chuỗi: truy cập cơ bản <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code><span class="k">let</span> s = <span class="s">"Javascript"</span>;      <span class="c">// đặt trong "..." hoặc '...'</span>
+
+s.length;       <span class="c">// 10  — độ dài (thuộc tính, KHÔNG có ngoặc)</span>
+s.charAt(0);    <span class="c">// "J" — ký tự tại vị trí 0</span>
+s[0];           <span class="c">// "J" — cách viết gọn hơn</span>
+
+<span class="c">// chuỗi là BẤT BIẾN (immutable): mọi phương thức đều trả CHUỖI MỚI</span>
+s.toUpperCase(); <span class="c">// "JAVASCRIPT" — nhưng s vẫn là "Javascript"</span></code></pre>
+    </section>
+
+    <!-- ==========  2. HOA THƯỜNG / TÌM KIẾM  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Hoa/thường · tìm kiếm <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code><span class="k">let</span> s = <span class="s">"Javascript is simple, Javascript is great!"</span>;
+
+s.toUpperCase();          <span class="c">// "JAVASCRIPT IS ..."</span>
+s.toLowerCase();          <span class="c">// "javascript is ..."</span>
+s.indexOf(<span class="s">"Javascript"</span>);  <span class="c">// 0   — vị trí đầu tiên</span>
+s.lastIndexOf(<span class="s">"Javascript"</span>); <span class="c">// 22 — vị trí cuối cùng</span>
+s.includes(<span class="s">"simple"</span>);     <span class="c">// true</span>
+s.startsWith(<span class="s">"Java"</span>);     <span class="c">// true</span>
+s.trim();                 <span class="c">// cắt khoảng trắng 2 đầu — luôn dùng với input người dùng!</span></code></pre>
+
+      <div class="callout tip">
+        <p><strong>So sánh không phân biệt hoa thường:</strong> đưa cả hai về cùng cỡ chữ trước —
+        <code>a.toLowerCase() === b.toLowerCase()</code>. Tìm kiếm trong danh sách món cũng vậy.</p>
+      </div>
+    </section>
+
+    <!-- ==========  3. CẮT / TÁCH / THAY THẾ  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Cắt · tách · thay thế <span class="tag-base">Cơ bản</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Phương thức</th><th>Công dụng</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>substring(a, b)</code></td><td>Lấy đoạn [a, b) — không nhận số âm</td><td><code>"Javascript".substring(0, 4)</code> → <code>"Java"</code></td></tr>
+          <tr><td><code>slice(a, b)</code></td><td>Như substring nhưng <strong>nhận số âm</strong> (đếm từ cuối)</td><td><code>"Javascript".slice(-6)</code> → <code>"script"</code></td></tr>
+          <tr><td><code>split(sep)</code></td><td>Tách thành <strong>mảng</strong> theo dấu phân cách</td><td><code>"a,b,c".split(",")</code> → <code>["a","b","c"]</code></td></tr>
+          <tr><td><code>replace(a, b)</code></td><td>Thay <strong>lần xuất hiện đầu</strong> của a bằng b</td><td><code>replaceAll(a, b)</code> thay tất cả</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — mổ xẻ địa chỉ email (đề trắc nghiệm câu 11)</div>
+        <div class="demo-body">
+          <input class="d-field" id="d-email" value="thanh.dh@ou.edu.vn" size="26">
+          <button class="d-btn" id="d-btn-email">Tách tên & tên miền</button>
+          <div class="d-out" id="d-out-email">// dùng indexOf("@") + slice</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  4. SỐ ↔ CHUỖI  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Số ↔ chuỗi <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code><span class="c">// CHUỖI → SỐ</span>
+parseInt(<span class="s">"123.56"</span>);   <span class="c">// 123    — lấy phần nguyên, đọc tới khi hết số</span>
+parseFloat(<span class="s">"123.56"</span>); <span class="c">// 123.56</span>
+Number(<span class="s">"123.56"</span>);     <span class="c">// 123.56 — nghiêm khắc: cả chuỗi phải là số</span>
+parseInt(<span class="s">"abc"</span>);      <span class="c">// NaN    — câu trắc nghiệm số 1!</span>
+
+<span class="c">// SỐ → CHUỖI</span>
+(1/3).toFixed(3);     <span class="c">// "0.333" — làm tròn 3 chữ số thập phân (trả CHUỖI)</span>
+(75).toString(2);     <span class="c">// "1001011" — đổi sang NHỊ PHÂN (cơ số 2)</span>
+(255).toString(16);   <span class="c">// "ff" — hệ 16 (quen thuộc với mã màu CSS!)</span></code></pre>
+
+      <div class="callout warn">
+        <p><strong>Phân biệt cho kỳ thi:</strong> <code>toFixed()</code> là phương thức của
+        <strong>số</strong> (trả chuỗi làm tròn) — nó <em>không</em> chuyển chuỗi thành số.
+        Nhóm chuyển chuỗi → số là <code>Number()</code>, <code>parseInt()</code>,
+        <code>parseFloat()</code>.</p>
+      </div>
+    </section>
+
+    <!-- ==========  5. TEMPLATE LITERAL  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Template literal <span class="tag-adv">ES6</span></h2>
+      <p class="lead">Chuỗi trong dấu <strong>backtick</strong> <code>`...`</code>: chèn biến bằng
+         <code>${...}</code>, xuống dòng thoải mái — thay hẳn kiểu nối chuỗi bằng <code>+</code>.</p>
+
+      <pre class="code"><code><span class="c">// cũ: nối bằng + — dễ sai, khó đọc</span>
+<span class="k">let</span> li = <span class="s">"&lt;li&gt;"</span> + ten + <span class="s">" - "</span> + gia + <span class="s">"đ&lt;/li&gt;"</span>;
+
+<span class="c">// mới: template literal — nhìn là hiểu</span>
+<span class="k">let</span> li = `&lt;li&gt;${ten} - ${gia}đ&lt;/li&gt;`;
+
+<span class="k">for</span> (<span class="k">let</span> i = 1; i &lt;= 3; i++)
+  console.log(`${i} * 2 = ${2 * i}`);   <span class="c">// 1 * 2 = 2 …  (chèn được cả BIỂU THỨC)</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — điền tên vào mẫu câu</div>
+        <div class="demo-body">
+          <input class="d-field" id="d-ten" value="An" size="14">
+          <input class="d-field" id="d-mon" value="Bạc xỉu" size="14">
+          <button class="d-btn" id="d-btn-tpl">Ghép template literal</button>
+          <div class="d-out" id="d-out-tpl">// `Chào ${ten}, món ${mon} của bạn: ${gia}đ`</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  6. DATE TẠO  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Date: tạo &amp; bẫy "tháng từ 0" <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code><span class="k">new</span> Date();                        <span class="c">// thời điểm HIỆN TẠI</span>
+<span class="k">new</span> Date(<span class="s">"2017-05-27"</span>);            <span class="c">// từ chuỗi ISO (yyyy-mm-dd)</span>
+<span class="k">new</span> Date(2017, 4, 27, 10, 30, 0);  <span class="c">// năm, THÁNG(0-11), ngày, giờ, phút, giây
+                                    //           ^^^ 4 = THÁNG 5 !!!</span></code></pre>
+
+      <div class="callout danger">
+        <p><strong>Bẫy kinh điển:</strong> trong <code>Date</code>, <strong>tháng đếm từ 0</strong>
+        (0 = tháng 1 … 11 = tháng 12). <code>new Date(2025, 0, 1)</code> là
+        <strong>1/1/2025</strong>. Riêng <em>ngày</em> thì vẫn đếm từ 1. Rất nhiều bug ngày tháng
+        sinh ra từ đây.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>4 định dạng chuỗi ngày</strong> mà <code>new Date("...")</code> hiểu:
+        <strong>ISO</strong> <code>"2017-05-27"</code> (khuyên dùng) · <strong>Short</strong>
+        <code>"05/27/2017"</code> (kiểu Mỹ: tháng trước ngày sau!) · <strong>Long</strong>
+        <code>"May 27 2017"</code> · <strong>Full</strong> <code>"Saturday May 27 2017"</code>.</p>
+      </div>
+    </section>
+
+    <!-- ==========  7. DATE ĐỌC & ĐỊNH DẠNG  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Date: đọc &amp; định dạng <span class="tag-adv">Nâng cao</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Phương thức</th><th>Trả về</th></tr></thead>
+        <tbody>
+          <tr><td><code>getFullYear()</code></td><td>Năm 4 chữ số (2026)</td></tr>
+          <tr><td><code>getMonth()</code></td><td><strong>0–11</strong> — nhớ +1 khi hiển thị!</td></tr>
+          <tr><td><code>getDate()</code> / <code>getDay()</code></td><td>Ngày trong tháng (1–31) / thứ trong tuần (0 = Chủ nhật)</td></tr>
+          <tr><td><code>getHours() / getMinutes() / getSeconds()</code></td><td>Giờ, phút, giây</td></tr>
+          <tr><td><code>toLocaleDateString("vi-VN")</code></td><td>Chuỗi ngày theo định dạng Việt Nam</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — hôm nay là...</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-date">Đọc Date ngay bây giờ</button>
+          <div class="d-out" id="d-out-date">// getMonth() sẽ nhỏ hơn tháng thật 1 đơn vị — xem demo</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  8. OBJECT  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Object: key/value · <code>this</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Object gom các cặp <code>key: value</code> (thuộc tính) và có thể chứa
+         <strong>phương thức</strong> (hàm). Cú pháp literal <code>{ }</code> là cách thường dùng.</p>
+
+      <pre class="code"><code><span class="k">let</span> student = {
+  firstName: <span class="s">"Le"</span>,
+  lastName:  <span class="s">"Duong"</span>,
+  gender:    <span class="s">"Male"</span>,
+  fullName:  <span class="k">function</span> () {                    <span class="c">// PHƯƠNG THỨC</span>
+    <span class="k">return</span> <span class="k">this</span>.firstName + <span class="s">" "</span> + <span class="k">this</span>.lastName;
+  }                                             <span class="c">// this = object đang gọi phương thức</span>
+};
+
+student.firstName;      <span class="c">// "Le"  — chấm (thường dùng)</span>
+student[<span class="s">"firstName"</span>];   <span class="c">// "Le"  — ngoặc vuông (khi key nằm trong biến)</span>
+student.fullName();     <span class="c">// "Le Duong"</span>
+student.email = <span class="s">"d@ou.edu.vn"</span>;  <span class="c">// thêm thuộc tính mới lúc nào cũng được</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — this trỏ về ai?</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-this">Gọi student.fullName()</button>
+          <div class="d-out" id="d-out-this">// this.firstName nghĩa là "firstName của object NÀY"</div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong><code>this</code> là gì?</strong> Trong phương thức, <code>this</code> trỏ tới
+        <strong>chính object đang gọi</strong>. <code>this</code> sẽ gặp lại (và gây bẫy với arrow
+        function) khi xử lý sự kiện DOM ở bài 3.7–3.8.</p>
+      </div>
+    </section>
+
+    <!-- ==========  9. DESTRUCTURING / WITH  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Destructuring object · chuyện về <code>with</code> <span class="tag-adv">Nâng cao</span></h2>
+
+      <pre class="code"><code><span class="c">// trích thuộc tính vào biến cùng tên — một dòng lấy nhiều giá trị</span>
+<span class="k">const</span> { firstName, lastName } = student;
+console.log(firstName);              <span class="c">// "Le"</span>
+
+<span class="c">// đổi tên biến + giá trị mặc định</span>
+<span class="k">const</span> { firstName: ten, tuoi = 18 } = student;
+
+<span class="c">// gộp 2 object bằng spread (bài 3.6.1)</span>
+<span class="k">const</span> full = { ...student, lop: <span class="s">"WD01"</span> };</code></pre>
+
+      <div class="callout danger">
+        <p><strong><code>with</code> — chỉ để biết, tuyệt đối không dùng:</strong> giáo trình có
+        giới thiệu <code>with (obj) {…}</code> để viết gọn, nhưng nó <strong>đã lỗi thời, bị cấm
+        trong strict mode</strong>, khó đọc và khó tối ưu. Thay bằng destructuring như trên.</p>
+      </div>
+    </section>
+
+    <!-- ==========  10. MẸO & LỖI  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout danger"><p><strong>Lỗi 1.</strong> <code>getMonth()</code> trả 0–11 —
+        hiển thị tháng phải <code>+1</code>; tạo <code>new Date(2025, 5, 1)</code> là
+        <strong>tháng 6</strong> chứ không phải tháng 5.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> Tưởng phương thức chuỗi sửa chuỗi gốc —
+        chuỗi bất biến, phải gán lại: <code>s = s.replace("js", "JavaScript")</code>. Muốn thay
+        <em>tất cả</em>: <code>replaceAll</code> (hoặc vòng lặp <code>while (s.indexOf(...) &gt;= 0)</code>
+        như đề trắc nghiệm câu 13).</p></div>
+      <div class="callout warn"><p><strong>Lỗi 3.</strong> Quên <code>this.</code> trong phương thức:
+        <code>return firstName</code> → <code>ReferenceError</code>; phải là
+        <code>this.firstName</code>.</p></div>
+      <div class="callout tip"><p><strong>Mẹo.</strong> Nối chuỗi có biến → luôn template literal.
+        Ngày tháng hiển thị cho người Việt → <code>toLocaleDateString("vi-VN")</code>.
+        Lấy nhiều thuộc tính → destructuring một dòng.</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="06-mang.html"><small>← Bài trước</small>3.6.1 · Mảng</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="08-su-kien.html"><small>Bài tiếp →</small>3.7 · Xử lý sự kiện</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- ===== JS MINH HOẠ CỦA BÀI (cuối body) ===== -->
+  <script>
+    'use strict';
+
+    /* ---- Mục 3: mổ xẻ email ---- */
+    document.getElementById("d-btn-email").addEventListener("click", () => {
+      const email = document.getElementById("d-email").value.trim();
+      const out = document.getElementById("d-out-email");
+      const viTriAcong = email.indexOf("@");
+      if (viTriAcong < 1) {                       // không có @ hoặc @ đứng đầu
+        out.innerHTML = '<span class="bad">✗ Chuỗi không có dạng email (thiếu @).</span>';
+        return;
+      }
+      const ten  = email.slice(0, viTriAcong);    // từ đầu đến trước @
+      const mien = email.slice(viTriAcong + 1);   // sau @ đến hết
+      out.innerHTML =
+`email.indexOf("@")            → ${viTriAcong}
+email.slice(0, ${viTriAcong})${" ".repeat(Math.max(0, 12 - String(viTriAcong).length))}→ <span class="ok">"${ten}"</span>   (tên người dùng)
+email.slice(${viTriAcong + 1})${" ".repeat(Math.max(0, 15 - String(viTriAcong + 1).length))}→ <span class="ok">"${mien}"</span>   (tên miền)`;
+    });
+
+    /* ---- Mục 5: template literal ---- */
+    document.getElementById("d-btn-tpl").addEventListener("click", () => {
+      const ten = document.getElementById("d-ten").value.trim() || "bạn";
+      const mon = document.getElementById("d-mon").value.trim() || "Cà phê";
+      const gia = 29000;
+      // toàn bộ câu nằm trong MỘT template literal
+      document.getElementById("d-out-tpl").textContent =
+        `Chào ${ten}, món ${mon} của bạn giá ${gia.toLocaleString("vi-VN")}đ — tổng 2 ly là ${(gia * 2).toLocaleString("vi-VN")}đ.`;
+    });
+
+    /* ---- Mục 7: đọc Date ---- */
+    document.getElementById("d-btn-date").addEventListener("click", () => {
+      const d = new Date();                       // thời điểm bấm nút
+      const thu = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"][d.getDay()];
+      document.getElementById("d-out-date").innerHTML =
+`getFullYear() → ${d.getFullYear()}
+getMonth()    → <span class="bad">${d.getMonth()}</span>   (tháng thật là <span class="ok">${d.getMonth() + 1}</span> — nhớ +1!)
+getDate()     → ${d.getDate()}
+getDay()      → ${d.getDay()}   (${thu} — 0 là Chủ nhật)
+giờ:phút:giây → ${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}
+
+toLocaleDateString("vi-VN") → <span class="ok">"${d.toLocaleDateString("vi-VN")}"</span>`;
+    });
+
+    /* ---- Mục 8: this trong phương thức ---- */
+    const student = {
+      firstName: "Le",
+      lastName: "Duong",
+      fullName: function () {                     // hàm THƯỜNG → this = student
+        return this.firstName + " " + this.lastName;
+      }
+    };
+    document.getElementById("d-btn-this").addEventListener("click", () => {
+      document.getElementById("d-out-this").innerHTML =
+`student.fullName() → <span class="ok">"${student.fullName()}"</span>
+(bên trong hàm: this === student, nên this.firstName = "${student.firstName}")`;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.2.4 — CSS BACKGROUND · FONT · TEXT (bản toàn diện)
+  ------------------------------------------------------------
+  Ba nhóm thuộc tính tạo "diện mạo" cho trang: NỀN (background),
+  PHÔNG CHỮ (font) và CHỮ (text). Đi từ cơ bản → nâng cao,
+  tham khảo theo W3Schools (CSS Backgrounds / Gradients /
+  Fonts / Web Fonts / Text / Text Effects):
+     1) background-color & cách viết màu   8) @font-face & Google Fonts
+     2) background-image/repeat/position   9) text-align/decoration/transform/indent
+     3) background-size & shorthand        10) letter/word-spacing · white-space
+     4) Gradient (linear/radial/conic)     11) text-shadow
+     5) font-family & generic family       12) text-overflow: ellipsis
+     6) font-size/weight/style/variant     13) Mẹo & tổng kết
+     7) line-height & font shorthand
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  Web font cần Internet → chỉ để MÃ MẪU; DEMO trực quan dùng
+  font hệ thống (Arial, Georgia, 'Courier New'…). Ảnh nền dùng
+  ../../assets/sky.svg và ../../assets/photo.svg (offline).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.2.4 · Background · Font · Text</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* 1) background-color & cách viết màu */
+    .d-colors { display: flex; flex-wrap: wrap; gap: 10px; }
+    .d-swatch {
+      width: 130px; height: 70px; border-radius: 8px; color: #fff;
+      display: flex; align-items: flex-end; padding: 6px 8px;
+      font-size: .74rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,.35);
+    }
+    .d-c-name { background-color: steelblue; }
+    .d-c-hex  { background-color: #1D559F; }
+    .d-c-rgb  { background-color: rgb(4, 170, 109); }
+    .d-c-rgba { background-color: rgba(4, 170, 109, .45); color:#16407a; text-shadow:none; }
+    .d-c-hsl  { background-color: hsl(258, 70%, 64%); }
+    .d-c-hsla { background-color: hsla(258, 70%, 64%, .45); color:#16407a; text-shadow:none; }
+
+    /* 2) background-image / repeat / position / attachment */
+    .d-bg-base {
+      height: 130px; border-radius: 8px; border: 1px solid #cfd8e6;
+      color: #fff; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,.5);
+      padding: 8px 10px;
+    }
+    .d-bg-repeat   { background-image: url("../../assets/photo.svg"); background-size: 90px 60px; background-repeat: repeat; }
+    .d-bg-norepeat { background-image: url("../../assets/photo.svg"); background-size: 90px 60px; background-repeat: no-repeat; }
+    .d-bg-repx     { background-image: url("../../assets/photo.svg"); background-size: 90px 60px; background-repeat: repeat-x; }
+    .d-bg-pos      { background-image: url("../../assets/photo.svg"); background-size: 90px 60px; background-repeat: no-repeat; background-position: right bottom; }
+
+    .d-scroll {
+      height: 150px; overflow: auto; border-radius: 8px; border: 1px solid #cfd8e6;
+      background-image: url("../../assets/sky.svg");
+      background-size: cover; background-repeat: no-repeat;
+      background-attachment: local; /* để thấy nền cuộn theo nội dung trong khung */
+      color: #16407a;
+    }
+    .d-scroll .pad { padding: 10px 12px; }
+    .d-scroll p { background: rgba(255,255,255,.85); padding: 6px 8px; border-radius: 6px; }
+
+    /* 3) background-size & shorthand */
+    .d-size {
+      height: 120px; border-radius: 8px; border: 1px solid #cfd8e6;
+      background-image: url("../../assets/sky.svg"); background-repeat: no-repeat; background-position: center;
+      color: #fff; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,.5); padding: 6px 8px;
+    }
+    .d-size-cover   { background-size: cover; }
+    .d-size-contain { background-size: contain; background-color: #eaf1fb; }
+    .d-size-px      { background-size: 100px 60px; background-color: #eaf1fb; }
+    .d-size-pct     { background-size: 100% 100%; }
+    /* shorthand: color image repeat position / size */
+    .d-bg-short {
+      height: 120px; border-radius: 8px; color: #fff; font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0,0,0,.5); padding: 8px 10px;
+      background: #16407a url("../../assets/sky.svg") no-repeat center / cover;
+    }
+
+    /* 4) Gradient */
+    .d-grad {
+      width: 100%; height: 110px; border-radius: 8px; color: #fff;
+      display: flex; align-items: flex-end; padding: 8px; font-size: .76rem; font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0,0,0,.45);
+    }
+    .d-linear  { background-image: linear-gradient(to bottom right, #E63946, #FFC107, #1D559F); }
+    .d-linear2 { background-image: linear-gradient(90deg, #04AA6D 0%, #04AA6D 50%, #FFC107 50%, #FFC107 100%); } /* dải cứng */
+    .d-radial  { background-image: radial-gradient(circle, #FFC107, #E63946 60%, #1D559F); }
+    .d-conic   { background-image: conic-gradient(#04AA6D, #1D559F, #6c5ce7, #FFC107, #04AA6D); border-radius: 50%; }
+    .d-multi   { /* nhiều lớp nền cùng lúc */
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.45), transparent 40%),
+        linear-gradient(135deg, #6c5ce7, #1D559F);
+    }
+
+    /* 5) font-family — web-safe stacks */
+    .d-serif { font-family: Georgia, "Times New Roman", Times, serif; }
+    .d-sans  { font-family: Arial, Helvetica, "Segoe UI", sans-serif; }
+    .d-mono  { font-family: "Courier New", Consolas, monospace; }
+    .d-cursive { font-family: "Comic Sans MS", cursive; }
+    .d-fontline { padding: 8px 12px; margin: 0; border-bottom: 1px solid #eef1f7; }
+
+    /* 6) font-size / weight / style / variant */
+    .d-fs-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 14px; }
+    .d-fs-16 { font-size: 16px; }
+    .d-fs-1e { font-size: 1.5em; }
+    .d-fs-1r { font-size: 1.5rem; }
+    .d-fs-pc { font-size: 120%; }
+    .d-w-normal { font-weight: normal; }
+    .d-w-bold   { font-weight: bold; }
+    .d-w-900    { font-weight: 900; }
+    .d-w-300    { font-weight: 300; }
+    .d-italic   { font-style: italic; }
+    .d-oblique  { font-style: oblique; }
+    .d-smallcaps{ font-variant: small-caps; }
+
+    /* 7) line-height & font shorthand */
+    .d-lh-box { background: #f1f5f9; border-radius: 8px; padding: 4px 12px; }
+    .d-lh-1   { line-height: 1; }
+    .d-lh-15  { line-height: 1.5; }
+    .d-lh-2   { line-height: 2; }
+    /* font shorthand: style variant weight size/line-height family */
+    .d-font-sh { font: italic small-caps bold 20px/1.4 Georgia, serif; margin: 0; }
+
+    /* 8) web font (chỉ minh hoạ kết quả bằng font hệ thống thay thế) */
+    .d-webfont-demo { font-family: Georgia, serif; font-size: 1.4rem; color: #1D559F; }
+
+    /* 9) text-align / decoration / transform / indent */
+    .d-ta-left   { text-align: left; }
+    .d-ta-center { text-align: center; }
+    .d-ta-right  { text-align: right; }
+    .d-ta-just   { text-align: justify; }
+    .d-ta-box p  { background: #f1f5f9; border-radius: 6px; padding: 6px 10px; margin: 4px 0; }
+    .d-td-under  { text-decoration: underline; }
+    .d-td-line   { text-decoration: line-through; }
+    .d-td-over   { text-decoration: overline; }
+    .d-td-fancy  { text-decoration: underline wavy #E63946; }
+    .d-tt-cap    { text-transform: capitalize; }
+    .d-tt-up     { text-transform: uppercase; }
+    .d-tt-low    { text-transform: lowercase; }
+    .d-indent    { text-indent: 50px; background: #f1f5f9; border-radius: 6px; padding: 6px 10px; }
+
+    /* 10) letter / word-spacing · white-space */
+    .d-ls   { letter-spacing: 4px; }
+    .d-ws   { word-spacing: 16px; }
+    .d-lsneg{ letter-spacing: -1px; }
+    .d-nowrap  { white-space: nowrap;  background:#f1f5f9; border-radius:6px; padding:6px 10px; overflow:auto; }
+    .d-pre     { white-space: pre;     background:#f1f5f9; border-radius:6px; padding:6px 10px; overflow:auto; }
+    .d-prewrap { white-space: pre-wrap;background:#f1f5f9; border-radius:6px; padding:6px 10px; }
+
+    /* 11) text-shadow */
+    .d-shadow1 { color:#1D559F; font-size:2rem; font-weight:bold; text-shadow: 3px 3px 2px #b7c9e6; }
+    .d-shadow2 { color:#fff;    font-size:2rem; font-weight:bold; text-shadow: 0 0 8px #04AA6D, 0 0 16px #04AA6D; }
+    .d-shadow3 { color:#FFC107; font-size:2rem; font-weight:900; background:#16407a; padding:6px 12px; border-radius:8px;
+                 text-shadow: -1px -1px 0 #16407a, 1px 1px 0 #E63946, 3px 3px 5px rgba(0,0,0,.4); }
+    .d-shadow-row { display:flex; flex-wrap:wrap; gap:18px; align-items:center; }
+
+    /* 12) text-overflow: ellipsis */
+    .d-ellipsis {
+      max-width: 260px; background: #fff8e6; border: 1px solid #ffe39a;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      padding: 8px 10px; border-radius: 6px;
+    }
+    .d-clip {
+      max-width: 260px; background: #f1f5f9; border: 1px solid #cfd8e6;
+      white-space: nowrap; overflow: hidden; text-overflow: clip;
+      padding: 8px 10px; border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.2 CSS</a><span>›</span>
+        Background · Font · Text
+      </nav>
+      <h1>Background · Font · Text — tạo diện mạo cho trang</h1>
+      <p class="sub">Ba nhóm thuộc tính làm nên "vẻ ngoài" của một trang web: tô <strong>nền</strong> (màu, ảnh, gradient),
+         chọn <strong>phông chữ</strong> (font-family, size, weight) và trang trí <strong>chữ</strong> (căn lề, gạch chân,
+         giãn cách, đổ bóng). Đi từ cách viết màu cơ bản đến gradient, web font và hiệu ứng chữ.</p>
+      <div class="chips">
+        <span class="chip solid">2.2.4</span>
+        <span class="chip">CSS cơ bản</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">background-color &amp; cách viết màu</a></li>
+        <li><a href="#s2">background-image · repeat · position</a></li>
+        <li><a href="#s3">background-size &amp; shorthand</a></li>
+        <li><a href="#s4">Gradient (linear · radial · conic)</a></li>
+        <li><a href="#s5">font-family &amp; generic family</a></li>
+        <li><a href="#s6">font-size · weight · style · variant</a></li>
+        <li><a href="#s7">line-height &amp; font shorthand</a></li>
+        <li><a href="#s8">@font-face &amp; Google Fonts</a></li>
+        <li><a href="#s9">text-align · decoration · transform · indent</a></li>
+        <li><a href="#s10">letter/word-spacing · white-space</a></li>
+        <li><a href="#s11">text-shadow</a></li>
+        <li><a href="#s12">text-overflow: ellipsis</a></li>
+        <li><a href="#s13">Mẹo &amp; tổng kết</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. BACKGROUND-COLOR & MÀU  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> <code>background-color</code> &amp; cách viết màu <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Cách đơn giản nhất để tô nền là đặt một <strong>màu</strong>. CSS có nhiều cách viết màu:
+         tên màu, mã <em>HEX</em>, hàm <em>RGB/RGBA</em> và <em>HSL/HSLA</em>. Hiểu các cách này dùng được cho
+         mọi thuộc tính màu (<code>color</code>, <code>border-color</code>…).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · cùng nhóm màu viết theo nhiều cách</div>
+        <div class="demo-body">
+          <div class="d-colors">
+            <div class="d-swatch d-c-name">name<br>steelblue</div>
+            <div class="d-swatch d-c-hex">HEX<br>#1D559F</div>
+            <div class="d-swatch d-c-rgb">RGB<br>rgb(4,170,109)</div>
+            <div class="d-swatch d-c-rgba">RGBA<br>alpha .45</div>
+            <div class="d-swatch d-c-hsl">HSL<br>hsl(258,70%,64%)</div>
+            <div class="d-swatch d-c-hsla">HSLA<br>alpha .45</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>HEX</strong> <code>#RRGGBB</code> — mỗi cặp 2 ký tự là đỏ/lục/lam ở hệ 16 (00–FF). Viết tắt 3 ký tự
+           <code>#abc</code> = <code>#aabbcc</code>. Có thể thêm độ mờ: <code>#1D559F80</code> (8 ký tự).</p>
+        <p><strong>RGB</strong> <code>rgb(đỏ, lục, lam)</code> mỗi kênh 0–255. <strong>RGBA</strong> thêm kênh alpha 0–1
+           (độ trong). <strong>HSL</strong> <code>hsl(màu, độ-bão-hoà%, độ-sáng%)</code> trực quan hơn khi chỉnh sắc độ.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Bốn cách viết cùng một màu xanh lá nhấn</caption>
+        <thead><tr><th>Cách</th><th>Cú pháp</th><th>Ví dụ (#04AA6D)</th></tr></thead>
+        <tbody>
+          <tr><td>Tên màu</td><td><code>color-name</code></td><td>không có tên chính xác — chỉ ~140 tên chuẩn</td></tr>
+          <tr><td>HEX</td><td><code>#RRGGBB</code></td><td><code>#04AA6D</code></td></tr>
+          <tr><td>RGB</td><td><code>rgb(r,g,b)</code></td><td><code>rgb(4, 170, 109)</code></td></tr>
+          <tr><td>HSL</td><td><code>hsl(h, s%, l%)</code></td><td><code>hsl(158, 95%, 34%)</code></td></tr>
+          <tr><td>+ alpha</td><td><code>rgba(...,a)</code> / <code>hsla(...,a)</code></td><td><code>rgba(4,170,109,.5)</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="k">background-color</span>: <span class="v">steelblue</span>;            <span class="c">/* tên màu  */</span>
+<span class="k">background-color</span>: <span class="v">#1D559F</span>;               <span class="c">/* HEX      */</span>
+<span class="k">background-color</span>: <span class="v">rgb(4, 170, 109)</span>;      <span class="c">/* RGB      */</span>
+<span class="k">background-color</span>: <span class="v">rgba(4, 170, 109, .45)</span>; <span class="c">/* + alpha  */</span>
+<span class="k">background-color</span>: <span class="v">hsl(258, 70%, 64%)</span>;    <span class="c">/* HSL      */</span></code></pre>
+    </section>
+
+    <!-- ==========  2. BACKGROUND-IMAGE / REPEAT / POSITION  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Ảnh nền: <code>image · repeat · position · attachment</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Đặt một ảnh làm nền bằng <code>background-image: url(...)</code>. Mặc định ảnh sẽ
+         <strong>lặp lại</strong> (tile) cho kín. Điều khiển bằng <code>background-repeat</code>,
+         vị trí bằng <code>background-position</code>, và cuộn hay cố định bằng <code>background-attachment</code>.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">repeat (mặc định — lặp kín)</div>
+          <div class="demo-body"><div class="d-bg-base d-bg-repeat">repeat</div></div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">no-repeat (chỉ 1 ảnh)</div>
+          <div class="demo-body"><div class="d-bg-base d-bg-norepeat">no-repeat</div></div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">repeat-x (chỉ lặp theo hàng ngang)</div>
+          <div class="demo-body"><div class="d-bg-base d-bg-repx">repeat-x</div></div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">position: right bottom</div>
+          <div class="demo-body"><div class="d-bg-base d-bg-pos">góc phải dưới</div></div>
+        </div>
+      </div>
+
+      <h3>background-attachment — nền cuộn hay đứng yên</h3>
+      <div class="demo">
+        <div class="demo-bar">Cuộn nội dung bên trong khung để quan sát nền</div>
+        <div class="demo-body">
+          <div class="d-scroll"><div class="pad">
+            <p>Cuộn xuống…</p><p>nền có thể cố định</p><p>hoặc cuộn theo</p>
+            <p>tuỳ <code>background-attachment</code></p><p>fixed / scroll / local</p>
+            <p>thêm dòng để có thanh cuộn</p><p>thêm dòng nữa</p><p>và nữa</p>
+          </div></div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Giá trị thường dùng</caption>
+        <thead><tr><th>Thuộc tính</th><th>Giá trị</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>background-repeat</code></td><td><code>repeat</code> / <code>no-repeat</code> / <code>repeat-x</code> / <code>repeat-y</code> / <code>space</code> / <code>round</code></td><td>Cách lặp ảnh nền.</td></tr>
+          <tr><td><code>background-position</code></td><td><code>left top</code> · <code>center</code> · <code>right bottom</code> · <code>20px 50%</code></td><td>Vị trí đặt ảnh (từ khoá hoặc toạ độ x y).</td></tr>
+          <tr><td><code>background-attachment</code></td><td><code>scroll</code> (mặc định) · <code>fixed</code> · <code>local</code></td><td>Nền cuộn theo trang, cố định, hay cuộn theo nội dung.</td></tr>
+          <tr><td><code>background-origin</code> / <code>-clip</code></td><td><code>padding-box</code> · <code>border-box</code> · <code>content-box</code></td><td>Vùng tính gốc / vùng cắt của nền (nâng cao).</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="k">background-image</span>: <span class="v">url(</span><span class="s">"../../assets/sky.svg"</span><span class="v">)</span>;
+<span class="k">background-repeat</span>: <span class="v">no-repeat</span>;
+<span class="k">background-position</span>: <span class="v">center</span>;
+<span class="k">background-attachment</span>: <span class="v">fixed</span>;  <span class="c">/* nền đứng yên khi cuộn trang */</span></code></pre>
+      <div class="callout info"><p>Đường dẫn trong <code>url()</code> tính <strong>tương đối với file CSS</strong> (nếu CSS rời),
+        không phải file HTML. Trong bài này CSS minh hoạ nằm ngay trong <code>&lt;style&gt;</code> nên <code>../../assets/…</code> tính từ file HTML.</p></div>
+    </section>
+
+    <!-- ==========  3. BACKGROUND-SIZE & SHORTHAND  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> <code>background-size</code> &amp; thuộc tính rút gọn <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Điều khiển kích thước ảnh nền: <code>cover</code> (phủ kín, có thể cắt),
+         <code>contain</code> (vừa khít, không cắt), hoặc số đo cụ thể (<code>px</code>/<code>%</code>).
+         Cuối cùng gộp tất cả lại bằng thuộc tính rút gọn <code>background</code>.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">cover — phủ kín (cắt bớt)</div>
+          <div class="demo-body"><div class="d-size d-size-cover">cover</div></div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">contain — vừa khít (chừa nền)</div>
+          <div class="demo-body"><div class="d-size d-size-contain">contain</div></div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">100px 60px — số đo cố định</div>
+          <div class="demo-body"><div class="d-size d-size-px">100px × 60px</div></div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">100% 100% — kéo méo cho đầy</div>
+          <div class="demo-body"><div class="d-size d-size-pct">100% 100%</div></div>
+        </div>
+      </div>
+
+      <h3>Thuộc tính rút gọn <code>background</code></h3>
+      <p class="lead">Gộp <code>color</code>, <code>image</code>, <code>repeat</code>, <code>position</code> và
+         <code>size</code> (sau dấu <code>/</code>) trong một dòng.</p>
+      <div class="demo">
+        <div class="demo-bar">background: color image no-repeat center / cover</div>
+        <div class="demo-body"><div class="d-bg-short">shorthand một dòng</div></div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* dạng đầy đủ */</span>
+<span class="k">background-color</span>:    <span class="v">#16407a</span>;
+<span class="k">background-image</span>:    <span class="v">url(</span><span class="s">"../../assets/sky.svg"</span><span class="v">)</span>;
+<span class="k">background-repeat</span>:   <span class="v">no-repeat</span>;
+<span class="k">background-position</span>: <span class="v">center</span>;
+<span class="k">background-size</span>:     <span class="v">cover</span>;
+
+<span class="c">/* dạng rút gọn tương đương (size đứng sau dấu / position) */</span>
+<span class="k">background</span>: <span class="v">#16407a url(</span><span class="s">"../../assets/sky.svg"</span><span class="v">) no-repeat center / cover</span>;</code></pre>
+      <div class="callout tip"><p><code>cover</code> là lựa chọn phổ biến nhất cho ảnh banner/hero: luôn phủ kín khung
+        dù màn hình rộng hẹp ra sao. Kết hợp <code>background-position: center</code> để giữ phần quan trọng ở giữa.</p></div>
+    </section>
+
+    <!-- ==========  4. GRADIENT  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Gradient — chuyển màu mượt <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Gradient là <em>ảnh do CSS tự sinh</em> (không cần file ảnh), đặt qua <code>background-image</code>.
+         Ba kiểu: <code>linear-gradient</code> (theo đường thẳng), <code>radial-gradient</code> (toả tròn),
+         <code>conic-gradient</code> (xoay quanh tâm). Có thể chồng nhiều lớp nền.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">linear-gradient — chéo, 3 màu</div>
+          <div class="demo-body"><div class="d-grad d-linear">to bottom right</div></div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">linear-gradient — dải màu cứng (50%)</div>
+          <div class="demo-body"><div class="d-grad d-linear2">color stops</div></div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">radial-gradient — toả tròn</div>
+          <div class="demo-body"><div class="d-grad d-radial">circle</div></div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">conic-gradient — xoay quanh tâm</div>
+          <div class="demo-body" style="display:flex;justify-content:center">
+            <div class="d-grad d-conic" style="width:110px"></div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Nhiều lớp nền cùng lúc</h3>
+      <div class="demo">
+        <div class="demo-bar">background-image nhận nhiều giá trị, cách nhau bằng dấu phẩy</div>
+        <div class="demo-body"><div class="d-grad d-multi">2 lớp: đốm sáng + nền chéo</div></div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* linear: hướng (góc hoặc to ...) rồi danh sách màu, có thể thêm % vị trí */</span>
+<span class="k">background-image</span>: <span class="v">linear-gradient(to bottom right, #E63946, #FFC107, #1D559F)</span>;
+<span class="k">background-image</span>: <span class="v">linear-gradient(90deg, #04AA6D 50%, #FFC107 50%)</span>; <span class="c">/* dải cứng */</span>
+
+<span class="c">/* radial: toả từ tâm ra */</span>
+<span class="k">background-image</span>: <span class="v">radial-gradient(circle, #FFC107, #E63946 60%, #1D559F)</span>;
+
+<span class="c">/* conic: quét vòng quanh tâm (làm biểu đồ tròn, bánh xe màu) */</span>
+<span class="k">background-image</span>: <span class="v">conic-gradient(#04AA6D, #1D559F, #6c5ce7, #FFC107, #04AA6D)</span>;
+
+<span class="c">/* nhiều lớp: lớp đầu nằm TRÊN cùng */</span>
+<span class="k">background-image</span>:
+  <span class="v">radial-gradient(circle at 20% 20%, rgba(255,255,255,.45), transparent 40%)</span>,
+  <span class="v">linear-gradient(135deg, #6c5ce7, #1D559F)</span>;</code></pre>
+      <div class="callout info"><p>Mỗi màu trong gradient gọi là một <strong>color-stop</strong>. Đặt hai stop cùng vị trí
+        (vd <code>#04AA6D 50%, #FFC107 50%</code>) sẽ tạo <em>ranh giới cứng</em> thay vì chuyển mượt — kỹ thuật làm sọc/cờ.</p></div>
+    </section>
+
+    <!-- ==========  5. FONT-FAMILY  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> <code>font-family</code> &amp; nhóm phông tổng quát <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>font-family</code> là một <strong>danh sách</strong> ("font stack"): trình duyệt thử lần lượt từ
+         trái sang phải, dùng font đầu tiên có sẵn trên máy. Phần tử <strong>cuối</strong> luôn nên là một
+         <em>generic family</em> (serif / sans-serif / monospace…) làm "lưới an toàn".</p>
+
+      <div class="demo">
+        <div class="demo-bar">Năm nhóm tổng quát (generic family)</div>
+        <div class="demo-body" style="background:#fff;border-radius:8px">
+          <p class="d-fontline d-serif">serif — có "chân" ở cuối nét (Georgia, Times). Thanh lịch, hợp văn bản dài.</p>
+          <p class="d-fontline d-sans">sans-serif — không chân (Arial, Helvetica). Sạch, hiện đại, dễ đọc trên màn hình.</p>
+          <p class="d-fontline d-mono">monospace — mọi ký tự rộng bằng nhau (Courier New). Hợp mã nguồn.</p>
+          <p class="d-fontline d-cursive">cursive — kiểu viết tay (Comic Sans MS). Dùng hạn chế.</p>
+          <p class="d-fontline" style="border-bottom:none">fantasy — kiểu trang trí (tuỳ hệ điều hành).</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>Quy tắc viết: tên font có khoảng trắng phải đặt trong dấu nháy — <code>"Times New Roman"</code>;
+           generic family <strong>không</strong> cần nháy — <code>serif</code>, <code>sans-serif</code>.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Vài "web-safe font stack" thông dụng</caption>
+        <thead><tr><th>Nhóm</th><th>Font stack gợi ý</th></tr></thead>
+        <tbody>
+          <tr><td>Sans-serif</td><td><code>Arial, Helvetica, sans-serif</code></td></tr>
+          <tr><td>Sans hiện đại</td><td><code>"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif</code></td></tr>
+          <tr><td>Serif</td><td><code>Georgia, "Times New Roman", Times, serif</code></td></tr>
+          <tr><td>Monospace</td><td><code>"Courier New", Consolas, monospace</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* duyệt trái → phải; "Helvetica Neue" có dấu cách nên phải để trong nháy */</span>
+<span class="k">font-family</span>: <span class="v">"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif</span>;</code></pre>
+    </section>
+
+    <!-- ==========  6. FONT-SIZE / WEIGHT / STYLE / VARIANT  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> <code>font-size · weight · style · variant</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Bốn thuộc tính tinh chỉnh phông chữ: cỡ chữ, độ đậm, dáng nghiêng và biến thể.</p>
+
+      <h3>font-size — đơn vị px / em / rem / %</h3>
+      <div class="demo">
+        <div class="demo-bar">Cùng dòng, khác đơn vị (gốc 16px)</div>
+        <div class="demo-body">
+          <div class="d-fs-row">
+            <span class="d-fs-16">16px</span>
+            <span class="d-fs-1e">1.5em</span>
+            <span class="d-fs-1r">1.5rem</span>
+            <span class="d-fs-pc">120%</span>
+          </div>
+        </div>
+      </div>
+      <div class="note">
+        <p><code>px</code> tuyệt đối. <code>em</code> nhân theo cỡ chữ của <strong>thẻ cha</strong> (dễ "dồn" khi lồng nhau).
+           <code>rem</code> nhân theo cỡ chữ của thẻ <code>&lt;html&gt;</code> (gốc, mặc định 16px) — ổn định, được khuyên dùng.
+           <code>%</code> tương tự <code>em</code>.</p>
+      </div>
+
+      <h3>font-weight · font-style · font-variant</h3>
+      <div class="demo">
+        <div class="demo-bar">Độ đậm, dáng nghiêng, biến thể</div>
+        <div class="demo-body">
+          <p class="d-w-300">font-weight: 300 (mảnh)</p>
+          <p class="d-w-normal">font-weight: normal = 400</p>
+          <p class="d-w-bold">font-weight: bold = 700</p>
+          <p class="d-w-900">font-weight: 900 (rất đậm)</p>
+          <p class="d-italic">font-style: italic — chữ nghiêng</p>
+          <p class="d-oblique">font-style: oblique — nghiêng "ép"</p>
+          <p class="d-smallcaps">font-variant: small-caps — chữ Thường Thành Hoa Nhỏ</p>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <thead><tr><th>Thuộc tính</th><th>Giá trị tiêu biểu</th></tr></thead>
+        <tbody>
+          <tr><td><code>font-size</code></td><td><code>16px</code> · <code>1.2em</code> · <code>1.2rem</code> · <code>120%</code> · <code>larger</code></td></tr>
+          <tr><td><code>font-weight</code></td><td><code>normal</code>(400) · <code>bold</code>(700) · <code>100…900</code> · <code>lighter</code>/<code>bolder</code></td></tr>
+          <tr><td><code>font-style</code></td><td><code>normal</code> · <code>italic</code> · <code>oblique</code></td></tr>
+          <tr><td><code>font-variant</code></td><td><code>normal</code> · <code>small-caps</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout tip"><p>Nên dùng <code>rem</code> cho <code>font-size</code> để toàn trang co giãn đồng bộ khi người dùng
+        đổi cỡ chữ trình duyệt — tốt cho khả năng tiếp cận (accessibility).</p></div>
+    </section>
+
+    <!-- ==========  7. LINE-HEIGHT & FONT SHORTHAND  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> <code>line-height</code> &amp; thuộc tính rút gọn <code>font</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>line-height</code> đặt khoảng cách giữa các dòng (giãn dòng). Số <em>không đơn vị</em>
+         (vd <code>1.5</code>) là cách tốt nhất: nó nhân theo cỡ chữ hiện tại.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">line-height: 1 (chật)</div>
+          <div class="demo-body"><div class="d-lh-box d-lh-1">Dòng một của đoạn văn.<br>Dòng hai sát nhau.<br>Dòng ba khó đọc.</div></div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">line-height: 1.5 (khuyên dùng)</div>
+          <div class="demo-body"><div class="d-lh-box d-lh-15">Dòng một của đoạn văn.<br>Dòng hai thoáng hơn.<br>Dòng ba dễ đọc.</div></div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">line-height: 2 (rộng)</div>
+          <div class="demo-body"><div class="d-lh-box d-lh-2">Dòng một của đoạn văn.<br>Dòng hai rất thoáng.<br>Dòng ba.</div></div>
+        </div>
+      </div>
+
+      <h3>Thuộc tính rút gọn <code>font</code></h3>
+      <p class="lead">Gộp nhiều thuộc tính font vào một dòng. Thứ tự bắt buộc:
+         <code>style variant weight size/line-height family</code> — trong đó <code>size</code> và <code>family</code>
+         là <strong>bắt buộc</strong>.</p>
+      <div class="demo">
+        <div class="demo-bar">font: italic small-caps bold 20px/1.4 Georgia, serif</div>
+        <div class="demo-body"><p class="d-font-sh">Web Design — một dòng gộp đủ thứ.</p></div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* dạng đầy đủ */</span>
+<span class="k">font-style</span>:   <span class="v">italic</span>;
+<span class="k">font-variant</span>: <span class="v">small-caps</span>;
+<span class="k">font-weight</span>:  <span class="v">bold</span>;
+<span class="k">font-size</span>:    <span class="v">20px</span>;
+<span class="k">line-height</span>:  <span class="v">1.4</span>;
+<span class="k">font-family</span>:  <span class="v">Georgia, serif</span>;
+
+<span class="c">/* dạng rút gọn tương đương — size/line-height đi liền nhau */</span>
+<span class="k">font</span>: <span class="v">italic small-caps bold 20px/1.4 Georgia, serif</span>;</code></pre>
+      <div class="callout warn"><p>Với shorthand <code>font</code>, nếu bỏ <code>size</code> hoặc <code>family</code> thì <strong>cả dòng bị bỏ qua</strong>.
+        Ngoài ra <code>font</code> sẽ <em>đặt lại</em> các thuộc tính không ghi về giá trị mặc định.</p></div>
+    </section>
+
+    <!-- ==========  8. WEB FONTS  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Web fonts: <code>@font-face</code> &amp; Google Fonts <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Để dùng phông <strong>không có sẵn</strong> trên máy người xem, ta nhúng "web font". Hai cách:
+         tự đặt file font với <code>@font-face</code>, hoặc nạp từ dịch vụ như <strong>Google Fonts</strong>.</p>
+
+      <div class="callout warn"><p><strong>Cần Internet / file font.</strong> Vì bài này chạy <em>offline</em>, các đoạn dưới chỉ là
+        <strong>mã mẫu để tham khảo</strong>. Demo trực quan dưới đây dùng font hệ thống (Georgia) thay cho web font thật.</p></div>
+
+      <div class="demo">
+        <div class="demo-bar">Demo mô phỏng (dùng Georgia thay cho web font)</div>
+        <div class="demo-body"><p class="d-webfont-demo">Tiêu đề bằng web font sẽ trông như thế này.</p></div>
+      </div>
+
+      <h3>Cách 1 — tự đặt file font với <code>@font-face</code></h3>
+      <pre class="code"><code><span class="c">/* khai báo phông tuỳ chỉnh từ file .woff2 đặt cùng dự án */</span>
+<span class="k">@font-face</span> {
+  <span class="k">font-family</span>: <span class="s">"MyFont"</span>;
+  <span class="k">src</span>: <span class="v">url(</span><span class="s">"../../assets/fonts/myfont.woff2"</span><span class="v">) format(</span><span class="s">"woff2"</span><span class="v">)</span>;
+  <span class="k">font-weight</span>: <span class="v">400 700</span>;        <span class="c">/* dải độ đậm hỗ trợ */</span>
+  <span class="k">font-display</span>: <span class="v">swap</span>;            <span class="c">/* hiện chữ ngay bằng font tạm, đổi sau khi tải xong */</span>
+}
+<span class="k">body</span> { <span class="k">font-family</span>: <span class="v">"MyFont", Arial, sans-serif</span>; }</code></pre>
+
+      <h3>Cách 2 — Google Fonts</h3>
+      <p class="lead">Thêm <code>&lt;link&gt;</code> trong <code>&lt;head&gt;</code> rồi gọi tên font trong CSS:</p>
+      <pre class="code"><code><span class="c">&lt;!-- đặt trong &lt;head&gt; của trang HTML --&gt;</span>
+<span class="k">&lt;link</span> <span class="v">rel</span>=<span class="s">"preconnect"</span> <span class="v">href</span>=<span class="s">"https://fonts.googleapis.com"</span><span class="k">&gt;</span>
+<span class="k">&lt;link</span> <span class="v">href</span>=<span class="s">"https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap"</span>
+      <span class="v">rel</span>=<span class="s">"stylesheet"</span><span class="k">&gt;</span>
+
+<span class="c">/* trong CSS */</span>
+<span class="k">body</span> { <span class="k">font-family</span>: <span class="v">"Roboto", Arial, sans-serif</span>; }</code></pre>
+
+      <div class="callout tip"><p>Luôn thêm <code>display=swap</code> (Google Fonts) hoặc <code>font-display: swap</code> (@font-face):
+        trình duyệt hiển thị chữ ngay bằng font dự phòng trong lúc tải web font, tránh "màn hình trắng chữ" (FOIT).</p></div>
+      <div class="callout info"><p>Vẫn nên để font hệ thống ở <strong>cuối</strong> font stack (<code>"Roboto", Arial, sans-serif</code>):
+        nếu mạng lỗi hoặc web font tải hỏng, trang vẫn có chữ đọc được.</p></div>
+    </section>
+
+    <!-- ==========  9. TEXT-ALIGN / DECORATION / TRANSFORM / INDENT  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> <code>text-align · decoration · transform · indent</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Nhóm thuộc tính căn lề và trang trí chữ — dùng cực kỳ thường xuyên.</p>
+
+      <h3>text-align — căn lề ngang</h3>
+      <div class="demo">
+        <div class="demo-bar">left · center · right · justify</div>
+        <div class="demo-body d-ta-box">
+          <p class="d-ta-left">left — căn trái (mặc định với tiếng Việt/Anh).</p>
+          <p class="d-ta-center">center — căn giữa.</p>
+          <p class="d-ta-right">right — căn phải.</p>
+          <p class="d-ta-just">justify — căn đều hai bên: kéo giãn khoảng cách từ cho mép phải thẳng hàng như sách báo in truyền thống.</p>
+        </div>
+      </div>
+
+      <h3>text-decoration — gạch chân / ngang / trên</h3>
+      <div class="demo">
+        <div class="demo-bar">underline · line-through · overline · wavy</div>
+        <div class="demo-body">
+          <p class="d-td-under">underline — gạch chân</p>
+          <p class="d-td-line">line-through — gạch ngang (giá cũ…)</p>
+          <p class="d-td-over">overline — gạch trên</p>
+          <p class="d-td-fancy">underline wavy #E63946 — gạch lượn sóng đỏ</p>
+        </div>
+      </div>
+
+      <h3>text-transform &amp; text-indent</h3>
+      <div class="demo">
+        <div class="demo-bar">Đổi HOA/thường &amp; thụt dòng đầu</div>
+        <div class="demo-body">
+          <p class="d-tt-cap">cascading style sheet → Hoa Đầu Mỗi Từ</p>
+          <p class="d-tt-up">cascading style sheet → HOA HẾT</p>
+          <p class="d-tt-low">CASCADING STYLE SHEET → thường hết</p>
+          <p class="d-indent">text-indent: 50px — dòng đầu của đoạn này được thụt vào 50px như văn bản in.</p>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <thead><tr><th>Thuộc tính</th><th>Giá trị tiêu biểu</th></tr></thead>
+        <tbody>
+          <tr><td><code>text-align</code></td><td><code>left</code> · <code>center</code> · <code>right</code> · <code>justify</code></td></tr>
+          <tr><td><code>text-decoration</code></td><td><code>none</code> · <code>underline</code> · <code>line-through</code> · <code>overline</code> (+ kiểu/màu)</td></tr>
+          <tr><td><code>text-transform</code></td><td><code>none</code> · <code>capitalize</code> · <code>uppercase</code> · <code>lowercase</code></td></tr>
+          <tr><td><code>text-indent</code></td><td><code>50px</code> · <code>2em</code> · <code>10%</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p>Bỏ gạch chân mặc định của liên kết bằng <code>a { text-decoration: none; }</code> — một trong những
+        dòng CSS hay gặp nhất khi làm menu/nút.</p></div>
+    </section>
+
+    <!-- ==========  10. SPACING & WHITE-SPACE  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> <code>letter-spacing · word-spacing · white-space</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Tinh chỉnh khoảng cách giữa <strong>chữ cái</strong>, giữa <strong>từ</strong>, và cách xử lý
+         <strong>khoảng trắng/xuống dòng</strong>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">letter-spacing &amp; word-spacing</div>
+        <div class="demo-body">
+          <p>Bình thường: thiết kế web hiện đại.</p>
+          <p class="d-ls">letter-spacing: 4px — giãn chữ cái.</p>
+          <p class="d-ws">word-spacing: 16px — giãn khoảng cách giữa các từ.</p>
+          <p class="d-lsneg">letter-spacing: -1px — co chữ lại sát hơn.</p>
+        </div>
+      </div>
+
+      <h3>white-space — xử lý khoảng trắng &amp; xuống dòng</h3>
+      <div class="demo">
+        <div class="demo-bar">nowrap · pre · pre-wrap</div>
+        <div class="demo-body">
+          <p class="d-nowrap">nowrap: không bao giờ tự xuống dòng, dù chuỗi rất dài rất dài rất dài rất dài rất dài — sinh thanh cuộn ngang.</p>
+          <p class="d-pre">pre: giữ   nguyên    khoảng trắng
+và các dòng        xuống dòng đúng như viết trong HTML.</p>
+          <p class="d-prewrap">pre-wrap: giữ khoảng trắng   nhưng   vẫn tự xuống dòng khi chạm mép khung như thế này.</p>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Tóm tắt giá trị <code>white-space</code></caption>
+        <thead><tr><th>Giá trị</th><th>Gộp khoảng trắng?</th><th>Tự xuống dòng?</th><th>Giữ xuống dòng nguồn?</th></tr></thead>
+        <tbody>
+          <tr><td><code>normal</code></td><td>Có (gộp)</td><td>Có</td><td>Không</td></tr>
+          <tr><td><code>nowrap</code></td><td>Có (gộp)</td><td>Không</td><td>Không</td></tr>
+          <tr><td><code>pre</code></td><td>Không (giữ)</td><td>Không</td><td>Có</td></tr>
+          <tr><td><code>pre-wrap</code></td><td>Không (giữ)</td><td>Có</td><td>Có</td></tr>
+          <tr><td><code>pre-line</code></td><td>Có (gộp)</td><td>Có</td><td>Có</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  11. TEXT-SHADOW  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> <code>text-shadow</code> — đổ bóng chữ <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Cú pháp: <code>text-shadow: x y blur color</code> — độ lệch ngang, độ lệch dọc, độ nhoè, màu.
+         Có thể liệt kê <strong>nhiều bóng</strong> cách nhau bằng dấu phẩy để tạo viền/phát sáng.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Ba kiểu đổ bóng</div>
+        <div class="demo-body d-shadow-row">
+          <span class="d-shadow1">Bóng mềm</span>
+          <span class="d-shadow2" style="background:#16407a;padding:6px 12px;border-radius:8px">Phát sáng</span>
+          <span class="d-shadow3">Viền nổi</span>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* x  y  blur  color */</span>
+<span class="k">text-shadow</span>: <span class="v">3px 3px 2px #b7c9e6</span>;                      <span class="c">/* bóng mềm đơn giản */</span>
+
+<span class="c">/* nhiều bóng → hiệu ứng phát sáng (glow) */</span>
+<span class="k">text-shadow</span>: <span class="v">0 0 8px #04AA6D, 0 0 16px #04AA6D</span>;
+
+<span class="c">/* xếp lớp tạo cảm giác chữ nổi có viền */</span>
+<span class="k">text-shadow</span>:
+  <span class="v">-1px -1px 0 #16407a</span>,
+  <span class="v">1px 1px 0 #E63946</span>,
+  <span class="v">3px 3px 5px rgba(0,0,0,.4)</span>;</code></pre>
+      <div class="callout warn"><p>Dùng đổ bóng vừa phải. Bóng quá đậm/quá nhiều làm chữ <strong>khó đọc</strong> và trông rối.
+        Với tiêu đề lớn, một bóng mềm nhẹ thường là đủ.</p></div>
+    </section>
+
+    <!-- ==========  12. TEXT-OVERFLOW: ELLIPSIS  ========== -->
+    <section class="block" id="s12">
+      <h2><span class="num">12</span> <code>text-overflow: ellipsis</code> — cắt chữ "…" <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Cắt gọn chuỗi quá dài và hiện dấu ba chấm <strong>…</strong>. Cần đủ <strong>ba</strong> thuộc tính
+         đi cùng nhau, nếu thiếu một sẽ không hiện được dấu ba chấm.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">text-overflow: ellipsis (có dấu …)</div>
+          <div class="demo-body">
+            <div class="d-ellipsis">Đây là một tiêu đề rất dài sẽ bị cắt gọn và hiển thị dấu ba chấm ở cuối.</div>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">text-overflow: clip (cắt cụt, không dấu)</div>
+          <div class="demo-body">
+            <div class="d-clip">Đây là một tiêu đề rất dài sẽ bị cắt cụt ngay không có dấu ba chấm.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>Công thức "kiềng ba chân" để có dấu …:</p>
+        <p><code>white-space: nowrap;</code> (không xuống dòng) + <code>overflow: hidden;</code> (giấu phần tràn) +
+           <code>text-overflow: ellipsis;</code> (thay phần ẩn bằng …). Và phần tử phải có <strong>chiều rộng giới hạn</strong>
+           (vd <code>max-width</code>).</p>
+      </div>
+
+      <pre class="code"><code>.tieu-de {
+  <span class="k">max-width</span>: <span class="v">260px</span>;        <span class="c">/* phải có giới hạn rộng */</span>
+  <span class="k">white-space</span>: <span class="v">nowrap</span>;     <span class="c">/* 1) không cho xuống dòng */</span>
+  <span class="k">overflow</span>: <span class="v">hidden</span>;        <span class="c">/* 2) giấu phần tràn ra */</span>
+  <span class="k">text-overflow</span>: <span class="v">ellipsis</span>; <span class="c">/* 3) thay bằng dấu …    */</span>
+}</code></pre>
+      <div class="callout tip"><p>Muốn cắt "…" sau <em>nhiều dòng</em> (line-clamp) thì cần
+        <code>display:-webkit-box; -webkit-line-clamp:N; -webkit-box-orient:vertical; overflow:hidden;</code> — kỹ thuật riêng cho nhiều dòng.</p></div>
+    </section>
+
+    <!-- ==========  13. MẸO & TỔNG KẾT  ========== -->
+    <section class="block" id="s13">
+      <h2><span class="num">13</span> Mẹo &amp; tổng kết <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout tip"><p><strong>Mẹo 1 — cỡ chữ.</strong> Ưu tiên <code>rem</code> cho <code>font-size</code> để toàn trang
+        co giãn đồng bộ và thân thiện với người dùng đổi cỡ chữ trình duyệt.</p></div>
+      <div class="callout tip"><p><strong>Mẹo 2 — giãn dòng.</strong> Đặt <code>line-height</code> khoảng <code>1.5</code> (số không đơn vị)
+        cho văn bản dài để dễ đọc; tiêu đề có thể chật hơn (1.1–1.3).</p></div>
+      <div class="callout tip"><p><strong>Mẹo 3 — web font.</strong> Khi nhúng web font, luôn dùng <code>font-display: swap</code>
+        (hoặc <code>&amp;display=swap</code>) và để font hệ thống ở cuối <code>font-family</code> làm dự phòng.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ shorthand.</strong> Nền: <code>background: color image repeat position / size</code>.
+        Chữ: <code>font: style variant weight size/line-height family</code> (size &amp; family bắt buộc).</p></div>
+      <div class="callout warn"><p><strong>Tránh.</strong> Ảnh nền nặng làm chậm trang; chữ trên ảnh thiếu tương phản gây khó đọc —
+        hãy thêm lớp phủ tối (gradient/rgba) hoặc <code>text-shadow</code> để chữ nổi rõ.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="03-box-model.html"><small>← Bài trước</small>2.2.3 · Box Model</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="05-list-table-link.html"><small>Bài tiếp →</small>2.2.5 · List · Table · Link</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

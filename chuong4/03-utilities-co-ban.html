@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="4.4 Utilities cơ bản - Màu sắc & nền, ảnh, khoảng cách (spacing), bảng, list group, nút & nhóm nút, flex utilities trong Bootstrap 5.3.">
+  <title>4.4 · Utilities cơ bản — Chương 4</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/bootstrap-lesson.css">
+</head>
+<body>
+
+  <!-- ===== Breadcrumb ===== -->
+  <nav class="container-lg pt-3" aria-label="breadcrumb">
+    <ol class="breadcrumb small mb-0">
+      <li class="breadcrumb-item"><a href="../index.html">Môn học</a></li>
+      <li class="breadcrumb-item"><a href="index.html">Chương 4</a></li>
+      <li class="breadcrumb-item active" aria-current="page">4.4 Utilities cơ bản</li>
+    </ol>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="hero4 py-5 mt-2">
+    <div class="container-lg">
+      <h1 class="h2 fw-bold mb-2">4.4 · Các lớp Bootstrap cơ bản</h1>
+      <p class="mb-0 opacity-75">Kho lớp tiện ích (utility): tô màu, canh ảnh, đặt khoảng cách, dựng bảng, danh sách, nút và bố cục flex — chỉ bằng cách thêm class, không viết CSS.</p>
+    </div>
+  </header>
+
+  <main class="container-lg my-4" style="max-width: 960px;">
+
+    <!-- 1 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">1</span>Màu sắc &amp; nền</h2>
+      <p>Bootstrap có bộ <strong>màu ngữ nghĩa</strong> dùng chung: <code>primary</code>, <code>secondary</code>,
+         <code>success</code>, <code>danger</code>, <code>warning</code>, <code>info</code>, <code>light</code>, <code>dark</code>.
+         Ghép chúng với ba nhóm lớp:</p>
+      <ul>
+        <li><strong>Màu chữ</strong> — <code>.text-primary</code>, <code>.text-danger</code>, <code>.text-success</code>…</li>
+        <li><strong>Màu nền</strong> — <code>.bg-primary</code>, <code>.bg-warning</code>, <code>.bg-dark</code>… (chỉ đổi nền, không đổi chữ).</li>
+        <li><strong>Cặp nền + chữ</strong> — <code>.text-bg-primary</code>, <code>.text-bg-success</code>… tự chọn màu chữ tương phản cho dễ đọc.</li>
+      </ul>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <p class="text-primary mb-1">Đây là <code>.text-primary</code></p>
+          <p class="text-danger mb-1">Đây là <code>.text-danger</code></p>
+          <p class="text-success mb-3">Đây là <code>.text-success</code></p>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="badge text-bg-primary">text-bg-primary</span>
+            <span class="badge text-bg-success">text-bg-success</span>
+            <span class="badge text-bg-warning">text-bg-warning</span>
+            <span class="badge text-bg-danger">text-bg-danger</span>
+            <span class="badge text-bg-dark">text-bg-dark</span>
+          </div>
+          <div class="mt-3 p-3 bg-warning rounded">Khối này dùng <code>.bg-warning</code> (chỉ đổi nền).</div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;p</span> <span class="v">class</span>=<span class="s">"text-primary"</span><span class="k">&gt;</span>Chữ màu chính<span class="k">&lt;/p&gt;</span>
+<span class="k">&lt;p</span> <span class="v">class</span>=<span class="s">"text-danger"</span><span class="k">&gt;</span>Chữ màu nguy hiểm<span class="k">&lt;/p&gt;</span>
+
+<span class="c">&lt;!-- nền + chữ tương phản trong một lớp --&gt;</span>
+<span class="k">&lt;span</span> <span class="v">class</span>=<span class="s">"badge text-bg-success"</span><span class="k">&gt;</span>OK<span class="k">&lt;/span&gt;</span>
+
+<span class="c">&lt;!-- chỉ đổi nền --&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"p-3 bg-warning rounded"</span><span class="k">&gt;</span>Khối nền vàng<span class="k">&lt;/div&gt;</span></code></pre>
+      <div class="alert alert-info mb-0">
+        <strong>Mẹo.</strong> Khi tô nền đậm hãy dùng <code>.text-bg-*</code> thay cho cặp <code>.bg-* .text-white</code>:
+        nó tự chọn chữ sáng/tối để bảo đảm độ tương phản.
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">2</span>Ảnh (Image)</h2>
+      <p>Ba lớp hay dùng cho thẻ <code>&lt;img&gt;</code>:</p>
+      <ul>
+        <li><code>.img-fluid</code> — ảnh <strong>co giãn</strong> theo khung cha (<code>max-width: 100%; height: auto</code>), không tràn.</li>
+        <li><code>.rounded</code> bo góc nhẹ, <code>.rounded-circle</code> bo tròn (hợp với ảnh vuông làm avatar).</li>
+        <li><code>.img-thumbnail</code> — thêm khung viền + nền trắng như một tấm hình dán.</li>
+      </ul>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <p class="small text-secondary mb-1"><code>.img-fluid</code> (kéo hẹp cửa sổ để thấy ảnh tự thu nhỏ):</p>
+          <img src="../assets/photo.svg" alt="Ảnh phong cảnh minh hoạ" class="img-fluid rounded mb-3">
+          <div class="d-flex flex-wrap align-items-center gap-3">
+            <figure class="text-center mb-0">
+              <img src="../assets/avatar.svg" alt="Avatar" width="90" height="90" class="rounded-circle">
+              <figcaption class="small text-secondary mt-1">.rounded-circle</figcaption>
+            </figure>
+            <figure class="text-center mb-0">
+              <img src="../assets/avatar.svg" alt="Avatar" width="90" height="90" class="img-thumbnail">
+              <figcaption class="small text-secondary mt-1">.img-thumbnail</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="c">&lt;!-- ảnh co giãn theo cột chứa nó --&gt;</span>
+<span class="k">&lt;img</span> <span class="v">src</span>=<span class="s">"photo.svg"</span> <span class="v">alt</span>=<span class="s">"Phong cảnh"</span> <span class="v">class</span>=<span class="s">"img-fluid rounded"</span><span class="k">&gt;</span>
+
+<span class="c">&lt;!-- avatar tròn --&gt;</span>
+<span class="k">&lt;img</span> <span class="v">src</span>=<span class="s">"avatar.svg"</span> <span class="v">class</span>=<span class="s">"rounded-circle"</span> <span class="v">width</span>=<span class="s">"90"</span> <span class="v">height</span>=<span class="s">"90"</span><span class="k">&gt;</span>
+
+<span class="c">&lt;!-- ảnh có khung viền --&gt;</span>
+<span class="k">&lt;img</span> <span class="v">src</span>=<span class="s">"avatar.svg"</span> <span class="v">class</span>=<span class="s">"img-thumbnail"</span><span class="k">&gt;</span></code></pre>
+    </section>
+
+    <!-- 3 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">3</span>Khoảng cách (Spacing)</h2>
+      <p>Đây là nhóm utility dùng nhiều nhất. Cú pháp ghép nhanh:
+         <code>{thuộc-tính}{hướng}-{cỡ}</code>.</p>
+      <ul>
+        <li><strong>Thuộc tính:</strong> <code>m</code> = margin (lề ngoài), <code>p</code> = padding (đệm trong).</li>
+        <li><strong>Hướng:</strong> <code>t</code> trên, <code>b</code> dưới, <code>s</code> trái (start), <code>e</code> phải (end),
+            <code>x</code> trái+phải, <code>y</code> trên+dưới; <em>bỏ trống</em> = cả 4 phía.</li>
+        <li><strong>Cỡ:</strong> <code>0</code>→<code>5</code> (0, .25, .5, 1, 1.5, 3rem) hoặc <code>auto</code> (chỉ cho margin).</li>
+      </ul>
+      <p>Ví dụ: <code>mt-3</code> = margin-top cỡ 3; <code>px-4</code> = padding trái phải cỡ 4; <code>mx-auto</code> = canh giữa theo chiều ngang.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="bg-light border">
+            <span class="d-inline-block text-bg-primary p-1">p-1</span>
+            <span class="d-inline-block text-bg-primary p-3 ms-2">p-3</span>
+            <span class="d-inline-block text-bg-primary p-5 ms-2">p-5</span>
+          </div>
+          <div class="bg-light border mt-3">
+            <div class="text-bg-success p-2 m-0">m-0 (sát mép)</div>
+          </div>
+          <div class="bg-light border mt-3">
+            <div class="text-bg-success p-2 m-3">m-3 (có lề mọi phía)</div>
+          </div>
+          <div class="bg-light border mt-3">
+            <div class="text-bg-danger p-2 mx-auto" style="width: 160px;">mx-auto (canh giữa)</div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"p-3"</span><span class="k">&gt;</span>đệm trong cỡ 3 mọi phía<span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"mt-3 mb-0"</span><span class="k">&gt;</span>lề trên cỡ 3, lề dưới 0<span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"px-4 py-2"</span><span class="k">&gt;</span>đệm ngang 4, đệm dọc 2<span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"mx-auto"</span> <span class="v">style</span>=<span class="s">"width:160px"</span><span class="k">&gt;</span>canh giữa<span class="k">&lt;/div&gt;</span></code></pre>
+      <div class="table-responsive">
+        <table class="table table-bordered table-sm align-middle mb-0">
+          <thead class="table-light">
+            <tr><th>Cỡ</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Giá trị</strong></td>
+              <td>0</td><td>.25rem</td><td>.5rem</td><td>1rem</td><td>1.5rem</td><td>3rem</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">4</span>Bảng (Table)</h2>
+      <p>Thêm <code>.table</code> vào thẻ <code>&lt;table&gt;</code> là có ngay bảng gọn gàng. Ghép thêm biến thể:</p>
+      <ul>
+        <li><code>.table-striped</code> tô nền so le các hàng; <code>.table-hover</code> làm nổi hàng khi rê chuột.</li>
+        <li><code>.table-bordered</code> kẻ viền mọi ô; <code>.table-dark</code>, <code>.table-success</code>… đổi tông màu cả bảng hoặc từng hàng/ô.</li>
+        <li>Bọc trong <code>.table-responsive</code> để bảng <strong>cuộn ngang</strong> trên màn hẹp thay vì tràn trang.</li>
+      </ul>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered align-middle mb-0">
+              <thead class="table-dark">
+                <tr><th>#</th><th>Sinh viên</th><th>Lớp</th><th>Điểm</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>1</td><td>Nguyễn An</td><td>K21</td><td>9.0</td></tr>
+                <tr class="table-success"><td>2</td><td>Trần Bình</td><td>K21</td><td>8.5</td></tr>
+                <tr><td>3</td><td>Lê Chi</td><td>K22</td><td>7.0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"table-responsive"</span><span class="k">&gt;</span>
+  <span class="k">&lt;table</span> <span class="v">class</span>=<span class="s">"table table-striped table-hover table-bordered"</span><span class="k">&gt;</span>
+    <span class="k">&lt;thead</span> <span class="v">class</span>=<span class="s">"table-dark"</span><span class="k">&gt;</span>
+      <span class="k">&lt;tr&gt;&lt;th&gt;</span>#<span class="k">&lt;/th&gt;&lt;th&gt;</span>Sinh viên<span class="k">&lt;/th&gt;&lt;/tr&gt;</span>
+    <span class="k">&lt;/thead&gt;</span>
+    <span class="k">&lt;tbody&gt;</span>
+      <span class="k">&lt;tr</span> <span class="v">class</span>=<span class="s">"table-success"</span><span class="k">&gt;&lt;td&gt;</span>2<span class="k">&lt;/td&gt;&lt;td&gt;</span>Trần Bình<span class="k">&lt;/td&gt;&lt;/tr&gt;</span>
+    <span class="k">&lt;/tbody&gt;</span>
+  <span class="k">&lt;/table&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+    </section>
+
+    <!-- 5 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">5</span>Danh sách (List group)</h2>
+      <p><strong>List group</strong> là danh sách dạng thẻ, mỗi dòng là một <code>.list-group-item</code>:</p>
+      <ul>
+        <li><code>.list-group</code> bọc ngoài; <code>.list-group-flush</code> bỏ viền ngoài để gắn liền vào card.</li>
+        <li>Item có thể mang trạng thái <code>.active</code> (đang chọn) hoặc <code>.disabled</code> (khoá).</li>
+        <li>Đổi <code>&lt;li&gt;</code> thành <code>&lt;a&gt;</code>/<code>&lt;button&gt;</code> + <code>.list-group-item-action</code> để có dòng bấm được.</li>
+      </ul>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <p class="small text-secondary mb-1">Danh sách tĩnh có trạng thái:</p>
+              <ul class="list-group">
+                <li class="list-group-item active" aria-current="true">Trang chủ (active)</li>
+                <li class="list-group-item">Bài viết</li>
+                <li class="list-group-item disabled">Liên hệ (disabled)</li>
+              </ul>
+            </div>
+            <div class="col-sm-6">
+              <p class="small text-secondary mb-1">Danh sách dạng link (bấm được):</p>
+              <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">Hồ sơ</a>
+                <a href="#" class="list-group-item list-group-item-action">Cài đặt</a>
+                <a href="#" class="list-group-item list-group-item-action list-group-item-danger">Đăng xuất</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;ul</span> <span class="v">class</span>=<span class="s">"list-group"</span><span class="k">&gt;</span>
+  <span class="k">&lt;li</span> <span class="v">class</span>=<span class="s">"list-group-item active"</span><span class="k">&gt;</span>Trang chủ<span class="k">&lt;/li&gt;</span>
+  <span class="k">&lt;li</span> <span class="v">class</span>=<span class="s">"list-group-item"</span><span class="k">&gt;</span>Bài viết<span class="k">&lt;/li&gt;</span>
+  <span class="k">&lt;li</span> <span class="v">class</span>=<span class="s">"list-group-item disabled"</span><span class="k">&gt;</span>Liên hệ<span class="k">&lt;/li&gt;</span>
+<span class="k">&lt;/ul&gt;</span>
+
+<span class="c">&lt;!-- dạng link, có hiệu ứng khi rê/bấm --&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"list-group"</span><span class="k">&gt;</span>
+  <span class="k">&lt;a</span> <span class="v">href</span>=<span class="s">"#"</span> <span class="v">class</span>=<span class="s">"list-group-item list-group-item-action"</span><span class="k">&gt;</span>Hồ sơ<span class="k">&lt;/a&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+    </section>
+
+    <!-- 6 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">6</span>Nút &amp; Nhóm nút</h2>
+      <p>Nút bắt đầu từ <code>.btn</code> rồi thêm biến thể màu, dạng viền, cỡ và trạng thái:</p>
+      <ul>
+        <li><strong>Màu:</strong> <code>.btn-primary</code>, <code>.btn-success</code>, <code>.btn-danger</code>… hoặc dạng viền <code>.btn-outline-primary</code>.</li>
+        <li><strong>Cỡ:</strong> <code>.btn-sm</code> (nhỏ), mặc định, <code>.btn-lg</code> (lớn).</li>
+        <li><strong>Trạng thái:</strong> thuộc tính <code>disabled</code> làm nút mờ và không bấm được.</li>
+        <li><strong>Gộp nút:</strong> <code>.btn-group</code> ghép các nút liền nhau; <code>.btn-toolbar</code> xếp nhiều nhóm.</li>
+      </ul>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+            <button type="button" class="btn btn-primary">Primary</button>
+            <button type="button" class="btn btn-success">Success</button>
+            <button type="button" class="btn btn-outline-danger">Outline danger</button>
+            <button type="button" class="btn btn-secondary btn-sm">Nhỏ (sm)</button>
+            <button type="button" class="btn btn-secondary btn-lg">Lớn (lg)</button>
+            <button type="button" class="btn btn-primary" disabled>Bị khoá</button>
+          </div>
+          <div class="btn-toolbar gap-2" role="toolbar" aria-label="Thanh công cụ">
+            <div class="btn-group" role="group" aria-label="Định dạng">
+              <button type="button" class="btn btn-outline-secondary">B</button>
+              <button type="button" class="btn btn-outline-secondary">I</button>
+              <button type="button" class="btn btn-outline-secondary">U</button>
+            </div>
+            <div class="btn-group" role="group" aria-label="Canh lề">
+              <button type="button" class="btn btn-outline-primary active">Trái</button>
+              <button type="button" class="btn btn-outline-primary">Giữa</button>
+              <button type="button" class="btn btn-outline-primary">Phải</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;button</span> <span class="v">class</span>=<span class="s">"btn btn-primary"</span><span class="k">&gt;</span>Primary<span class="k">&lt;/button&gt;</span>
+<span class="k">&lt;button</span> <span class="v">class</span>=<span class="s">"btn btn-outline-danger"</span><span class="k">&gt;</span>Viền đỏ<span class="k">&lt;/button&gt;</span>
+<span class="k">&lt;button</span> <span class="v">class</span>=<span class="s">"btn btn-secondary btn-sm"</span><span class="k">&gt;</span>Nhỏ<span class="k">&lt;/button&gt;</span>
+<span class="k">&lt;button</span> <span class="v">class</span>=<span class="s">"btn btn-primary"</span> <span class="v">disabled</span><span class="k">&gt;</span>Bị khoá<span class="k">&lt;/button&gt;</span>
+
+<span class="c">&lt;!-- nhóm nút liền nhau --&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"btn-group"</span> <span class="v">role</span>=<span class="s">"group"</span><span class="k">&gt;</span>
+  <span class="k">&lt;button</span> <span class="v">class</span>=<span class="s">"btn btn-outline-secondary"</span><span class="k">&gt;</span>B<span class="k">&lt;/button&gt;</span>
+  <span class="k">&lt;button</span> <span class="v">class</span>=<span class="s">"btn btn-outline-secondary"</span><span class="k">&gt;</span>I<span class="k">&lt;/button&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+    </section>
+
+    <!-- 7 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">7</span>Flex utilities</h2>
+      <p>Bật <code>display: flex</code> bằng <code>.d-flex</code> rồi sắp xếp con bằng các lớp tiện ích, khỏi viết CSS:</p>
+      <ul>
+        <li><code>.justify-content-*</code> — dàn theo <strong>trục chính</strong>: <code>start</code>, <code>center</code>, <code>between</code>, <code>around</code>, <code>end</code>.</li>
+        <li><code>.align-items-*</code> — canh theo <strong>trục phụ</strong>: <code>center</code>, <code>start</code>, <code>end</code>.</li>
+        <li><code>.flex-column</code> đổi hướng xếp thành cột; <code>.gap-*</code> đặt khoảng cách giữa các con (0→5).</li>
+      </ul>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <p class="small text-secondary mb-1"><code>.d-flex .justify-content-between .align-items-center</code>:</p>
+          <div class="d-flex justify-content-between align-items-center bg-light border rounded p-2 mb-3">
+            <span class="badge text-bg-primary">Trái</span>
+            <span class="badge text-bg-secondary">Giữa</span>
+            <span class="badge text-bg-primary">Phải</span>
+          </div>
+          <p class="small text-secondary mb-1"><code>.d-flex .justify-content-center .gap-3</code>:</p>
+          <div class="d-flex justify-content-center gap-3 bg-light border rounded p-2 mb-3">
+            <button class="btn btn-sm btn-primary">Lưu</button>
+            <button class="btn btn-sm btn-outline-secondary">Huỷ</button>
+          </div>
+          <p class="small text-secondary mb-1"><code>.d-flex .flex-column .gap-2</code>:</p>
+          <div class="d-flex flex-column gap-2 bg-light border rounded p-2">
+            <span class="text-bg-success p-1 rounded">Dòng 1</span>
+            <span class="text-bg-success p-1 rounded">Dòng 2</span>
+            <span class="text-bg-success p-1 rounded">Dòng 3</span>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="c">&lt;!-- đẩy hai đầu, canh giữa theo chiều dọc --&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"d-flex justify-content-between align-items-center"</span><span class="k">&gt;</span>
+  <span class="k">&lt;span&gt;</span>Trái<span class="k">&lt;/span&gt;</span>
+  <span class="k">&lt;span&gt;</span>Phải<span class="k">&lt;/span&gt;</span>
+<span class="k">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- canh giữa + cách nhau cỡ 3 --&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"d-flex justify-content-center gap-3"</span><span class="k">&gt;</span>…<span class="k">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- xếp dọc thành cột --&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"d-flex flex-column gap-2"</span><span class="k">&gt;</span>…<span class="k">&lt;/div&gt;</span></code></pre>
+      <div class="alert alert-success mb-0">
+        <strong>Rất hay dùng.</strong> Bộ đôi <code>d-flex justify-content-between align-items-center</code> chính là
+        cách dựng thanh tiêu đề: tên bên trái, nút thao tác bên phải — bạn sẽ gặp lại nó khi làm Navbar và Card.
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer điều hướng ===== -->
+  <footer class="foot4">
+    <div class="container-lg py-4 d-flex flex-wrap justify-content-between gap-2">
+      <a class="btn btn-outline-secondary btn-sm" href="02-container-grid.html">← 4.2–4.3 Container &amp; Grid</a>
+      <a class="btn btn-primary btn-sm" href="04-components-1.html">Bài tiếp: 4.5 Components (1) →</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

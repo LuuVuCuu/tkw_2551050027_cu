@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  3.9 — HTML BOM (BROWSER OBJECT MODEL) & LƯU TRỮ PHÍA CLIENT
+  ------------------------------------------------------------
+    1) BOM là gì? window           6) Cookie
+    2) location (demo)             7) localStorage & sessionStorage
+    3) history                     8) Demo: ghi nhớ theme + đếm lượt
+    4) navigator (demo)            9) An toàn dữ liệu client
+    5) screen & resize (demo)     10) Mẹo & lỗi thường gặp
+  JS minh hoạ đặt cuối <body>.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.9 · HTML BOM · Lưu trữ</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI ===== */
+    .d-btn { background:#1D559F; color:#fff; border:none; border-radius:8px;
+             padding:9px 16px; font-size:.92rem; font-weight:600; cursor:pointer;
+             margin:3px 4px 3px 0; }
+    .d-btn:hover { background:#16407a; }
+    .d-btn.green { background:#04AA6D; } .d-btn.green:hover { background:#03875a; }
+    .d-btn.red   { background:#E63946; } .d-btn.red:hover   { background:#c02936; }
+    .d-out { background:#0f172a; color:#e6edf3; border-radius:10px;
+             font-family:"Cascadia Code",Consolas,monospace; font-size:.88rem;
+             padding:12px 14px; margin-top:12px; min-height:20px; white-space:pre-wrap; }
+    .d-out .ok { color:#7ee787; } .d-out .hl { color:#ffa657; } .d-out .bad { color:#ff7b72; }
+
+    /* mục 8: khung theme nhớ bằng localStorage */
+    .d-theme { background:#f8fafc; border:1px solid #e3e8f0; border-radius:10px;
+               padding:16px; margin-top:10px; transition:background .3s, color .3s; }
+    .d-theme.dark { background:#0f172a; color:#e6edf3; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        3.9 HTML BOM · Lưu trữ
+      </nav>
+      <h1>HTML BOM &amp; lưu trữ phía client</h1>
+      <p class="sub">BOM là "cần điều khiển" của cửa sổ trình duyệt: URL, lịch sử, thông tin máy…
+         Kèm phần quan trọng cho dự án: <strong>localStorage</strong> — nơi ghi nhớ theme,
+         giỏ hàng, to-do giữa các lần mở trang.</p>
+      <div class="chips">
+        <span class="chip solid">3.9</span>
+        <span class="chip">BOM · Storage</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">BOM là gì? · window</a></li>
+        <li><a href="#s2">location</a></li>
+        <li><a href="#s3">history</a></li>
+        <li><a href="#s4">navigator</a></li>
+        <li><a href="#s5">screen &amp; resize</a></li>
+        <li><a href="#s6">Cookie</a></li>
+        <li><a href="#s7">localStorage · sessionStorage</a></li>
+        <li><a href="#s8">Demo: nhớ theme + đếm lượt</a></li>
+        <li><a href="#s9">An toàn dữ liệu client</a></li>
+        <li><a href="#s10">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. BOM / WINDOW  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> BOM là gì? · <code>window</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><strong>Browser Object Model</strong> — tập đối tượng để tương tác với
+         <em>cửa sổ trình duyệt</em> (nằm ngoài tài liệu HTML/DOM).</p>
+
+      <table class="syntax">
+        <thead><tr><th>Đối tượng</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>window</code></td><td>Gốc của BOM — mọi biến/hàm toàn cục đều là thành viên của nó (<code>window.alert === alert</code>)</td></tr>
+          <tr><td><code>location</code></td><td>URL hiện tại: xem, chuyển trang, tải lại</td></tr>
+          <tr><td><code>history</code></td><td>Lịch sử duyệt: back / forward</td></tr>
+          <tr><td><code>navigator</code></td><td>Thông tin trình duyệt: tên, ngôn ngữ, online…</td></tr>
+          <tr><td><code>screen</code></td><td>Thông tin màn hình: độ phân giải</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  2. LOCATION  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> <code>location</code> <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code>location.href;      <span class="c">// URL đầy đủ</span>
+location.protocol;  <span class="c">// "https:" (hoặc "file:" khi mở file trực tiếp)</span>
+location.hostname;  <span class="c">// tên miền, vd "ou.edu.vn"</span>
+location.pathname;  <span class="c">// đường dẫn, vd "/tuyensinh/index.html"</span>
+location.port;      <span class="c">// cổng (Live Server thường là "5500")</span>
+
+location.assign(<span class="s">"https://ou.edu.vn"</span>);  <span class="c">// chuyển sang trang khác</span>
+location.reload();                       <span class="c">// tải lại trang hiện tại</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — mổ xẻ URL của chính trang này</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-loc">Đọc location</button>
+          <button class="d-btn red" id="d-btn-reload">location.reload()</button>
+          <div class="d-out" id="d-out-loc">// mở bằng Live Server và bằng file:// sẽ thấy protocol khác nhau</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  3. HISTORY  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> <code>history</code> <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code>history.back();     <span class="c">// = bấm nút ← Back của trình duyệt</span>
+history.forward();  <span class="c">// = bấm nút → Forward</span>
+history.length;     <span class="c">// số trang trong lịch sử của tab này</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — nút Back tự chế</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-back">← history.back()</button>
+          <button class="d-btn" id="d-btn-fw">history.forward() →</button>
+          <span class="muted">(đi từ trang mục lục sang đây rồi bấm thử)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  4. NAVIGATOR  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> <code>navigator</code> <span class="tag-adv">Nâng cao</span></h2>
+
+      <pre class="code"><code>navigator.language;      <span class="c">// "vi", "en-US"… — ngôn ngữ trình duyệt</span>
+navigator.userAgent;     <span class="c">// chuỗi nhận diện trình duyệt/hệ điều hành</span>
+navigator.onLine;        <span class="c">// true/false — đang có mạng?</span>
+navigator.cookieEnabled; <span class="c">// trình duyệt cho phép cookie?</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — trình duyệt của bạn khai gì?</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-nav">Đọc navigator</button>
+          <div class="d-out" id="d-out-nav">// language / onLine / cookieEnabled / userAgent</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  5. SCREEN / RESIZE  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> <code>screen</code> &amp; kích thước cửa sổ <span class="tag-adv">Nâng cao</span></h2>
+
+      <pre class="code"><code>screen.width  / screen.height;       <span class="c">// độ phân giải MÀN HÌNH</span>
+window.innerWidth / window.innerHeight; <span class="c">// kích thước CỬA SỔ (vùng xem trang)</span>
+
+window.addEventListener(<span class="s">"resize"</span>, () =&gt; { ... }); <span class="c">// theo dõi đổi kích thước</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — kéo giãn cửa sổ trình duyệt và nhìn số nhảy</div>
+        <div class="demo-body">
+          <div class="d-out" id="d-out-size">// đang đo…</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  6. COOKIE  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Cookie <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Mẩu dữ liệu nhỏ lưu ở client, <strong>tự gửi kèm mỗi request</strong> lên
+         server — sinh ra để server "nhớ mặt" người dùng (phiên đăng nhập).</p>
+
+      <pre class="code"><code><span class="c">// ghi (mỗi lần một cookie; kèm được Expires / Path / Secure…)</span>
+document.cookie = <span class="s">"theme=dark; max-age=86400; path=/"</span>;
+
+<span class="c">// đọc: trả về MỘT chuỗi gộp tất cả — phải tự tách</span>
+document.cookie;   <span class="c">// "theme=dark; user=an"</span></code></pre>
+
+      <div class="callout info">
+        <p><strong>Cookie vs Web Storage:</strong> cookie nhỏ (~4KB), tự gửi kèm <em>mọi</em>
+        request (tốn băng thông), API lủng củng. Lưu dữ liệu <em>chỉ dùng phía client</em>
+        (theme, giỏ hàng demo) → <code>localStorage</code> tiện hơn hẳn (mục 7). Cookie để
+        dành cho thứ server cần đọc.</p>
+      </div>
+    </section>
+
+    <!-- ==========  7. WEB STORAGE  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> <code>localStorage</code> · <code>sessionStorage</code> <span class="tag-base">Quan trọng</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th></th><th><code>localStorage</code></th><th><code>sessionStorage</code></th><th>Cookie</th></tr></thead>
+        <tbody>
+          <tr><td>Sống bao lâu?</td><td><strong>Bền</strong> — đóng trình duyệt vẫn còn</td><td>Hết <strong>phiên</strong> (đóng tab là mất)</td><td>Theo <code>Expires</code></td></tr>
+          <tr><td>Gửi lên server?</td><td>Không</td><td>Không</td><td><strong>Tự gửi mỗi request</strong></td></tr>
+          <tr><td>Dung lượng</td><td>~5–10 MB</td><td>~5 MB</td><td>~4 KB</td></tr>
+          <tr><td>Dùng cho</td><td>Theme, giỏ hàng, to-do…</td><td>Dữ liệu tạm trong phiên</td><td>Phiên đăng nhập (server)</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code>localStorage.setItem(<span class="s">"theme"</span>, <span class="s">"dark"</span>);    <span class="c">// lưu (key, value — đều là CHUỖI)</span>
+<span class="k">let</span> theme = localStorage.getItem(<span class="s">"theme"</span>);  <span class="c">// đọc ("dark", hoặc null nếu chưa có)</span>
+localStorage.removeItem(<span class="s">"theme"</span>);           <span class="c">// xoá một khoá</span>
+localStorage.clear();                        <span class="c">// xoá tất cả</span>
+
+<span class="c">// lưu MẢNG/OBJECT: phải đổi qua chuỗi JSON (bài 3.12 học kỹ JSON)</span>
+localStorage.setItem(<span class="s">"todos"</span>, JSON.stringify([<span class="s">"học bài"</span>, <span class="s">"làm bt"</span>]));
+<span class="k">let</span> todos = JSON.parse(localStorage.getItem(<span class="s">"todos"</span>)) || [];</code></pre>
+    </section>
+
+    <!-- ==========  8. DEMO LOCALSTORAGE  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Demo: nhớ theme + đếm lượt truy cập <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Hai ứng dụng localStorage kinh điển — <strong>tải lại trang (F5) để thấy
+         dữ liệu vẫn còn</strong>, đó chính là điểm khác biệt với biến JS thường.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — chọn theme, F5, theme vẫn được nhớ</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-sang"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg> Theme sáng</button>
+          <button class="d-btn" style="background:#0f172a" id="d-btn-toi"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><path d="M12 3a6.36 6.36 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg> Theme tối</button>
+          <button class="d-btn red" id="d-btn-quen">Xoá ghi nhớ</button>
+          <div class="d-theme" id="d-khung">
+            <p style="margin:0">Khung này đọc <code>localStorage.getItem("demo-theme")</code>
+               ngay khi nạp trang — nên F5 xong vẫn giữ đúng theme bạn chọn.</p>
+          </div>
+          <div class="d-out" id="d-out-store">// trạng thái localStorage hiện ở đây</div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>Bạn đã ghé trang này <strong id="d-solan">?</strong> lần (đếm bằng
+        <code>localStorage</code> — mỗi lần nạp trang, đọc số cũ, +1, ghi lại).
+        Mẹo xem "kho": DevTools → tab <em>Application</em> → Local Storage.</p>
+      </div>
+    </section>
+
+    <!-- ==========  9. AN TOÀN  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> An toàn dữ liệu phía client <span class="tag-adv">CLO4</span></h2>
+      <div class="callout danger">
+        <p><strong>Không lưu thông tin nhạy cảm</strong> (mật khẩu, token bí mật, số thẻ) trong
+        <code>localStorage</code>/cookie phía client — JS nào chạy trên trang cũng đọc được,
+        nên một lỗ hổng XSS (bài 3.8) là bị đánh cắp sạch. Client chỉ lưu thứ
+        <em>mất cũng không sao</em>: theme, giỏ hàng demo, bản nháp.</p>
+      </div>
+    </section>
+
+    <!-- ==========  10. MẸO & LỖI  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout warn"><p><strong>Lỗi 1.</strong> localStorage chỉ chứa <strong>chuỗi</strong>:
+        lưu object/mảng quên <code>JSON.stringify</code> → đọc ra <code>"[object Object]"</code>.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> Khoá chưa từng lưu →
+        <code>getItem</code> trả <code>null</code> — nhớ <code>|| giá_trị_mặc_định</code> khi đọc.</p></div>
+      <div class="callout tip"><p><strong>Mẹo.</strong> Mẫu chuẩn cho dự án:
+        <code>const data = JSON.parse(localStorage.getItem("key")) || [];</code> khi nạp trang,
+        và một hàm <code>luu()</code> gọi sau mỗi lần thêm/xoá/sửa.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> <code>location</code> = URL ·
+        <code>history</code> = back/forward · <code>navigator</code> = thông tin máy ·
+        <code>localStorage</code> = nhớ bền (không gửi server) · nhạy cảm thì đừng lưu client.</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="09-html-dom.html"><small>← Bài trước</small>3.8 · HTML DOM</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="11-canvas-svg.html"><small>Bài tiếp →</small>3.10 · Canvas &amp; SVG</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- ===== JS MINH HOẠ CỦA BÀI (cuối body) ===== -->
+  <script>
+    'use strict';
+
+    /* ---- Mục 2: location ---- */
+    document.getElementById("d-btn-loc").addEventListener("click", () => {
+      document.getElementById("d-out-loc").innerHTML =
+`location.href     → <span class="ok">${location.href}</span>
+location.protocol → ${location.protocol}   ${location.protocol === "file:" ? '<span class="hl">(đang mở file trực tiếp — Live Server sẽ là http:)</span>' : ""}
+location.hostname → ${location.hostname || '<span class="hl">(rỗng với file://)</span>'}
+location.pathname → ${location.pathname}
+location.port     → ${location.port || "(mặc định)"}`;
+    });
+    document.getElementById("d-btn-reload").addEventListener("click", () => location.reload());
+
+    /* ---- Mục 3: history ---- */
+    document.getElementById("d-btn-back").addEventListener("click", () => history.back());
+    document.getElementById("d-btn-fw").addEventListener("click", () => history.forward());
+
+    /* ---- Mục 4: navigator ---- */
+    document.getElementById("d-btn-nav").addEventListener("click", () => {
+      document.getElementById("d-out-nav").innerHTML =
+`navigator.language      → <span class="ok">"${navigator.language}"</span>
+navigator.onLine        → ${navigator.onLine}
+navigator.cookieEnabled → ${navigator.cookieEnabled}
+navigator.userAgent     → ${navigator.userAgent}`;
+    });
+
+    /* ---- Mục 5: screen & resize ---- */
+    function doKichThuoc() {
+      document.getElementById("d-out-size").innerHTML =
+`screen.width × height       → ${screen.width} × ${screen.height}   (độ phân giải màn hình)
+window.innerWidth × Height  → <span class="ok">${window.innerWidth} × ${window.innerHeight}</span>   (kéo giãn cửa sổ để thấy đổi!)`;
+    }
+    doKichThuoc();                              // đo ngay khi nạp
+    window.addEventListener("resize", doKichThuoc);
+
+    /* ---- Mục 8: theme nhớ bằng localStorage ---- */
+    const khung = document.getElementById("d-khung");
+    const outStore = document.getElementById("d-out-store");
+    function apDungTheme(theme, thongBao) {
+      khung.classList.toggle("dark", theme === "dark");
+      outStore.innerHTML = thongBao +
+        `\nlocalStorage.getItem("demo-theme") → ${JSON.stringify(localStorage.getItem("demo-theme"))}`;
+    }
+    document.getElementById("d-btn-sang").addEventListener("click", () => {
+      localStorage.setItem("demo-theme", "light");
+      apDungTheme("light", 'Đã setItem("demo-theme", "light") — F5 thử xem, vẫn nhớ!');
+    });
+    document.getElementById("d-btn-toi").addEventListener("click", () => {
+      localStorage.setItem("demo-theme", "dark");
+      apDungTheme("dark", 'Đã setItem("demo-theme", "dark") — F5 thử xem, vẫn nhớ!');
+    });
+    document.getElementById("d-btn-quen").addEventListener("click", () => {
+      localStorage.removeItem("demo-theme");
+      apDungTheme("light", 'Đã removeItem("demo-theme") — hết ghi nhớ, F5 sẽ về mặc định.');
+    });
+    // khi NẠP TRANG: đọc theme đã lưu (nếu có) và áp dụng lại — đây là điểm mấu chốt
+    apDungTheme(localStorage.getItem("demo-theme"),
+      "Trạng thái đọc được lúc nạp trang:");
+
+    /* ---- Mục 8: đếm lượt ghé trang ---- */
+    // đọc số cũ (chuỗi hoặc null) → đổi ra số → +1 → ghi lại
+    const soLan = Number(localStorage.getItem("demo-visits") || 0) + 1;
+    localStorage.setItem("demo-visits", soLan);
+    document.getElementById("d-solan").textContent = soLan;
+  </script>
+</body>
+</html>

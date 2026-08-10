@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="5.2 Cơ bản Tailwind - cấu trúc tên class, bảng màu &amp; cường độ 50→950, kích thước, khoảng cách (1=4px), responsive mobile-first, đối chiếu CSS thuần.">
+  <title>5.2 · Màu · Kích thước · Khoảng cách — Chương 5</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <!-- Tailwind v4 — bản trình duyệt (biên dịch class ngay trong browser). Chỉ dùng để học/prototype. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- Tuỳ biến CSS-first của v4: token thương hiệu + họ màu tự thêm (demo mục 3) -->
+  <style type="text/tailwindcss">
+    @theme {
+      --color-brand: #04AA6D;
+      /* Họ màu TỰ THÊM — Tailwind lưu màu dạng OKLCH. Sinh ra class bg-mauve-500, text-mauve-500… */
+      --color-mauve-500: oklch(0.62 0.06 350);
+    }
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- ===== Breadcrumb ===== -->
+  <nav class="mx-auto max-w-4xl px-4 pt-4 text-sm text-gray-500">
+    <a class="hover:text-[#1D559F]" href="../index.html">Môn học</a>
+    <span class="mx-1">›</span>
+    <a class="hover:text-[#1D559F]" href="index.html">Chương 5</a>
+    <span class="mx-1">›</span>
+    <span class="text-gray-700">5.2 Cơ bản</span>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="mt-3 bg-linear-to-br from-[#1D559F] to-violet-600 text-white">
+    <div class="mx-auto max-w-4xl px-4 py-10">
+      <h1 class="text-3xl font-bold">5.2 · Màu · kích thước · khoảng cách · responsive</h1>
+      <p class="mt-2 text-white/80">Tên class Tailwind <strong>dễ đoán</strong> theo công thức <code>[loại thuộc tính]-[giá trị]</code>. Nắm màu, sizing, spacing và cú pháp <strong>mobile-first</strong> là dựng được hầu hết giao diện.</p>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-4xl px-4 py-8">
+
+    <!-- 1 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">1</span>Cấu trúc tên class — dễ đoán
+      </h2>
+      <p class="mb-3">Đa số class Tailwind theo công thức <code class="rounded bg-gray-200 px-1">[loại thuộc tính]-[giá trị]</code>. Biết công thức là <strong>đoán</strong> được tên class mà không cần tra: muốn màu chữ thì bắt đầu bằng <code>text-</code>, muốn nền thì <code>bg-</code>, muốn padding thì <code>p-</code>…</p>
+
+      <div class="overflow-x-auto rounded-xl border border-gray-200">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-gray-100 text-gray-700">
+            <tr><th class="p-3">Nhóm</th><th class="p-3">Tiền tố &amp; vai trò</th><th class="p-3">Ví dụ</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr><td class="p-3 font-medium">Màu</td><td class="p-3">màu chữ / nền / viền</td><td class="p-3"><code>text-blue-500</code> · <code>bg-red-300</code> · <code>border-sky-600/50</code></td></tr>
+            <tr><td class="p-3 font-medium">Kích thước</td><td class="p-3">rộng / cao / giới hạn</td><td class="p-3"><code>w-1/2</code> · <code>h-64</code> · <code>max-w-lg</code> · <code>size-10</code></td></tr>
+            <tr><td class="p-3 font-medium">Khoảng cách</td><td class="p-3">margin / padding / gap</td><td class="p-3"><code>m-4</code> · <code>p-6</code> · <code>px-2</code> · <code>gap-4</code></td></tr>
+            <tr><td class="p-3 font-medium">Typography</td><td class="p-3">cỡ / đậm / dòng / chữ</td><td class="p-3"><code>text-2xl</code> · <code>font-bold</code> · <code>leading-7</code> · <code>tracking-wide</code></td></tr>
+            <tr><td class="p-3 font-medium">Layout / Hiển thị</td><td class="p-3">display / căn / vị trí</td><td class="p-3"><code>flex</code> · <code>grid-cols-3</code> · <code>justify-center</code> · <code>hidden</code> · <code>sticky</code></td></tr>
+            <tr><td class="p-3 font-medium">Nền / Viền / Bóng</td><td class="p-3">gradient / border / bo / đổ bóng</td><td class="p-3"><code>bg-linear-to-r</code> · <code>border-2</code> · <code>rounded-lg</code> · <code>shadow-md</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-sky-500 bg-sky-50 p-3 text-sm">
+        <p class="font-semibold text-sky-800">Đọc một tên class</p>
+        <p><code class="rounded bg-sky-100 px-1">text-blue-500</code> = <em>text</em> (màu chữ) + <em>blue</em> (họ màu) + <em>500</em> (cường độ). Hiểu 3 mảnh này là suy ra được cả nghìn class.</p>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">2</span>Màu &amp; cường độ 50 → 950
+      </h2>
+      <p class="mb-3">Class màu theo công thức <code class="rounded bg-gray-200 px-1">[thuộc tính]-[họ]-[cường độ]</code>. Cường độ chạy từ <strong>50</strong> đến <strong>950</strong>: số càng <strong>lớn</strong> thì màu càng <strong>ĐẬM</strong>. Ví dụ <code>text-red-500</code> đỏ vừa, <code>bg-green-200</code> xanh nhạt, <code>border-blue-700</code> xanh đậm.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — thang cường độ họ <code>blue</code></div>
+        <div class="p-4">
+          <div class="flex overflow-hidden rounded-lg text-center text-xs font-semibold">
+            <div class="flex-1 bg-blue-50 py-3 text-blue-900">50</div>
+            <div class="flex-1 bg-blue-100 py-3 text-blue-900">100</div>
+            <div class="flex-1 bg-blue-200 py-3 text-blue-900">200</div>
+            <div class="flex-1 bg-blue-300 py-3 text-blue-900">300</div>
+            <div class="flex-1 bg-blue-400 py-3 text-white">400</div>
+            <div class="flex-1 bg-blue-500 py-3 text-white">500</div>
+            <div class="flex-1 bg-blue-600 py-3 text-white">600</div>
+            <div class="flex-1 bg-blue-700 py-3 text-white">700</div>
+            <div class="flex-1 bg-blue-800 py-3 text-white">800</div>
+            <div class="flex-1 bg-blue-900 py-3 text-white">900</div>
+            <div class="flex-1 bg-blue-950 py-3 text-white">950</div>
+          </div>
+          <p class="mt-2 text-xs text-gray-500">← nhạt (nền, vùng lớn) &nbsp;·&nbsp; đậm (chữ, nhấn) →</p>
+        </div>
+      </div>
+
+      <p class="mb-3">Thêm <strong>độ mờ</strong> (opacity) bằng dấu <code class="rounded bg-gray-200 px-1">/</code> sau tên màu: <code>bg-blue-500/50</code> (mờ 50%), <code>text-white/75</code>. Rất tiện khi phủ chữ/nền lên ảnh.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — cùng màu <code>blue-600</code>, khác độ mờ (nền gradient để thấy xuyên thấu)</div>
+        <div class="p-4">
+          <div class="rounded-lg bg-linear-to-r from-amber-300 to-rose-400 p-3">
+            <div class="flex gap-2 text-center text-xs font-semibold text-white">
+              <div class="flex-1 rounded bg-blue-600 py-4">/100</div>
+              <div class="flex-1 rounded bg-blue-600/75 py-4">/75</div>
+              <div class="flex-1 rounded bg-blue-600/50 py-4">/50</div>
+              <div class="flex-1 rounded bg-blue-600/25 py-4">/25</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- công thức: [thuộc tính]-[họ]-[cường độ] và tuỳ chọn /độ-mờ --&gt;</span>
+<span class="text-sky-300">&lt;p</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"text-red-500"</span><span class="text-sky-300">&gt;</span>đỏ vừa<span class="text-sky-300">&lt;/p&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"bg-green-200"</span><span class="text-sky-300">&gt;</span>nền xanh nhạt<span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"bg-blue-500/50 text-white/75"</span><span class="text-sky-300">&gt;</span>nền &amp; chữ có độ mờ<span class="text-sky-300">&lt;/div&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-amber-500 bg-amber-50 p-3 text-sm">
+        <p class="font-semibold text-amber-800">Lưu ý về cường độ</p>
+        <p>500 là mức "giữa" cân bằng, hay dùng cho nút/nhấn. Dùng 50–200 cho <em>nền lớn</em>, 600–900 cho <em>chữ/viền</em> để đủ tương phản. Đơn vị gốc của Tailwind: <code class="rounded bg-amber-100 px-1">1 = 0.25rem = 4px</code> (áp dụng cho spacing/sizing ở mục 4).</p>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">3</span>Bảng màu Tailwind
+      </h2>
+      <p class="mb-3">Tailwind có <strong>22 họ màu</strong> dựng sẵn, mỗi họ 11 mức (50→950). Dưới đây là swatch mỗi họ ở 3 mức <strong>200 · 400 · 600</strong>:</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — 22 họ màu thật (trái→phải mỗi ô: 200 / 400 / 600)</div>
+        <div class="grid grid-cols-2 gap-3 p-4 sm:grid-cols-3 md:grid-cols-4">
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-slate-200"></div><div class="flex-1 bg-slate-400"></div><div class="flex-1 bg-slate-600"></div></div><p class="mt-1 text-xs text-gray-600">slate</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-gray-200"></div><div class="flex-1 bg-gray-400"></div><div class="flex-1 bg-gray-600"></div></div><p class="mt-1 text-xs text-gray-600">gray</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-zinc-200"></div><div class="flex-1 bg-zinc-400"></div><div class="flex-1 bg-zinc-600"></div></div><p class="mt-1 text-xs text-gray-600">zinc</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-neutral-200"></div><div class="flex-1 bg-neutral-400"></div><div class="flex-1 bg-neutral-600"></div></div><p class="mt-1 text-xs text-gray-600">neutral</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-stone-200"></div><div class="flex-1 bg-stone-400"></div><div class="flex-1 bg-stone-600"></div></div><p class="mt-1 text-xs text-gray-600">stone</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-red-200"></div><div class="flex-1 bg-red-400"></div><div class="flex-1 bg-red-600"></div></div><p class="mt-1 text-xs text-gray-600">red</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-orange-200"></div><div class="flex-1 bg-orange-400"></div><div class="flex-1 bg-orange-600"></div></div><p class="mt-1 text-xs text-gray-600">orange</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-amber-200"></div><div class="flex-1 bg-amber-400"></div><div class="flex-1 bg-amber-600"></div></div><p class="mt-1 text-xs text-gray-600">amber</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-yellow-200"></div><div class="flex-1 bg-yellow-400"></div><div class="flex-1 bg-yellow-600"></div></div><p class="mt-1 text-xs text-gray-600">yellow</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-lime-200"></div><div class="flex-1 bg-lime-400"></div><div class="flex-1 bg-lime-600"></div></div><p class="mt-1 text-xs text-gray-600">lime</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-green-200"></div><div class="flex-1 bg-green-400"></div><div class="flex-1 bg-green-600"></div></div><p class="mt-1 text-xs text-gray-600">green</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-emerald-200"></div><div class="flex-1 bg-emerald-400"></div><div class="flex-1 bg-emerald-600"></div></div><p class="mt-1 text-xs text-gray-600">emerald</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-teal-200"></div><div class="flex-1 bg-teal-400"></div><div class="flex-1 bg-teal-600"></div></div><p class="mt-1 text-xs text-gray-600">teal</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-cyan-200"></div><div class="flex-1 bg-cyan-400"></div><div class="flex-1 bg-cyan-600"></div></div><p class="mt-1 text-xs text-gray-600">cyan</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-sky-200"></div><div class="flex-1 bg-sky-400"></div><div class="flex-1 bg-sky-600"></div></div><p class="mt-1 text-xs text-gray-600">sky</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-blue-200"></div><div class="flex-1 bg-blue-400"></div><div class="flex-1 bg-blue-600"></div></div><p class="mt-1 text-xs text-gray-600">blue</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-indigo-200"></div><div class="flex-1 bg-indigo-400"></div><div class="flex-1 bg-indigo-600"></div></div><p class="mt-1 text-xs text-gray-600">indigo</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-violet-200"></div><div class="flex-1 bg-violet-400"></div><div class="flex-1 bg-violet-600"></div></div><p class="mt-1 text-xs text-gray-600">violet</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-purple-200"></div><div class="flex-1 bg-purple-400"></div><div class="flex-1 bg-purple-600"></div></div><p class="mt-1 text-xs text-gray-600">purple</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-fuchsia-200"></div><div class="flex-1 bg-fuchsia-400"></div><div class="flex-1 bg-fuchsia-600"></div></div><p class="mt-1 text-xs text-gray-600">fuchsia</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-pink-200"></div><div class="flex-1 bg-pink-400"></div><div class="flex-1 bg-pink-600"></div></div><p class="mt-1 text-xs text-gray-600">pink</p></div>
+          <div><div class="flex h-8 overflow-hidden rounded"><div class="flex-1 bg-rose-200"></div><div class="flex-1 bg-rose-400"></div><div class="flex-1 bg-rose-600"></div></div><p class="mt-1 text-xs text-gray-600">rose</p></div>
+        </div>
+      </div>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Mẹo — tự thêm họ màu riêng</p>
+        <p class="mb-2">Slide có nhắc "v4.3 thêm mauve/olive/mist/taupe", nhưng đó <strong>không</strong> phải họ màu dựng sẵn của Tailwind — viết <code class="rounded bg-emerald-100 px-1">bg-mauve-500</code> mà chưa khai báo thì <strong>không hiển thị</strong>. Muốn có, tự thêm trong <code>@theme</code> (giống <code>bg-brand</code> ở bài 5.1). Trang này đã khai báo <code>--color-mauve-500</code> nên ô demo dưới đây mới lên màu:</p>
+        <div class="mt-2 flex flex-wrap items-center gap-3">
+          <span class="rounded-lg bg-mauve-500 px-4 py-2 font-semibold text-white">bg-mauve-500</span>
+          <span class="font-semibold text-mauve-500">text-mauve-500</span>
+          <span class="rounded-lg border-2 border-mauve-500 px-4 py-2 text-mauve-500">border-mauve-500</span>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">/* Tailwind lưu màu dạng OKLCH — tự thêm họ màu bằng biến --color-* */</span>
+<span class="text-sky-300">@theme</span> {
+  <span class="text-orange-300">--color-mauve-500</span>: <span class="text-emerald-300">oklch(0.62 0.06 350)</span>;  <span class="text-gray-400 italic">/* → bg-mauve-500, text-mauve-500… */</span>
+}</code></pre>
+    </section>
+
+    <!-- 4 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">4</span>Kích thước &amp; khoảng cách cơ bản
+      </h2>
+      <p class="mb-3"><strong>Sizing</strong>: <code>w-*</code> (rộng), <code>h-*</code> (cao) với <code class="rounded bg-gray-200 px-1">1 = 4px</code>; phân số <code>w-1/2</code>, <code>w-1/3</code>; <code>w-full</code> (100%); <code>size-10</code> = <code>w-10 h-10</code> (rộng &amp; cao bằng nhau, 40px).</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — chiều rộng theo phân số</div>
+        <div class="space-y-2 p-4">
+          <div class="w-full rounded bg-blue-500 py-1 text-center text-xs text-white">w-full</div>
+          <div class="w-1/2 rounded bg-blue-500 py-1 text-center text-xs text-white">w-1/2</div>
+          <div class="w-1/3 rounded bg-blue-500 py-1 text-center text-xs text-white">w-1/3</div>
+          <div class="flex items-center gap-2 pt-1">
+            <div class="size-10 rounded bg-violet-500"></div>
+            <span class="text-xs text-gray-600"><code>size-10</code> = <code>w-10 h-10</code> = 40×40px</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="mb-3"><strong>Spacing</strong>: <code>m-*</code> (margin ngoài), <code>p-*</code> (padding trong); trục lẻ <code>px-*</code>/<code>py-*</code>; <code>mx-auto</code> canh giữa; margin <strong>âm</strong> <code>-mt-2</code>; <code>gap-*</code> (khe giữa các con trong flex/grid); <code>space-x-*</code>/<code>space-y-*</code> (đẩy lề giữa các con liên tiếp).</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — padding · mx-auto · gap · margin âm</div>
+        <div class="space-y-4 p-4">
+          <div>
+            <p class="mb-1 text-xs text-gray-500">padding (vùng xanh nhạt = <code>p-6</code> quanh chữ)</p>
+            <div class="inline-block rounded bg-sky-200 p-6">
+              <div class="rounded bg-white px-3 py-1 text-xs">nội dung · p-6 = 24px</div>
+            </div>
+          </div>
+          <div>
+            <p class="mb-1 text-xs text-gray-500"><code>w-1/2 mx-auto</code> — canh giữa theo chiều ngang</p>
+            <div class="mx-auto w-1/2 rounded bg-violet-500 py-2 text-center text-xs text-white">mx-auto</div>
+          </div>
+          <div>
+            <p class="mb-1 text-xs text-gray-500"><code>flex gap-4</code> — khe đều giữa các con</p>
+            <div class="flex gap-4">
+              <div class="flex-1 rounded bg-emerald-500 py-2 text-center text-xs text-white">1</div>
+              <div class="flex-1 rounded bg-emerald-500 py-2 text-center text-xs text-white">2</div>
+              <div class="flex-1 rounded bg-emerald-500 py-2 text-center text-xs text-white">3</div>
+            </div>
+          </div>
+          <div>
+            <p class="mb-1 text-xs text-gray-500">margin âm <code>-mt-4</code> — kéo hộp tím đè lên hộp cam</p>
+            <div class="rounded bg-amber-400 p-4 text-center text-xs font-semibold text-white">hộp trên</div>
+            <div class="-mt-4 mx-4 rounded bg-purple-600 p-3 text-center text-xs font-semibold text-white">-mt-4 (đè lên)</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- gap: khe giữa CÁC CON · space-y: đẩy lề dọc giữa các con --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"flex gap-4"</span><span class="text-sky-300">&gt;</span> … <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"space-y-2"</span><span class="text-sky-300">&gt;</span> … <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-gray-400 italic">&lt;!-- 1 = 4px → p-6 = 24px, mt-2 = 8px, -mt-4 = -16px --&gt;</span></code></pre>
+    </section>
+
+    <!-- 5 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">5</span>Responsive — mobile-first
+      </h2>
+      <p class="mb-3">Thêm tiền tố breakpoint theo cú pháp <code class="rounded bg-gray-200 px-1">breakpoint:class</code>. Class <strong>không tiền tố</strong> áp dụng cho <em>mọi</em> màn (mặc định = mobile); thêm tiền tố để đổi từ một bề rộng trở lên.</p>
+
+      <div class="overflow-x-auto rounded-xl border border-gray-200">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-gray-100 text-gray-700">
+            <tr><th class="p-3">Tiền tố</th><th class="p-3">Áp dụng từ</th><th class="p-3">Ví dụ</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr><td class="p-3 font-medium">(không có)</td><td class="p-3">mọi màn hình — mobile</td><td class="p-3"><code>text-base</code></td></tr>
+            <tr><td class="p-3 font-medium"><code>sm:</code></td><td class="p-3">≥ 640px</td><td class="p-3"><code>sm:flex</code></td></tr>
+            <tr><td class="p-3 font-medium"><code>md:</code></td><td class="p-3">≥ 768px</td><td class="p-3"><code>md:text-lg</code></td></tr>
+            <tr><td class="p-3 font-medium"><code>lg:</code></td><td class="p-3">≥ 1024px</td><td class="p-3"><code>lg:grid-cols-3</code></td></tr>
+            <tr><td class="p-3 font-medium"><code>xl:</code></td><td class="p-3">≥ 1280px</td><td class="p-3"><code>xl:px-12</code></td></tr>
+            <tr><td class="p-3 font-medium"><code>2xl:</code></td><td class="p-3">≥ 1536px</td><td class="p-3"><code>2xl:max-w-7xl</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — thu/phóng cửa sổ để thấy bố cục đổi</div>
+        <div class="p-4">
+          <div class="flex flex-col gap-2 sm:flex-row lg:gap-6">
+            <div class="flex-1 rounded bg-sky-500 p-4 text-center text-sm text-white">A</div>
+            <div class="flex-1 rounded bg-violet-500 p-4 text-center text-sm text-white">B</div>
+            <div class="flex-1 rounded bg-emerald-500 p-4 text-center text-sm text-white">C</div>
+          </div>
+          <p class="mt-2 text-xs text-gray-500"><code>flex flex-col sm:flex-row lg:gap-6</code> — &lt;640px xếp <strong>dọc</strong>, ≥640px (<code>sm</code>) xếp <strong>ngang</strong>, ≥1024px (<code>lg</code>) khe rộng hơn.</p>
+        </div>
+      </div>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-amber-500 bg-amber-50 p-3 text-sm">
+        <p class="font-semibold text-amber-800">Lưu ý — lỗi hay gặp về mobile-first</p>
+        <p><code class="rounded bg-amber-100 px-1">md:text-lg</code> <strong>không</strong> phải "chỉ trên màn md" mà là "từ ≥768px <strong>TRỞ LÊN</strong>". Vì vậy hãy thiết kế <strong>cho mobile trước</strong> (class không tiền tố), rồi mới thêm <code>md:</code>/<code>lg:</code> để mở rộng cho màn lớn — đừng làm ngược lại.</p>
+      </div>
+
+      <p class="mb-3">Vài biến thể hữu ích: <code>max-md:hidden</code> (chỉ ẩn <em>dưới</em> breakpoint), khoảng giữa hai mốc <code>md:max-lg:flex</code> (chỉ từ md đến trước lg), và <strong>container query</strong> mới ở v4 — phản ứng theo bề rộng của <em>vùng chứa</em> chứ không phải màn hình.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — container query (đổi theo bề rộng thẻ, không phải màn)</div>
+        <div class="p-4">
+          <div class="@container">
+            <div class="flex flex-col gap-2 @md:flex-row">
+              <div class="rounded bg-rose-500 p-3 text-center text-sm text-white @md:flex-1">Ngang khi vùng chứa ≥ 448px (@md)</div>
+              <div class="rounded bg-indigo-500 p-3 text-center text-sm text-white @md:flex-1">Không phụ thuộc bề rộng màn hình</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- mobile-first: mặc định cho mobile, thêm md:/lg: cho màn lớn --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"flex flex-col md:flex-row"</span><span class="text-sky-300">&gt;</span> … <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"max-md:hidden"</span><span class="text-sky-300">&gt;</span>chỉ hiện từ md trở lên<span class="text-sky-300">&lt;/div&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- container query (v4): @container ở CHA, @md: ở CON --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"@container"</span><span class="text-sky-300">&gt;</span>
+  <span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"flex flex-col @md:flex-row"</span><span class="text-sky-300">&gt;</span> … <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;/div&gt;</span></code></pre>
+    </section>
+
+    <!-- 6 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">6</span>Đối chiếu Tailwind và CSS thuần
+      </h2>
+      <p class="mb-3">Mỗi class Tailwind chỉ là <em>một</em> (hoặc vài) dòng CSS đã học ở Chương 2. Hiểu CSS thì học Tailwind rất nhanh:</p>
+
+      <div class="overflow-x-auto rounded-xl border border-gray-200">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-gray-100 text-gray-700">
+            <tr><th class="p-3">Class Tailwind</th><th class="p-3">CSS thuần tương đương</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 font-mono text-xs sm:text-sm">
+            <tr><td class="p-3"><code>p-4</code></td><td class="p-3">padding: 1rem;</td></tr>
+            <tr><td class="p-3"><code>w-1/2</code></td><td class="p-3">width: 50%;</td></tr>
+            <tr><td class="p-3"><code>bg-blue-500</code></td><td class="p-3">background-color: #3b82f6;</td></tr>
+            <tr><td class="p-3"><code>text-xl</code></td><td class="p-3">font-size: 1.25rem;</td></tr>
+            <tr><td class="p-3"><code>flex justify-center items-center</code></td><td class="p-3">display: flex; justify-content: center; align-items: center;</td></tr>
+            <tr><td class="p-3"><code>grid-cols-3</code></td><td class="p-3">grid-template-columns: repeat(3, 1fr);</td></tr>
+            <tr><td class="p-3"><code>rounded-lg</code></td><td class="p-3">border-radius: 0.5rem;</td></tr>
+            <tr><td class="p-3"><code>hover:bg-blue-700</code></td><td class="p-3">&amp;:hover { background-color: #1d4ed8; }</td></tr>
+            <tr><td class="p-3"><code>md:flex</code></td><td class="p-3">@media (min-width: 768px) { display: flex; }</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+        <p class="font-semibold text-violet-800">Chốt lại</p>
+        <p>Tailwind <strong>không thay thế</strong> kiến thức CSS — nó chỉ đóng gói CSS thành class ngắn để viết nhanh hơn. Nắm chắc màu (50→950), sizing/spacing (1=4px) và mobile-first là đủ dựng phần lớn giao diện; phần bố cục Flex/Grid xem tiếp bài 5.3.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer điều hướng ===== -->
+  <footer class="mx-auto mt-6 flex max-w-4xl flex-wrap justify-between gap-2 border-t border-gray-200 px-4 py-6">
+    <a class="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-100" href="02-core-concepts.html">← Core concepts</a>
+    <a class="rounded-lg bg-[#1D559F] px-4 py-2 text-sm text-white hover:bg-[#17457f]" href="04-layout-flex-grid.html">5.3 Layout →</a>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.2.9 — CSS TRANSFORM · TRANSITION · ANIMATION (bản toàn diện)
+  ------------------------------------------------------------
+  Ba nhóm thuộc tính tạo HIỆU ỨNG cho web hiện đại. Bài này đi
+  từ cơ bản → nâng cao, tham khảo theo W3Schools:
+    1) transform: translate        7) animation: các thuộc tính
+    2) rotate/scale/skew + origin   8) Tự chạy: spinner/pulse/bounce
+    3) transform 3D (perspective)   9) fade-in / slide-in khi tải
+    4) transition cơ bản           10) Nút có hiệu ứng (thực hành)
+    5) timing-function so sánh     11) Hiệu năng & reduced-motion
+    6) @keyframes
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  Mỗi @keyframes cũng đặt tên với tiền tố d- để khỏi trùng.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.2.9 · Hiệu ứng — Transform, Transition &amp; Animation</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* ---- hộp mẫu dùng chung để quan sát transform ---- */
+    .d-stage {
+      background: repeating-linear-gradient(45deg, #f1f5f9, #f1f5f9 10px, #e9eef6 10px, #e9eef6 20px);
+      border: 1px dashed #cfd8e6; border-radius: 8px;
+      padding: 30px; display: flex; flex-wrap: wrap; gap: 28px;
+      align-items: center; justify-content: center; min-height: 110px;
+    }
+    .d-box {
+      width: 84px; height: 84px; border-radius: 10px;
+      display: grid; place-items: center; text-align: center;
+      color: #fff; font-weight: 700; font-size: .8rem; line-height: 1.2;
+      background: linear-gradient(135deg, #1D559F, #6c5ce7);
+      box-shadow: 0 6px 14px rgba(29,85,159,.25);
+    }
+    .d-ghost {                       /* viền nét đứt = vị trí gốc trước transform */
+      width: 84px; height: 84px; border-radius: 10px;
+      border: 2px dashed #b6c2d6; display: grid; place-items: center;
+      color: #93a1b5; font-weight: 700; font-size: .76rem;
+    }
+    .d-cap { font-size: .72rem; color: #5b6472; text-align: center; margin-top: 6px; }
+    .d-item { display: flex; flex-direction: column; align-items: center; }
+
+    /* 1) translate */
+    .d-tx  { transform: translateX(28px); background: linear-gradient(135deg,#04AA6D,#16a34a); }
+    .d-ty  { transform: translateY(-18px); background: linear-gradient(135deg,#FFC107,#f59e0b); color:#16407a; }
+    .d-txy { transform: translate(24px, 14px); background: linear-gradient(135deg,#E63946,#c2185b); }
+
+    /* 2) rotate / scale / skew + transform-origin */
+    .d-rot   { transform: rotate(30deg); }
+    .d-scale { transform: scale(1.35); background: linear-gradient(135deg,#04AA6D,#16a34a); }
+    .d-skew  { transform: skewX(-18deg); background: linear-gradient(135deg,#FFC107,#f59e0b); color:#16407a; }
+    .d-origin-c  { transform: rotate(40deg); transform-origin: center; }
+    .d-origin-tl { transform: rotate(40deg); transform-origin: top left; background: linear-gradient(135deg,#E63946,#c2185b); }
+
+    /* 3) transform 3D + perspective */
+    .d-3d-stage { perspective: 600px; }                 /* khoảng cách "camera" → tạo chiều sâu */
+    .d-rotx { transform: rotateX(50deg); background: linear-gradient(135deg,#04AA6D,#16a34a); }
+    .d-roty { transform: rotateY(50deg); background: linear-gradient(135deg,#FFC107,#f59e0b); color:#16407a; }
+    .d-combo { transform: rotate(15deg) scale(1.1) translateX(10px); background: linear-gradient(135deg,#E63946,#c2185b); }
+
+    /* thẻ lật 3D (rê chuột) */
+    .d-flip { width: 140px; height: 90px; perspective: 700px; }
+    .d-flip-inner {
+      position: relative; width: 100%; height: 100%;
+      transition: transform .7s; transform-style: preserve-3d;
+    }
+    .d-flip:hover .d-flip-inner { transform: rotateY(180deg); }
+    .d-flip-front, .d-flip-back {
+      position: absolute; inset: 0; backface-visibility: hidden;
+      border-radius: 10px; display: grid; place-items: center;
+      color: #fff; font-weight: 700;
+    }
+    .d-flip-front { background: linear-gradient(135deg,#1D559F,#6c5ce7); }
+    .d-flip-back  { background: linear-gradient(135deg,#04AA6D,#16a34a); transform: rotateY(180deg); }
+
+    /* 4) transition cơ bản (rê chuột) */
+    .d-trans {
+      width: 120px; height: 70px; border-radius: 10px; cursor: pointer;
+      display: grid; place-items: center; color: #fff; font-weight: 700; font-size: .8rem;
+      background: #1D559F;
+      transition: transform .35s ease, background-color .35s ease, border-radius .35s ease;
+    }
+    .d-trans:hover { transform: scale(1.18); background: #04AA6D; border-radius: 50%; }
+
+    .d-trans2 {
+      width: 200px; padding: 14px 18px; border-radius: 10px; cursor: pointer; text-align: center;
+      background: #6c5ce7; color: #fff; font-weight: 700;
+      transition: all .4s cubic-bezier(.25,.8,.25,1);
+    }
+    .d-trans2:hover { letter-spacing: 2px; padding-left: 40px; background: #1D559F; }
+
+    /* 5) timing-function so sánh */
+    .d-track { background: #eef2f8; border-radius: 999px; padding: 8px; margin: 6px 0; }
+    .d-runner {
+      width: 34px; height: 34px; border-radius: 50%; color: #fff;
+      display: grid; place-items: center; font-size: .68rem; font-weight: 700;
+      background: linear-gradient(135deg,#1D559F,#6c5ce7);
+      transition: transform 1.6s;
+    }
+    .d-timing:hover .d-runner { transform: translateX(calc(100% + 300px)); }
+    .d-ease     { transition-timing-function: ease; }
+    .d-linear   { transition-timing-function: linear; }
+    .d-easein   { transition-timing-function: ease-in; }
+    .d-easeout  { transition-timing-function: ease-out; }
+    .d-bezier   { transition-timing-function: cubic-bezier(.68,-0.55,.27,1.55); }
+    .d-steps    { transition-timing-function: steps(5, end); }
+    .d-tlabel   { font-size: .72rem; color: #5b6472; width: 130px; flex: none; font-family: "Cascadia Code", Consolas, monospace; }
+    .d-trow     { display: flex; align-items: center; gap: 10px; }
+    .d-trow .d-track { flex: 1; }
+
+    /* 6) @keyframes minh hoạ (chạy tự động để luôn thấy) */
+    @keyframes d-grow {
+      from { background: #1D559F; transform: scale(1); }
+      to   { background: #04AA6D; transform: scale(1.25); }
+    }
+    @keyframes d-rainbow {
+      0%   { background: #1D559F; transform: translateY(0); }
+      50%  { background: #04AA6D; transform: translateY(-14px); }
+      100% { background: #E63946; transform: translateY(0); }
+    }
+    .d-kf1 { animation: d-grow 1.6s ease-in-out infinite alternate; }
+    .d-kf2 { animation: d-rainbow 2s ease-in-out infinite; }
+
+    /* 8) Ví dụ TỰ CHẠY: spinner / pulse / bounce / progress (vô hạn) */
+    @keyframes d-spin { to { transform: rotate(360deg); } }
+    .d-spinner {
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 6px solid #e3e8f0; border-top-color: #1D559F;
+      animation: d-spin 1s linear infinite;
+    }
+    .d-spinner.alt { border-top-color: #04AA6D; border-right-color: #6c5ce7; animation-duration: 1.4s; }
+
+    @keyframes d-pulse {
+      0%   { transform: scale(.85); box-shadow: 0 0 0 0 rgba(230,57,70,.45); }
+      70%  { transform: scale(1);   box-shadow: 0 0 0 18px rgba(230,57,70,0); }
+      100% { transform: scale(.85); box-shadow: 0 0 0 0 rgba(230,57,70,0); }
+    }
+    .d-pulse {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: #E63946; display: grid; place-items: center; color: #fff; font-size: 1.2rem;
+      animation: d-pulse 1.5s ease-out infinite;
+    }
+
+    @keyframes d-bounce {
+      0%, 100%   { transform: translateY(0);    animation-timing-function: ease-out; }
+      50%        { transform: translateY(-40px); animation-timing-function: ease-in; }
+    }
+    .d-ball {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: radial-gradient(circle at 32% 30%, #ffe08a, #FFC107 60%, #f59e0b);
+      box-shadow: 0 6px 10px rgba(0,0,0,.15);
+      animation: d-bounce 1s infinite;
+    }
+    .d-floor { width: 70px; height: 4px; border-radius: 4px; background: #cfd8e6; margin-top: 4px; }
+
+    @keyframes d-load { 0% { width: 6%; } 100% { width: 100%; } }
+    .d-progress { background: #eef2f8; border-radius: 999px; height: 16px; overflow: hidden; width: 100%; }
+    .d-progress > i {
+      display: block; height: 100%; width: 6%; border-radius: 999px;
+      background: linear-gradient(90deg, #1D559F, #6c5ce7, #04AA6D);
+      animation: d-load 2.2s ease-in-out infinite alternate;
+    }
+
+    /* 9) fade-in / slide-in khi tải trang */
+    @keyframes d-fade-in   { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes d-slide-up  { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes d-slide-left{ from { opacity: 0; transform: translateX(-40px);} to { opacity: 1; transform: translateX(0); } }
+    .d-enter { background: #f8fafc; border: 1px solid #e3e8f0; border-radius: 10px; padding: 16px; }
+    .d-card  {
+      background: linear-gradient(135deg,#1D559F,#6c5ce7); color: #fff;
+      padding: 14px; border-radius: 10px; margin: 8px 0; font-weight: 600;
+      animation: d-slide-up .7s ease both;
+    }
+    .d-card:nth-child(1) { animation-delay: .05s; }
+    .d-card:nth-child(2) { animation-delay: .25s; }
+    .d-card:nth-child(3) { animation-delay: .45s; }
+    .d-fade  { animation: d-fade-in 1.4s ease both; }
+    .d-banner{ background: #04AA6D; color: #fff; padding: 14px; border-radius: 10px; font-weight: 700; animation: d-slide-left .8s ease both; }
+
+    /* 10) nút thực hành (transform + transition + box-shadow) */
+    .d-btn {
+      border: none; cursor: pointer; font-weight: 700; font-size: .95rem;
+      color: #fff; padding: 12px 24px; border-radius: 10px;
+      background: linear-gradient(135deg,#1D559F,#6c5ce7);
+      box-shadow: 0 6px 14px rgba(29,85,159,.30);
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    .d-btn:hover  { transform: translateY(-4px) scale(1.04); box-shadow: 0 14px 26px rgba(29,85,159,.40); filter: brightness(1.08); }
+    .d-btn:active { transform: translateY(-1px) scale(.99); box-shadow: 0 6px 12px rgba(29,85,159,.30); }
+    .d-btn.green  { background: linear-gradient(135deg,#04AA6D,#16a34a); box-shadow: 0 6px 14px rgba(4,170,109,.30); }
+    .d-btn.green:hover { box-shadow: 0 14px 26px rgba(4,170,109,.40); }
+
+    /* nút "ghost" viền chạy nền khi hover */
+    .d-btn2 {
+      position: relative; overflow: hidden; border: 2px solid #1D559F;
+      background: #fff; color: #1D559F; font-weight: 700; padding: 11px 24px;
+      border-radius: 10px; cursor: pointer;
+      transition: color .35s ease;
+    }
+    .d-btn2::before {
+      content: ""; position: absolute; inset: 0; z-index: 0;
+      background: #1D559F; transform: scaleX(0); transform-origin: left;
+      transition: transform .35s ease;
+    }
+    .d-btn2 span { position: relative; z-index: 1; }
+    .d-btn2:hover { color: #fff; }
+    .d-btn2:hover::before { transform: scaleX(1); }
+
+    /* 11) tôn trọng người muốn giảm chuyển động */
+    @media (prefers-reduced-motion: reduce) {
+      .d-kf1, .d-kf2, .d-spinner, .d-pulse, .d-ball, .d-progress > i,
+      .d-card, .d-fade, .d-banner { animation: none !important; }
+      .d-trans, .d-trans2, .d-runner, .d-btn, .d-btn2, .d-btn2::before, .d-flip-inner {
+        transition: none !important;
+      }
+    }
+
+    /* 12) Multicolumn — rót văn bản dài thành nhiều cột kiểu báo/tạp chí */
+    .d-multicol {
+      column-count: 3;                 /* rót văn bản thành 3 cột */
+      column-gap: 24px;                /* khoảng cách giữa các cột */
+      column-rule: 1px solid #cfd8e6;  /* đường kẻ mảnh giữa hai cột */
+      color: #2c3542; font-size: .92rem; line-height: 1.7; text-align: justify;
+    }
+    .d-multicol h4 {
+      column-span: all;                /* tiêu đề trải ngang MỌI cột */
+      margin: 0 0 12px; padding-bottom: 8px;
+      color: #16407a; font-size: 1.1rem;
+      border-bottom: 2px solid #e3e8f0;
+    }
+    .d-multicol p { margin: 0 0 12px; break-inside: avoid; } /* không cắt đôi đoạn giữa 2 cột */
+    @media (max-width: 640px) {
+      .d-multicol { column-count: 1; }  /* mobile: về 1 cột cho dễ đọc */
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.2 CSS</a><span>›</span>
+        Animation
+      </nav>
+      <h1>Hiệu ứng: <code style="color:#fff;background:rgba(255,255,255,.18)">transform</code> ·
+          <code style="color:#fff;background:rgba(255,255,255,.18)">transition</code> ·
+          <code style="color:#fff;background:rgba(255,255,255,.18)">animation</code></h1>
+      <p class="sub">Ba nhóm thuộc tính làm web "sống động": biến đổi hình học (di chuyển, xoay, phóng),
+         chuyển trạng thái mượt mà khi tương tác, và hoạt ảnh tự chạy bằng <code>@keyframes</code>.
+         Đi từ cơ bản đến 3D, cubic-bezier và tối ưu hiệu năng.</p>
+      <div class="chips">
+        <span class="chip solid">2.2.9</span>
+        <span class="chip">Hiệu ứng</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">transform: translate</a></li>
+        <li><a href="#s2">rotate · scale · skew · origin</a></li>
+        <li><a href="#s3">transform 3D &amp; perspective</a></li>
+        <li><a href="#s4">transition cơ bản</a></li>
+        <li><a href="#s5">timing-function so sánh</a></li>
+        <li><a href="#s6">@keyframes</a></li>
+        <li><a href="#s7">Thuộc tính animation</a></li>
+        <li><a href="#s8">Tự chạy: spinner · pulse · bounce</a></li>
+        <li><a href="#s9">fade-in / slide-in khi tải</a></li>
+        <li><a href="#s10">Nút có hiệu ứng (thực hành)</a></li>
+        <li><a href="#s11">Hiệu năng &amp; reduced-motion</a></li>
+        <li><a href="#s12">Multicolumn — chia cột</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. TRANSFORM: TRANSLATE  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> <code>transform: translate</code> — di chuyển <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>transform</code> biến đổi hình học một phần tử mà <strong>không</strong> ảnh hưởng tới luồng layout
+         xung quanh. <code>translate</code> dời phần tử theo trục X (ngang) và/hoặc Y (dọc). Viền nét đứt là vị trí gốc.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="d-stage">
+            <div class="d-item"><div class="d-ghost">gốc</div><span class="d-cap">chưa biến đổi</span></div>
+            <div class="d-item"><div class="d-box d-tx">translateX</div><span class="d-cap">sang phải 28px</span></div>
+            <div class="d-item"><div class="d-box d-ty">translateY</div><span class="d-cap">lên trên 18px</span></div>
+            <div class="d-item"><div class="d-box d-txy">translate</div><span class="d-cap">phải 24px · xuống 14px</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><code>translateX(28px)</code> dời sang phải; số âm dời sang trái.
+           <code>translateY(-18px)</code> dời lên trên (trục Y dương hướng <em>xuống</em>).
+           <code>translate(x, y)</code> gộp cả hai. Giá trị có thể là <code>px</code>, <code>%</code> (theo kích thước
+           <strong>chính phần tử</strong>), <code>rem</code>…</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Các hàm translate</caption>
+        <thead><tr><th>Hàm</th><th>Ý nghĩa</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>translateX(x)</code></td><td>Dời theo trục ngang</td><td><code>translateX(50px)</code></td></tr>
+          <tr><td><code>translateY(y)</code></td><td>Dời theo trục dọc</td><td><code>translateY(-20px)</code></td></tr>
+          <tr><td><code>translate(x, y)</code></td><td>Dời cả hai trục</td><td><code>translate(30px, 10px)</code></td></tr>
+          <tr><td><code>translate(x)</code></td><td>Chỉ ghi 1 giá trị = chỉ trục X</td><td><code>translate(50%)</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* dời sang phải 28px */</span>
+.box { <span class="k">transform</span>: <span class="v">translateX(28px)</span>; }
+
+<span class="c">/* mẹo kinh điển: căn giữa tuyệt đối một phần tử */</span>
+.center {
+  <span class="k">position</span>: <span class="v">absolute</span>;
+  <span class="k">top</span>: <span class="v">50%</span>; <span class="k">left</span>: <span class="v">50%</span>;
+  <span class="k">transform</span>: <span class="v">translate(-50%, -50%)</span>; <span class="c">/* lùi nửa kích thước chính nó */</span>
+}</code></pre>
+      <div class="callout tip"><p>Vì <code>%</code> trong <code>translate</code> tính theo kích thước
+        <strong>của chính phần tử</strong>, nên <code>translate(-50%, -50%)</code> là cách căn giữa tuyệt đối phổ biến nhất.</p></div>
+    </section>
+
+    <!-- ==========  2. ROTATE / SCALE / SKEW + ORIGIN  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> <code>rotate · scale · skew</code> &amp; <code>transform-origin</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Ngoài dời chỗ, <code>transform</code> còn <strong>xoay</strong> (rotate), <strong>phóng/thu</strong> (scale)
+         và <strong>nghiêng</strong> (skew). <code>transform-origin</code> quyết định "tâm" của phép biến đổi.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · rotate · scale · skew</div>
+        <div class="demo-body">
+          <div class="d-stage">
+            <div class="d-item"><div class="d-box d-rot">rotate</div><span class="d-cap">xoay 30°</span></div>
+            <div class="d-item"><div class="d-box d-scale">scale</div><span class="d-cap">phóng 1.35×</span></div>
+            <div class="d-item"><div class="d-box d-skew">skewX</div><span class="d-cap">nghiêng −18°</span></div>
+          </div>
+        </div>
+      </div>
+
+      <h3>transform-origin — đổi tâm biến đổi</h3>
+      <div class="demo">
+        <div class="demo-bar">Cùng xoay 40° nhưng khác tâm</div>
+        <div class="demo-body">
+          <div class="d-stage">
+            <div class="d-item"><div class="d-box d-origin-c">center</div><span class="d-cap">tâm = giữa (mặc định)</span></div>
+            <div class="d-item"><div class="d-box d-origin-tl">top left</div><span class="d-cap">tâm = góc trên-trái</span></div>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Hàm biến đổi 2D thường dùng</caption>
+        <thead><tr><th>Hàm</th><th>Tác dụng</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>rotate(góc)</code></td><td>Xoay quanh tâm; đơn vị <code>deg</code>/<code>turn</code></td><td><code>rotate(45deg)</code></td></tr>
+          <tr><td><code>scale(x[, y])</code></td><td>Phóng to/thu nhỏ (1 = giữ nguyên)</td><td><code>scale(1.5)</code> · <code>scale(2, .5)</code></td></tr>
+          <tr><td><code>scaleX</code> / <code>scaleY</code></td><td>Phóng theo từng trục</td><td><code>scaleX(.5)</code></td></tr>
+          <tr><td><code>skewX</code> / <code>skewY</code></td><td>Nghiêng (xô) theo trục</td><td><code>skewX(20deg)</code></td></tr>
+          <tr><td><code>transform-origin</code></td><td>Đặt tâm biến đổi (mặc định <code>center</code>)</td><td><code>top left</code> · <code>0 100%</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code>.rot   { <span class="k">transform</span>: <span class="v">rotate(30deg)</span>; }
+.scale { <span class="k">transform</span>: <span class="v">scale(1.35)</span>; }
+.skew  { <span class="k">transform</span>: <span class="v">skewX(-18deg)</span>; }
+
+<span class="c">/* xoay quanh góc trên-trái thay vì tâm */</span>
+.corner {
+  <span class="k">transform</span>: <span class="v">rotate(40deg)</span>;
+  <span class="k">transform-origin</span>: <span class="v">top left</span>;
+}</code></pre>
+    </section>
+
+    <!-- ==========  3. TRANSFORM 3D  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Kết hợp nhiều phép &amp; biến đổi 3D <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Có thể ghép nhiều hàm trong <strong>một</strong> <code>transform</code> (thứ tự có ý nghĩa).
+         Thêm <code>perspective</code> ở phần tử cha để tạo chiều sâu, rồi dùng <code>rotateX</code>/<code>rotateY</code>
+         để xoay trong không gian 3D.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết hợp 2D · và 3D (rotateX/Y)</div>
+        <div class="demo-body">
+          <div class="d-stage d-3d-stage">
+            <div class="d-item"><div class="d-box d-combo">combo</div><span class="d-cap">rotate + scale + translate</span></div>
+            <div class="d-item"><div class="d-box d-rotx">rotateX</div><span class="d-cap">ngả ra sau 50°</span></div>
+            <div class="d-item"><div class="d-box d-roty">rotateY</div><span class="d-cap">xoay quanh trục dọc 50°</span></div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Thẻ lật 3D <span class="tag-adv">Tương tác</span></h3>
+      <p class="lead muted">Rê chuột vào thẻ để xem mặt sau lật ra (dùng <code>rotateY(180deg)</code> + <code>backface-visibility</code>).</p>
+      <div class="demo">
+        <div class="demo-bar">Rê chuột để lật thẻ</div>
+        <div class="demo-body">
+          <div class="d-stage">
+            <div class="d-flip">
+              <div class="d-flip-inner">
+                <div class="d-flip-front">Mặt trước</div>
+                <div class="d-flip-back">Mặt sau</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Thuộc tính cho không gian 3D</caption>
+        <thead><tr><th>Thuộc tính / hàm</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>perspective: 600px</code></td><td>Đặt ở <strong>cha</strong>: khoảng cách "mắt nhìn" — số nhỏ → 3D mạnh.</td></tr>
+          <tr><td><code>rotateX(deg)</code> / <code>rotateY(deg)</code></td><td>Xoay quanh trục ngang / dọc trong 3D.</td></tr>
+          <tr><td><code>rotateZ(deg)</code></td><td>Xoay quanh trục Z (tương đương <code>rotate</code> 2D).</td></tr>
+          <tr><td><code>translateZ</code> / <code>scaleZ</code></td><td>Dời / phóng theo trục chiều sâu Z.</td></tr>
+          <tr><td><code>transform-style: preserve-3d</code></td><td>Cho phép con nằm trong không gian 3D thật.</td></tr>
+          <tr><td><code>backface-visibility: hidden</code></td><td>Ẩn mặt sau khi phần tử bị lật (dùng cho flip card).</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* ghép nhiều hàm — đọc từ trái sang phải, áp dụng phải→trái */</span>
+.combo { <span class="k">transform</span>: <span class="v">rotate(15deg) scale(1.1) translateX(10px)</span>; }
+
+<span class="c">/* 3D: cha tạo chiều sâu, con xoay */</span>
+.scene { <span class="k">perspective</span>: <span class="v">600px</span>; }
+.card  { <span class="k">transform</span>: <span class="v">rotateY(50deg)</span>; }</code></pre>
+      <div class="callout warn"><p><strong>Thứ tự quan trọng!</strong> <code>translateX(50px) rotate(45deg)</code> khác
+        <code>rotate(45deg) translateX(50px)</code> — vì sau khi xoay, trục toạ độ của phần tử cũng xoay theo.</p></div>
+    </section>
+
+    <!-- ==========  4. TRANSITION CƠ BẢN  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> <code>transition</code> — chuyển trạng thái mượt <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>transition</code> làm cho việc <strong>thay đổi giá trị</strong> một thuộc tính diễn ra
+         <em>từ từ</em> thay vì nhảy đột ngột — thường kích hoạt bằng <code>:hover</code>, <code>:focus</code>
+         hay khi đổi class. Gồm 4 thành phần: <em>property · duration · timing-function · delay</em>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Rê chuột vào ô để xem (phóng to + đổi màu + bo tròn)</div>
+        <div class="demo-body">
+          <div class="d-stage" style="gap:40px">
+            <div class="d-trans">Rê chuột<br>vào tôi</div>
+            <div class="d-trans2">Rê chuột → giãn chữ</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Thành phần của transition</caption>
+        <thead><tr><th>Thuộc tính</th><th>Ý nghĩa</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>transition-property</code></td><td>Thuộc tính nào sẽ chuyển động (<code>all</code> = tất cả)</td><td><code>transform, background-color</code></td></tr>
+          <tr><td><code>transition-duration</code></td><td>Thời gian (<strong>bắt buộc</strong>, nếu 0 = không thấy)</td><td><code>.35s</code> · <code>300ms</code></td></tr>
+          <tr><td><code>transition-timing-function</code></td><td>Kiểu tăng tốc (xem mục 5)</td><td><code>ease</code> · <code>linear</code></td></tr>
+          <tr><td><code>transition-delay</code></td><td>Chờ bao lâu rồi mới bắt đầu</td><td><code>.1s</code></td></tr>
+          <tr><td><code>transition</code> (gộp)</td><td>Viết tắt: <em>property duration timing delay</em></td><td><code>transform .35s ease .1s</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* viết tách từng phần */</span>
+.box {
+  <span class="k">transition-property</span>: <span class="v">transform, background-color</span>;
+  <span class="k">transition-duration</span>: <span class="v">.35s</span>;
+  <span class="k">transition-timing-function</span>: <span class="v">ease</span>;
+  <span class="k">transition-delay</span>: <span class="v">0s</span>;
+}
+<span class="c">/* viết GỘP (shorthand) — khuyên dùng */</span>
+.box  { <span class="k">transition</span>: <span class="v">transform .35s ease, background-color .35s ease</span>; }
+.box:hover { <span class="k">transform</span>: <span class="v">scale(1.18)</span>; <span class="k">background</span>: <span class="v">#04AA6D</span>; }</code></pre>
+      <div class="callout danger"><p>Bỏ quên <code>duration</code> thì transition <strong>không chạy</strong> (mặc định là <code>0s</code>).
+        Luôn ghi thời gian. Và đặt <code>transition</code> ở <em>trạng thái thường</em>, không phải trong <code>:hover</code>,
+        để hiệu ứng mượt cả lúc rê vào lẫn rê ra.</p></div>
+    </section>
+
+    <!-- ==========  5. TIMING-FUNCTION  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> <code>timing-function</code> — đường cong tốc độ <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Hàm thời gian quyết định tốc độ <em>thay đổi theo thời gian</em>: nhanh dần, chậm dần, đều,
+         giật từng nấc… Rê chuột vào ô bên dưới để cho cả 6 viên chạy <strong>cùng lúc, cùng quãng đường, cùng 1.6s</strong>
+         và quan sát khác biệt.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Rê chuột vào đây để chạy đua 6 kiểu</div>
+        <div class="demo-body d-timing">
+          <div class="d-trow"><span class="d-tlabel">ease</span>      <div class="d-track"><div class="d-runner d-ease">E</div></div></div>
+          <div class="d-trow"><span class="d-tlabel">linear</span>    <div class="d-track"><div class="d-runner d-linear">L</div></div></div>
+          <div class="d-trow"><span class="d-tlabel">ease-in</span>   <div class="d-track"><div class="d-runner d-easein">I</div></div></div>
+          <div class="d-trow"><span class="d-tlabel">ease-out</span>  <div class="d-track"><div class="d-runner d-easeout">O</div></div></div>
+          <div class="d-trow"><span class="d-tlabel">cubic-bezier</span><div class="d-track"><div class="d-runner d-bezier">B</div></div></div>
+          <div class="d-trow"><span class="d-tlabel">steps(5)</span>  <div class="d-track"><div class="d-runner d-steps">S</div></div></div>
+        </div>
+      </div>
+
+      <table class="syntax">
+        <caption>Các giá trị timing-function</caption>
+        <thead><tr><th>Giá trị</th><th>Cảm giác chuyển động</th></tr></thead>
+        <tbody>
+          <tr><td><code>ease</code> (mặc định)</td><td>Chậm → nhanh → chậm; tự nhiên nhất.</td></tr>
+          <tr><td><code>linear</code></td><td>Tốc độ đều từ đầu đến cuối.</td></tr>
+          <tr><td><code>ease-in</code></td><td>Bắt đầu chậm rồi tăng tốc.</td></tr>
+          <tr><td><code>ease-out</code></td><td>Bắt đầu nhanh rồi chậm dần (hay dùng cho UI).</td></tr>
+          <tr><td><code>ease-in-out</code></td><td>Chậm hai đầu, nhanh ở giữa.</td></tr>
+          <tr><td><code>cubic-bezier(a,b,c,d)</code></td><td>Tự định nghĩa đường cong; có thể "nảy" vượt mốc.</td></tr>
+          <tr><td><code>steps(n)</code></td><td>Nhảy <em>n</em> nấc rời rạc — dùng cho sprite/đồng hồ.</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code>.a { <span class="k">transition-timing-function</span>: <span class="v">ease-out</span>; }
+.b { <span class="k">transition-timing-function</span>: <span class="v">cubic-bezier(.68,-0.55,.27,1.55)</span>; } <span class="c">/* nảy */</span>
+.c { <span class="k">transition-timing-function</span>: <span class="v">steps(5, end)</span>; }              <span class="c">/* 5 nấc */</span></code></pre>
+      <div class="callout tip"><p>Khó nhớ con số <code>cubic-bezier</code>? Mở DevTools của trình duyệt, bấm vào ô timing-function
+        sẽ hiện trình chỉnh đường cong trực quan để kéo thả.</p></div>
+    </section>
+
+    <!-- ==========  6. @KEYFRAMES  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> <code>@keyframes</code> — định nghĩa các mốc <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Khác với <code>transition</code> (chỉ đi từ A → B), <code>@keyframes</code> cho phép định nghĩa
+         <strong>nhiều mốc</strong> trong một hoạt ảnh: bằng <code>from</code>/<code>to</code> hoặc theo phần trăm
+         <code>0%</code>…<code>100%</code>. Hai demo dưới đây <strong>chạy tự động</strong> nên chụp ảnh tĩnh vẫn thấy.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">from → to (2 mốc) · tự chạy</div>
+          <div class="demo-body d-stage" style="min-height:130px">
+            <div class="d-box d-kf1">from→to</div>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">theo % (3 mốc) · tự chạy</div>
+          <div class="demo-body d-stage" style="min-height:130px">
+            <div class="d-box d-kf2">0/50/100%</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Cách 1: chỉ 2 mốc đầu–cuối */</span>
+<span class="k">@keyframes</span> grow {
+  <span class="k">from</span> { <span class="k">background</span>: <span class="v">#1D559F</span>; <span class="k">transform</span>: <span class="v">scale(1)</span>; }
+  <span class="k">to</span>   { <span class="k">background</span>: <span class="v">#04AA6D</span>; <span class="k">transform</span>: <span class="v">scale(1.25)</span>; }
+}
+
+<span class="c">/* Cách 2: nhiều mốc theo phần trăm */</span>
+<span class="k">@keyframes</span> rainbow {
+  <span class="v">0%</span>   { <span class="k">background</span>: <span class="v">#1D559F</span>; <span class="k">transform</span>: <span class="v">translateY(0)</span>; }
+  <span class="v">50%</span>  { <span class="k">background</span>: <span class="v">#04AA6D</span>; <span class="k">transform</span>: <span class="v">translateY(-14px)</span>; }
+  <span class="v">100%</span> { <span class="k">background</span>: <span class="v">#E63946</span>; <span class="k">transform</span>: <span class="v">translateY(0)</span>; }
+}</code></pre>
+      <div class="callout info"><p><code>from</code> = <code>0%</code> và <code>to</code> = <code>100%</code>. Có thể gộp nhiều mốc giống nhau:
+        <code>0%, 100% { … }</code>. Trong một mốc có thể đổi nhiều thuộc tính cùng lúc.</p></div>
+    </section>
+
+    <!-- ==========  7. THUỘC TÍNH ANIMATION  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Thuộc tính <code>animation</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Sau khi có <code>@keyframes</code>, gắn nó vào phần tử bằng các thuộc tính <code>animation-*</code>
+         (hoặc gộp thành <code>animation</code>). Bảng dưới liệt kê đầy đủ.</p>
+
+      <table class="syntax">
+        <caption>Các thuộc tính animation (theo W3Schools)</caption>
+        <thead><tr><th>Thuộc tính</th><th>Ý nghĩa</th><th>Giá trị ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>animation-name</code></td><td>Tên <code>@keyframes</code> sẽ chạy</td><td><code>spin</code></td></tr>
+          <tr><td><code>animation-duration</code></td><td>Thời lượng một vòng (bắt buộc &gt; 0)</td><td><code>1s</code> · <code>500ms</code></td></tr>
+          <tr><td><code>animation-timing-function</code></td><td>Đường cong tốc độ</td><td><code>linear</code> · <code>ease-in-out</code></td></tr>
+          <tr><td><code>animation-delay</code></td><td>Chờ bao lâu rồi bắt đầu (âm = bắt đầu giữa chừng)</td><td><code>.3s</code></td></tr>
+          <tr><td><code>animation-iteration-count</code></td><td>Số lần lặp</td><td><code>3</code> · <code>infinite</code></td></tr>
+          <tr><td><code>animation-direction</code></td><td>Chiều chạy mỗi vòng</td><td><code>normal</code> · <code>reverse</code> · <code>alternate</code></td></tr>
+          <tr><td><code>animation-fill-mode</code></td><td>Giữ trạng thái trước/sau khi chạy</td><td><code>none</code> · <code>forwards</code> · <code>both</code></td></tr>
+          <tr><td><code>animation-play-state</code></td><td>Đang chạy hay tạm dừng</td><td><code>running</code> · <code>paused</code></td></tr>
+          <tr><td><code>animation</code> (gộp)</td><td>Viết tắt tất cả trong một dòng</td><td><code>spin 1s linear infinite</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* viết tách từng phần */</span>
+.loader {
+  <span class="k">animation-name</span>: <span class="v">spin</span>;
+  <span class="k">animation-duration</span>: <span class="v">1s</span>;
+  <span class="k">animation-timing-function</span>: <span class="v">linear</span>;
+  <span class="k">animation-iteration-count</span>: <span class="v">infinite</span>;
+}
+<span class="c">/* viết GỘP — thứ tự: name duration timing delay count direction fill */</span>
+.loader { <span class="k">animation</span>: <span class="v">spin 1s linear infinite</span>; }
+.popup  { <span class="k">animation</span>: <span class="v">grow .6s ease-out .2s 1 normal forwards</span>; }</code></pre>
+
+      <div class="callout warn"><p><code>animation-fill-mode: forwards</code> giữ lại trạng thái của mốc <code>100%</code> sau khi chạy xong
+        (nếu không, phần tử "nhảy" về trạng thái gốc). Dùng <code>both</code> để áp dụng cả mốc đầu trong lúc <code>delay</code>.</p></div>
+    </section>
+
+    <!-- ==========  8. TỰ CHẠY: SPINNER / PULSE / BOUNCE  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Ví dụ tự chạy: spinner · pulse · bounce <span class="tag-adv">Thực hành</span></h2>
+      <p class="lead">Những hoạt ảnh <strong>lặp vô hạn</strong> hay gặp nhất: vòng xoay tải trang (spinner),
+         nhịp đập (pulse), quả bóng nảy (bounce), thanh tiến trình. Tất cả tự chạy, không cần tương tác.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Đang chạy tự động (animation: … infinite)</div>
+        <div class="demo-body">
+          <div class="d-stage" style="gap:46px; align-items:flex-end">
+            <div class="d-item"><div class="d-spinner"></div><span class="d-cap">spinner</span></div>
+            <div class="d-item"><div class="d-spinner alt"></div><span class="d-cap">spinner 2 màu</span></div>
+            <div class="d-item"><div class="d-pulse">♥</div><span class="d-cap">pulse (nhịp)</span></div>
+            <div class="d-item"><div class="d-ball"></div><div class="d-floor"></div><span class="d-cap">bounce (nảy)</span></div>
+          </div>
+          <div style="margin-top:22px">
+            <span class="d-cap" style="display:block; text-align:left; margin-bottom:6px">progress bar (alternate)</span>
+            <div class="d-progress"><i></i></div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* SPINNER — xoay tròn vô hạn */</span>
+<span class="k">@keyframes</span> spin { <span class="k">to</span> { <span class="k">transform</span>: <span class="v">rotate(360deg)</span>; } }
+.spinner {
+  <span class="k">width</span>: <span class="v">56px</span>; <span class="k">height</span>: <span class="v">56px</span>; <span class="k">border-radius</span>: <span class="v">50%</span>;
+  <span class="k">border</span>: <span class="v">6px solid #e3e8f0</span>;
+  <span class="k">border-top-color</span>: <span class="v">#1D559F</span>;          <span class="c">/* một cạnh khác màu → thấy xoay */</span>
+  <span class="k">animation</span>: <span class="v">spin 1s linear infinite</span>;
+}
+
+<span class="c">/* PULSE — phình ra + quầng sáng lan toả */</span>
+<span class="k">@keyframes</span> pulse {
+  <span class="v">0%</span>   { <span class="k">transform</span>: <span class="v">scale(.85)</span>; <span class="k">box-shadow</span>: <span class="v">0 0 0 0 rgba(230,57,70,.45)</span>; }
+  <span class="v">70%</span>  { <span class="k">transform</span>: <span class="v">scale(1)</span>;   <span class="k">box-shadow</span>: <span class="v">0 0 0 18px rgba(230,57,70,0)</span>; }
+  <span class="v">100%</span> { <span class="k">transform</span>: <span class="v">scale(.85)</span>; }
+}
+
+<span class="c">/* BOUNCE — nảy lên xuống */</span>
+<span class="k">@keyframes</span> bounce {
+  <span class="v">0%, 100%</span> { <span class="k">transform</span>: <span class="v">translateY(0)</span>; }
+  <span class="v">50%</span>      { <span class="k">transform</span>: <span class="v">translateY(-40px)</span>; }
+}
+.ball { <span class="k">animation</span>: <span class="v">bounce 1s infinite</span>; }</code></pre>
+      <div class="callout tip"><p>Spinner chỉ cần một cạnh viền khác màu (<code>border-top-color</code>) rồi xoay 360° vô hạn —
+        công thức loader phổ biến nhất, nhẹ và không cần ảnh.</p></div>
+    </section>
+
+    <!-- ==========  9. FADE-IN / SLIDE-IN  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Hiệu ứng xuất hiện khi tải trang <span class="tag-adv">Thực hành</span></h2>
+      <p class="lead">Cho nội dung <strong>hiện dần</strong> (fade-in) hoặc <strong>trượt vào</strong> (slide-in) ngay khi tải.
+         Bí quyết: <code>animation</code> chạy <strong>một lần</strong> với <code>animation-fill-mode: both</code>, và dùng
+         <code>animation-delay</code> khác nhau để tạo hiệu ứng "đổ xuống lần lượt" (staggered).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Chạy một lần khi trang tải xong</div>
+        <div class="demo-body d-enter">
+          <div class="d-banner d-fade">Banner này fade-in (mờ → rõ)</div>
+          <div style="margin-top:12px">
+            <div class="d-card">Thẻ 1 — trượt lên, delay .05s</div>
+            <div class="d-card">Thẻ 2 — trượt lên, delay .25s</div>
+            <div class="d-card">Thẻ 3 — trượt lên, delay .45s</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="k">@keyframes</span> slide-up {
+  <span class="k">from</span> { <span class="k">opacity</span>: <span class="v">0</span>; <span class="k">transform</span>: <span class="v">translateY(26px)</span>; }
+  <span class="k">to</span>   { <span class="k">opacity</span>: <span class="v">1</span>; <span class="k">transform</span>: <span class="v">translateY(0)</span>; }
+}
+.card { <span class="k">animation</span>: <span class="v">slide-up .7s ease both</span>; } <span class="c">/* both = giữ trạng thái đầu/cuối */</span>
+.card:nth-child(1) { <span class="k">animation-delay</span>: <span class="v">.05s</span>; }
+.card:nth-child(2) { <span class="k">animation-delay</span>: <span class="v">.25s</span>; }   <span class="c">/* mỗi thẻ chậm hơn một nhịp */</span>
+.card:nth-child(3) { <span class="k">animation-delay</span>: <span class="v">.45s</span>; }</code></pre>
+      <div class="callout info"><p>Animate <code>opacity</code> + <code>transform</code> (chứ không phải <code>top</code>/<code>margin</code>)
+        để hiệu ứng mượt và không gây "giật layout" — lý do giải thích ở mục 11.</p></div>
+    </section>
+
+    <!-- ==========  10. NÚT CÓ HIỆU ỨNG  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Thực hành: nút có hiệu ứng hover <span class="tag-adv">Thực hành</span></h2>
+      <p class="lead">Gộp cả ba kỹ thuật: <code>transition</code> để mượt, <code>transform</code> để nhấc nút lên,
+         và <code>box-shadow</code> để tạo cảm giác nổi khối. Rê chuột vào để xem, nhấn giữ để thấy trạng thái <code>:active</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Rê chuột / nhấn giữ vào các nút</div>
+        <div class="demo-body">
+          <div class="d-stage" style="gap:24px">
+            <button class="d-btn">Nút nhấc lên</button>
+            <button class="d-btn green">Nút xanh lá</button>
+            <button class="d-btn2"><span>Nền chạy từ trái</span></button>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>.btn {
+  <span class="k">color</span>: <span class="v">#fff</span>; <span class="k">padding</span>: <span class="v">12px 24px</span>; <span class="k">border</span>: <span class="v">none</span>; <span class="k">border-radius</span>: <span class="v">10px</span>;
+  <span class="k">background</span>: <span class="v">linear-gradient(135deg,#1D559F,#6c5ce7)</span>;
+  <span class="k">box-shadow</span>: <span class="v">0 6px 14px rgba(29,85,159,.30)</span>;
+  <span class="k">transition</span>: <span class="v">transform .2s ease, box-shadow .2s ease, filter .2s ease</span>;
+}
+.btn:hover  { <span class="k">transform</span>: <span class="v">translateY(-4px) scale(1.04)</span>; <span class="k">box-shadow</span>: <span class="v">0 14px 26px rgba(29,85,159,.40)</span>; }
+.btn:active { <span class="k">transform</span>: <span class="v">translateY(-1px) scale(.99)</span>; } <span class="c">/* nhấn xuống */</span></code></pre>
+      <div class="callout tip"><p>Quy tắc UI: hover thì "nhấc lên" (bóng đậm hơn, dời lên), active thì "ấn xuống"
+        (bóng nhạt, dời xuống gần vị trí gốc). Tạo phản hồi xúc giác rất tự nhiên.</p></div>
+    </section>
+
+    <!-- ==========  11. HIỆU NĂNG & REDUCED-MOTION  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Hiệu năng &amp; tôn trọng người dùng <span class="tag-base">Tổng kết</span></h2>
+      <p class="lead">Hoạt ảnh đẹp nhưng phải mượt và không gây khó chịu. Hai nguyên tắc cốt lõi khi làm hiệu ứng.</p>
+
+      <div class="callout tip"><p><strong>1 · Ưu tiên animate <code>transform</code> và <code>opacity</code>.</strong>
+        Hai thuộc tính này được trình duyệt tăng tốc bằng GPU và <em>không</em> kích hoạt tính lại layout (reflow).
+        Tránh animate <code>width</code>, <code>height</code>, <code>top</code>, <code>left</code>, <code>margin</code> — chúng làm
+        cả trang phải bố trí lại, gây giật (jank).</p></div>
+
+      <div class="callout info"><p><strong>2 · Tôn trọng <code>prefers-reduced-motion</code>.</strong>
+        Một số người bị chóng mặt với chuyển động. Hãy tắt/giảm hoạt ảnh khi hệ điều hành của họ bật chế độ "giảm chuyển động".
+        Trang này đã áp dụng quy tắc đó cho mọi demo phía trên.</p></div>
+
+      <pre class="code"><code><span class="c">/* Tắt hoạt ảnh cho người chọn "giảm chuyển động" trong hệ điều hành */</span>
+<span class="k">@media</span> (prefers-reduced-motion: reduce) {
+  * {
+    <span class="k">animation</span>: <span class="v">none</span> !important;
+    <span class="k">transition</span>: <span class="v">none</span> !important;
+  }
+}</code></pre>
+
+      <table class="syntax">
+        <caption>Nên / tránh khi animate</caption>
+        <thead><tr><th>Mục tiêu</th><th>Nên animate</th><th>Tránh animate</th></tr></thead>
+        <tbody>
+          <tr><td>Di chuyển</td><td><code>transform: translate()</code></td><td><code>top</code> / <code>left</code> / <code>margin</code></td></tr>
+          <tr><td>Phóng to / thu nhỏ</td><td><code>transform: scale()</code></td><td><code>width</code> / <code>height</code></td></tr>
+          <tr><td>Hiện / ẩn</td><td><code>opacity</code></td><td><code>display</code> (không transition được)</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="soft">
+      <div class="callout danger"><p><strong>Đừng lạm dụng.</strong> Hoạt ảnh phục vụ trải nghiệm, không phải để "khoe".
+        Hiệu ứng quá nhiều/quá dài làm trang nặng và mệt mắt. Mỗi hiệu ứng nên có lý do (phản hồi thao tác,
+        hướng sự chú ý, thể hiện trạng thái tải).</p></div>
+    </section>
+
+    <!-- ==========  12. MULTICOLUMN  ========== -->
+    <section class="block" id="s12">
+      <h2><span class="num">12</span> <code>Multicolumn</code> — chia văn bản thành nhiều cột <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Nhóm thuộc tính <code>column-*</code> tự động rót một khối văn bản dài thành <strong>nhiều cột</strong>
+         như trang báo hay tạp chí — trình duyệt tự cân đối chiều cao các cột. Ta chỉ cần một khối HTML duy nhất,
+         không phải chia cột thủ công.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · 3 cột · có đường kẻ giữa · tiêu đề trải ngang</div>
+        <div class="demo-body">
+          <div class="d-multicol">
+            <h4>Thiết kế web đáp ứng</h4>
+            <p>Thiết kế web đáp ứng (responsive) giúp trang hiển thị tốt trên mọi kích thước màn hình, từ điện thoại
+               nhỏ gọn đến màn hình máy tính rộng. Ý tưởng cốt lõi là bố cục co giãn linh hoạt thay vì cố định theo pixel.</p>
+            <p>Ba trụ cột thường được nhắc tới là lưới linh hoạt (fluid grid), hình ảnh co giãn (flexible images) và
+               truy vấn phương tiện (media queries). Khi kết hợp, chúng cho phép một mã nguồn duy nhất phục vụ nhiều thiết bị.</p>
+            <p>Cách tiếp cận ưu tiên di động (mobile-first) khuyến khích viết CSS cho màn hình nhỏ trước, rồi bổ sung dần
+               cho màn hình lớn. Nhờ đó trang nhẹ và nhanh trên thiết bị yếu, đồng thời dễ mở rộng về sau.</p>
+            <p>Đơn vị tương đối như <code>%</code>, <code>rem</code>, <code>em</code>, <code>vw</code> và <code>vh</code>
+               giúp kích thước bám theo ngữ cảnh thay vì con số tuyệt đối — chìa khoá để nội dung tự thích nghi.</p>
+            <p>Cuối cùng, hãy luôn kiểm thử trên nhiều thiết bị thật và dùng công cụ mô phỏng của trình duyệt. Trải nghiệm
+               đọc mượt mà trên điện thoại quan trọng không kém giao diện đẹp trên máy tính để bàn.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>Có hai cách "ra lệnh" số cột: đặt cứng số cột bằng <code>column-count</code>, hoặc đặt <strong>bề rộng mong muốn</strong>
+           của mỗi cột bằng <code>column-width</code> để trình duyệt <em>tự tính</em> số cột vừa với chỗ trống. Viết tắt cả hai
+           bằng <code>columns</code>.</p>
+      </div>
+
+      <table class="syntax">
+        <caption>Các thuộc tính multicolumn thường dùng</caption>
+        <thead><tr><th>Thuộc tính</th><th>Ý nghĩa</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>column-count</code></td><td>Số cột cố định</td><td><code>column-count: 3</code></td></tr>
+          <tr><td><code>column-width</code></td><td>Bề rộng lý tưởng mỗi cột (số cột tự tính)</td><td><code>column-width: 220px</code></td></tr>
+          <tr><td><code>columns</code> (gộp)</td><td>Viết tắt: <em>column-width column-count</em></td><td><code>columns: 220px 3</code></td></tr>
+          <tr><td><code>column-gap</code></td><td>Khoảng cách giữa các cột</td><td><code>column-gap: 24px</code></td></tr>
+          <tr><td><code>column-rule</code></td><td>Đường kẻ giữa hai cột (như <code>border</code>)</td><td><code>1px solid #cfd8e6</code></td></tr>
+          <tr><td><code>column-span</code></td><td><code>all</code> = phần tử trải ngang mọi cột</td><td><code>column-span: all</code></td></tr>
+          <tr><td><code>break-inside</code></td><td><code>avoid</code> = không cắt đôi khối giữa 2 cột</td><td><code>break-inside: avoid</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* chia khối văn bản thành 3 cột, cách nhau 24px, có đường kẻ giữa */</span>
+.baiviet {
+  <span class="k">column-count</span>: <span class="v">3</span>;
+  <span class="k">column-gap</span>: <span class="v">24px</span>;
+  <span class="k">column-rule</span>: <span class="v">1px solid #cfd8e6</span>;
+}
+
+<span class="c">/* hoặc để trình duyệt tự tính số cột theo bề rộng mong muốn */</span>
+.baiviet { <span class="k">columns</span>: <span class="v">220px 3</span>; } <span class="c">/* column-width column-count */</span>
+
+<span class="c">/* tiêu đề trải ngang toàn bộ các cột */</span>
+.baiviet h2 { <span class="k">column-span</span>: <span class="v">all</span>; }
+
+<span class="c">/* không cắt đôi một đoạn / một thẻ giữa hai cột */</span>
+.baiviet p { <span class="k">break-inside</span>: <span class="v">avoid</span>; }
+
+<span class="c">/* mobile: giảm còn 1 cột cho dễ đọc */</span>
+<span class="k">@media</span> (max-width: 640px) {
+  .baiviet { <span class="k">column-count</span>: <span class="v">1</span>; }
+}</code></pre>
+
+      <div class="callout warn"><p>Multicolumn hợp cho <strong>văn bản dài</strong> dạng báo/tạp chí, ít hợp cho các khối UI phức tạp.
+        Trên màn hình hẹp, cột quá nhiều khiến người đọc phải cuộn lên-xuống theo từng cột rất mệt — hãy dùng
+        <code>@media</code> để <strong>giảm số cột</strong> (thậm chí về 1 cột) khi màn hình nhỏ, và thêm
+        <code>break-inside: avoid</code> để không xé đôi một đoạn hay một thẻ giữa hai cột.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="08-flexbox-grid-navbar-form.html"><small>← Bài trước</small>2.2.8 · Flex · Grid · Navbar · Form</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="../2.3-responsive/01-media-queries.html"><small>Bài tiếp →</small>2.3.2 · Media Queries</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

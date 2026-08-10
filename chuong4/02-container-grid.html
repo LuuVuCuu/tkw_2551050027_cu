@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="4.2 Container và 4.3 Grid - container/fluid, hệ lưới 12 cột, cột responsive theo breakpoint, bảng breakpoint, gutters, offset, nesting và canh chỉnh.">
+  <title>4.2–4.3 · Container & Grid — Chương 4</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/bootstrap-lesson.css">
+</head>
+<body>
+
+  <!-- ===== Breadcrumb ===== -->
+  <nav class="container-lg pt-3" aria-label="breadcrumb">
+    <ol class="breadcrumb small mb-0">
+      <li class="breadcrumb-item"><a href="../index.html">Môn học</a></li>
+      <li class="breadcrumb-item"><a href="index.html">Chương 4</a></li>
+      <li class="breadcrumb-item active" aria-current="page">4.2–4.3 Container &amp; Grid</li>
+    </ol>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="hero4 py-5 mt-2">
+    <div class="container-lg">
+      <h1 class="h2 fw-bold mb-2">4.2–4.3 · Container &amp; Grid</h1>
+      <p class="mb-0 opacity-75">Hai nền tảng bố cục của Bootstrap: <strong>container</strong> gói nội dung và canh lề, còn <strong>hệ lưới 12 cột</strong> chia trang thành các cột co giãn theo màn hình.</p>
+    </div>
+  </header>
+
+  <main class="container-lg my-4" style="max-width: 960px;">
+
+    <!-- 1 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">1</span>Container — khung chứa nội dung</h2>
+      <p>Mọi bố cục Bootstrap nên đặt trong một <strong>container</strong>. Container tạo lề hai bên, canh
+         nội dung vào giữa và là nơi hệ lưới hoạt động. Có ba kiểu:</p>
+      <ul>
+        <li><code>.container</code> — <strong>rộng cố định</strong> (max-width) thay đổi theo breakpoint; luôn canh giữa.</li>
+        <li><code>.container-fluid</code> — luôn rộng <strong>100%</strong> chiều ngang, sát mép màn hình.</li>
+        <li><code>.container-sm</code> … <code>.container-xxl</code> — rộng 100% cho tới breakpoint chỉ định, từ đó mới cố định (ví dụ <code>.container-md</code> chỉ bắt đầu bó khung khi màn ≥ 768px).</li>
+      </ul>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="container border border-primary bg-primary-subtle text-center py-2 mb-3">
+            <code>.container</code> — rộng cố định, canh giữa
+          </div>
+          <div class="container-fluid border border-success bg-success-subtle text-center py-2">
+            <code>.container-fluid</code> — luôn rộng 100%
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"container"</span><span class="k">&gt;</span>Rộng cố định, canh giữa<span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"container-fluid"</span><span class="k">&gt;</span>Luôn rộng 100%<span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"container-md"</span><span class="k">&gt;</span>Chỉ bó khung từ md (≥768px) trở lên<span class="k">&lt;/div&gt;</span></code></pre>
+      <div class="alert alert-info">
+        <strong>Mẹo.</strong> Thu nhỏ cửa sổ trình duyệt và quan sát: khối <code>.container</code> nhảy chiều
+        rộng theo từng nấc breakpoint, còn <code>.container-fluid</code> co giãn mượt theo mọi bề rộng.
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">2</span>Hệ lưới 12 cột</h2>
+      <p>Bootstrap chia mỗi hàng thành <strong>12 phần bằng nhau</strong>. Quy tắc gồm ba lớp lồng nhau:
+         <code>.container</code> → <code>.row</code> → <code>.col</code>. Bên trong <code>.row</code>:</p>
+      <ul>
+        <li><code>.col</code> (không số) — các cột <strong>tự chia đều</strong> phần còn trống.</li>
+        <li><code>.col-{1..12}</code> — cột <strong>cố định</strong> chiếm bấy nhiêu phần trong 12. Tổng trên một hàng nên bằng <strong>12</strong>.</li>
+      </ul>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="row text-center text-white mb-2">
+            <div class="col bg-primary border border-2 border-white py-2">.col</div>
+            <div class="col bg-primary border border-2 border-white py-2">.col</div>
+            <div class="col bg-primary border border-2 border-white py-2">.col</div>
+          </div>
+          <div class="row text-center text-white">
+            <div class="col-6 bg-success border border-2 border-white py-2">.col-6</div>
+            <div class="col-4 bg-info border border-2 border-white py-2">.col-4</div>
+            <div class="col-2 bg-secondary border border-2 border-white py-2">.col-2</div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="c">&lt;!-- ba cột tự chia đều (mỗi cột 1/3) --&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"row"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col"</span><span class="k">&gt;</span>.col<span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col"</span><span class="k">&gt;</span>.col<span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col"</span><span class="k">&gt;</span>.col<span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- cột cố định: 6 + 4 + 2 = 12 --&gt;</span>
+<span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"row"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-6"</span><span class="k">&gt;</span>.col-6<span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-4"</span><span class="k">&gt;</span>.col-4<span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-2"</span><span class="k">&gt;</span>.col-2<span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+      <div class="alert alert-warning">
+        <strong>Lưu ý.</strong> Nếu tổng vượt quá 12, cột thừa sẽ <em>tự động xuống hàng mới</em>. Đây là hành vi bình
+        thường của lưới, nhưng thường là dấu hiệu bạn cộng nhầm số cột.
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">3</span>Cột responsive theo breakpoint</h2>
+      <p>Sức mạnh thật của lưới là <strong>đổi số cột theo bề rộng màn hình</strong>. Thêm tiền tố breakpoint vào
+         class cột: <code>.col-{breakpoint}-{số}</code>. Bootstrap là <em>mobile-first</em> nên class không có
+         breakpoint (như <code>.col-12</code>) áp dụng từ màn nhỏ nhất, rồi các breakpoint lớn hơn <strong>ghi đè</strong> lên.</p>
+      <p>Ví dụ <code>.col-12 .col-md-6 .col-lg-4</code> nghĩa là: <strong>mobile</strong> mỗi khối chiếm cả hàng
+         (xếp dọc), từ <strong>md</strong> chia 2 cột, từ <strong>lg</strong> chia 3 cột.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="row text-center text-white g-2">
+            <div class="col-12 col-md-6 col-lg-4"><div class="bg-primary rounded py-3">Khối A</div></div>
+            <div class="col-12 col-md-6 col-lg-4"><div class="bg-success rounded py-3">Khối B</div></div>
+            <div class="col-12 col-md-6 col-lg-4"><div class="bg-info rounded py-3">Khối C</div></div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"row"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-12 col-md-6 col-lg-4"</span><span class="k">&gt;</span>Khối A<span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-12 col-md-6 col-lg-4"</span><span class="k">&gt;</span>Khối B<span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-12 col-md-6 col-lg-4"</span><span class="k">&gt;</span>Khối C<span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+      <div class="alert alert-info">
+        <strong>Thử ngay.</strong> Kéo thu nhỏ dần cửa sổ: ba khối trên chuyển từ 3 cột (lg) → 2 cột (md) → xếp
+        dọc thành 1 cột (mobile). Không cần viết một dòng media query nào.
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">4</span>Bảng breakpoint</h2>
+      <p>Sáu mốc màn hình của Bootstrap 5 và tiền tố class tương ứng. Mỗi mốc là <strong>chiều rộng tối thiểu</strong>
+         (min-width) để class bắt đầu có hiệu lực:</p>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr><th>Breakpoint</th><th>Tiền tố class</th><th>Bề rộng áp dụng</th><th>Thiết bị tiêu biểu</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Extra small</strong></td><td><code>(không tiền tố)</code></td><td>&lt; 576px</td><td>Điện thoại dọc</td></tr>
+            <tr><td><strong>Small</strong></td><td><code>.col-sm-*</code></td><td>≥ 576px</td><td>Điện thoại ngang</td></tr>
+            <tr><td><strong>Medium</strong></td><td><code>.col-md-*</code></td><td>≥ 768px</td><td>Máy tính bảng</td></tr>
+            <tr><td><strong>Large</strong></td><td><code>.col-lg-*</code></td><td>≥ 992px</td><td>Laptop</td></tr>
+            <tr><td><strong>Extra large</strong></td><td><code>.col-xl-*</code></td><td>≥ 1200px</td><td>Màn hình lớn</td></tr>
+            <tr><td><strong>XXL</strong></td><td><code>.col-xxl-*</code></td><td>≥ 1400px</td><td>Màn hình rất lớn</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-success mb-0">
+        <strong>Ghi nhớ.</strong> Vì lối tiếp cận <em>mobile-first</em>, tiền tố luôn nghĩa là "từ mốc này <strong>trở lên</strong>".
+        <code>.col-md-6</code> đọc là "chiếm 6/12 <strong>khi màn ≥ 768px</strong>", còn dưới mức đó thì lấy giá trị nhỏ hơn (mặc định cả hàng).
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="mb-5">
+      <h2 class="h4"><span class="sec-num">5</span>Gutters, offset, nesting và canh chỉnh</h2>
+
+      <p><strong>a) Gutters — khoảng cách giữa cột.</strong> Dùng <code>.g-*</code> (cả ngang lẫn dọc),
+         <code>.gx-*</code> (chỉ ngang), <code>.gy-*</code> (chỉ dọc), với mức 0–5.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="row g-3 text-center text-white">
+            <div class="col-4"><div class="bg-primary rounded py-2">1</div></div>
+            <div class="col-4"><div class="bg-primary rounded py-2">2</div></div>
+            <div class="col-4"><div class="bg-primary rounded py-2">3</div></div>
+            <div class="col-4"><div class="bg-primary rounded py-2">4</div></div>
+            <div class="col-4"><div class="bg-primary rounded py-2">5</div></div>
+            <div class="col-4"><div class="bg-primary rounded py-2">6</div></div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"row g-3"</span><span class="k">&gt;</span> <span class="c">&lt;!-- g-3: cách đều ngang + dọc --&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-4"</span><span class="k">&gt;</span>…<span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+
+      <p class="mt-4"><strong>b) Offset — đẩy cột sang phải.</strong> <code>.offset-md-4</code> chừa trống 4 cột bên trái
+         (từ breakpoint md). Hữu ích để canh giữa hoặc tạo lề bất đối xứng.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="row text-center text-white mb-2">
+            <div class="col-4 bg-secondary rounded py-2">.col-4</div>
+            <div class="col-4 offset-4 bg-info rounded py-2">.col-4 .offset-4</div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"row"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-4"</span><span class="k">&gt;</span>.col-4<span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-4 offset-md-4"</span><span class="k">&gt;</span>đẩy sang phải<span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+
+      <p class="mt-4"><strong>c) Nesting — lồng lưới trong lưới.</strong> Đặt một <code>.row</code> mới bên trong một
+         <code>.col</code>; hàng con lại được chia 12 cột riêng theo bề rộng của cột cha.</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="row text-center">
+            <div class="col-8 bg-light border rounded p-2">
+              <span class="small text-secondary">.col-8 (cha)</span>
+              <div class="row mt-2 text-white">
+                <div class="col-6"><div class="bg-primary rounded py-2">.col-6</div></div>
+                <div class="col-6"><div class="bg-success rounded py-2">.col-6</div></div>
+              </div>
+            </div>
+            <div class="col-4 text-white"><div class="bg-warning rounded py-2 h-100 d-flex align-items-center justify-content-center">.col-4</div></div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-8"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"row"</span><span class="k">&gt;</span>          <span class="c">&lt;!-- lưới con --&gt;</span>
+    <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-6"</span><span class="k">&gt;</span>…<span class="k">&lt;/div&gt;</span>
+    <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-6"</span><span class="k">&gt;</span>…<span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+
+      <p class="mt-4"><strong>d) Canh chỉnh.</strong> Vì <code>.row</code> là một flexbox, ta canh theo trục ngang bằng
+         <code>.justify-content-*</code> (<code>start/center/end/between/around/evenly</code>) và theo trục dọc bằng
+         <code>.align-items-*</code> (<code>start/center/end</code>).</p>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body">
+          <div class="row justify-content-between align-items-center text-center text-white bg-light rounded" style="min-height: 96px;">
+            <div class="col-3"><div class="bg-primary rounded py-2">A</div></div>
+            <div class="col-3"><div class="bg-success rounded py-4">B (cao hơn)</div></div>
+            <div class="col-3"><div class="bg-info rounded py-2">C</div></div>
+          </div>
+        </div>
+      </div>
+      <pre class="code"><code><span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"row justify-content-between align-items-center"</span><span class="k">&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-3"</span><span class="k">&gt;</span>A<span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-3"</span><span class="k">&gt;</span>B<span class="k">&lt;/div&gt;</span>
+  <span class="k">&lt;div</span> <span class="v">class</span>=<span class="s">"col-3"</span><span class="k">&gt;</span>C<span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;/div&gt;</span></code></pre>
+      <div class="alert alert-success mb-0">
+        <strong>Ok, gói gọn.</strong> <code>.container</code> bọc ngoài · <code>.row</code> mở một hàng ·
+        <code>.col-*</code> chia cột · thêm breakpoint để responsive · dùng <code>gutters/offset/nesting</code> và
+        <code>justify/align</code> để tinh chỉnh. Nắm bằng đây là đủ dựng gần như mọi bố cục.
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer điều hướng ===== -->
+  <footer class="foot4">
+    <div class="container-lg py-4 d-flex flex-wrap justify-content-between gap-2">
+      <a class="btn btn-outline-secondary btn-sm" href="01-tong-quan-bootstrap.html">← 4.1 Tổng quan</a>
+      <a class="btn btn-primary btn-sm" href="03-utilities-co-ban.html">4.4 Utilities cơ bản →</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

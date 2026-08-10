@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.2.2 — CSS SELECTOR (bộ chọn) · bản tham khảo toàn diện
+  ------------------------------------------------------------
+  Selector là "địa chỉ" giúp CSS biết phải tô vào phần tử nào.
+  Bài đi từ cơ bản → nâng cao, tham khảo theo W3Schools:
+    1) Selector cơ bản (element/#id/.class/*/nhóm)
+    2) Combinator (hậu duệ / > / + / ~)
+    3) Selector thuộc tính ([attr], ^=, $=, *=, ~=, |=)
+    4) Pseudo-class trạng thái (:hover :focus :active …)
+    5) Pseudo-class cấu trúc (:nth-child, :first-child …)
+    6) Pseudo-class khác (:not :checked :required :root …)
+    7) Pseudo-element (::before ::after ::first-letter …)
+    8) Độ ưu tiên (specificity) — cách tính điểm
+    9) Bảng tổng hợp các nhóm selector
+   10) Mẹo viết selector tốt
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.2.2 · CSS Selector — bộ chọn</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* 1) Selector cơ bản */
+    .d-basic p          { color: #16407a; }                         /* element */
+    .d-basic #d-special { background: #fde68a; font-weight: 700; }  /* id */
+    .d-basic .hot       { color: #E63946; font-weight: 700; }       /* class */
+    .d-basic .frame *   { outline: 1px dashed #c4b5fd; }            /* universal trong khung */
+    .d-basic h4, .d-basic figcaption { color: #6c5ce7; }           /* nhóm A, B */
+    .d-basic .frame { background: #faf5ff; padding: 10px; border-radius: 8px; }
+
+    /* 2) Combinator */
+    .d-comb { background: #f1f5f9; padding: 12px; border-radius: 8px; }
+    .d-comb .box { background: #fff; border: 1px solid #cbd5e1; padding: 8px; border-radius: 6px; margin: 6px 0; }
+    .d-comb p          { margin: 4px 0; }
+    /* hậu duệ: mọi <em> bên trong .d-descend */
+    .d-descend em      { background: #bbf7d0; padding: 1px 4px; border-radius: 4px; font-style: normal; }
+    /* con trực tiếp: chỉ <p> là con trực tiếp của .d-child */
+    .d-child > p       { color: #04AA6D; font-weight: 700; }
+    /* kề liền: <p> đứng NGAY SAU h5 */
+    .d-adj h5 + p      { background: #fde68a; padding: 2px 6px; border-radius: 4px; }
+    /* anh em chung: MỌI <p> đứng sau h5 (cùng cha) */
+    .d-sib h5 ~ p      { color: #6c5ce7; }
+
+    /* 3) Selector thuộc tính */
+    .d-attr a            { display: inline-block; margin: 3px 6px 3px 0; color: #16407a; text-decoration: none;
+                           border: 1px solid #cbd5e1; padding: 4px 9px; border-radius: 6px; }
+    .d-attr a[target]              { border-color: #04AA6D; }                 /* có thuộc tính target */
+    .d-attr a[href^="https"]       { background: #eafaf3; }                   /* bắt đầu bằng https */
+    .d-attr a[href$=".pdf"]        { background: #fdecee; color: #c2185b; }   /* kết thúc .pdf */
+    .d-attr a[href*="khoa"]        { font-weight: 700; }                      /* chứa "khoa" */
+    .d-attr a[hreflang|="vi"]      { outline: 2px solid #FFC107; }            /* vi hoặc vi-* */
+    .d-attr a[data-tag~="hot"]     { color: #E63946; }                        /* trong list cách nhau dấu cách */
+
+    /* 4) Pseudo-class trạng thái */
+    .d-state a:link    { color: #1D559F; }
+    .d-state a:visited { color: #6c5ce7; }
+    .d-state a:hover   { color: #E63946; text-decoration: underline; }
+    .d-state a:active  { color: #FFC107; }
+    .d-btn { font: inherit; border: none; cursor: pointer; padding: 9px 16px; border-radius: 8px;
+             background: #1D559F; color: #fff; font-weight: 600; margin: 2px; }
+    .d-btn:hover  { background: #16407a; }
+    .d-btn:active { transform: translateY(1px); }
+    .d-ipt { font: inherit; padding: 8px 10px; border: 2px solid #cbd5e1; border-radius: 8px; }
+    .d-ipt:focus { outline: none; border-color: #04AA6D; box-shadow: 0 0 0 3px #04aa6d33; }
+
+    /* 5) Pseudo-class cấu trúc */
+    .d-struct ul { list-style: none; margin: 0; padding: 0; }
+    .d-struct li { padding: 7px 12px; border: 1px solid #e3e8f0; background: #fff; }
+    .d-struct li:first-child       { background: #dbeafe; font-weight: 700; }
+    .d-struct li:last-child        { background: #fde68a; font-weight: 700; }
+    .d-struct li:nth-child(even)   { background: #f6f9fe; }
+    .d-struct li:nth-child(3n)     { color: #E63946; }        /* mỗi 3 mục */
+    .d-mix span        { display: inline-block; padding: 5px 9px; border-radius: 6px; margin: 2px;
+                         background: #e2e8f0; }
+    .d-mix p:first-of-type { color: #04AA6D; font-weight: 700; }   /* <p> đầu tiên */
+    .d-mix span:nth-of-type(odd) { background: #c4b5fd; color: #fff; }
+    .d-only li:only-child { background: #bbf7d0; font-weight: 700; }
+
+    /* 6) Pseudo-class khác */
+    .d-not li        { padding: 6px 10px; }
+    .d-not li:not(.skip) { background: #eafaf3; }                  /* mọi li trừ .skip */
+    .d-form label { display: block; margin: 8px 0; }
+    .d-form input[type="text"], .d-form input[type="email"] {
+        font: inherit; padding: 6px 9px; border: 2px solid #cbd5e1; border-radius: 7px; }
+    .d-form input:required { border-color: #1D559F; }
+    .d-form input:disabled { background: #e2e8f0; color: #94a3b8; }
+    .d-form .opt label { display: inline-block; margin-right: 14px; }
+    .d-form input[type="checkbox"]:checked + span { color: #04AA6D; font-weight: 700; }
+    .d-empty div { border: 1px dashed #cbd5e1; padding: 8px; margin: 4px 0; border-radius: 6px; }
+    .d-empty div:empty { background: #fdecee; }
+    .d-empty div:empty::after { content: "(rỗng)"; color: #c2185b; }
+
+    /* 7) Pseudo-element */
+    .d-pe { background: #f8fafc; padding: 12px; border-radius: 8px; }
+    .d-ba { padding: 6px 0; }
+    .d-ba::before { content: "👉 "; }
+    .d-ba::after  { content: " ✓"; color: #04AA6D; }
+    .d-fl::first-letter { font-size: 2.4em; font-weight: 700; color: #1D559F; float: left; line-height: .8; padding-right: 6px; }
+    .d-fl::first-line   { font-variant: small-caps; color: #6c5ce7; }
+    .d-sel::selection   { background: #FFC107; color: #16407a; }
+    .d-ph::placeholder  { color: #94a3b8; font-style: italic; }
+    .d-marker li::marker { color: #E63946; font-weight: 700; content: "➤ "; }
+
+    /* 8) Specificity */
+    .d-spec p { padding: 6px 10px; border-radius: 6px; margin: 4px 0; }
+
+    /* tiện ích nhỏ trong bài */
+    .d-tag { display: inline-block; background: #1D559F; color: #fff; font-size: .72rem; font-weight: 700;
+             padding: 1px 8px; border-radius: 999px; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.2 CSS</a><span>›</span>
+        Selector
+      </nav>
+      <h1>CSS Selector — <code style="color:#fff;background:rgba(255,255,255,.18)">bộ chọn</code> phần tử</h1>
+      <p class="sub">Selector là "địa chỉ" cho biết quy tắc CSS sẽ áp vào phần tử nào. Nắm vững selector
+         giúp bạn nhắm trúng đối tượng, viết CSS gọn và dễ bảo trì. Đi từ element/class/id cơ bản đến
+         combinator, pseudo-class, pseudo-element và cách tính độ ưu tiên.</p>
+      <div class="chips">
+        <span class="chip solid">2.2.2</span>
+        <span class="chip">CSS cơ bản</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Selector cơ bản</a></li>
+        <li><a href="#s2">Combinator (kết hợp)</a></li>
+        <li><a href="#s3">Selector thuộc tính</a></li>
+        <li><a href="#s4">Pseudo-class trạng thái</a></li>
+        <li><a href="#s5">Pseudo-class cấu trúc</a></li>
+        <li><a href="#s6">Pseudo-class khác</a></li>
+        <li><a href="#s7">Pseudo-element</a></li>
+        <li><a href="#s8">Độ ưu tiên (specificity)</a></li>
+        <li><a href="#s9">Bảng tổng hợp selector</a></li>
+        <li><a href="#s10">Mẹo viết selector tốt</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. SELECTOR CƠ BẢN  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Selector cơ bản <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Năm bộ chọn nền tảng: theo <strong>tên thẻ</strong>, theo <strong>id</strong> (<code>#</code>),
+         theo <strong>class</strong> (<code>.</code>), <strong>tất cả</strong> phần tử (<code>*</code>) và
+         <strong>nhóm</strong> nhiều bộ chọn (ngăn bằng dấu phẩy).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body d-basic">
+          <h4>Tiêu đề (nhóm A, B tô tím)</h4>
+          <p>Mọi <code>&lt;p&gt;</code> ở đây tô xanh đậm (selector theo tên thẻ).</p>
+          <p>Đoạn có <span class="hot">class .hot</span> tô đỏ đậm.</p>
+          <p id="d-special">Đoạn có id <code>#d-special</code> nền vàng.</p>
+          <div class="frame">
+            <span>universal <code>*</code></span> <b>tô viền</b> <em>mọi con</em>
+          </div>
+          <figure style="margin:8px 0 0"><figcaption>figcaption cũng thuộc nhóm tô tím.</figcaption></figure>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* theo tên thẻ — mọi &lt;p&gt; */</span>
+p        { <span class="k">color</span>: <span class="v">#16407a</span>; }
+<span class="c">/* theo id — duy nhất trên trang, dùng dấu # */</span>
+#special { <span class="k">background</span>: <span class="v">#fde68a</span>; }
+<span class="c">/* theo class — tái sử dụng nhiều nơi, dùng dấu . */</span>
+.hot     { <span class="k">color</span>: <span class="v">#E63946</span>; }
+<span class="c">/* universal — chọn TẤT CẢ phần tử */</span>
+*        { <span class="k">box-sizing</span>: <span class="v">border-box</span>; }
+<span class="c">/* nhóm — áp cùng quy tắc cho nhiều selector */</span>
+h4, figcaption { <span class="k">color</span>: <span class="v">#6c5ce7</span>; }</code></pre>
+
+      <table class="syntax">
+        <caption>Năm selector cơ bản</caption>
+        <thead><tr><th>Selector</th><th>Ví dụ</th><th>Chọn gì</th></tr></thead>
+        <tbody>
+          <tr><td>Tên thẻ (element)</td><td><code>p</code></td><td>Mọi phần tử <code>&lt;p&gt;</code>.</td></tr>
+          <tr><td>id</td><td><code>#nav</code></td><td>Phần tử có <code>id="nav"</code> (chỉ một trên trang).</td></tr>
+          <tr><td>class</td><td><code>.btn</code></td><td>Mọi phần tử có <code>class="btn"</code>.</td></tr>
+          <tr><td>Kết hợp thẻ + class</td><td><code>a.btn</code></td><td>Phần tử <code>&lt;a&gt;</code> có class <code>btn</code>.</td></tr>
+          <tr><td>Universal</td><td><code>*</code></td><td>Tất cả phần tử.</td></tr>
+          <tr><td>Nhóm</td><td><code>h1, h2, h3</code></td><td>Mọi <code>h1</code> <em>hoặc</em> <code>h2</code> <em>hoặc</em> <code>h3</code>.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p><code>id</code> nên là <strong>duy nhất</strong> trong một trang; còn <code>class</code> được phép
+        lặp lại nhiều lần. Vì vậy hãy ưu tiên class để dễ tái sử dụng (xem mục 10).</p></div>
+    </section>
+
+    <!-- ==========  2. COMBINATOR  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Combinator — kết hợp bộ chọn <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Combinator mô tả <strong>quan hệ</strong> giữa các phần tử: hậu duệ (khoảng trắng),
+         con trực tiếp (<code>&gt;</code>), anh em kề liền (<code>+</code>) và anh em chung sau đó (<code>~</code>).</p>
+
+      <h3>2.1 — Hậu duệ <code>A B</code> &amp; con trực tiếp <code>A &gt; B</code></h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body d-comb">
+          <div class="d-descend">
+            <p>Hậu duệ: <em>em này</em> được tô (nằm sâu bên trong).</p>
+            <div class="box"><p>Và <em>em lồng sâu hơn</em> cũng được tô.</p></div>
+          </div>
+          <hr class="soft">
+          <div class="d-child">
+            <p>Con trực tiếp: tôi tô xanh lá (là <code>&gt; p</code>).</p>
+            <div class="box"><p>Tôi KHÔNG tô vì là cháu, không phải con trực tiếp.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <h3>2.2 — Kề liền <code>A + B</code> &amp; anh em chung <code>A ~ B</code></h3>
+      <div class="demo">
+        <div class="demo-bar">Kết quả</div>
+        <div class="demo-body d-comb">
+          <div class="d-adj">
+            <h5>Kề liền (+):</h5>
+            <p>Tôi NGAY SAU h5 → được tô vàng.</p>
+            <p>Tôi đứng xa hơn → không tô.</p>
+          </div>
+          <hr class="soft">
+          <div class="d-sib">
+            <h5>Anh em chung (~):</h5>
+            <p>p sau h5 → tô tím.</p>
+            <p>p này cũng sau h5 → tô tím luôn.</p>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* hậu duệ: mọi em BÊN TRONG .menu (con, cháu, chắt…) */</span>
+.menu em      { <span class="k">color</span>: <span class="v">green</span>; }
+<span class="c">/* con trực tiếp: chỉ p là CON ngay của .menu */</span>
+.menu &gt; p      { <span class="k">color</span>: <span class="v">green</span>; }
+<span class="c">/* kề liền: p đứng NGAY SAU h5 (cùng cha) */</span>
+h5 + p        { <span class="k">background</span>: <span class="v">yellow</span>; }
+<span class="c">/* anh em chung: MỌI p sau h5 (cùng cha) */</span>
+h5 ~ p        { <span class="k">color</span>: <span class="v">purple</span>; }</code></pre>
+
+      <table class="syntax">
+        <caption>Bốn combinator</caption>
+        <thead><tr><th>Cú pháp</th><th>Tên</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>A&nbsp;B</code> (khoảng trắng)</td><td>Hậu duệ</td><td>B nằm bên trong A ở bất kỳ độ sâu nào.</td></tr>
+          <tr><td><code>A &gt; B</code></td><td>Con trực tiếp</td><td>B là con <strong>ngay</strong> của A (một cấp).</td></tr>
+          <tr><td><code>A + B</code></td><td>Anh em kề liền</td><td>B đứng <strong>ngay sau</strong> A, cùng một cha.</td></tr>
+          <tr><td><code>A ~ B</code></td><td>Anh em chung</td><td><strong>Mọi</strong> B đứng sau A (cùng cha), không cần kề.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  3. SELECTOR THUỘC TÍNH  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Selector thuộc tính <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Chọn phần tử dựa trên <strong>thuộc tính</strong> và <strong>giá trị</strong> của nó.
+         Rất mạnh để tạo kiểu cho liên kết, ô input, hay nút theo dữ liệu (<code>data-*</code>).</p>
+
+      <table class="syntax">
+        <caption>Bảy dạng selector thuộc tính (theo W3Schools)</caption>
+        <thead><tr><th>Cú pháp</th><th>Khớp khi</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>[attr]</code></td><td>Có thuộc tính <code>attr</code> (bất kể giá trị).</td><td><code>a[target]</code></td></tr>
+          <tr><td><code>[attr="val"]</code></td><td>Giá trị <strong>đúng bằng</strong> <code>val</code>.</td><td><code>input[type="text"]</code></td></tr>
+          <tr><td><code>[attr^="val"]</code></td><td>Giá trị <strong>bắt đầu bằng</strong> <code>val</code>.</td><td><code>a[href^="https"]</code></td></tr>
+          <tr><td><code>[attr$="val"]</code></td><td>Giá trị <strong>kết thúc bằng</strong> <code>val</code>.</td><td><code>a[href$=".pdf"]</code></td></tr>
+          <tr><td><code>[attr*="val"]</code></td><td>Giá trị <strong>chứa</strong> chuỗi <code>val</code>.</td><td><code>a[href*="khoa"]</code></td></tr>
+          <tr><td><code>[attr~="val"]</code></td><td>Giá trị là danh sách cách nhau bởi dấu cách và <strong>chứa từ</strong> <code>val</code>.</td><td><code>[data-tag~="hot"]</code></td></tr>
+          <tr><td><code>[attr|="val"]</code></td><td>Giá trị bằng <code>val</code> <strong>hoặc</strong> bắt đầu bằng <code>val-</code> (hay dùng cho mã ngôn ngữ).</td><td><code>[hreflang|="vi"]</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · mỗi liên kết khớp một dạng selector</div>
+        <div class="demo-body d-attr">
+          <a href="https://ou.edu.vn" target="_blank">[target] + ^=https (viền xanh, nền nhạt)</a>
+          <a href="tailieu-khoahoc.pdf">$=.pdf (nền hồng)</a>
+          <a href="https://trang-khoa.vn">*=khoa (in đậm)</a>
+          <a href="bai-hoc.html" hreflang="vi-VN">|=vi (viền vàng)</a>
+          <a href="#" data-tag="moi hot sale">~=hot (chữ đỏ)</a>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* có thuộc tính target */</span>
+a[<span class="k">target</span>]            { <span class="k">border-color</span>: <span class="v">green</span>; }
+<span class="c">/* href bắt đầu bằng https → liên kết an toàn */</span>
+a[<span class="k">href</span>^=<span class="s">"https"</span>]   { <span class="k">background</span>: <span class="v">#eafaf3</span>; }
+<span class="c">/* href kết thúc .pdf → tài liệu tải về */</span>
+a[<span class="k">href</span>$=<span class="s">".pdf"</span>]    { <span class="k">background</span>: <span class="v">#fdecee</span>; }
+<span class="c">/* href chứa chuỗi "khoa" */</span>
+a[<span class="k">href</span>*=<span class="s">"khoa"</span>]    { <span class="k">font-weight</span>: <span class="v">700</span>; }
+<span class="c">/* hreflang = vi hoặc vi-VN, vi-... */</span>
+a[<span class="k">hreflang</span>|=<span class="s">"vi"</span>]  { <span class="k">outline</span>: <span class="v">2px solid gold</span>; }
+<span class="c">/* data-tag là 1 list, chứa đúng từ "hot" */</span>
+[<span class="k">data-tag</span>~=<span class="s">"hot"</span>]    { <span class="k">color</span>: <span class="v">red</span>; }</code></pre>
+      <div class="callout tip"><p>Thêm chữ <code>i</code> trước dấu ngoặc đóng để bỏ qua hoa/thường:
+        <code>a[href$=".PDF" i]</code> khớp cả <code>.pdf</code> lẫn <code>.PDF</code>.</p></div>
+    </section>
+
+    <!-- ==========  4. PSEUDO-CLASS TRẠNG THÁI  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Pseudo-class trạng thái <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Pseudo-class (lớp giả) bắt đầu bằng <strong>một dấu hai chấm</strong> <code>:</code>, mô tả
+         <strong>trạng thái</strong> của phần tử: đang rê chuột, đang focus, đang bấm, đã/chưa thăm.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả · rê chuột / bấm / focus để thấy đổi màu</div>
+        <div class="demo-body">
+          <p class="d-state">Liên kết: <a href="#s4">rê chuột vào tôi</a> hoặc
+             <a href="https://w3schools.com">liên kết ngoài</a> — đổi màu theo trạng thái.</p>
+          <p><button type="button" class="d-btn">Nút :hover &amp; :active</button>
+             <input class="d-ipt" type="text" placeholder="Bấm vào ô này để thấy :focus"></p>
+        </div>
+      </div>
+
+      <pre class="code"><code>a<span class="k">:link</span>    { <span class="k">color</span>: <span class="v">#1D559F</span>; }  <span class="c">/* chưa thăm */</span>
+a<span class="k">:visited</span> { <span class="k">color</span>: <span class="v">#6c5ce7</span>; }  <span class="c">/* đã thăm   */</span>
+a<span class="k">:hover</span>   { <span class="k">color</span>: <span class="v">#E63946</span>; }  <span class="c">/* đang rê chuột */</span>
+a<span class="k">:active</span>  { <span class="k">color</span>: <span class="v">#FFC107</span>; }  <span class="c">/* đang bấm  */</span>
+input<span class="k">:focus</span> { <span class="k">border-color</span>: <span class="v">#04AA6D</span>; } <span class="c">/* đang được chọn */</span></code></pre>
+
+      <table class="syntax">
+        <caption>Pseudo-class trạng thái thường gặp</caption>
+        <thead><tr><th>Pseudo-class</th><th>Kích hoạt khi</th></tr></thead>
+        <tbody>
+          <tr><td><code>:link</code></td><td>Liên kết <strong>chưa</strong> được truy cập.</td></tr>
+          <tr><td><code>:visited</code></td><td>Liên kết <strong>đã</strong> được truy cập.</td></tr>
+          <tr><td><code>:hover</code></td><td>Con trỏ chuột đang ở trên phần tử.</td></tr>
+          <tr><td><code>:focus</code></td><td>Phần tử đang được chọn (ô nhập, nút, link qua phím Tab).</td></tr>
+          <tr><td><code>:active</code></td><td>Phần tử đang được bấm giữ.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn"><p>Thứ tự khai báo cho liên kết phải đúng <strong>LoVe&nbsp;–&nbsp;HAte</strong>:
+        <code>:link → :visited → :hover → :active</code>. Sai thứ tự thì hiệu ứng hover/active có thể không hiện.</p></div>
+    </section>
+
+    <!-- ==========  5. PSEUDO-CLASS CẤU TRÚC  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Pseudo-class cấu trúc <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Chọn phần tử theo <strong>vị trí</strong> của nó trong cây HTML mà không cần thêm class:
+         mục đầu/cuối, mục thứ n, mục chẵn/lẻ…</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">Danh sách · :first/:last/:nth-child</div>
+          <div class="demo-body d-struct">
+            <ul>
+              <li>Mục 1 — :first-child (xanh)</li>
+              <li>Mục 2 — :nth-child(even)</li>
+              <li>Mục 3 — :nth-child(3n) đỏ</li>
+              <li>Mục 4 — :nth-child(even)</li>
+              <li>Mục 5</li>
+              <li>Mục 6 — even + 3n</li>
+              <li>Mục 7 — :last-child (vàng)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">Theo loại thẻ · :first-of-type / :nth-of-type</div>
+          <div class="demo-body d-mix">
+            <p>p đầu tiên → xanh lá (:first-of-type)</p>
+            <p>p thứ hai → bình thường</p>
+            <span>span 1</span><span>span 2</span><span>span 3</span><span>span 4</span>
+            <p class="muted" style="margin:8px 0 0">span lẻ (1,3) tô tím qua :nth-of-type(odd)</p>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>li<span class="k">:first-child</span>     { <span class="k">background</span>: <span class="v">#dbeafe</span>; } <span class="c">/* mục đầu */</span>
+li<span class="k">:last-child</span>      { <span class="k">background</span>: <span class="v">#fde68a</span>; } <span class="c">/* mục cuối */</span>
+li<span class="k">:nth-child(even)</span> { <span class="k">background</span>: <span class="v">#f6f9fe</span>; } <span class="c">/* dòng chẵn — kẻ vằn */</span>
+li<span class="k">:nth-child(3n)</span>   { <span class="k">color</span>: <span class="v">red</span>; }       <span class="c">/* mỗi 3 mục: 3,6,9… */</span>
+p<span class="k">:first-of-type</span>   { <span class="k">color</span>: <span class="v">green</span>; }     <span class="c">/* &lt;p&gt; đầu tiên trong cha */</span>
+span<span class="k">:nth-of-type(odd)</span>{ <span class="k">background</span>: <span class="v">#c4b5fd</span>; } <span class="c">/* span lẻ */</span></code></pre>
+
+      <table class="syntax">
+        <caption>Cú pháp tham số của <code>:nth-child(n)</code></caption>
+        <thead><tr><th>Tham số</th><th>Chọn các mục</th></tr></thead>
+        <tbody>
+          <tr><td><code>:nth-child(3)</code></td><td>Đúng mục thứ 3.</td></tr>
+          <tr><td><code>:nth-child(odd)</code> / <code>(2n+1)</code></td><td>Lẻ: 1, 3, 5, 7…</td></tr>
+          <tr><td><code>:nth-child(even)</code> / <code>(2n)</code></td><td>Chẵn: 2, 4, 6, 8…</td></tr>
+          <tr><td><code>:nth-child(3n)</code></td><td>Bội của 3: 3, 6, 9…</td></tr>
+          <tr><td><code>:nth-child(3n+1)</code></td><td>1, 4, 7, 10… (cứ cách 3).</td></tr>
+          <tr><td><code>:only-child</code></td><td>Phần tử là con <strong>duy nhất</strong> của cha.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><p>Khác biệt mấu chốt: <code>:nth-child</code> đếm <strong>mọi</strong> anh em rồi xét vị trí,
+        còn <code>:nth-of-type</code> chỉ đếm các anh em <strong>cùng loại thẻ</strong>. Hộp dưới minh hoạ <code>:only-child</code>:</p></div>
+      <div class="demo">
+        <div class="demo-bar">:only-child · ul chỉ có 1 li → tô xanh lá</div>
+        <div class="demo-body d-only">
+          <ul style="list-style:none;margin:0;padding:0"><li style="padding:7px 12px">Tôi là con duy nhất</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  6. PSEUDO-CLASS KHÁC  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Pseudo-class khác: phủ định, form &amp; gốc <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Nhóm pseudo-class hữu ích cho biểu mẫu và loại trừ:
+         <code>:not()</code>, <code>:checked</code>, <code>:disabled</code>, <code>:required</code>, <code>:empty</code>, <code>:root</code>.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">:not() — mọi mục TRỪ .skip</div>
+          <div class="demo-body d-not">
+            <ul style="list-style:none;margin:0;padding:0">
+              <li>Mục thường (tô xanh)</li>
+              <li class="skip">Mục .skip (KHÔNG tô)</li>
+              <li>Mục thường (tô xanh)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">:empty — phần tử rỗng tô khác</div>
+          <div class="demo-body d-empty">
+            <div>Có nội dung.</div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-bar">Form · :required (viền xanh) · :disabled (xám) · :checked</div>
+        <div class="demo-body d-form">
+          <label>Họ tên (bắt buộc): <input type="text" required></label>
+          <label>Email (không bắt buộc): <input type="email"></label>
+          <label>Trường khoá: <input type="text" value="không sửa được" disabled></label>
+          <div class="opt">
+            <label><input type="checkbox" checked> <span>Đã tick → chữ xanh đậm</span></label>
+            <label><input type="checkbox"> <span>Chưa tick</span></label>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code>li<span class="k">:not(.skip)</span>   { <span class="k">background</span>: <span class="v">#eafaf3</span>; }  <span class="c">/* loại trừ .skip */</span>
+input<span class="k">:required</span> { <span class="k">border-color</span>: <span class="v">blue</span>; }    <span class="c">/* ô bắt buộc */</span>
+input<span class="k">:disabled</span> { <span class="k">background</span>: <span class="v">#e2e8f0</span>; }  <span class="c">/* ô bị khoá  */</span>
+input<span class="k">:checked</span> + span { <span class="k">color</span>: <span class="v">green</span>; }  <span class="c">/* checkbox đã tick */</span>
+div<span class="k">:empty</span>      { <span class="k">background</span>: <span class="v">#fdecee</span>; }  <span class="c">/* không có con/nội dung */</span>
+<span class="k">:root</span>          { <span class="k">--blue</span>: <span class="v">#1D559F</span>; }     <span class="c">/* phần tử gốc &lt;html&gt; — nơi khai báo biến CSS */</span></code></pre>
+      <div class="callout info"><p><code>:root</code> trỏ tới phần tử gốc <code>&lt;html&gt;</code> nhưng có độ ưu tiên cao hơn,
+        là nơi lý tưởng để khai báo <strong>biến CSS</strong> (custom properties) dùng chung cho cả trang.</p></div>
+    </section>
+
+    <!-- ==========  7. PSEUDO-ELEMENT  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Pseudo-element <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Pseudo-element (phần tử giả) dùng <strong>hai dấu hai chấm</strong> <code>::</code>, tạo kiểu cho
+         <strong>một phần</strong> của phần tử hoặc <strong>chèn nội dung</strong> mà không cần thêm thẻ HTML.</p>
+
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">::before / ::after chèn nội dung</div>
+          <div class="demo-body d-pe">
+            <p class="d-ba">Chèn icon trước và dấu tick sau</p>
+            <p class="d-ba">Mỗi dòng tự có 👉 và ✓</p>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">::first-letter / ::first-line</div>
+          <div class="demo-body d-pe">
+            <p class="d-fl">Chữ cái đầu được phóng to kiểu báo in (drop cap); còn cả dòng đầu tiên
+               được tô tím và viết kiểu small-caps. Phần còn lại của đoạn văn giữ nguyên định dạng bình thường.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-bar">::selection · ::placeholder · ::marker</div>
+        <div class="demo-body d-pe">
+          <p class="d-sel"><strong>Bôi đen thử đoạn này</strong> — vùng chọn sẽ có nền vàng (::selection).</p>
+          <p><input class="d-ph" type="text" placeholder="placeholder in nghiêng xám (::placeholder)"
+                    style="font:inherit;padding:8px 10px;border:2px solid #cbd5e1;border-radius:8px;width:min(320px,100%)"></p>
+          <ul class="d-marker" style="margin:0">
+            <li>Dấu đầu dòng đổi thành ➤ đỏ (::marker)</li>
+            <li>Mục thứ hai cũng vậy</li>
+          </ul>
+        </div>
+      </div>
+
+      <pre class="code"><code>p<span class="k">::before</span>  { <span class="k">content</span>: <span class="s">"👉 "</span>; }          <span class="c">/* chèn trước nội dung */</span>
+p<span class="k">::after</span>   { <span class="k">content</span>: <span class="s">" ✓"</span>; <span class="k">color</span>: <span class="v">green</span>; }
+p<span class="k">::first-letter</span> { <span class="k">font-size</span>: <span class="v">2.4em</span>; <span class="k">float</span>: <span class="v">left</span>; }
+p<span class="k">::first-line</span>   { <span class="k">font-variant</span>: <span class="v">small-caps</span>; }
+<span class="k">::selection</span>      { <span class="k">background</span>: <span class="v">gold</span>; }       <span class="c">/* vùng bôi đen */</span>
+input<span class="k">::placeholder</span> { <span class="k">color</span>: <span class="v">#94a3b8</span>; }    <span class="c">/* chữ gợi ý */</span>
+li<span class="k">::marker</span>     { <span class="k">color</span>: <span class="v">red</span>; <span class="k">content</span>: <span class="s">"➤ "</span>; } <span class="c">/* chấm/số đầu dòng */</span></code></pre>
+      <div class="callout warn"><p><code>::before</code> và <code>::after</code> <strong>bắt buộc</strong> phải có thuộc tính
+        <code>content</code> (dù chỉ là <code>content: ""</code>) thì mới hiển thị. Nội dung chèn là "ảo", không vào được DOM.</p></div>
+    </section>
+
+    <!-- ==========  8. ĐỘ ƯU TIÊN (SPECIFICITY)  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Độ ưu tiên — Specificity <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Khi nhiều quy tắc cùng nhắm một phần tử, trình duyệt chọn quy tắc có <strong>độ ưu tiên cao nhất</strong>.
+         Tính điểm theo bộ ba <span class="d-tag">(id, class, element)</span> — so từ trái sang phải.</p>
+
+      <table class="syntax">
+        <caption>Cách tính điểm specificity</caption>
+        <thead><tr><th>Loại selector</th><th>Cộng vào</th><th>Ví dụ → điểm</th></tr></thead>
+        <tbody>
+          <tr><td>Inline style (<code>style="…"</code>)</td><td>Cao nhất (1,0,0,0)</td><td>luôn thắng selector thường</td></tr>
+          <tr><td>id (<code>#nav</code>)</td><td>+1 cột <strong>id</strong></td><td><code>#box</code> → (1,0,0)</td></tr>
+          <tr><td>class / pseudo-class / thuộc tính</td><td>+1 cột <strong>class</strong></td><td><code>.menu:hover</code> → (0,2,0)</td></tr>
+          <tr><td>element / pseudo-element</td><td>+1 cột <strong>element</strong></td><td><code>p::before</code> → (0,0,2)</td></tr>
+          <tr><td>universal <code>*</code></td><td>+0 (không cộng gì)</td><td><code>*</code> → (0,0,0)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Ai thắng? · cùng nhắm vào một đoạn <code>&lt;p id="x" class="y"&gt;</code></div>
+        <div class="demo-body d-spec">
+          <p id="d-win" class="d-win" style="background:#bbf7d0">Đoạn này thực tế đang nhận màu nền của quy tắc thắng cuộc.</p>
+        </div>
+      </div>
+      <p class="muted">Giả sử có 3 quy tắc cùng đặt <code>background</code> cho đoạn trên:</p>
+      <pre class="code"><code>p          { <span class="k">background</span>: <span class="v">#eee</span>; }    <span class="c">/* (0,0,1) = 1 điểm element  */</span>
+.d-win     { <span class="k">background</span>: <span class="v">#fde68a</span>; } <span class="c">/* (0,1,0) = 1 điểm class    → mạnh hơn element */</span>
+#d-win     { <span class="k">background</span>: <span class="v">#bbf7d0</span>; } <span class="c">/* (1,0,0) = 1 điểm id       → MẠNH NHẤT, thắng */</span></code></pre>
+
+      <table class="syntax">
+        <caption>So điểm vài selector (đọc như số: id &gt; class &gt; element)</caption>
+        <thead><tr><th>Selector</th><th>(id, class, element)</th><th>Mạnh hơn?</th></tr></thead>
+        <tbody>
+          <tr><td><code>p</code></td><td>(0, 0, 1)</td><td>yếu nhất</td></tr>
+          <tr><td><code>.btn</code></td><td>(0, 1, 0)</td><td>&gt; <code>p</code></td></tr>
+          <tr><td><code>nav a.btn</code></td><td>(0, 1, 2)</td><td>&gt; <code>.btn</code></td></tr>
+          <tr><td><code>#menu .btn</code></td><td>(1, 1, 0)</td><td>&gt; mọi cái không có id</td></tr>
+          <tr><td><code>style="…"</code></td><td>(1,0,0,0)</td><td>thắng gần như tất cả</td></tr>
+        </tbody>
+      </table>
+      <div class="callout danger"><p><code>!important</code> ghi đè cả specificity — nhưng <strong>hạn chế dùng</strong> vì nó phá vỡ
+        quy tắc tự nhiên, khiến CSS rất khó bảo trì và gỡ lỗi. Hãy ưu tiên viết selector hợp lý trước.</p></div>
+    </section>
+
+    <!-- ==========  9. BẢNG TỔNG HỢP  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Bảng tổng hợp các nhóm selector <span class="tag-base">Tra cứu</span></h2>
+      <p class="lead">Bảng tra nhanh gom mọi nhóm selector đã học, tiện in ra dán cạnh bàn.</p>
+
+      <table class="syntax">
+        <caption>Tổng hợp selector CSS (theo W3Schools)</caption>
+        <thead><tr><th>Nhóm</th><th>Cú pháp tiêu biểu</th><th>Chọn gì</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="3">Cơ bản</td><td><code>p</code> · <code>.class</code> · <code>#id</code></td><td>Theo tên thẻ / class / id.</td></tr>
+          <tr><td><code>*</code></td><td>Tất cả phần tử.</td></tr>
+          <tr><td><code>h1, h2, p</code></td><td>Nhóm nhiều selector.</td></tr>
+          <tr><td rowspan="4">Combinator</td><td><code>div p</code></td><td>Hậu duệ.</td></tr>
+          <tr><td><code>div &gt; p</code></td><td>Con trực tiếp.</td></tr>
+          <tr><td><code>h2 + p</code></td><td>Anh em kề liền.</td></tr>
+          <tr><td><code>h2 ~ p</code></td><td>Anh em chung sau đó.</td></tr>
+          <tr><td rowspan="3">Thuộc tính</td><td><code>[type="text"]</code></td><td>Khớp giá trị chính xác.</td></tr>
+          <tr><td><code>[href^="https"]</code> · <code>[src$=".png"]</code></td><td>Bắt đầu / kết thúc.</td></tr>
+          <tr><td><code>[class*="col"]</code></td><td>Chứa chuỗi con.</td></tr>
+          <tr><td rowspan="3">Pseudo-class</td><td><code>:hover</code> · <code>:focus</code> · <code>:active</code></td><td>Trạng thái tương tác.</td></tr>
+          <tr><td><code>:first-child</code> · <code>:nth-child(n)</code></td><td>Vị trí cấu trúc.</td></tr>
+          <tr><td><code>:not()</code> · <code>:checked</code> · <code>:required</code></td><td>Phủ định &amp; form.</td></tr>
+          <tr><td rowspan="2">Pseudo-element</td><td><code>::before</code> · <code>::after</code></td><td>Chèn nội dung ảo.</td></tr>
+          <tr><td><code>::first-letter</code> · <code>::selection</code> · <code>::marker</code></td><td>Tạo kiểu một phần.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  10. MẸO VIẾT SELECTOR TỐT  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Mẹo viết selector tốt <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout tip"><p><strong>Mẹo 1 — Ưu tiên class hơn id.</strong> Class tái sử dụng được nhiều nơi và có specificity
+        thấp hơn nên dễ ghi đè khi cần. Hãy để dành <code>id</code> cho mỏ neo (<code>#section</code>) hay JavaScript.</p></div>
+      <div class="callout warn"><p><strong>Mẹo 2 — Đừng lồng selector quá sâu.</strong> Kiểu
+        <code>.a .b .c .d .e span</code> vừa khó đọc, vừa khó ghi đè, vừa chậm. Giữ selector <strong>nông và phẳng</strong>,
+        đặt một class mô tả ngay trên phần tử đích.</p></div>
+      <div class="callout info"><p><strong>Mẹo 3 — Một dấu <code>:</code> cho pseudo-class, hai dấu <code>::</code> cho pseudo-element.</strong>
+        <code>:hover</code> (lớp giả) khác <code>::before</code> (phần tử giả). Trình duyệt vẫn chấp nhận <code>:before</code>
+        kiểu cũ, nhưng nên dùng <code>::before</code> cho đúng chuẩn.</p></div>
+      <div class="callout danger"><p><strong>Mẹo 4 — Tránh lạm dụng <code>!important</code> và universal <code>*</code>.</strong>
+        <code>!important</code> phá trật tự ưu tiên; <code>* { … }</code> áp lên mọi phần tử có thể gây chậm và lỗi ngoài ý muốn.</p></div>
+      <div class="callout tip"><p><strong>Ghi nhớ thứ tự ưu tiên:</strong> inline style &gt; <code>#id</code> &gt;
+        <code>.class</code> / <code>[attr]</code> / <code>:pseudo-class</code> &gt; <code>element</code> / <code>::pseudo-element</code> &gt; <code>*</code>.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="01-cach-chen-css.html"><small>← Bài trước</small>2.2.1 · 3 cách chèn CSS</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="03-box-model.html"><small>Bài tiếp →</small>2.2.3 · Box Model</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

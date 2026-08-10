@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  3.4 — CẤU TRÚC ĐIỀU KHIỂN
+  ------------------------------------------------------------
+    1) if / else / else if (demo)   5) for cổ điển (demo)
+    2) Toán tử ba ngôi              6) for…of / for…in
+    3) switch (demo)                7) break & continue
+    4) while / do…while             8) Chọn vòng lặp nào?
+                                    9) Mẹo & lỗi thường gặp
+  JS minh hoạ đặt cuối <body>.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.4 · Cấu trúc điều khiển</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI ===== */
+    .d-btn { background:#1D559F; color:#fff; border:none; border-radius:8px;
+             padding:9px 16px; font-size:.92rem; font-weight:600; cursor:pointer;
+             margin:3px 4px 3px 0; }
+    .d-btn:hover { background:#16407a; }
+    .d-field { padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px;
+               font-size:.95rem; margin:3px 4px 3px 0; }
+    .d-out { background:#0f172a; color:#e6edf3; border-radius:10px;
+             font-family:"Cascadia Code",Consolas,monospace; font-size:.88rem;
+             padding:12px 14px; margin-top:12px; min-height:20px; white-space:pre-wrap; }
+    .d-out .ok  { color:#7ee787; }
+    .d-out .bad { color:#ff7b72; }
+    .d-out .hl  { color:#ffa657; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        3.4 Cấu trúc điều khiển
+      </nav>
+      <h1>Cấu trúc điều khiển</h1>
+      <p class="sub">Rẽ nhánh với <code>if/else</code> và <code>switch</code>, lặp với
+         <code>for</code> / <code>while</code> / <code>for…of</code>, điều khiển luồng bằng
+         <code>break</code> / <code>continue</code> — bộ khung của mọi chương trình.</p>
+      <div class="chips">
+        <span class="chip solid">3.4</span>
+        <span class="chip">if · switch · loop</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">if / else / else if</a></li>
+        <li><a href="#s2">Toán tử ba ngôi</a></li>
+        <li><a href="#s3">switch … case</a></li>
+        <li><a href="#s4">while · do…while</a></li>
+        <li><a href="#s5">Vòng lặp for</a></li>
+        <li><a href="#s6">for…of · for…in</a></li>
+        <li><a href="#s7">break &amp; continue</a></li>
+        <li><a href="#s8">Chọn vòng lặp nào?</a></li>
+        <li><a href="#s9">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. IF / ELSE  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> <code>if</code> / <code>else</code> / <code>else if</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Rẽ nhánh một chiều (chỉ <code>if</code>), hai chiều (<code>if/else</code>),
+         nhiều chiều (<code>if/else if/else</code>).</p>
+
+      <pre class="code"><code><span class="k">if</span> (diem &gt;= 5) {
+  console.log(<span class="s">"Đậu"</span>);
+} <span class="k">else if</span> (diem &gt;= 4) {
+  console.log(<span class="s">"Thi lại"</span>);
+} <span class="k">else</span> {
+  console.log(<span class="s">"Rớt"</span>);
+}</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — xếp loại điểm</div>
+        <div class="demo-body">
+          <input class="d-field" id="d-diem" type="number" min="0" max="10" step="0.1" value="7.5" style="width:110px"> / 10
+          <button class="d-btn" id="d-btn-diem">Xếp loại</button>
+          <div class="d-out" id="d-out-diem">// nhập điểm 0–10 rồi bấm — thử 9, 6.5, 4.2, 3</div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p><strong>Mẹo viết nhánh:</strong> xếp điều kiện từ <em>cao xuống thấp</em>
+        (≥ 8, rồi ≥ 6.5, rồi ≥ 5…) thì mỗi nhánh không phải viết lại cận trên. Không nên
+        lồng <code>if</code> quá ~4 cấp — tách hàm hoặc <code>return</code> sớm cho dễ đọc.</p>
+      </div>
+    </section>
+
+    <!-- ==========  2. BA NGÔI  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Toán tử ba ngôi <code>?:</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">if/else viết gọn <em>trong một biểu thức</em> — hợp khi chỉ chọn 1 trong 2 giá trị.</p>
+
+      <pre class="code"><code><span class="c">// điều_kiện ? giá_trị_khi_đúng : giá_trị_khi_sai</span>
+<span class="k">let</span> ketQua = diem &gt;= 5 ? <span class="s">"Đậu"</span> : <span class="s">"Rớt"</span>;
+
+<span class="c">// dùng thẳng trong template literal:</span>
+kq.textContent = `Bạn đã ${diem &gt;= 5 ? <span class="s">"ĐẬU"</span> : <span class="s">"RỚT"</span>} kỳ thi này`;</code></pre>
+
+      <div class="callout warn">
+        <p>Ba ngôi <em>lồng nhau nhiều tầng</em> rất khó đọc — quá 2 tầng thì quay về
+        <code>if/else</code> hoặc bảng tra cứu object.</p>
+      </div>
+    </section>
+
+    <!-- ==========  3. SWITCH  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> <code>switch … case</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Kiểm tra <strong>nhiều giá trị của cùng một biến</strong> — gọn hơn chuỗi
+         <code>if/else if</code>. So khớp bằng <code>===</code> (nghiêm ngặt).</p>
+
+      <pre class="code"><code><span class="k">switch</span> (thu) {
+  <span class="k">case</span> 7:                               <span class="c">// case 7 KHÔNG break →</span>
+  <span class="k">case</span> 1:                               <span class="c">// "rơi" xuống gộp chung với case 1</span>
+    console.log(<span class="s">"Cuối tuần"</span>); <span class="k">break</span>;
+  <span class="k">default</span>:
+    console.log(<span class="s">"Ngày thường"</span>);
+}</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — hôm nay thứ mấy?</div>
+        <div class="demo-body">
+          <select class="d-field" id="d-thu">
+            <option value="2">Thứ 2</option><option value="3">Thứ 3</option>
+            <option value="4">Thứ 4</option><option value="5">Thứ 5</option>
+            <option value="6">Thứ 6</option><option value="7">Thứ 7</option>
+            <option value="1">Chủ nhật</option>
+          </select>
+          <button class="d-btn" id="d-btn-thu">Chạy switch</button>
+          <div class="d-out" id="d-out-thu">// chọn thứ rồi bấm</div>
+        </div>
+      </div>
+
+      <div class="callout danger">
+        <p><strong>Bẫy quên <code>break</code>:</strong> thiếu <code>break</code> → chương trình
+        "rớt" (fall-through) chạy tiếp các <code>case</code> phía sau. Đôi khi cố ý gộp case
+        (như 7 và 1 ở trên), nhưng thường thiếu <code>break</code> là <strong>lỗi</strong>.</p>
+      </div>
+    </section>
+
+    <!-- ==========  4. WHILE  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> <code>while</code> · <code>do…while</code> <span class="tag-base">Cơ bản</span></h2>
+
+      <div class="split">
+        <div>
+          <pre class="code"><code><span class="c">// while: kiểm tra TRƯỚC
+// → có thể không chạy lần nào</span>
+<span class="k">let</span> i = 1;
+<span class="k">while</span> (i &lt;= 5) {
+  console.log(i);
+  i++;              <span class="c">// quên dòng này
+                    // → lặp VÔ TẬN!</span>
+}</code></pre>
+        </div>
+        <div>
+          <pre class="code"><code><span class="c">// do…while: chạy TRƯỚC ít nhất
+// 1 lần rồi mới kiểm tra</span>
+<span class="k">let</span> traLoi;
+<span class="k">do</span> {
+  traLoi = prompt(<span class="s">"Mật khẩu?"</span>);
+} <span class="k">while</span> (traLoi !== <span class="s">"123"</span>);</code></pre>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <p><strong>Lặp vô tận</strong> là lỗi kinh điển của <code>while</code>: điều kiện không bao giờ
+        sai (thường do quên tăng biến đếm) → treo tab trình duyệt. Luôn tự hỏi:
+        <em>"điều gì làm điều kiện này sai đi?"</em></p>
+      </div>
+    </section>
+
+    <!-- ==========  5. FOR  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Vòng lặp <code>for</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Ba phần trên một dòng: <em>khởi tạo ; điều kiện ; thay đổi</em> — chuẩn mực khi
+         cần biến đếm/chỉ số.</p>
+
+      <pre class="code"><code><span class="k">for</span> (<span class="k">let</span> i = 1; i &lt;= 10; i++) {
+  console.log(`${bang} × ${i} = ${bang * i}`);   <span class="c">// template literal (bài 3.7)</span>
+}</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — máy in bảng cửu chương</div>
+        <div class="demo-body">
+          Bảng <input class="d-field" id="d-bang" type="number" min="2" max="9" value="7" style="width:80px">
+          <button class="d-btn" id="d-btn-bang">In bằng vòng for</button>
+          <div class="d-out" id="d-out-bang">// chọn bảng 2–9 rồi bấm</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  6. FOR…OF / FOR…IN  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> <code>for…of</code> · <code>for…in</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><code>of</code> duyệt <strong>phần tử</strong> (mảng/chuỗi);
+         <code>in</code> duyệt <strong>chỉ số/khoá</strong> (mảng/object). Một chữ khác nhau — công dụng khác hẳn.</p>
+
+      <pre class="code"><code><span class="k">let</span> a = [5, 6, 3, 9];
+
+<span class="k">for</span> (<span class="k">let</span> i = 0; i &lt; a.length; i++) console.log(a[i]);  <span class="c">// theo CHỈ SỐ (cổ điển)</span>
+<span class="k">for</span> (<span class="k">let</span> x <span class="k">of</span> a) console.log(x);       <span class="c">// theo PHẦN TỬ  → 5 6 3 9</span>
+<span class="k">for</span> (<span class="k">let</span> i <span class="k">in</span> a) console.log(i, a[i]); <span class="c">// theo CHỈ SỐ/KHOÁ → "0" 5, "1" 6…</span>
+
+<span class="c">// for…in hợp với OBJECT:</span>
+<span class="k">const</span> sv = { ten: <span class="s">"An"</span>, tuoi: 20 };
+<span class="k">for</span> (<span class="k">let</span> khoa <span class="k">in</span> sv) console.log(khoa, <span class="s">"="</span>, sv[khoa]);  <span class="c">// ten = An, tuoi = 20</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — cùng một mảng, 3 kiểu duyệt</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-duyet">Duyệt [5, 6, 3, 9] bằng for · for…of · for…in</button>
+          <div class="d-out" id="d-out-duyet">// so sánh 3 kết quả cạnh nhau</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  7. BREAK & CONTINUE  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> <code>break</code> &amp; <code>continue</code> <span class="tag-base">Cơ bản</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Lệnh</th><th>Tác dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>break</code></td><td><strong>Thoát hẳn</strong> vòng lặp gần nhất (hoặc <code>switch</code>)</td></tr>
+          <tr><td><code>continue</code></td><td><strong>Bỏ qua lượt này</strong>, nhảy sang lượt tiếp theo (chỉ dùng trong vòng lặp)</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="k">for</span> (<span class="k">let</span> i = 1; i &lt;= 10; i++) {
+  <span class="k">if</span> (i === 7) <span class="k">break</span>;        <span class="c">// gặp 7 → dừng hẳn: in 1..6</span>
+}
+<span class="k">for</span> (<span class="k">let</span> i = 1; i &lt;= 10; i++) {
+  <span class="k">if</span> (i % 2 === 0) <span class="k">continue</span>; <span class="c">// chẵn → bỏ qua: in 1 3 5 7 9</span>
+  console.log(i);
+}</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — break vs continue trên 1..10</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-break">break tại 7</button>
+          <button class="d-btn" id="d-btn-continue">continue khi chẵn</button>
+          <div class="d-out" id="d-out-bc">// so sánh hai hành vi</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  8. CHỌN VÒNG LẶP  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Chọn vòng lặp nào? <span class="tag-adv">Nâng cao</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Nhu cầu</th><th>Dùng</th></tr></thead>
+        <tbody>
+          <tr><td>Cần <strong>giá trị phần tử</strong> của mảng/chuỗi</td><td><code>for…of</code> — rõ ràng nhất</td></tr>
+          <tr><td>Cần <strong>chỉ số</strong> (i) để tính toán</td><td><code>for</code> cổ điển</td></tr>
+          <tr><td>Duyệt <strong>thuộc tính object</strong></td><td><code>for…in</code></td></tr>
+          <tr><td>Chưa biết trước số lần lặp</td><td><code>while</code> / <code>do…while</code></td></tr>
+          <tr><td>Biến đổi / lọc / gộp <strong>mảng</strong></td><td><code>forEach</code> / <code>map</code> / <code>filter</code> / <code>reduce</code> (bài 3.6) — thường gọn hơn vòng lặp thủ công</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — FizzBuzz: bài phỏng vấn kinh điển gộp if + loop</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-fizz">Chạy FizzBuzz 1→20</button>
+          <div class="d-out" id="d-out-fizz">// chia hết 3 → Fizz, chia hết 5 → Buzz, cả hai → FizzBuzz</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  9. MẸO & LỖI  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout warn"><p><strong>Lỗi 1.</strong> <code>if (x = 5)</code> — dấu <code>=</code>
+        là <em>gán</em> (luôn truthy), so sánh phải là <code>===</code>. Một dấu bằng thiếu,
+        cả chương trình sai.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> Quên <code>break</code> trong
+        <code>switch</code> → fall-through; quên <code>i++</code> trong <code>while</code> →
+        lặp vô tận.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 3.</strong> Điều kiện biên sai:
+        <code>i &lt;= a.length</code> chạy lố 1 phần tử (phần tử cuối có chỉ số
+        <code>length - 1</code>) → <code>undefined</code>.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> Giá trị → <code>for…of</code>;
+        chỉ số → <code>for</code>; khoá object → <code>for…in</code>; 2 lựa chọn → ba ngôi;
+        nhiều giá trị 1 biến → <code>switch</code> (+ <code>break</code>!).</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="03-xuat-du-lieu.html"><small>← Bài trước</small>3.3 · Xuất dữ liệu</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="05-ham.html"><small>Bài tiếp →</small>3.5 · Hàm</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- ===== JS MINH HOẠ CỦA BÀI (cuối body) ===== -->
+  <script>
+    'use strict';
+
+    /* ---- Mục 1: xếp loại điểm bằng if/else if ---- */
+    document.getElementById("d-btn-diem").addEventListener("click", () => {
+      const diem = parseFloat(document.getElementById("d-diem").value);
+      const out  = document.getElementById("d-out-diem");
+      let loai;
+      if (isNaN(diem) || diem < 0 || diem > 10) {   // validate trước khi phân loại
+        out.innerHTML = '<span class="bad">✗ Điểm phải là số trong khoảng 0–10.</span>';
+        return;
+      }
+      if      (diem >= 8)   loai = "Giỏi";
+      else if (diem >= 6.5) loai = "Khá";
+      else if (diem >= 5)   loai = "Trung bình";
+      else if (diem >= 4)   loai = "Yếu (thi lại)";
+      else                  loai = "Kém (học lại)";
+      out.innerHTML = `Điểm ${diem} → <span class="ok">${loai}</span>` +
+        `\nBa ngôi kèm theo: diem >= 5 ? "Đậu" : "Rớt"  →  <span class="hl">"${diem >= 5 ? "Đậu" : "Rớt"}"</span>`;
+    });
+
+    /* ---- Mục 3: switch thứ trong tuần ---- */
+    document.getElementById("d-btn-thu").addEventListener("click", () => {
+      const thu = Number(document.getElementById("d-thu").value);
+      let kq;
+      switch (thu) {
+        case 7:                       // 7 và 1 gộp chung (fall-through CÓ CHỦ ĐÍCH)
+        case 1:  kq = "Cuối tuần"; break;
+        case 6:  kq = "Sắp cuối tuần rồi!"; break;
+        default: kq = "Ngày thường";
+      }
+      document.getElementById("d-out-thu").innerHTML =
+        `switch (${thu}) → <span class="ok">"${kq}"</span>` +
+        (thu === 7 ? '\n(case 7 không có break nên "rơi" xuống case 1 — gộp có chủ đích)' : "");
+    });
+
+    /* ---- Mục 5: bảng cửu chương bằng for ---- */
+    document.getElementById("d-btn-bang").addEventListener("click", () => {
+      const bang = Number(document.getElementById("d-bang").value);
+      let dong = [];
+      for (let i = 1; i <= 10; i++) {
+        dong.push(`${bang} × ${String(i).padStart(2)} = ${bang * i}`);
+      }
+      document.getElementById("d-out-bang").textContent = dong.join("\n");
+    });
+
+    /* ---- Mục 6: ba kiểu duyệt ---- */
+    document.getElementById("d-btn-duyet").addEventListener("click", () => {
+      const a = [5, 6, 3, 9];
+      let s1 = [], s2 = [], s3 = [];
+      for (let i = 0; i < a.length; i++) s1.push(`a[${i}]=${a[i]}`);
+      for (let x of a) s2.push(x);
+      for (let i in a) s3.push(`khoá "${i}" → ${a[i]}`);
+      document.getElementById("d-out-duyet").innerHTML =
+`for cổ điển : ${s1.join("  ")}
+for…of      : <span class="ok">${s2.join("  ")}</span>   (giá trị phần tử)
+for…in      : <span class="hl">${s3.join(",  ")}</span>   (khoá là CHUỖI!)`;
+    });
+
+    /* ---- Mục 7: break vs continue ---- */
+    document.getElementById("d-btn-break").addEventListener("click", () => {
+      let kq = [];
+      for (let i = 1; i <= 10; i++) {
+        if (i === 7) break;            // dừng hẳn vòng lặp
+        kq.push(i);
+      }
+      document.getElementById("d-out-bc").innerHTML =
+        `break tại 7    → <span class="ok">${kq.join(" ")}</span>  (dừng hẳn, không in 7..10)`;
+    });
+    document.getElementById("d-btn-continue").addEventListener("click", () => {
+      let kq = [];
+      for (let i = 1; i <= 10; i++) {
+        if (i % 2 === 0) continue;     // bỏ qua số chẵn, lặp tiếp
+        kq.push(i);
+      }
+      document.getElementById("d-out-bc").innerHTML =
+        `continue khi chẵn → <span class="ok">${kq.join(" ")}</span>  (chỉ bỏ lượt, vẫn lặp tới 10)`;
+    });
+
+    /* ---- Mục 8: FizzBuzz ---- */
+    document.getElementById("d-btn-fizz").addEventListener("click", () => {
+      let kq = [];
+      for (let i = 1; i <= 20; i++) {
+        if      (i % 15 === 0) kq.push("FizzBuzz");   // chia hết cả 3 và 5 — xét TRƯỚC
+        else if (i % 3  === 0) kq.push("Fizz");
+        else if (i % 5  === 0) kq.push("Buzz");
+        else                   kq.push(i);
+      }
+      document.getElementById("d-out-fizz").textContent = kq.join("  ");
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="Bộ code mẫu minh hoạ Chương 4 - Thiết kế Web hiện đại với Bootstrap (môn Thiết kế Web INTE03010).">
+  <title>Chương 4 · Code mẫu Bootstrap</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/site.css">
+  <style>
+    .note {
+      background: #fff8e6; border-left: 5px solid #e0a92a;
+      padding: 12px 16px; border-radius: 8px; margin: 0 0 24px; font-size: .92rem;
+    }
+    .badge-opt {
+      display: inline-block; background: #6c5ce7; color: #fff; font-size: .72rem;
+      font-weight: 700; padding: 2px 10px; border-radius: 999px; margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <h1>Chương 4 — Thiết kế giao diện Web hiện đại với Bootstrap</h1>
+    <p>Bộ code mẫu theo từng mục · mỗi bài có <strong>demo trực tiếp</strong> dựng bằng chính Bootstrap 5</p>
+    <span class="badge-opt">Chương đọc thêm / tự chọn</span>
+  </header>
+
+  <main>
+    <p class="note"><strong>Cần internet:</strong> chương này nạp <strong>Bootstrap 5.3 qua CDN</strong>
+       (như bài Font Awesome ở 2.4.6). Các thành phần tương tác (Dropdown, Modal, Carousel, Collapse,
+       Offcanvas, Tooltip, Toast, ScrollSpy) cần <code>bootstrap.bundle.min.js</code> — mở bằng
+       <em>VS Code + Live Server</em> hoặc khi có mạng. Đọc mã → mở trình duyệt → bấm thử.</p>
+
+    <section class="group">
+      <h2>Nền tảng (4.1 – 4.3)</h2>
+      <div class="cards">
+        <a class="card" href="01-tong-quan-bootstrap.html"><span class="tag">4.1</span><h3>Tổng quan Bootstrap</h3><p>Bootstrap là gì, cài qua CDN &amp; npm, utility-first vs component, trang đầu tiên.</p></a>
+        <a class="card" href="02-container-grid.html"><span class="tag">4.2–4.3</span><h3>Container &amp; Grid</h3><p>container/fluid, hệ 12 cột, breakpoints (sm→xxl), gutters, offset, nesting.</p></a>
+        <a class="card" href="03-utilities-co-ban.html"><span class="tag">4.4</span><h3>Utilities cơ bản</h3><p>Color &amp; spacing, Table, List, Button &amp; Button Group, Flex utilities.</p></a>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>Thành phần (4.5)</h2>
+      <div class="cards">
+        <a class="card" href="04-components-1.html"><span class="tag">4.5.1–4.5.5</span><h3>Components (1)</h3><p>Dropdown, Collapse, Spinner, Progress, Badge, Pagination, Card, Nav &amp; Navbar.</p></a>
+        <a class="card" href="05-components-2.html"><span class="tag">4.5.6–4.5.10</span><h3>Components (2)</h3><p>Carousel, Modal, Alert/Tooltip/Popover/Toast, ScrollSpy, Offcanvas.</p></a>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>Form &amp; Thực hành (4.6)</h2>
+      <div class="cards">
+        <a class="card" href="06-form.html"><span class="tag">4.6</span><h3>Bootstrap Form</h3><p>Điều khiển form, Input Group, Floating Labels, kiểm tra hợp lệ (validation).</p></a>
+        <a class="card" href="07-landing-tong-hop.html"><span class="tag">BT</span><h3>Landing tổng hợp</h3><p>Dựng trang giới thiệu: Navbar + Carousel + Card + Form — ghép mọi thứ đã học.</p></a>
+        <a class="card" href="../index.html"><span class="tag">←</span><h3>Về mục lục môn</h3><p>Quay lại trang chủ cả môn Thiết kế Web.</p></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 4 — Bootstrap
+  </footer>
+</body>
+</html>

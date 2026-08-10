@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  3.7 — XỬ LÝ SỰ KIỆN (EVENT)
+  ------------------------------------------------------------
+    1) Sự kiện là gì?              6) Sự kiện bàn phím (demo)
+    2) 2 cách gắn sự kiện          7) focus / blur / change / input
+    3) Đối tượng event             8) load vs DOMContentLoaded
+    4) Sự kiện chuột (demo)        9) removeEventListener (demo)
+    5) mouseenter / mouseleave    10) Mẹo & lỗi: this & arrow
+  JS minh hoạ đặt cuối <body>.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.7 · Xử lý sự kiện</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI ===== */
+    .d-btn { background:#1D559F; color:#fff; border:none; border-radius:8px;
+             padding:9px 16px; font-size:.92rem; font-weight:600; cursor:pointer;
+             margin:3px 4px 3px 0; }
+    .d-btn:hover { background:#16407a; }
+    .d-btn.red { background:#E63946; } .d-btn.red:hover { background:#c02936; }
+    .d-field { padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px;
+               font-size:.95rem; margin:3px 4px 3px 0; }
+    .d-out { background:#0f172a; color:#e6edf3; border-radius:10px;
+             font-family:"Cascadia Code",Consolas,monospace; font-size:.88rem;
+             padding:12px 14px; margin-top:12px; min-height:20px; white-space:pre-wrap; }
+    .d-out .ok { color:#7ee787; } .d-out .hl { color:#ffa657; } .d-out .bad { color:#ff7b72; }
+
+    /* mục 4: sàn theo dõi chuột */
+    .d-pad { height:150px; background:#eaf1fb; border:2px dashed #1D559F; border-radius:10px;
+             display:grid; place-items:center; color:#16407a; font-weight:600; cursor:crosshair;
+             user-select:none; margin-top:10px; }
+    /* mục 5: hộp hover */
+    .d-hover { display:inline-block; padding:22px 34px; border-radius:10px; background:#f1f5f9;
+               border:2px solid #cbd5e1; font-weight:700; transition:all .25s; margin-top:10px; }
+    .d-hover.vao { background:#04AA6D; border-color:#03875a; color:#fff; transform:scale(1.08); }
+    /* mục 6: phím bấm */
+    .d-keys { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+    .d-key  { min-width:56px; text-align:center; background:#fff; border:1px solid #cbd5e1;
+              border-bottom-width:3px; border-radius:8px; padding:10px 8px 6px; }
+    .d-key b { display:block; font-size:1.05rem; color:#1D559F; }
+    .d-key small { color:#5b6472; font-size:.68rem; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        3.7 Xử lý sự kiện
+      </nav>
+      <h1>Xử lý sự kiện (Event)</h1>
+      <p class="sub">Trang web "sống" nhờ sự kiện: click, gõ phím, di chuột, submit form…
+         JavaScript lắng nghe bằng <code>addEventListener</code> và đọc chi tiết từ đối tượng
+         <code>event</code>.</p>
+      <div class="chips">
+        <span class="chip solid">3.7</span>
+        <span class="chip">addEventListener</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Sự kiện là gì?</a></li>
+        <li><a href="#s2">Hai cách gắn sự kiện</a></li>
+        <li><a href="#s3">Đối tượng event</a></li>
+        <li><a href="#s4">Sự kiện chuột</a></li>
+        <li><a href="#s5">mouseenter / mouseleave</a></li>
+        <li><a href="#s6">Sự kiện bàn phím</a></li>
+        <li><a href="#s7">focus · blur · change · input</a></li>
+        <li><a href="#s8">load vs DOMContentLoaded</a></li>
+        <li><a href="#s9">removeEventListener</a></li>
+        <li><a href="#s10">Mẹo &amp; lỗi: this &amp; arrow</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. SỰ KIỆN LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Sự kiện là gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Sự kiện (event) xảy ra khi <strong>người dùng</strong> (click, gõ phím, cuộn)
+         hoặc <strong>trình duyệt</strong> (nạp xong trang, đổi kích thước) tác động đến trang.
+         Mỗi thẻ HTML có danh sách sự kiện mà JS có thể "nghe" và xử lý.</p>
+
+      <table class="syntax">
+        <thead><tr><th>Nhóm</th><th>Sự kiện tiêu biểu</th></tr></thead>
+        <tbody>
+          <tr><td>Chuột</td><td><code>click</code>, <code>dblclick</code>, <code>mousedown/up</code>, <code>mousemove</code>, <code>mouseenter/leave</code>, <code>contextmenu</code> (chuột phải), <code>wheel</code>, <code>drag/drop</code></td></tr>
+          <tr><td>Bàn phím</td><td><code>keydown</code> (ấn), <code>keyup</code> (thả), <code>keypress</code> (cũ)</td></tr>
+          <tr><td>Form</td><td><code>focus</code>, <code>blur</code>, <code>input</code>, <code>change</code>, <code>submit</code></td></tr>
+          <tr><td>Trang / cửa sổ</td><td><code>load</code>, <code>DOMContentLoaded</code>, <code>resize</code>, <code>scroll</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  2. HAI CÁCH GẮN  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Hai cách gắn sự kiện <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code><span class="c">&lt;!-- Cách 1: thuộc tính onxxx INLINE trong HTML — KHÔNG khuyến khích --&gt;</span>
+&lt;input type=<span class="s">"button"</span> value=<span class="s">"Say"</span> onclick=<span class="s">"sayHello();"</span> /&gt;
+
+<span class="c">// Cách 2: addEventListener trong JS — KHUYẾN NGHỊ</span>
+<span class="k">const</span> button = document.querySelector(<span class="s">"#say"</span>);
+button.addEventListener(<span class="s">"click"</span>, sayHello);   <span class="c">// truyền TÊN hàm, không có ( )</span></code></pre>
+
+      <div class="callout tip">
+        <p><strong>Vì sao <code>addEventListener</code> thắng?</strong>
+        (1) Tách JS khỏi HTML — dễ bảo trì;
+        (2) gắn được <strong>nhiều handler</strong> cho cùng một sự kiện;
+        (3) gỡ được bằng <code>removeEventListener</code>.
+        Quy ước nghề: <strong>không viết <code>onclick=""</code> inline</strong>.</p>
+      </div>
+    </section>
+
+    <!-- ==========  3. ĐỐI TƯỢNG EVENT  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Đối tượng <code>event</code> <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Handler nhận một tham số chứa <em>mọi chi tiết</em> về sự kiện vừa xảy ra.</p>
+
+      <pre class="code"><code>element.addEventListener(<span class="s">"click"</span>, (event) =&gt; {
+  event.target;           <span class="c">// phần tử THẬT SỰ bị tác động (quan trọng nhất!)</span>
+  event.type;             <span class="c">// "click"</span>
+  event.clientX / clientY;<span class="c">// toạ độ chuột theo cửa sổ</span>
+  event.key;              <span class="c">// phím vừa gõ (sự kiện bàn phím)</span>
+  event.preventDefault(); <span class="c">// CHẶN hành vi mặc định (submit, mở link…)</span>
+});</code></pre>
+
+      <div class="note">
+        <p><strong><code>preventDefault()</code></strong> dùng nhiều nhất với <code>submit</code>
+        (chặn nạp lại trang để tự kiểm tra form — xem bài 14) và với phím tắt (chặn Ctrl+S mở
+        hộp thoại lưu trang — demo mục 6).</p>
+      </div>
+    </section>
+
+    <!-- ==========  4. SỰ KIỆN CHUỘT  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Sự kiện chuột — <code>MouseEvent</code> <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code>pad.addEventListener(<span class="s">"mousemove"</span>, (event) =&gt; {
+  console.log(`X: ${event.clientX}, Y: ${event.clientY}`);
+});
+<span class="c">// clientX/Y: theo CỬA SỔ · pageX/Y: theo TRANG (tính cả phần đã cuộn)
+// button: 0 = trái, 1 = giữa, 2 = phải · altKey/ctrlKey/shiftKey: có giữ phím bổ trợ?</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — di chuột / click / double-click / chuột phải vào vùng dưới</div>
+        <div class="demo-body">
+          <div class="d-pad" id="d-pad">Di chuột vào đây…</div>
+          <div class="d-out" id="d-out-pad">// toạ độ và loại sự kiện hiện ở đây</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  5. MOUSEENTER / LEAVE  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> <code>mouseenter</code> / <code>mouseleave</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Cặp sự kiện "vào / ra" — nền tảng của mọi hiệu ứng hover bằng JS
+         (dù hover đơn giản thì CSS <code>:hover</code> là đủ).</p>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — rê chuột vào hộp</div>
+        <div class="demo-body">
+          <span class="d-hover" id="d-hover">Rê chuột vào tôi</span>
+          <div class="d-out" id="d-out-hover">// JS chỉ toggle class "vao" — hiệu ứng nằm trong CSS (transition)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  6. BÀN PHÍM  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Sự kiện bàn phím <span class="tag-adv">Nâng cao</span></h2>
+
+      <pre class="code"><code>document.addEventListener(<span class="s">"keydown"</span>, (event) =&gt; {
+  event.key;   <span class="c">// "a", "Enter", "ArrowUp" — KÝ TỰ/tên phím (thường dùng)</span>
+  event.code;  <span class="c">// "KeyA" — mã phím VẬT LÝ trên bàn phím</span>
+
+  <span class="k">if</span> (event.ctrlKey &amp;&amp; event.key === <span class="s">"s"</span>) {
+    event.preventDefault();          <span class="c">// chặn hành vi mặc định (lưu trang)</span>
+    console.log(<span class="s">"Bạn đã nhấn Ctrl + S!"</span>);
+  }
+});</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — bấm phím bất kỳ (thử cả Ctrl+S / ⌘S)</div>
+        <div class="demo-body">
+          <input class="d-field" id="d-keyinput" placeholder="Click vào đây rồi gõ phím…" size="34">
+          <div class="d-keys">
+            <div class="d-key"><b id="d-key-key">?</b><small>event.key</small></div>
+            <div class="d-key"><b id="d-key-code">?</b><small>event.code</small></div>
+            <div class="d-key"><b id="d-key-mod">—</b><small>phím bổ trợ</small></div>
+          </div>
+          <div class="d-out" id="d-out-key">// Ctrl+S (hoặc ⌘S) sẽ bị preventDefault — trang không mở hộp thoại lưu</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  7. FORM EVENTS  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> <code>focus</code> · <code>blur</code> · <code>change</code> · <code>input</code> <span class="tag-base">Cơ bản</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Sự kiện</th><th>Xảy ra khi</th></tr></thead>
+        <tbody>
+          <tr><td><code>focus</code></td><td>Ô nhập <strong>nhận</strong> con trỏ</td></tr>
+          <tr><td><code>blur</code></td><td>Ô nhập <strong>mất</strong> con trỏ (câu trắc nghiệm 18!) — thời điểm đẹp để validate</td></tr>
+          <tr><td><code>input</code></td><td><strong>Mỗi lần gõ</strong> — giá trị thay đổi tức thời</td></tr>
+          <tr><td><code>change</code></td><td>Giá trị đổi <strong>và</strong> rời ô (hoặc chọn mục mới trong <code>&lt;select&gt;</code>)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — gõ vào ô và click ra ngoài để thấy 4 sự kiện</div>
+        <div class="demo-body">
+          <input class="d-field" id="d-form" placeholder="Gõ gì đó rồi click ra ngoài…" size="34">
+          <div class="d-out" id="d-out-form">// nhật ký sự kiện hiện ở đây</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  8. LOAD VS DOMCONTENTLOADED  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> <code>load</code> vs <code>DOMContentLoaded</code> <span class="tag-adv">Nâng cao</span></h2>
+
+      <pre class="code"><code><span class="c">// DOMContentLoaded: HTML phân tích XONG (chưa cần chờ ảnh/CSS) — NHANH hơn</span>
+document.addEventListener(<span class="s">"DOMContentLoaded"</span>, () =&gt; {
+  <span class="c">// nơi an toàn để gắn sự kiện, khởi tạo trang</span>
+});
+
+<span class="c">// load: nạp xong TOÀN BỘ tài nguyên (cả ảnh, video…) — muộn hơn</span>
+window.addEventListener(<span class="s">"load"</span>, () =&gt; { ... });</code></pre>
+
+      <div class="callout tip">
+        <p><strong>Mẹo:</strong> đặt code khởi tạo trong <code>DOMContentLoaded</code>
+        (hoặc dùng <code>&lt;script defer&gt;</code> / script cuối body) để chắc chắn phần tử đã
+        tồn tại trước khi gắn sự kiện — hết lỗi "Cannot read properties of null".</p>
+      </div>
+    </section>
+
+    <!-- ==========  9. REMOVE EVENT LISTENER  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> <code>removeEventListener</code> <span class="tag-adv">Nâng cao</span></h2>
+
+      <pre class="code"><code><span class="k">function</span> chaoMotLan() { console.log(<span class="s">"Hello!"</span>); }
+
+nut.addEventListener(<span class="s">"click"</span>, chaoMotLan);      <span class="c">// gắn</span>
+nut.removeEventListener(<span class="s">"click"</span>, chaoMotLan);   <span class="c">// gỡ — PHẢI cùng một hàm!</span>
+
+<span class="c">// ⚠ gỡ KHÔNG được nếu lúc gắn dùng hàm vô danh:
+//   nut.addEventListener("click", () => {...})  → không có "tên" để gỡ</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — nút đếm có công tắc bật/tắt listener</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-dem">Bấm tôi để đếm: 0</button>
+          <button class="d-btn red" id="d-tat">Gỡ listener</button>
+          <button class="d-btn" style="background:#04AA6D" id="d-bat">Gắn lại</button>
+          <div class="d-out" id="d-out-dem">// gỡ xong thì nút đếm "chết" — gắn lại thì sống</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  10. MẸO & LỖI  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Mẹo &amp; lỗi: <code>this</code> &amp; arrow <span class="tag-base">Tổng kết</span></h2>
+
+      <pre class="code"><code><span class="c">// Hàm THƯỜNG: this = phần tử nhận sự kiện ✓</span>
+button.addEventListener(<span class="s">"click"</span>, <span class="k">function</span> () {
+  <span class="k">this</span>.textContent = <span class="s">"Đã bấm!"</span>;        <span class="c">// this là button</span>
+});
+
+<span class="c">// ARROW: this KHÔNG phải button (lấy theo phạm vi ngoài) ✗</span>
+button.addEventListener(<span class="s">"click"</span>, () =&gt; {
+  <span class="k">this</span>.textContent = <span class="s">"..."</span>;             <span class="c">// ✗ this = window → lỗi!</span>
+});
+
+<span class="c">// ✓ Mẹo an toàn nhất: dùng event.target — khỏi nghĩ về this</span>
+button.addEventListener(<span class="s">"click"</span>, (e) =&gt; {
+  e.target.textContent = <span class="s">"Đã bấm!"</span>;
+});</code></pre>
+
+      <div class="callout danger"><p><strong>Lỗi 1.</strong> Cần <code>this</code> là phần tử nhận
+        sự kiện mà lại viết arrow function — <code>this</code> hoá <code>window</code>/<code>undefined</code>.
+        An toàn nhất: dùng <code>event.target</code>.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> <code>addEventListener("click", chao<span style="color:#E63946">()</span>)</code>
+        — ngoặc thừa làm hàm chạy ngay khi nạp trang. Truyền <em>tên hàm</em> không ngoặc.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 3.</strong> Viết <code>"onclick"</code> trong
+        <code>addEventListener</code> — tên sự kiện là <code>"click"</code> (không có "on").</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> Luôn <code>addEventListener</code>;
+        đọc chi tiết từ <code>event</code>; chặn mặc định bằng <code>preventDefault()</code>;
+        validate lúc <code>blur</code>; khởi tạo trong <code>DOMContentLoaded</code>.</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="07-chuoi-date-doi-tuong.html"><small>← Bài trước</small>3.6.2-4 · Chuỗi · Date · Object</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="09-html-dom.html"><small>Bài tiếp →</small>3.8 · HTML DOM</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- ===== JS MINH HOẠ CỦA BÀI (cuối body) ===== -->
+  <script>
+    'use strict';
+
+    /* ---- Mục 4: sàn theo dõi chuột ---- */
+    const pad = document.getElementById("d-pad");
+    const outPad = document.getElementById("d-out-pad");
+    pad.addEventListener("mousemove", (e) => {
+      outPad.textContent = `mousemove   X: ${e.clientX}, Y: ${e.clientY}  (toạ độ theo cửa sổ)`;
+    });
+    pad.addEventListener("click", (e) => {
+      outPad.innerHTML = `<span class="ok">click</span>       X: ${e.clientX}, Y: ${e.clientY}  · button = ${e.button} (0 là chuột trái)` +
+        (e.shiftKey ? "  · shiftKey = true" : "");
+    });
+    pad.addEventListener("dblclick", () => {
+      outPad.innerHTML = '<span class="hl">dblclick</span>    bạn vừa nhấp đúp!';
+    });
+    pad.addEventListener("contextmenu", (e) => {
+      e.preventDefault();                       // chặn menu chuột phải mặc định
+      outPad.innerHTML = '<span class="hl">contextmenu</span> chuột phải — menu mặc định đã bị preventDefault()';
+    });
+
+    /* ---- Mục 5: hover bằng mouseenter/leave ---- */
+    const hop = document.getElementById("d-hover");
+    const outHover = document.getElementById("d-out-hover");
+    hop.addEventListener("mouseenter", () => {
+      hop.classList.add("vao");                 // JS chỉ bật class — hiệu ứng do CSS
+      outHover.innerHTML = '<span class="ok">mouseenter</span> → classList.add("vao")';
+    });
+    hop.addEventListener("mouseleave", () => {
+      hop.classList.remove("vao");
+      outHover.innerHTML = '<span class="hl">mouseleave</span> → classList.remove("vao")';
+    });
+
+    /* ---- Mục 6: bàn phím ---- */
+    const oPhim = document.getElementById("d-keyinput");
+    oPhim.addEventListener("keydown", (e) => {
+      document.getElementById("d-key-key").textContent  = e.key === " " ? "Space" : e.key;
+      document.getElementById("d-key-code").textContent = e.code;
+      const bs = [e.ctrlKey && "Ctrl", e.metaKey && "⌘", e.shiftKey && "Shift", e.altKey && "Alt"]
+        .filter(Boolean).join("+");
+      document.getElementById("d-key-mod").textContent = bs || "—";
+
+      // phím tắt Ctrl+S (Windows) / ⌘S (macOS): chặn hộp thoại lưu trang
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        document.getElementById("d-out-key").innerHTML =
+          '<span class="ok">✓ Bắt được Ctrl/⌘ + S — preventDefault() đã chặn hộp thoại lưu trang!</span>';
+      }
+    });
+
+    /* ---- Mục 7: nhật ký sự kiện form ---- */
+    const oForm = document.getElementById("d-form");
+    const outForm = document.getElementById("d-out-form");
+    let nhatKy = [];
+    function ghi(su, chiTiet) {
+      nhatKy.push(`${su.padEnd(7)} ${chiTiet}`);
+      if (nhatKy.length > 6) nhatKy.shift();    // chỉ giữ 6 dòng gần nhất
+      outForm.textContent = nhatKy.join("\n");
+    }
+    oForm.addEventListener("focus",  () => ghi("focus",  "— ô nhận con trỏ"));
+    oForm.addEventListener("input",  (e) => ghi("input",  `— giá trị hiện tại: "${e.target.value}"`));
+    oForm.addEventListener("change", (e) => ghi("change", `— giá trị chốt: "${e.target.value}"`));
+    oForm.addEventListener("blur",   () => ghi("blur",   "— ô mất con trỏ (thời điểm đẹp để validate)"));
+
+    /* ---- Mục 9: remove/add listener ---- */
+    let dem = 0;
+    const nutDem = document.getElementById("d-dem");
+    const outDem = document.getElementById("d-out-dem");
+    function tangDem() {                        // hàm CÓ TÊN → gỡ được
+      dem++;
+      nutDem.textContent = `Bấm tôi để đếm: ${dem}`;
+    }
+    nutDem.addEventListener("click", tangDem);  // gắn lần đầu
+    document.getElementById("d-tat").addEventListener("click", () => {
+      nutDem.removeEventListener("click", tangDem);
+      outDem.innerHTML = '<span class="bad">Đã removeEventListener — nút đếm không phản ứng nữa.</span>';
+    });
+    document.getElementById("d-bat").addEventListener("click", () => {
+      nutDem.removeEventListener("click", tangDem);  // gỡ trước cho khỏi gắn trùng 2 lần
+      nutDem.addEventListener("click", tangDem);
+      outDem.innerHTML = '<span class="ok">Đã addEventListener lại — nút đếm sống rồi!</span>';
+    });
+  </script>
+</body>
+</html>

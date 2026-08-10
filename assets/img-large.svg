@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360">
+  <rect width="1200" height="360" fill="#6c5ce7"/>
+  <text x="600" y="170" font-family="Arial" font-size="64" font-weight="bold" fill="#fff" text-anchor="middle">LARGE</text>
+  <text x="600" y="235" font-family="Arial" font-size="30" fill="#e3def9" text-anchor="middle">&gt; 1200px</text>
+</svg>

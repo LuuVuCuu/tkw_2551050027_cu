@@ -1,0 +1,8 @@
+<!-- Mask theo cơ chế ALPHA: vùng ĐẶC (opaque) -> hiện, vùng TRONG SUỐT -> ẩn.
+     Chữ để màu đặc, nền để trống (transparent) nên ảnh sẽ lộ ra theo hình chữ. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="200" viewBox="0 0 600 200">
+  <text x="300" y="90" font-family="Arial Black, Arial, sans-serif" font-size="64"
+        font-weight="900" fill="#000000" text-anchor="middle">ĐẠI HỌC</text>
+  <text x="300" y="165" font-family="Arial Black, Arial, sans-serif" font-size="64"
+        font-weight="900" fill="#000000" text-anchor="middle">MỞ TPHCM</text>
+</svg>

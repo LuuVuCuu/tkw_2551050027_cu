@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  3.8 — HTML DOM (DOCUMENT OBJECT MODEL)
+  ------------------------------------------------------------
+    1) DOM là gì?                   7) Tạo / thêm / xoá nút (demo)
+    2) Chọn phần tử                 8) Bubbling & event delegation (demo)
+    3) Đổi nội dung + XSS (demo)    9) setTimeout / setInterval (demo)
+    4) Đổi CSS: style & classList  10) Hiệu ứng: 4 kỹ thuật (demo)
+    5) Đổi thuộc tính (demo)       11) Lazy loading
+    6) Duyệt cây DOM               12) Mẹo & lỗi thường gặp
+  JS minh hoạ đặt cuối <body>.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.8 · HTML DOM</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI ===== */
+    .d-btn { background:#1D559F; color:#fff; border:none; border-radius:8px;
+             padding:9px 16px; font-size:.92rem; font-weight:600; cursor:pointer;
+             margin:3px 4px 3px 0; }
+    .d-btn:hover { background:#16407a; }
+    .d-btn.green { background:#04AA6D; } .d-btn.green:hover { background:#03875a; }
+    .d-btn.red   { background:#E63946; } .d-btn.red:hover   { background:#c02936; }
+    .d-field { padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px;
+               font-size:.95rem; margin:3px 4px 3px 0; }
+    .d-out { background:#0f172a; color:#e6edf3; border-radius:10px;
+             font-family:"Cascadia Code",Consolas,monospace; font-size:.88rem;
+             padding:12px 14px; margin-top:12px; min-height:20px; white-space:pre-wrap; }
+    .d-out .ok { color:#7ee787; } .d-out .hl { color:#ffa657; } .d-out .bad { color:#ff7b72; }
+
+    /* mục 4: dark mode cục bộ */
+    .d-theme { background:#f8fafc; border:1px solid #e3e8f0; border-radius:10px;
+               padding:16px; margin-top:10px; transition:background .3s, color .3s; }
+    .d-theme.dark-mode { background:#0f172a; color:#e6edf3; }
+    .d-theme.dark-mode h4 { color:#79c0ff; }
+    .d-theme h4 { margin:0 0 6px; color:#1D559F; transition:color .3s; }
+
+    /* mục 5: ảnh đổi thuộc tính */
+    .d-anh { width:110px; height:110px; border-radius:10px; vertical-align:middle; }
+
+    /* mục 7 & 8: danh sách việc */
+    .d-tasks { list-style:none; margin:12px 0 0; padding:0; }
+    .d-tasks li { display:flex; align-items:center; gap:10px; background:#fff;
+                  border:1px solid #e3e8f0; border-radius:8px; padding:8px 12px; margin-bottom:6px; }
+    .d-tasks span { flex:1; }
+    .d-tasks span.delete { text-decoration:line-through; opacity:.5; }
+    .d-tasks button { border:none; border-radius:6px; padding:4px 10px; cursor:pointer; font-weight:700; }
+    .d-tasks .ok  { background:#eafaf3; color:#04AA6D; }
+    .d-tasks .del { background:#fdecee; color:#E63946; }
+
+    /* mục 8: bubbling lồng nhau */
+    .d-ngoai { background:#eaf1fb; border:2px solid #1D559F; border-radius:10px; padding:18px; cursor:pointer; }
+    .d-trong { background:#fde68a; border:2px solid #f59e0b; border-radius:8px; padding:14px; cursor:pointer; }
+
+    /* mục 9: đồng hồ + toast */
+    .d-clock { font-family:Consolas,monospace; font-size:1.8rem; font-weight:700;
+               color:#1D559F; letter-spacing:2px; }
+    .d-toast { position:fixed; right:18px; bottom:18px; background:#04AA6D; color:#fff;
+               padding:12px 20px; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.25);
+               opacity:0; transform:translateY(12px); transition:all .3s; pointer-events:none; z-index:99; }
+    .d-toast.hien { opacity:1; transform:translateY(0); }
+
+    /* mục 10: hiệu ứng đổi class */
+    .d-box { display:inline-block; width:90px; height:90px; background:#1D559F; border-radius:12px;
+             cursor:pointer; transition:all .3s ease; }
+    .d-box.active { transform:scale(1.15) rotate(45deg); background:#FFC107; border-radius:50%; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        3.8 HTML DOM
+      </nav>
+      <h1>HTML DOM</h1>
+      <p class="sub">DOM biểu diễn trang HTML thành <strong>cây đối tượng</strong> để JavaScript
+         truy cập và thay đổi mọi thứ: chọn phần tử, sửa nội dung/CSS/thuộc tính, tạo &amp; xoá nút,
+         uỷ quyền sự kiện và hẹn giờ hiệu ứng.</p>
+      <div class="chips">
+        <span class="chip solid">3.8</span>
+        <span class="chip">DOM</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">DOM là gì?</a></li>
+        <li><a href="#s2">Chọn phần tử</a></li>
+        <li><a href="#s3">Đổi nội dung + cảnh báo XSS</a></li>
+        <li><a href="#s4">Đổi CSS: style &amp; classList</a></li>
+        <li><a href="#s5">Đổi thuộc tính</a></li>
+        <li><a href="#s6">Duyệt cây DOM</a></li>
+        <li><a href="#s7">Tạo · thêm · xoá nút</a></li>
+        <li><a href="#s8">Bubbling &amp; event delegation</a></li>
+        <li><a href="#s9">setTimeout · setInterval</a></li>
+        <li><a href="#s10">Hiệu ứng: 4 kỹ thuật</a></li>
+        <li><a href="#s11">Lazy loading</a></li>
+        <li><a href="#s12">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. DOM LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> DOM là gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Khi trang được nạp, trình duyệt dựng <strong>Document Object Model</strong> —
+         cây đối tượng trong đó mỗi thẻ HTML là một <em>node</em>. JS dùng cây này để đọc/sửa
+         nội dung, cấu trúc và kiểu dáng trang.</p>
+
+      <pre class="code"><code>document                      <span class="c">← gốc của cả cây</span>
+ └─ html
+     ├─ head ── title, meta…
+     └─ body
+         ├─ h1
+         ├─ p ── <span class="c">"đoạn văn" (text node)</span>
+         └─ ul ── li, li, li</code></pre>
+
+      <div class="note">
+        <p>DOM định nghĩa: các <strong>element</strong> (mỗi thẻ là một object), các
+        <strong>attribute</strong>, các <strong>method</strong> để thao tác, và các
+        <strong>event</strong> gắn trên phần tử — trọn bộ "API của trang web".</p>
+      </div>
+    </section>
+
+    <!-- ==========  2. CHỌN PHẦN TỬ  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Chọn phần tử <span class="tag-base">Cơ bản</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Trả về <strong>một</strong> phần tử (hoặc <code>null</code>)</th><th>Trả về <strong>danh sách</strong> phần tử</th></tr></thead>
+        <tbody>
+          <tr><td><code>getElementById(id)</code></td><td><code>getElementsByTagName(tag)</code></td></tr>
+          <tr><td><code>querySelector(selector)</code></td><td><code>getElementsByClassName(class)</code></td></tr>
+          <tr><td></td><td><code>getElementsByName(name)</code></td></tr>
+          <tr><td></td><td><code>querySelectorAll(selector)</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">// querySelector dùng CÚ PHÁP CSS SELECTOR — kiến thức Chương 2 tái sử dụng 100%:</span>
+document.querySelector(<span class="s">"#menu"</span>);          <span class="c">// theo id</span>
+document.querySelector(<span class="s">".card"</span>);          <span class="c">// theo class (phần tử ĐẦU tiên)</span>
+document.querySelectorAll(<span class="s">"ul.tasks li"</span>); <span class="c">// tất cả li trong ul.tasks</span>
+document.querySelectorAll(<span class="s">"input[type=checkbox]:checked"</span>); <span class="c">// selector phức tạp vô tư</span></code></pre>
+
+      <div class="callout tip">
+        <p><strong>Chuẩn nghề:</strong> ưu tiên <code>querySelector</code> /
+        <code>querySelectorAll</code> — một cú pháp thống nhất, chọn được mọi thứ. Cần phần tử
+        thuộc <em>nhiều thẻ &amp; class khác nhau</em> → <code>querySelectorAll</code>
+        (câu trắc nghiệm 14).</p>
+      </div>
+    </section>
+
+    <!-- ==========  3. ĐỔI NỘI DUNG + XSS  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Đổi nội dung — và cảnh báo XSS <span class="tag-base">Cơ bản</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Thuộc tính</th><th>Đặc điểm</th></tr></thead>
+        <tbody>
+          <tr><td><code>textContent</code></td><td>Toàn bộ <strong>văn bản</strong> (kể cả phần bị ẩn) — <strong>an toàn</strong>, không diễn giải HTML</td></tr>
+          <tr><td><code>innerText</code></td><td>Văn bản <em>đang hiển thị</em> (bỏ phần ẩn)</td></tr>
+          <tr><td><code>innerHTML</code></td><td>Đọc/ghi nội dung <strong>gồm cả thẻ HTML</strong> — thẻ được trình duyệt diễn giải</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">// ví dụ giáo trình: giải & hiển thị nghiệm phương trình bậc nhất ax + b = 0</span>
+<span class="k">function</span> giaiBac1() {
+  <span class="k">let</span> a = parseFloat(document.getElementById(<span class="s">"a"</span>).value);
+  <span class="k">let</span> b = parseFloat(document.getElementById(<span class="s">"b"</span>).value);
+  <span class="k">let</span> m = a === 0 ? (b === 0 ? <span class="s">"Vô số nghiệm"</span> : <span class="s">"Vô nghiệm"</span>)
+                  : `Nghiệm x = ${-b / a}`;
+  document.getElementById(<span class="s">"re"</span>).innerHTML = `&lt;h3 style='color:red'&gt;${m}&lt;/h3&gt;`;
+}</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — giải ax + b = 0 &nbsp;·&nbsp; và thí nghiệm XSS</div>
+        <div class="demo-body">
+          a = <input class="d-field" id="d-a" type="number" value="2" style="width:80px">
+          b = <input class="d-field" id="d-b" type="number" value="-8" style="width:80px">
+          <button class="d-btn" id="d-btn-giai">Giải phương trình</button>
+          <p id="d-re" style="min-height:1.4em;margin:8px 0"></p>
+          <hr style="border:none;border-top:1px solid #e3e8f0">
+          <p style="margin:6px 0"><strong>Thí nghiệm XSS:</strong> giả sử người dùng nhập bình luận
+             <code>&lt;img src=x onerror="alert('bị hack!')"&gt;</code> — hiển thị bằng gì?</p>
+          <button class="d-btn red" id="d-btn-xss-html">Gán bằng innerHTML (nguy hiểm)</button>
+          <button class="d-btn green" id="d-btn-xss-text">Gán bằng textContent (an toàn)</button>
+          <div class="d-out" id="d-out-xss">// bấm hai nút và quan sát khác biệt</div>
+        </div>
+      </div>
+
+      <div class="callout danger">
+        <p><strong>XSS (Cross-Site Scripting):</strong> <code>innerHTML</code> diễn giải chuỗi
+        thành HTML — gán <em>dữ liệu người dùng nhập</em> vào là mở cửa cho kẻ xấu chèn mã độc.
+        <strong>Quy tắc:</strong> dữ liệu từ người dùng/nguồn ngoài → <code>textContent</code>;
+        chỉ dùng <code>innerHTML</code> với nội dung <em>tin cậy do mình tạo</em>.</p>
+      </div>
+    </section>
+
+    <!-- ==========  4. ĐỔI CSS  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> Đổi CSS: <code>style</code> &amp; <code>classList</code> <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code><span class="c">// Cách 1: sửa style trực tiếp — chú ý tên camelCase!</span>
+e.style.backgroundColor = <span class="s">"gold"</span>;   <span class="c">// CSS: background-color</span>
+
+<span class="c">// Cách 2 (hiện đại): đổi CLASS — trình bày để yên trong file CSS</span>
+e.classList.add(<span class="s">"noi-bat"</span>);
+e.classList.remove(<span class="s">"noi-bat"</span>);
+e.classList.toggle(<span class="s">"dark-mode"</span>);    <span class="c">// có thì gỡ, chưa có thì thêm</span>
+e.classList.contains(<span class="s">"dark-mode"</span>);  <span class="c">// true/false</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — Dark Mode bằng classList.toggle</div>
+        <div class="demo-body">
+          <label><input type="checkbox" id="d-dark"> Bật Dark Mode cho khung dưới</label>
+          <div class="d-theme" id="d-theme">
+            <h4>Góc Cà Phê</h4>
+            <p style="margin:0">JS chỉ toggle class <code>dark-mode</code> — toàn bộ màu sắc
+               (nền, chữ, tiêu đề) và cả <code>transition</code> mượt đều nằm trong CSS.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p><strong>Chuẩn nghề:</strong> ưu tiên <strong>đổi class</strong> thay vì sửa từng
+        <code>e.style.*</code> — trình bày ở CSS, JS chỉ bật/tắt <em>trạng thái</em>: đúng nguyên
+        tắc tách 3 tầng. Chỉ sửa <code>style</code> trực tiếp khi giá trị phải <em>tính toán động</em>
+        (vị trí px, kích thước…).</p>
+      </div>
+    </section>
+
+    <!-- ==========  5. ĐỔI THUỘC TÍNH  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Đổi thuộc tính <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code><span class="c">// hai cách tương đương:</span>
+anh.src = <span class="s">"photo.svg"</span>;                    <span class="c">// truy cập trực tiếp (camelCase)</span>
+anh.setAttribute(<span class="s">"src"</span>, <span class="s">"photo.svg"</span>);     <span class="c">// get/setAttribute (tên như trong HTML)</span>
+anh.getAttribute(<span class="s">"alt"</span>);
+anh.removeAttribute(<span class="s">"hidden"</span>);</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — đổi src &amp; alt của ảnh</div>
+        <div class="demo-body">
+          <img class="d-anh" id="d-anh" src="../assets/img-small.svg" alt="Ảnh nhỏ">
+          <div>
+            <button class="d-btn" id="d-btn-anh1">src = img-small.svg</button>
+            <button class="d-btn green" id="d-btn-anh2">src = photo.svg</button>
+            <button class="d-btn" style="background:#6c5ce7" id="d-btn-anh3">Đọc getAttribute("alt")</button>
+          </div>
+          <div class="d-out" id="d-out-anh">// đổi ảnh không cần tải lại trang — nguyên lý của gallery bài tập 4</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  6. DUYỆT CÂY  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Duyệt cây DOM <span class="tag-adv">Nâng cao</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Hướng</th><th>Thuộc tính</th></tr></thead>
+        <tbody>
+          <tr><td>Lên cha</td><td><code>parentElement</code></td></tr>
+          <tr><td>Xuống con</td><td><code>children</code>, <code>firstElementChild</code>, <code>lastElementChild</code></td></tr>
+          <tr><td>Sang anh em</td><td><code>previousElementSibling</code>, <code>nextElementSibling</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn">
+        <p><strong><code>children</code> vs <code>childNodes</code> (câu trắc nghiệm 19):</strong>
+        <code>children</code> chỉ gồm <em>phần tử</em> con; <code>childNodes</code> gồm
+        <strong>tất cả</strong> node con — kể cả text node (khoảng trắng xuống dòng giữa các thẻ!)
+        và comment. Duyệt DOM nên dùng <code>children</code> để khỏi dính node "vô hình".</p>
+      </div>
+
+      <pre class="code"><code><span class="c">// trong handler: từ nút bấm lần sang span đứng kề trước nó</span>
+button.addEventListener(<span class="s">"click"</span>, <span class="k">function</span> () {
+  <span class="k">this</span>.previousElementSibling.classList.toggle(<span class="s">"delete"</span>);
+});  <span class="c">// ⚠ cần this = nút bấm → PHẢI dùng function thường (không phải arrow)</span></code></pre>
+    </section>
+
+    <!-- ==========  7. TẠO / THÊM / XOÁ NÚT  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Tạo · thêm · xoá nút <span class="tag-adv">Nâng cao</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Phương thức</th><th>Công dụng</th></tr></thead>
+        <tbody>
+          <tr><td><code>createElement(tag)</code> / <code>createTextNode(text)</code></td><td>Tạo phần tử / nút văn bản mới (chưa hiển thị)</td></tr>
+          <tr><td><code>appendChild(e)</code> / <code>insertBefore(new, ref)</code></td><td>Thêm vào cuối / chèn trước một nút</td></tr>
+          <tr><td><code>removeChild(e)</code> hoặc <code>e.remove()</code></td><td>Xoá nút</td></tr>
+          <tr><td><code>replaceChild(new, old)</code></td><td>Thay nút</td></tr>
+          <tr><td><code>insertAdjacentHTML(pos, html)</code></td><td>Chèn HTML tại <code>beforebegin</code> / <code>afterbegin</code> / <code>beforeend</code> / <code>afterend</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">// mẫu "To-Do" của giáo trình: thêm việc mới vào cuối danh sách</span>
+btnAdd.addEventListener(<span class="s">"click"</span>, () =&gt; {
+  <span class="k">let</span> content = document.getElementById(<span class="s">"content"</span>);
+  <span class="k">let</span> h = `&lt;li&gt;&lt;span&gt;${content.value}&lt;/span&gt; &lt;button&gt;&amp;times;&lt;/button&gt;&lt;/li&gt;`;
+  list.insertAdjacentHTML(<span class="s">"beforeend"</span>, h);
+});
+<span class="c">// kiểm tra quan hệ: cha.contains(con) · e.matches(".selector")</span></code></pre>
+      <p class="muted">Demo sống của phần này nằm ngay mục 8 bên dưới — danh sách việc có thêm/xoá.</p>
+    </section>
+
+    <!-- ==========  8. BUBBLING & DELEGATION  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Bubbling &amp; event delegation <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead"><strong>Bubbling</strong> (mặc định): sự kiện nổi từ phần tử trong cùng ra ngoài.
+         <strong>Capturing</strong>: ngược lại, từ ngoài vào trong.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — click vào hộp VÀNG (nằm trong hộp XANH)</div>
+        <div class="demo-body">
+          <div class="d-ngoai" id="d-ngoai">
+            Hộp NGOÀI (xanh)
+            <div class="d-trong" id="d-trong">Hộp TRONG (vàng) — click tôi</div>
+          </div>
+          <div class="d-out" id="d-out-bub">// thứ tự handler chạy sẽ hiện ở đây</div>
+        </div>
+      </div>
+
+      <h3>Event delegation — uỷ quyền sự kiện <span class="tag-adv">Kỹ thuật quan trọng</span></h3>
+      <p class="lead">Gắn <strong>một</strong> listener ở phần tử <strong>cha</strong> rồi kiểm tra
+         <code>event.target</code> — nhờ bubbling, click ở mọi con (kể cả con <em>thêm sau này</em>)
+         đều "nổi" lên cha.</p>
+
+      <pre class="code"><code><span class="k">let</span> list = document.querySelector(<span class="s">"ul.tasks"</span>);
+list.addEventListener(<span class="s">"click"</span>, (event) =&gt; {
+  <span class="k">if</span> (event.target.tagName === <span class="s">"BUTTON"</span>) {      <span class="c">// chỉ xử lý khi click nút xoá</span>
+    <span class="k">if</span> (confirm(<span class="s">"Bạn chắc chắn xoá?"</span>))
+      list.removeChild(event.target.parentElement);
+  }
+});</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — To-Do mini: MỘT listener cho cả danh sách</div>
+        <div class="demo-body">
+          <input class="d-field" id="d-viec" placeholder="Việc cần làm…" size="26">
+          <button class="d-btn green" id="d-them">+ Thêm</button>
+          <ul class="d-tasks" id="d-tasks">
+            <li><span>Học xong bài DOM</span><button class="ok">✓</button><button class="del">✕</button></li>
+            <li><span>Làm bài tập To-Do List</span><button class="ok">✓</button><button class="del">✕</button></li>
+          </ul>
+          <div class="d-out" id="d-out-task">// việc THÊM MỚI vẫn có nút ✓/✕ hoạt động — không cần gắn thêm listener nào</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  9. TIMER  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> <code>setTimeout</code> · <code>setInterval</code> <span class="tag-base">Cơ bản</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Hàm</th><th>Công dụng</th><th>Huỷ bằng</th></tr></thead>
+        <tbody>
+          <tr><td><code>setTimeout(fn, ms)</code></td><td>Gọi <code>fn</code> <strong>một lần</strong> sau <code>ms</code> mili-giây</td><td><code>clearTimeout(id)</code></td></tr>
+          <tr><td><code>setInterval(fn, ms)</code></td><td>Gọi <code>fn</code> <strong>lặp lại</strong> mỗi <code>ms</code></td><td><code>clearInterval(id)</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">// đồng hồ số: cập nhật mỗi giây</span>
+setInterval(() =&gt; {
+  <span class="k">let</span> d = <span class="k">new</span> Date();
+  clock.innerText = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+}, 1000);</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — đồng hồ số + toast tự ẩn</div>
+        <div class="demo-body">
+          <p class="d-clock" id="d-clock">--:--:--</p>
+          <button class="d-btn green" id="d-clock-on">▶ Chạy đồng hồ (setInterval)</button>
+          <button class="d-btn red" id="d-clock-off">■ Dừng (clearInterval)</button>
+          <button class="d-btn" style="background:#6c5ce7" id="d-toast-btn">Hiện toast 2,5 giây (setTimeout)</button>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <p><strong>Nhớ <code>clearInterval</code></strong> khi không cần nữa — interval bị bỏ quên
+        vẫn chạy ngầm, tốn tài nguyên (và bấm "Chạy" nhiều lần mà không clear sẽ tạo
+        <em>nhiều</em> interval chồng nhau — demo trên đã phòng bằng cách clear trước khi tạo).</p>
+      </div>
+    </section>
+
+    <!-- ==========  10. HIỆU ỨNG  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Hiệu ứng: 4 kỹ thuật <span class="tag-adv">Nâng cao</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>#</th><th>Kỹ thuật</th><th>Dùng khi</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Đổi class</strong> + CSS <code>transition</code>/<code>transform</code> — <em>khuyến nghị</em></td><td>Hầu hết hiệu ứng (đổi màu, phóng to, ẩn hiện) — mượt, chạy GPU</td></tr>
+          <tr><td>2</td><td>Sửa <code>style</code> trực tiếp</td><td>Giá trị tính toán động (toạ độ, kích thước)</td></tr>
+          <tr><td>3</td><td><code>setInterval</code> / <code>setTimeout</code></td><td>Hiệu ứng theo thời gian: slideshow, bóng nảy, đồng hồ</td></tr>
+          <tr><td>4</td><td>Thư viện (jQuery fade/slide, GSAP, AOS)</td><td>Hiệu ứng phức tạp, tiết kiệm công</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* CSS đảm nhận toàn bộ chuyển động: */</span>
+.box        { <span class="k">transition</span>: <span class="v">all .3s ease</span>; }
+.box.active { <span class="k">transform</span>: <span class="v">scale(1.15) rotate(45deg)</span>; <span class="k">background</span>: <span class="v">gold</span>; }
+
+<span class="c">// JS chỉ bật/tắt trạng thái:</span>
+box.addEventListener(<span class="s">"click"</span>, () =&gt; box.classList.toggle(<span class="s">"active"</span>));</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — click hình vuông (kỹ thuật 1: class + transition)</div>
+        <div class="demo-body">
+          <div class="d-box" id="d-box" title="Click tôi!"></div>
+          <p class="muted" style="margin-bottom:0">Một dòng JS — mọi chuyển động do CSS lo.
+             Câu hỏi tự kiểm tra của giáo trình: nút Dark Mode mượt nên dùng kỹ thuật nào?
+             → chính là kỹ thuật này (xem lại demo mục 4).</p>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <p><strong>Nâng cao:</strong> animation cần điều khiển từng khung hình → dùng
+        <code>requestAnimationFrame</code> thay <code>setInterval</code> (mượt hơn, tự đồng bộ
+        với màn hình). Bóng nảy bằng <code>setInterval</code> có ở bài 11 (Canvas) và bài tập 6.</p>
+      </div>
+    </section>
+
+    <!-- ==========  11. LAZY LOADING  ========== -->
+    <section class="block" id="s11">
+      <h2><span class="num">11</span> Lazy loading <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Trì hoãn tải ảnh/video/iframe đến khi người dùng cuộn gần tới —
+         tăng tốc nạp trang, tiết kiệm băng thông (liên hệ Core Web Vitals — Chương 1).</p>
+
+      <pre class="code"><code><span class="c">&lt;!-- HTML5 có sẵn — một thuộc tính là xong: --&gt;</span>
+&lt;img src=<span class="s">"image.jpg"</span> alt=<span class="s">"…"</span> loading=<span class="s">"lazy"</span>&gt;
+&lt;video preload=<span class="s">"none"</span> poster=<span class="s">"thumb.jpg"</span> controls&gt;…&lt;/video&gt;
+
+<span class="c">// kiểm soát chi tiết hơn: IntersectionObserver — theo dõi phần tử vào viewport</span>
+<span class="k">const</span> io = <span class="k">new</span> IntersectionObserver((entries) =&gt; {
+  entries.forEach(e =&gt; {
+    <span class="k">if</span> (e.isIntersecting) {
+      e.target.src = e.target.dataset.src;   <span class="c">// lúc này mới gán src thật</span>
+      io.unobserve(e.target);
+    }
+  });
+});
+document.querySelectorAll(<span class="s">"img[data-src]"</span>).forEach(img =&gt; io.observe(img));</code></pre>
+    </section>
+
+    <!-- ==========  12. MẸO & LỖI  ========== -->
+    <section class="block" id="s12">
+      <h2><span class="num">12</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout danger"><p><strong>Lỗi 1.</strong> Gán dữ liệu người dùng bằng
+        <code>innerHTML</code> → lỗ hổng XSS. Dữ liệu ngoài → <code>textContent</code>.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> Gắn listener cho từng phần tử con rồi
+        thêm phần tử mới thì "chết" nút — dùng <strong>event delegation</strong> ở cha.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 3.</strong> <code>e.style.background-color</code> —
+        sai; trong JS phải camelCase: <code>backgroundColor</code> (câu trắc nghiệm 12).</p></div>
+      <div class="callout warn"><p><strong>Lỗi 4.</strong> Bấm nút "chạy interval" nhiều lần không
+        clear → hiệu ứng nhanh dần bất thường vì nhiều interval chồng nhau.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> Chọn: <code>querySelector</code> ·
+        Nội dung: <code>textContent</code> (an toàn) · Kiểu dáng: <code>classList</code> ·
+        Danh sách động: delegation · Hẹn giờ: <code>setTimeout/setInterval</code> + clear.</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="08-su-kien.html"><small>← Bài trước</small>3.7 · Xử lý sự kiện</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="10-html-bom-luu-tru.html"><small>Bài tiếp →</small>3.9 · HTML BOM · Lưu trữ</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- toast dùng cho demo mục 9 -->
+  <div class="d-toast" id="d-toast">✓ Đã lưu! (toast tự ẩn bằng setTimeout)</div>
+
+  <!-- ===== JS MINH HOẠ CỦA BÀI (cuối body) ===== -->
+  <script>
+    'use strict';
+
+    /* ---- Mục 3: giải bậc 1 + thí nghiệm XSS ---- */
+    document.getElementById("d-btn-giai").addEventListener("click", () => {
+      const a = parseFloat(document.getElementById("d-a").value);
+      const b = parseFloat(document.getElementById("d-b").value);
+      const m = isNaN(a) || isNaN(b) ? "Vui lòng nhập đủ a và b"
+              : a === 0 ? (b === 0 ? "Vô số nghiệm" : "Vô nghiệm")
+              : `Nghiệm x = ${-b / a}`;
+      // nội dung do TA tạo (tin cậy) → dùng innerHTML để tô màu được
+      document.getElementById("d-re").innerHTML = `<strong style="color:#E63946">${m}</strong>`;
+    });
+
+    const duLieuNguoiDung = `<img src=x onerror="alert('bị hack!')">`;   // giả lập bình luận độc
+    document.getElementById("d-btn-xss-html").addEventListener("click", () => {
+      const out = document.getElementById("d-out-xss");
+      out.innerHTML = '<span class="bad">innerHTML: thẻ img được DIỄN GIẢI → onerror chạy → alert "bị hack!" hiện ra!</span>';
+      const hop = document.createElement("div");
+      hop.innerHTML = duLieuNguoiDung;         // ← đây chính là lỗ hổng (demo có kiểm soát)
+      out.appendChild(hop);
+    });
+    document.getElementById("d-btn-xss-text").addEventListener("click", () => {
+      const out = document.getElementById("d-out-xss");
+      out.innerHTML = '<span class="ok">textContent: chuỗi hiện NGUYÊN VĂN vô hại ↓</span>\n';
+      const hop = document.createElement("div");
+      hop.textContent = duLieuNguoiDung;       // an toàn: không diễn giải HTML
+      out.appendChild(hop);
+    });
+
+    /* ---- Mục 4: dark mode ---- */
+    document.getElementById("d-dark").addEventListener("change", function () {
+      // toggle(class, điều_kiện): bật khi checked, tắt khi bỏ check
+      document.getElementById("d-theme").classList.toggle("dark-mode", this.checked);
+    });
+
+    /* ---- Mục 5: đổi thuộc tính ảnh ---- */
+    const anh = document.getElementById("d-anh");
+    const outAnh = document.getElementById("d-out-anh");
+    document.getElementById("d-btn-anh1").addEventListener("click", () => {
+      anh.src = "../assets/img-small.svg";  anh.alt = "Ảnh nhỏ";
+      outAnh.textContent = 'anh.src = "../assets/img-small.svg"';
+    });
+    document.getElementById("d-btn-anh2").addEventListener("click", () => {
+      anh.setAttribute("src", "../assets/photo.svg");  anh.setAttribute("alt", "Ảnh phong cảnh");
+      outAnh.textContent = 'anh.setAttribute("src", "../assets/photo.svg")';
+    });
+    document.getElementById("d-btn-anh3").addEventListener("click", () => {
+      outAnh.innerHTML = `anh.getAttribute("alt") → <span class="ok">"${anh.getAttribute("alt")}"</span>`;
+    });
+
+    /* ---- Mục 8: bubbling ---- */
+    const outBub = document.getElementById("d-out-bub");
+    let thuTu = 0;
+    document.getElementById("d-ngoai").addEventListener("click", () => {
+      thuTu++;
+      outBub.innerHTML += `\n${thuTu}. handler hộp <span class="ok">NGOÀI</span> chạy (sự kiện nổi ra tới đây)`;
+    });
+    document.getElementById("d-trong").addEventListener("click", (e) => {
+      thuTu = 1;
+      outBub.innerHTML = `${thuTu}. handler hộp <span class="hl">TRONG</span> chạy trước (bubbling: trong → ngoài)`;
+      // muốn chặn nổi tiếp: e.stopPropagation();
+    });
+
+    /* ---- Mục 8: to-do delegation ---- */
+    const tasks = document.getElementById("d-tasks");
+    const oViec = document.getElementById("d-viec");
+    document.getElementById("d-them").addEventListener("click", () => {
+      const noiDung = oViec.value.trim();
+      if (noiDung === "") return;
+      const li = document.createElement("li");
+      li.innerHTML = `<span></span><button class="ok">✓</button><button class="del">✕</button>`;
+      li.querySelector("span").textContent = noiDung;   // textContent → chống XSS
+      tasks.appendChild(li);
+      oViec.value = "";
+      oViec.focus();
+    });
+    // MỘT listener ở <ul> xử lý mọi nút ✓/✕ — kể cả của việc thêm sau này
+    tasks.addEventListener("click", (e) => {
+      const li = e.target.closest("li");
+      if (!li) return;
+      if (e.target.classList.contains("ok")) {
+        li.querySelector("span").classList.toggle("delete");
+        document.getElementById("d-out-task").textContent =
+          "event.target là nút ✓ → toggle class 'delete' cho span kề nó (delegation!)";
+      } else if (e.target.classList.contains("del")) {
+        if (confirm("Bạn chắc chắn xoá?")) li.remove();
+      }
+    });
+
+    /* ---- Mục 9: đồng hồ + toast ---- */
+    let idDongHo = null;                       // giữ id để clear
+    const clock = document.getElementById("d-clock");
+    function capNhatGio() {
+      const d = new Date();
+      const p = (n) => String(n).padStart(2, "0");
+      clock.textContent = `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+    }
+    document.getElementById("d-clock-on").addEventListener("click", () => {
+      clearInterval(idDongHo);                 // phòng bấm nhiều lần tạo interval chồng nhau
+      capNhatGio();                            // hiện ngay, khỏi đợi 1 giây
+      idDongHo = setInterval(capNhatGio, 1000);
+    });
+    document.getElementById("d-clock-off").addEventListener("click", () => {
+      clearInterval(idDongHo);
+    });
+
+    let idToast = null;
+    document.getElementById("d-toast-btn").addEventListener("click", () => {
+      const toast = document.getElementById("d-toast");
+      toast.classList.add("hien");
+      clearTimeout(idToast);
+      idToast = setTimeout(() => toast.classList.remove("hien"), 2500);  // tự ẩn sau 2,5s
+    });
+
+    /* ---- Mục 10: hiệu ứng class + transition ---- */
+    const box = document.getElementById("d-box");
+    box.addEventListener("click", () => box.classList.toggle("active"));
+  </script>
+</body>
+</html>

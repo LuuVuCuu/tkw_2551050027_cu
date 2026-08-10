@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English For Students</title>
+  <meta
+    name="description"
+    content="Nền tảng học tiếng Anh dành cho học sinh và sinh viên với lộ trình học rõ ràng, bài học tương tác và luyện tập mỗi ngày."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;700;800&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="./dist/output.css" />
+</head>
+<body>
+  <a
+    href="#main"
+    class="btn btn-primary sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50"
+  >
+  </a>
+  <!-- ================= NAVBAR ================= -->
+   <header class="sticky top-0 z-40 border-b border-line bg-surface/85 backdrop-blur">
+    <nav
+      class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4"
+      aria-label="Điều hướng chính"
+    >
+      <a href="./index.html" class="flex items-center gap-2.5">
+
+        <span
+          class="grid h-10 w-10 place-items-center rounded-lg bg-brand-600 font-display text-xl font-extrabold text-white"
+        >
+          E
+        </span>
+
+        <span class="font-display text-xl font-extrabold">
+          English For Students
+        </span>
+
+      </a>
+
+      <ul class="hidden items-center gap-8 text-sm font-medium lg:flex">
+
+        <li>
+          <a href="#courses" class="hover:text-brand-600">
+            Khóa học
+          </a>
+        </li>
+
+        <li>
+          <a href="#features" class="hover:text-brand-600">
+            Tính năng
+          </a>
+        </li>
+
+        <li>
+          <a href="#pricing" class="hover:text-brand-600">
+            Gói học
+          </a>
+        </li>
+
+        <li>
+          <a href="#faq" class="hover:text-brand-600">
+            FAQ
+          </a>
+        </li>
+
+      </ul>
+
+      <div class="flex items-center gap-2">
+
+        <a href="#cta" class="btn btn-primary hidden lg:inline-flex">
+          Bắt đầu học
+        </a>
+
+        <button
+          type="button"
+          class="grid h-10 w-10 place-items-center rounded-pill border border-line lg:hidden"
+          aria-expanded="false"
+          aria-controls="nav-mobile"
+          aria-label="Mở menu"
+        >
+
+          <svg
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <path d="M4 7h16M4 12h16M4 17h16"/>
+          </svg>
+
+        </button>
+
+      </div>
+
+    </nav>
+
+    <div id="nav-mobile" class="hidden border-t border-line px-5 pb-6 pt-4 lg:hidden">
+
+      <ul class="flex flex-col gap-1 text-base font-medium">
+
+        <li>
+          <a href="#courses" class="block rounded-lg px-3 py-2.5 hover:bg-surface-alt">
+            Khóa học
+          </a>
+        </li>
+
+        <li>
+          <a href="#features" class="block rounded-lg px-3 py-2.5 hover:bg-surface-alt">
+            Tính năng
+          </a>
+        </li>
+
+        <li>
+          <a href="#pricing" class="block rounded-lg px-3 py-2.5 hover:bg-surface-alt">
+            Gói học
+          </a>
+        </li>
+
+        <li>
+          <a href="#faq" class="block rounded-lg px-3 py-2.5 hover:bg-surface-alt">
+            FAQ
+          </a>
+        </li>
+
+      </ul>
+
+      <a href="#cta" class="btn btn-primary btn-lg mt-4 w-full">
+        Bắt đầu học
+      </a>
+
+    </div>
+
+  </header>
+
+  <!-- ================= HERO ================= -->
+
+  <main id="main">
+
+    <section
+      class="section grid items-center gap-14 lg:grid-cols-2 lg:gap-16"
+      aria-labelledby="hero-title"
+    >
+
+      <div>
+
+        <p class="eyebrow">
+          English For Students
+        </p>
+
+        <h1
+          id="hero-title"
+          class="mt-4 text-4xl font-extrabold leading-[1.1] sm:text-5xl lg:text-6xl"
+        >
+          Learn English <br>
+          Every Day.
+        </h1>
+
+        <p class="mt-6 max-w-lg text-lg text-muted">
+
+          Học tiếng Anh hiệu quả với lộ trình dành riêng cho học sinh và sinh viên.
+          Luyện Nghe - Nói - Đọc - Viết thông qua bài học tương tác, bài kiểm tra
+          và theo dõi tiến độ học tập.
+
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+
+          <a href="#courses" class="btn btn-primary btn-lg">
+            Bắt đầu học
+          </a>
+
+          <a href="#features" class="btn btn-ghost btn-lg">
+            Khám phá khóa học
+          </a>
+
+        </div>
+
+        <p class="mt-5 text-sm text-muted">
+
+          ✔ Hơn 1.000 bài học
+          &nbsp;&nbsp;•&nbsp;&nbsp;
+          ✔ Luyện tập mỗi ngày
+          &nbsp;&nbsp;•&nbsp;&nbsp;
+          ✔ Học mọi lúc mọi nơi
+
+        </p>
+
+      </div>
+
+      <!-- Hero Card -->
+
+      <div class="card max-w-md mx-auto shadow-xl">
+
+        <div class="flex items-center justify-between">
+
+          <div>
+
+            <p class="text-sm text-muted">
+              Today's Lesson
+            </p>
+
+            <h2 class="font-display text-2xl font-bold">
+              Unit 05
+            </h2>
+
+          </div>
+
+          <span class="badge">
+            Vocabulary
+          </span>
+
+        </div>
+
+        <div class="mt-8 space-y-6">
+
+          <div>
+
+            <div class="flex justify-between mb-2">
+
+              <span>Listening</span>
+
+              <span>85%</span>
+
+            </div>
+
+            <div class="h-2 rounded-full bg-line">
+
+              <div
+                class="h-2 w-[85%] rounded-full bg-brand-500">
+              </div>
+
+            </div>
+
+          </div>
+
+          <div>
+
+            <div class="flex justify-between mb-2">
+
+              <span>Reading</span>
+
+              <span>72%</span>
+
+            </div>
+
+            <div class="h-2 rounded-full bg-line">
+
+              <div
+                class="h-2 w-[72%] rounded-full bg-brand-500">
+              </div>
+
+            </div>
+
+          </div>
+
+          <div>
+
+            <div class="flex justify-between mb-2">
+
+              <span>Speaking</span>
+
+              <span>60%</span>
+
+            </div>
+
+            <div class="h-2 rounded-full bg-line">
+
+              <div
+                class="h-2 w-[60%] rounded-full bg-brand-500">
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="mt-8 rounded-xl bg-brand-50 p-4">
+
+          <p class="text-sm text-muted">
+            Today's Goal
+          </p>
+
+          <p class="mt-2 font-semibold">
+
+            Learn 20 new words and complete one Listening lesson.
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</body>
+</html>
+
+
+    <!-- ############################################################
+         TỪ ĐÂY TRỞ XUỐNG LÀ PHẦN VIỆC CỦA BUỔI 2.
+
+         Khung semantic đã dựng sẵn ở buổi 1 tiết 3: mỗi section có
+         heading riêng nối bằng aria-labelledby, danh sách dùng <ul><li>,
+         cảm nhận dùng <figure>/<blockquote>/<cite>, số liệu dùng <dl>.
+
+         Việc của bạn ở buổi 2 là THÊM CLASS BỐ CỤC vào khung này.
+         Không xóa thẻ, không đổi thứ bậc heading.
+         ############################################################ -->
+
+
+    <!-- === BUỔI 2 · Tiết 2 — DẢI KHÁCH HÀNG =====================
+         Gợi ý: bọc ngoài một khối nền nhạt (bg-surface-alt) có
+         border-y. <ul> dùng flex flex-wrap, căn giữa,
+         gap-x lớn hơn gap-y.
+         ========================================================= -->
+    <section class="border-y border-line bg-surface-alt" aria-labelledby="doitac-title">
+<div class="mx-auto max-w-6x1 px-5 py-12">
+<h2 id="doitac-title" class="text-center text-sm font-medium text-muted">Được tin dùng bởi hàng nghìn học sinh và sinh viên trên toàn quốc</h2>
+<ul class="mt-8 flex flex-wrap items-center justify-center gap-x-12 gap-y-6 font-display text-lg font-bold text-muted">
+<li>Đại học Bách Khoa</li>
+<li>English Club</li>
+<li>Trung tâm IELTS</li>
+<li>Student Learning Hub</li>
+<li>English Academy</li>
+<li>Language Center</li>
+<li>Smart Learning</li>
+</ul>
+</div>
+</section>
+
+
+
+    <!-- === BUỔI 2 · Tiết 2 — TÍNH NĂNG =========================
+         Gợi ý: <ul> dùng grid gap-6 sm:grid-cols-2 lg:grid-cols-3
+         Mỗi <li> dùng class "card".
+         Icon bọc trong <span> vuông: grid h-11 w-11 place-items-center
+         rounded-lg bg-brand-50 text-brand-600
+         ========================================================= -->
+    <section id="tinh-nang" class="mx-auto w-full max-w-6xl px-5 py-20 lg:py-28" aria-labelledby="tinh-nang-title">
+
+  <div class="max-w-2xl">
+
+    <p class="font-display text-xs font-semibold uppercase text-brand-600">
+      Tính năng
+    </p>
+
+    <h2 id="tinh-nang-title" class="mt-4 text-3xl font-extrabold sm:text-4xl">
+      Công cụ giúp bạn học tiếng Anh hiệu quả mỗi ngày
+    </h2>
+
+    <p class="mt-4 text-muted">
+      Luyện tập toàn diện các kỹ năng nghe, nói, đọc, viết và xây dựng thói quen học tiếng Anh thông minh.
+    </p>
+
+  </div>
+
+
+  <ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+
+    <li class="rounded-card border border-line bg-surface p-6">
+
+      <!-- TODO: thêm icon SVG, nhớ aria-hidden="true" vì icon chỉ trang trí -->
+
+      <h3 class="feature-name">
+        Học từ vựng thông minh
+      </h3>
+
+      <p class="mt-2 text-muted">
+        Ghi nhớ từ mới nhanh hơn với phương pháp ôn tập lặp lại, ví dụ thực tế và bài tập tương tác.
+      </p>
+
+    </li>
+
+
+
+    <li class="rounded-card border border-line bg-surface p-6">
+
+      <!-- TODO: thêm icon SVG, nhớ aria-hidden="true" vì icon chỉ trang trí -->
+
+      <h3 class="feature-name">
+        Theo dõi tiến độ học tập
+      </h3>
+
+      <p class="mt-2 text-muted">
+        Theo dõi kết quả từng kỹ năng nghe, nói, đọc, viết để biết điểm mạnh và cải thiện mỗi ngày.
+      </p>
+
+    </li>
+
+
+
+    <li class="rounded-card border border-line bg-surface p-6">
+
+      <!-- TODO: thêm icon SVG, nhớ aria-hidden="true" vì icon chỉ trang trí -->
+
+      <h3 class="feature-name">
+        Luyện nghe và phát âm
+      </h3>
+
+      <p class="mt-2 text-muted">
+        Cải thiện khả năng nghe hiểu và phát âm chuẩn qua các bài luyện tập thực tế.
+      </p>
+
+    </li>
+
+
+  </ul>
+
+</section>
+
+
+
+    <!-- === BÀI TẬP VỀ NHÀ BUỔI 2 — CÁCH HOẠT ĐỘNG ==============
+         Section này KHÔNG có trong file Figma. Đây chính là phần
+         "thêm một section tự nghĩ" của bài tập về nhà buổi 2.
+
+         Nội dung mẫu đã có sẵn để bạn tham khảo cách viết. Bạn có
+         thể giữ, sửa, hoặc thay bằng ý tưởng khác của mình.
+
+         Lưu ý: dùng <ol> vì đây THẬT SỰ là chuỗi có thứ tự.
+         Đánh số cho ba mục không liên quan nhau chỉ là trang trí
+         và sẽ bị trừ điểm.
+         ========================================================= -->
+    <section id="cach-hoat-dong" aria-labelledby="cach-title">
+      <div>
+        <p class="eyebrow">Cách hoạt động</p>
+        <h2 id="cach-title">Một xe vào vựa, ba thao tác</h2>
+      </div>
+
+      <ol>
+        <li>
+          <h3>Xe lên bàn cân</h3>
+          <p>Chọn thương lái có sẵn trong danh bạ, nhập cân tổng. Khách mới thì thêm ngay trên màn hình đó.</p>
+        </li>
+        <li>
+          <h3>Trừ bì, chốt giá</h3>
+          <p>Nhập số bì và đơn giá hôm đó. Thành tiền tính tự động, không bấm máy tính tay.</p>
+        </li>
+        <li>
+          <h3>Chốt phiếu</h3>
+          <p>Phiếu vào sổ ngày và vào công nợ của thương lái cùng lúc. Không phải ghi hai lần.</p>
+        </li>
+      </ol>
+    </section>
+
+
+    <!-- === BUỔI 2 · Tiết 3 — SỐ LIỆU ===========================
+         Gợi ý: <dl> dùng grid sm:grid-cols-3, kẻ vạch bằng
+         sm:divide-x sm:divide-line.
+         Mẹo: <dt> phải đứng TRƯỚC <dd> cho đúng ngữ nghĩa, nhưng
+         nhìn thì con số phải nằm trên → dùng order-2 cho <dt>.
+         ========================================================= -->
+    <section aria-labelledby="solieu-title">
+      <h2 id="solieu-title" class="sr-only">Số liệu sử dụng</h2>
+      <dl>
+        <div>
+          <dt>Vựa đang dùng hằng ngày</dt>
+          <dd>340</dd>
+        </div>
+        <div>
+          <dt>Phiếu cân ghi trong năm 2025</dt>
+          <dd>1,2 triệu</dd>
+        </div>
+        <div>
+          <dt>Thời gian chốt sổ cuối ngày</dt>
+          <dd>4 phút</dd>
+        </div>
+      </dl>
+    </section>
+
+
+    <!-- === BUỔI 2 · Tiết 3 — CẢM NHẬN ==========================
+         Gợi ý: đặt ba <figure> trong một grid, mỗi cái dùng "card".
+         Buổi 4 sẽ biến khối này thành slider chạy được, nên GIỮ
+         NGUYÊN cấu trúc <ul> → <li> → <figure>.
+         ========================================================= -->
+    <section aria-labelledby="camnhan-title">
+      <h2 id="camnhan-title">Người dùng nói gì</h2>
+
+      <ul>
+        <li>
+          <figure>
+            <blockquote>
+              Trước đây tối nào tôi cũng ngồi cộng sổ tới 9 giờ. Giờ chốt xong là xong,
+              số liệu khớp luôn với con dâu ghi ở nhà.
+            </blockquote>
+            <figcaption>
+              <span>Cô Nguyễn Thị Tám</span>
+              <cite>Vựa Ba Càng, Vĩnh Long</cite>
+            </figcaption>
+          </figure>
+        </li>
+        <li>
+          <figure>
+            <blockquote>
+              Cái tôi cần là không cãi nhau về tiền. Thương lái có phiếu trong Zalo,
+              tôi có phiếu trong máy, hết chuyện.
+            </blockquote>
+            <figcaption>
+              <span>Anh Lê Hoàng</span>
+              <cite>HTX Tân Phú, Đồng Tháp</cite>
+            </figcaption>
+          </figure>
+        </li>
+        <li>
+          <figure>
+            <blockquote>
+              Nhân viên mới vô làm nửa buổi là dùng được. Tôi sợ nhất phần mềm phải đi học,
+              cái này không phải học.
+            </blockquote>
+            <figcaption>
+              <span>Chú Trần Sáu</span>
+              <cite>Kho lạnh Sáu Nghĩa, Tiền Giang</cite>
+            </figcaption>
+          </figure>
+        </li>
+      </ul>
+    </section>
+
+
+    <!-- === BUỔI 2 · Tiết 4 — BẢNG GIÁ ==========================
+         ĐÂY LÀ PHẦN KHÓ NHẤT CỦA BUỔI 2.
+
+         Công thức bốn phần để ba thẻ cao bằng nhau:
+           1. <ul>  →  grid items-stretch gap-6 lg:grid-cols-3
+           2. <li>  →  card flex h-full flex-col
+           3. nút   →  mt-auto        (đẩy xuống đáy thẻ)
+           4. thẻ nổi bật → relative ring-2 ring-brand-600,
+              badge dùng absolute -top-3 left-6
+
+         Buổi 4 sẽ thêm công tắc Tháng/Năm cho khối này, khi đó giá
+         sẽ chuyển vào thuộc tính data-monthly / data-yearly.
+         Bây giờ cứ để giá dạng chữ.
+         ========================================================= -->
+    <section id="bang-gia" aria-labelledby="gia-title">
+      <div>
+        <p class="eyebrow">Bảng giá</p>
+        <h2 id="gia-title">Trả theo quy mô vựa</h2>
+        <p>Đổi gói bất cứ lúc nào. Mùa vắng hạ gói, mùa rộ nâng gói.</p>
+      </div>
+
+      <ul>
+        <li>
+          <h3>Vựa nhỏ</h3>
+          <p>Một bàn cân, dưới 30 phiếu mỗi ngày.</p>
+          <p>390.000 ₫<span>/tháng</span></p>
+          <ul>
+            <li>2 tài khoản</li>
+            <li>Phiếu cân không giới hạn</li>
+            <li>Sổ lô hàng theo ngày</li>
+          </ul>
+          <a href="#cta">Chọn gói này</a>
+        </li>
+
+        <li>
+          <!-- Thẻ nổi bật: cần badge "Được chọn nhiều nhất" -->
+          <h3>Vựa vừa</h3>
+          <p>Nhiều bàn cân, có công nợ thương lái.</p>
+          <p>890.000 ₫<span>/tháng</span></p>
+          <ul>
+            <li>8 tài khoản</li>
+            <li>Mọi thứ của gói Vựa nhỏ</li>
+            <li>Sổ công nợ thương lái</li>
+            <li>Gửi phiếu qua Zalo</li>
+          </ul>
+          <a href="#cta">Chọn gói này</a>
+        </li>
+
+        <li>
+          <h3>Chuỗi kho</h3>
+          <p>Nhiều điểm cân, cần báo cáo gộp.</p>
+          <p>1.990.000 ₫<span>/tháng</span></p>
+          <ul>
+            <li>Không giới hạn tài khoản</li>
+            <li>Mọi thứ của gói Vựa vừa</li>
+            <li>Báo cáo gộp nhiều kho</li>
+          </ul>
+          <a href="#cta">Liên hệ tư vấn</a>
+        </li>
+      </ul>
+    </section>
+
+
+    <!-- === BUỔI 2 · Tiết 5 — CÂU HỎI THƯỜNG GẶP ================
+         Gợi ý: lưới hai cột không đều  →  lg:grid-cols-[1fr_1.4fr]
+         Cột trái là tiêu đề, cột phải là danh sách câu hỏi,
+         ngăn nhau bằng divide-y divide-line.
+
+         Buổi 4 sẽ biến khối này thành accordion đóng/mở được, khi
+         đó mỗi <h3> sẽ bọc một <button>. Giờ giữ nguyên cấu trúc.
+         ========================================================= -->
+    <section id="cau-hoi" aria-labelledby="faq-title">
+      <div>
+        <p class="eyebrow">Câu hỏi thường gặp</p>
+        <h2 id="faq-title">Điều chủ vựa hay hỏi trước khi dùng</h2>
+        <p>Chưa thấy câu của mình? Gửi câu hỏi, chúng tôi trả lời trong ngày làm việc.</p>
+      </div>
+
+      <div>
+        <div>
+          <h3>Mất mạng ở vựa thì có ghi phiếu được không?</h3>
+          <p>Được. Phiếu lưu tạm trên máy và tự đẩy lên khi có mạng lại. Thanh trạng thái báo còn bao nhiêu phiếu chưa đồng bộ.</p>
+        </div>
+        <div>
+          <h3>Người lớn tuổi dùng có được không?</h3>
+          <p>Màn hình ghi phiếu chỉ có bốn ô nhập và một nút. Chữ cỡ lớn, không có menu chìm. Phần lớn chủ vựa dùng thành thạo sau một buổi.</p>
+        </div>
+        <div>
+          <h3>Dữ liệu cũ trong sổ tay có nhập vào được không?</h3>
+          <p>Có. Gửi ảnh chụp sổ hoặc file Excel, đội hỗ trợ nhập giúp phần công nợ đang dở của từng thương lái, miễn phí trong tháng đầu.</p>
+        </div>
+        <div>
+          <h3>Nếu ngừng dùng thì dữ liệu đi đâu?</h3>
+          <p>Tải toàn bộ phiếu cân và công nợ về file Excel bất cứ lúc nào, kể cả sau khi ngừng gói. Dữ liệu là của vựa.</p>
+        </div>
+        <div>
+          <h3>Có kết nối được với cân điện tử không?</h3>
+          <p>Với cân có cổng RS-232 thì có, cần thêm bộ chuyển đổi. Đội kỹ thuật khảo sát trước khi lắp, không tính phí.</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- === BUỔI 2 · Tiết 5 — CTA ===============================
+         Gợi ý: một khối nền đậm (bg-brand-900) bo góc rounded-card,
+         chữ trắng, căn giữa, hai nút.
+         Nút phụ trên nền đậm KHÔNG dùng btn-ghost được, vì viền và
+         chữ của nó là màu dành cho nền sáng. Tự viết class riêng.
+         ========================================================= -->
+    <section id="cta" aria-labelledby="cta-title">
+      <div>
+        <h2 id="cta-title">Mùa rộ năm nay đừng ghi sổ tay nữa</h2>
+        <p>Cài đặt mất 10 phút. Dùng thử 30 ngày, không cần thẻ ngân hàng.</p>
+        <div>
+          <a href="#">Bắt đầu dùng thử</a>
+          <a href="tel:+842873001234">Gọi 028 7300 1234</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- === BUỔI 2 · Tiết 5 — FOOTER ==============================
+       Gợi ý: grid sm:grid-cols-2 lg:grid-cols-4, nền bg-surface-alt,
+       hàng bản quyền ngăn bằng border-t.
+       Mỗi nhóm liên kết bọc trong một thẻ nav riêng có aria-labelledby.
+       ========================================================== -->
+  <footer>
+    <div>
+      <div>
+        <a href="./index.html">
+          <span>V</span>
+          <span>Vựa</span>
+        </a>
+        <p>Phần mềm quản lý vựa nông sản cho chủ vựa ở Đồng bằng sông Cửu Long.</p>
+      </div>
+
+      <nav aria-labelledby="footer-sp">
+        <h2 id="footer-sp">Sản phẩm</h2>
+        <ul>
+          <li><a href="#tinh-nang">Tính năng</a></li>
+          <li><a href="#bang-gia">Bảng giá</a></li>
+          <li><a href="#cach-hoat-dong">Cách hoạt động</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-labelledby="footer-ht">
+        <h2 id="footer-ht">Hỗ trợ</h2>
+        <ul>
+          <li><a href="#cau-hoi">Câu hỏi thường gặp</a></li>
+          <li><a href="tel:+842873001234">028 7300 1234</a></li>
+          <li><a href="mailto:hotro@vua.vn">hotro@vua.vn</a></li>
+        </ul>
+      </nav>
+
+      <div>
+        <h2>Địa chỉ</h2>
+        <address>
+          128 Nguyễn Văn Cừ, Phường An Hòa<br />
+          Cần Thơ
+        </address>
+      </div>
+    </div>
+
+    <p>© 2026 Vựa. Bài thực hành môn Thiết kế Web.</p>
+  </footer>
+
+</body>
+</html>

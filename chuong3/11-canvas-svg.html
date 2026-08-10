@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  3.10 — ĐỒ HOẠ TRÊN WEB: CANVAS & SVG
+  ------------------------------------------------------------
+    1) Canvas là gì? context       5) SVG: các thẻ cơ bản
+    2) Vẽ hình cơ bản (demo)       6) SVG tương tác (demo)
+    3) Bóng nảy Play/Stop (demo)   7) Canvas hay SVG?
+    4) SVG là gì?                  8) Mẹo & lỗi thường gặp
+  JS minh hoạ đặt cuối <body>.
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.10 · Canvas &amp; SVG</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI ===== */
+    .d-btn { background:#1D559F; color:#fff; border:none; border-radius:8px;
+             padding:9px 16px; font-size:.92rem; font-weight:600; cursor:pointer;
+             margin:3px 4px 3px 0; }
+    .d-btn:hover { background:#16407a; }
+    .d-btn.green { background:#04AA6D; } .d-btn.green:hover { background:#03875a; }
+    .d-btn.red   { background:#E63946; } .d-btn.red:hover   { background:#c02936; }
+    .d-out { background:#0f172a; color:#e6edf3; border-radius:10px;
+             font-family:"Cascadia Code",Consolas,monospace; font-size:.88rem;
+             padding:12px 14px; margin-top:12px; min-height:20px; white-space:pre-wrap; }
+    .d-out .ok { color:#7ee787; }
+
+    canvas.d-cv { border:1px solid #e3e8f0; border-radius:10px; background:#fff;
+                  max-width:100%; display:block; margin-top:10px; }
+    .d-svgwrap svg { border:1px solid #e3e8f0; border-radius:10px; background:#fff;
+                     max-width:100%; height:auto; display:block; margin-top:10px; }
+    .d-svgwrap .an-tuong:hover { opacity:.75; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="index.html">Chương 3 · JavaScript</a><span>›</span>
+        3.10 Canvas &amp; SVG
+      </nav>
+      <h1>Đồ hoạ trên Web: Canvas &amp; SVG</h1>
+      <p class="sub">Hai cách vẽ trên trang: <strong>Canvas</strong> — tấm vẽ pixel điều khiển bằng
+         JavaScript (game, hiệu ứng động); <strong>SVG</strong> — đồ hoạ vector bằng thẻ
+         (logo, icon, biểu đồ — phóng to không vỡ nét).</p>
+      <div class="chips">
+        <span class="chip solid">3.10</span>
+        <span class="chip">Canvas · SVG</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Canvas là gì? · context</a></li>
+        <li><a href="#s2">Vẽ hình cơ bản</a></li>
+        <li><a href="#s3">Bóng nảy — Play / Stop</a></li>
+        <li><a href="#s4">SVG là gì?</a></li>
+        <li><a href="#s5">SVG: các thẻ cơ bản</a></li>
+        <li><a href="#s6">SVG tương tác</a></li>
+        <li><a href="#s7">Canvas hay SVG?</a></li>
+        <li><a href="#s8">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  1. CANVAS LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Canvas là gì? · context <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><code>&lt;canvas&gt;</code> (HTML5) là vùng vẽ trống — mọi nét vẽ đều do
+         JavaScript ra lệnh qua đối tượng <strong>context</strong>.</p>
+
+      <pre class="code"><code>&lt;canvas id=<span class="s">"myCanvas"</span> width=<span class="s">"500"</span> height=<span class="s">"300"</span>&gt;&lt;/canvas&gt;
+
+<span class="k">const</span> ctx = document.getElementById(<span class="s">"myCanvas"</span>).getContext(<span class="s">"2d"</span>);
+<span class="c">// "2d" cho đồ hoạ phẳng; "webgl" cho 3D</span></code></pre>
+
+      <div class="callout warn">
+        <p>Đặt kích thước canvas bằng <strong>thuộc tính</strong> <code>width</code>/<code>height</code>
+        (như trên), <em>không</em> bằng CSS — CSS chỉ kéo giãn tấm vẽ làm hình bị nhoè/méo.</p>
+      </div>
+    </section>
+
+    <!-- ==========  2. VẼ HÌNH CƠ BẢN  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Vẽ hình cơ bản <span class="tag-base">Cơ bản</span></h2>
+
+      <pre class="code"><code>ctx.fillStyle = <span class="s">"darkblue"</span>;    ctx.fillRect(20, 20, 150, 100);    <span class="c">// chữ nhật TÔ màu</span>
+ctx.strokeStyle = <span class="s">"blue"</span>;      ctx.strokeRect(200, 20, 150, 100); <span class="c">// chữ nhật VIỀN</span>
+
+ctx.beginPath();                                <span class="c">// hình tròn = cung 0 → 2π</span>
+ctx.arc(380, 200, 50, 0, 2 * Math.PI);
+ctx.fill();
+
+ctx.font = <span class="s">"30px Arial"</span>;
+ctx.fillText(<span class="s">"Web Design"</span>, 50, 260);            <span class="c">// văn bản</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — chạy từng lệnh vẽ lên canvas thật</div>
+        <div class="demo-body">
+          <button class="d-btn" id="d-btn-rect">fillRect + strokeRect</button>
+          <button class="d-btn green" id="d-btn-arc">arc (hình tròn)</button>
+          <button class="d-btn" style="background:#6c5ce7" id="d-btn-text">fillText + gradient</button>
+          <button class="d-btn red" id="d-btn-clear">clearRect (xoá)</button>
+          <canvas class="d-cv" id="d-canvas" width="520" height="290"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  3. BÓNG NẢY  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Bóng nảy — Play / Stop <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Nguyên lý mọi animation canvas: mỗi "khung hình" = <em>xoá → tính toạ độ mới
+         → vẽ lại</em>, lặp bằng <code>setInterval</code> (bài tập 6 dùng đúng kỹ thuật này).</p>
+
+      <pre class="code"><code><span class="k">let</span> x = 50, y = 50, dx = 3, dy = 2;              <span class="c">// vị trí + vận tốc</span>
+
+<span class="k">function</span> khungHinh() {
+  ctx.clearRect(0, 0, W, H);                     <span class="c">// 1. xoá khung cũ</span>
+  x += dx;  y += dy;                             <span class="c">// 2. di chuyển</span>
+  <span class="k">if</span> (x &lt; r || x &gt; W - r) dx = -dx;              <span class="c">// 3. chạm biên → đảo hướng</span>
+  <span class="k">if</span> (y &lt; r || y &gt; H - r) dy = -dy;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fill();  <span class="c">// 4. vẽ lại</span>
+}
+<span class="k">let</span> id = setInterval(khungHinh, 16);             <span class="c">// ~60 khung/giây · Stop: clearInterval(id)</span></code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — quả bóng nảy trong khung</div>
+        <div class="demo-body">
+          <button class="d-btn green" id="d-btn-play">▶ Play</button>
+          <button class="d-btn red" id="d-btn-stop">■ Stop</button>
+          <canvas class="d-cv" id="d-bong" width="520" height="220"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  4. SVG LÀ GÌ  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> SVG là gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><strong>Scalable Vector Graphics</strong> — đồ hoạ <strong>vector</strong>
+         mô tả bằng thẻ kiểu XML: phóng to không vỡ nét, nhẹ, và vì mỗi hình là một
+         <em>phần tử DOM</em> nên style/gắn sự kiện được như thẻ HTML thường.</p>
+
+      <ul>
+        <li>Nhúng thẳng vào HTML bằng thẻ <code>&lt;svg&gt;</code>, hoặc qua <code>&lt;img src="hinh.svg"&gt;</code>.</li>
+        <li>Thuộc tính chung: <code>fill</code> (màu nền), <code>stroke</code> (viền),
+            <code>stroke-width</code>, <code>opacity</code>, <code>transform</code>.</li>
+        <li><code>viewBox</code> định nghĩa "khung nhìn" — bí quyết để SVG co giãn responsive.</li>
+      </ul>
+    </section>
+
+    <!-- ==========  5. SVG THẺ CƠ BẢN  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> SVG: các thẻ cơ bản <span class="tag-base">Cơ bản</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th>Thẻ</th><th>Vẽ</th><th>Thuộc tính chính</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;circle&gt;</code></td><td>hình tròn</td><td><code>cx cy r</code></td></tr>
+          <tr><td><code>&lt;rect&gt;</code></td><td>chữ nhật</td><td><code>x y width height</code> (+ <code>rx</code> bo góc)</td></tr>
+          <tr><td><code>&lt;ellipse&gt;</code></td><td>ellipse</td><td><code>cx cy rx ry</code></td></tr>
+          <tr><td><code>&lt;line&gt;</code></td><td>đường thẳng</td><td><code>x1 y1 x2 y2</code></td></tr>
+          <tr><td><code>&lt;polygon&gt;</code> / <code>&lt;polyline&gt;</code></td><td>đa giác / gấp khúc</td><td><code>points</code></td></tr>
+          <tr><td><code>&lt;path&gt;</code></td><td>hình tự do</td><td><code>d</code> (chuỗi lệnh vẽ)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo">
+        <div class="demo-bar">Kết quả — 5 hình SVG viết thẳng trong HTML (xem source!)</div>
+        <div class="demo-body d-svgwrap">
+          <svg viewBox="0 0 520 150" width="520" aria-label="Các hình SVG cơ bản">
+            <circle cx="60" cy="75" r="42" fill="#1D559F"/>
+            <rect x="125" y="33" width="84" height="84" rx="12" fill="#04AA6D"/>
+            <ellipse cx="285" cy="75" rx="55" ry="35" fill="#6c5ce7"/>
+            <line x1="360" y1="115" x2="440" y2="35" stroke="#E63946" stroke-width="6" stroke-linecap="round"/>
+            <polygon points="480,35 510,115 450,115" fill="#FFC107"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  6. SVG TƯƠNG TÁC  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> SVG tương tác <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Vì mỗi hình SVG là phần tử DOM, ta <code>querySelector</code> +
+         <code>addEventListener</code> + đổi thuộc tính như thường — nền tảng của bài tập 10
+         (chọn hình, tô màu).</p>
+
+      <pre class="code"><code><span class="k">const</span> tron = document.querySelector(<span class="s">"#hinh-tron"</span>);
+tron.addEventListener(<span class="s">"click"</span>, () =&gt; {
+  tron.setAttribute(<span class="s">"fill"</span>, mauNgauNhien());   <span class="c">// đổi thuộc tính SVG = setAttribute</span>
+});</code></pre>
+
+      <div class="demo">
+        <div class="demo-bar">Thử ngay — click từng hình để đổi màu ngẫu nhiên</div>
+        <div class="demo-body d-svgwrap">
+          <svg viewBox="0 0 420 150" width="420" id="d-svg">
+            <circle class="an-tuong" cx="70" cy="75" r="45" fill="#1D559F"/>
+            <rect class="an-tuong" x="150" y="30" width="90" height="90" rx="12" fill="#04AA6D"/>
+            <ellipse class="an-tuong" cx="330" cy="75" rx="60" ry="40" fill="#6c5ce7"/>
+          </svg>
+          <div class="d-out" id="d-out-svg">// click một hình bất kỳ</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========  7. CANVAS HAY SVG  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Canvas hay SVG? <span class="tag-adv">Nâng cao</span></h2>
+
+      <table class="syntax">
+        <thead><tr><th></th><th>SVG</th><th>Canvas</th></tr></thead>
+        <tbody>
+          <tr><td>Bản chất</td><td>Vector — mỗi hình là <strong>phần tử DOM</strong></td><td>Raster — <strong>tấm vẽ pixel</strong>, vẽ xong là "phẳng"</td></tr>
+          <tr><td>Phóng to</td><td>Không vỡ nét</td><td>Vỡ (pixel)</td></tr>
+          <tr><td>Tương tác từng hình</td><td>Dễ (event trên từng thẻ)</td><td>Phải tự tính toạ độ</td></tr>
+          <tr><td>Hiệu năng khi RẤT nhiều đối tượng</td><td>Chậm dần (DOM nặng)</td><td>Nhanh</td></tr>
+          <tr><td><strong>Hợp với</strong></td><td>Logo, icon, biểu đồ tĩnh</td><td>Game, hiệu ứng thời gian thực, xử lý ảnh</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==========  8. MẸO & LỖI  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout warn"><p><strong>Lỗi 1.</strong> Vẽ hình tròn canvas quên
+        <code>beginPath()</code> → các nét dính vào nhau thành "mạng nhện".</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2.</strong> Animation quên <code>clearRect</code>
+        đầu mỗi khung → bóng để lại "vệt" dài.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 3.</strong> Đổi màu SVG bằng
+        <code>e.style.fill</code> có lúc không ăn thuộc tính <code>fill=""</code> —
+        dùng <code>setAttribute("fill", ...)</code> cho chắc.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> Icon/logo/biểu đồ → SVG;
+        game/hiệu ứng nhiều pixel → Canvas. Canvas animation = xoá → tính → vẽ lại mỗi khung.</p></div>
+    </section>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="10-html-bom-luu-tru.html"><small>← Bài trước</small>3.9 · HTML BOM · Lưu trữ</a>
+    <a class="home" href="index.html">Mục lục</a>
+    <a class="next" href="12-jquery.html"><small>Bài tiếp →</small>3.11 · jQuery</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 3 — Lập trình JavaScript căn bản
+  </footer>
+
+  <!-- ===== JS MINH HOẠ CỦA BÀI (cuối body) ===== -->
+  <script>
+    'use strict';
+
+    /* ---- Mục 2: vẽ hình cơ bản ---- */
+    const cv  = document.getElementById("d-canvas");
+    const ctx = cv.getContext("2d");
+
+    document.getElementById("d-btn-rect").addEventListener("click", () => {
+      ctx.fillStyle = "#1D559F";
+      ctx.fillRect(20, 20, 150, 100);            // chữ nhật tô màu
+      ctx.strokeStyle = "#04AA6D";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(200, 20, 150, 100);         // chữ nhật viền
+    });
+    document.getElementById("d-btn-arc").addEventListener("click", () => {
+      ctx.beginPath();                           // bắt đầu nét MỚI (quan trọng!)
+      ctx.arc(430, 70, 50, 0, 2 * Math.PI);      // tâm (430,70), bán kính 50
+      ctx.fillStyle = "#E63946";
+      ctx.fill();
+    });
+    document.getElementById("d-btn-text").addEventListener("click", () => {
+      const grad = ctx.createLinearGradient(50, 0, 400, 0);   // chuyển màu ngang
+      grad.addColorStop(0, "#1D559F");
+      grad.addColorStop(1, "#6c5ce7");
+      ctx.font = "bold 42px Arial";
+      ctx.fillStyle = grad;
+      ctx.fillText("Web Design", 50, 250);
+    });
+    document.getElementById("d-btn-clear").addEventListener("click", () => {
+      ctx.clearRect(0, 0, cv.width, cv.height);  // xoá toàn bộ tấm vẽ
+    });
+
+    /* ---- Mục 3: bóng nảy ---- */
+    const cvB  = document.getElementById("d-bong");
+    const ctxB = cvB.getContext("2d");
+    const r = 16;                                // bán kính bóng
+    let x = 60, y = 60, dx = 3.2, dy = 2.4;      // vị trí + vận tốc
+    let idBong = null;
+
+    function khungHinh() {
+      ctxB.clearRect(0, 0, cvB.width, cvB.height);       // 1. xoá khung cũ
+      x += dx;  y += dy;                                 // 2. di chuyển
+      if (x < r || x > cvB.width  - r) dx = -dx;         // 3. chạm biên → nảy
+      if (y < r || y > cvB.height - r) dy = -dy;
+      ctxB.beginPath();                                  // 4. vẽ lại bóng
+      ctxB.arc(x, y, r, 0, 2 * Math.PI);
+      ctxB.fillStyle = "#1D559F";
+      ctxB.fill();
+    }
+    khungHinh();                                 // vẽ bóng đứng yên lúc nạp trang
+    document.getElementById("d-btn-play").addEventListener("click", () => {
+      clearInterval(idBong);                     // chống bấm Play nhiều lần chồng interval
+      idBong = setInterval(khungHinh, 16);       // ~60 fps
+    });
+    document.getElementById("d-btn-stop").addEventListener("click", () => clearInterval(idBong));
+
+    /* ---- Mục 6: SVG tương tác ---- */
+    const bangMau = ["#1D559F", "#04AA6D", "#6c5ce7", "#FFC107", "#E63946", "#0ea5e9"];
+    document.querySelectorAll("#d-svg .an-tuong").forEach(hinh => {
+      hinh.addEventListener("click", () => {
+        // chọn màu KHÁC màu hiện tại cho chắc chắn thấy đổi
+        const dangCo = hinh.getAttribute("fill");
+        const conLai = bangMau.filter(m => m !== dangCo);
+        const mau = conLai[Math.floor(Math.random() * conLai.length)];
+        hinh.setAttribute("fill", mau);
+        document.getElementById("d-out-svg").innerHTML =
+          `&lt;${hinh.tagName}&gt;.setAttribute("fill", "<span class="ok">${mau}</span>")`;
+      });
+    });
+  </script>
+</body>
+</html>

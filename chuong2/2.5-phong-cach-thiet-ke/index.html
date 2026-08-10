@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.5 — CHÍN PHONG CÁCH THIẾT KẾ WEB PHỔ BIẾN (bản redesign)
+  ------------------------------------------------------------
+  Mỗi thẻ minh hoạ MỘT phong cách + kỹ thuật CSS cốt lõi tạo ra nó.
+  Mục tiêu: NHẬN DIỆN phong cách, không học thuộc. Khung trang dùng
+  ../../assets/lesson.css; CSS minh hoạ ở <style> (tiền tố .d-).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.5 · 9 phong cách thiết kế web</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== minh hoạ riêng (tiền tố d-) ===== */
+    .d-gallery { display:grid; gap:20px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+    .d-card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+              box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column; }
+    .d-card .head { padding:14px 16px 0; }
+    .d-card h2 { margin:0 0 4px; color:var(--blue); font-size:1.08rem; }
+    .d-card .tech { font-size:.8rem; color:var(--muted); margin:0 0 12px; }
+    .d-stage { margin:0 16px; border-radius:10px; min-height:140px; display:flex; flex-direction:column;
+               align-items:center; justify-content:center; gap:10px; padding:18px; text-align:center; }
+    .d-card .hint { margin:12px 16px 16px; font-family:"Cascadia Code",Consolas,monospace; font-size:.74rem;
+                    background:#0f172a; color:#7ee787; padding:8px 10px; border-radius:8px; overflow:auto; white-space:pre; }
+    .d-when { margin:0 16px 16px; font-size:.82rem; color:var(--muted); }
+    .d-when b { color:var(--ink); }
+
+    /* 1. MINIMALISM */
+    .s-minimal { background:#fff; border:1px solid #eee; }
+    .s-minimal h3 { font-size:2rem; font-weight:300; margin:0; letter-spacing:1px; color:#111; }
+    .s-minimal p  { color:#999; margin:0; }
+
+    /* 2. FLAT */
+    .s-flat { background:#eef2ff; }
+    .s-flat .card { background:#FFDD67; padding:16px 22px; border-radius:10px; font-weight:600; color:#5a4b00;
+                    box-shadow:0 4px 6px rgba(0,0,0,.1); transition:transform .3s, background .3s; cursor:pointer; }
+    .s-flat .card:hover { transform:translateY(-5px); background:#FFBC42; }
+
+    /* 3. SKEUOMORPHISM */
+    .s-skeuo { background:linear-gradient(#d7c49e,#b08d57); }
+    .s-skeuo button { font-size:1rem; font-weight:bold; padding:12px 22px; border:none; border-radius:12px;
+      background:linear-gradient(#fefefe,#cfcfcf); box-shadow:0 6px 0 #888, 0 8px 10px rgba(0,0,0,.4); cursor:pointer; }
+    .s-skeuo button:active { transform:translateY(4px); box-shadow:0 2px 0 #888, 0 3px 6px rgba(0,0,0,.4); }
+
+    /* 4. DARK MODE (nút bật/tắt thật) */
+    .s-dark { --bg:#fff; --fg:#111; background:var(--bg); color:var(--fg); border:1px solid #ddd; transition:.3s; }
+    .s-dark.on { --bg:#111; --fg:#f0f0f0; border-color:#333; }
+    .s-dark button { margin-top:8px; padding:8px 16px; border:1px solid currentColor; background:transparent;
+                     color:inherit; border-radius:6px; cursor:pointer; }
+
+    /* 5. BRUTALISM */
+    .s-brutal { background:#f9ca24; }
+    .s-brutal .btn { background:cyan; border:3px solid #000; box-shadow:6px 6px 0 #000; color:#000;
+      font-weight:bold; text-transform:uppercase; padding:12px 20px; transition:transform .1s; cursor:pointer; }
+    .s-brutal .btn:hover { transform:translate(3px,3px); box-shadow:3px 3px 0 #000; }
+
+    /* 6. GLASSMORPHISM */
+    .s-glass { background:url('../../assets/photo.svg') center/cover; }
+    .s-glass .panel { background:rgba(255,255,255,.15); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.35); border-radius:15px; padding:20px 26px; color:#fff;
+      box-shadow:0 4px 16px rgba(0,0,0,.2); }
+
+    /* 7. NEUMORPHISM */
+    .s-neu { background:#e0e0e0; }
+    .s-neu button { background:#e0e0e0; border:none; border-radius:14px; padding:16px 22px; font-weight:bold; color:#555;
+      box-shadow:6px 6px 12px #bebebe, -6px -6px 12px #ffffff; cursor:pointer; }
+    .s-neu button:active { box-shadow:inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff; }
+
+    /* 8. MATERIAL DESIGN */
+    .s-material { background:#fafafa; }
+    .s-material .fab { background:#6200ee; color:#fff; border:none; border-radius:8px; padding:12px 22px;
+      font-weight:600; text-transform:uppercase; letter-spacing:.5px; cursor:pointer;
+      box-shadow:0 3px 6px rgba(0,0,0,.16), 0 3px 6px rgba(0,0,0,.23); transition:box-shadow .3s, transform .2s; }
+    .s-material .fab:hover { box-shadow:0 10px 20px rgba(0,0,0,.19), 0 6px 6px rgba(0,0,0,.23); transform:translateY(-2px); }
+
+    /* 9. SCROLLYTELLING (kể chuyện theo cuộn) */
+    .s-scrolly { background:#0f172a; padding:0; display:block; height:170px; overflow-y:auto;
+      scroll-snap-type:y proximity; text-align:left; }
+    .s-scrolly .caption { position:sticky; top:0; z-index:2; background:#1d559f; color:#fff;
+      font-weight:700; font-size:.82rem; padding:8px 12px; box-shadow:0 2px 6px rgba(0,0,0,.35); }
+    .s-scrolly .panel { scroll-snap-align:start; min-height:118px; display:flex; align-items:center;
+      justify-content:center; color:#e6edf3; font-weight:600; padding:16px; }
+    .s-scrolly .panel:nth-child(2) { background:#1e293b; }
+    .s-scrolly .panel:nth-child(3) { background:#334155; }
+    .s-scrolly .panel:nth-child(4) { background:#0f766e; }
+    .s-scrolly .panel:nth-child(5) { background:#3f3f6e; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.5 Phong cách thiết kế</a><span>›</span>
+        9 phong cách phổ biến
+      </nav>
+      <h1>9 phong cách thiết kế web phổ biến</h1>
+      <p class="sub">Mỗi phong cách gắn với một vài <em>kỹ thuật CSS cốt lõi</em>. Mục tiêu của bài là
+         <strong>nhận diện</strong> phong cách qua dấu hiệu thị giác, không phải học thuộc.</p>
+      <div class="chips">
+        <span class="chip solid">2.5</span>
+        <span class="chip">Design Styles</span>
+        <span class="chip">Nhận diện</span>
+        <span class="chip">Có demo tương tác</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <div class="callout info">
+      <p>Rê chuột / bấm vào các nút trong từng thẻ để cảm nhận. Một sản phẩm thật thường <strong>pha trộn</strong>
+         nhiều phong cách — quan trọng là biết gọi tên kỹ thuật tạo ra chúng.</p>
+    </div>
+
+    <div class="d-gallery">
+      <!-- 1 -->
+      <article class="d-card">
+        <div class="head"><h2>1 · Minimalism (Tối giản)</h2>
+          <p class="tech">Cốt lõi: nhiều khoảng trắng, typography lớn, rất ít màu.</p></div>
+        <div class="d-stage s-minimal"><h3>Less is more</h3><p>portfolio · blog</p></div>
+        <div class="hint">font-weight: 300;
+letter-spacing: 1px;
+/* nhiều whitespace, 1–2 màu */</div>
+        <p class="d-when"><b>Nhận diện:</b> trang đề cao nội dung, gọn gàng, gần như đơn sắc.</p>
+      </article>
+
+      <!-- 2 -->
+      <article class="d-card">
+        <div class="head"><h2>2 · Flat Design (Phẳng)</h2>
+          <p class="tech">Cốt lõi: màu phẳng tươi, bo góc nhẹ, bóng mờ tối giản.</p></div>
+        <div class="d-stage s-flat"><div class="card">Hover tôi ↑</div></div>
+        <div class="hint">background: #FFDD67;
+border-radius: 10px;
+box-shadow: 0 4px 6px rgba(0,0,0,.1);</div>
+        <p class="d-when"><b>Nhận diện:</b> không hiệu ứng 3D, hình khối &amp; icon phẳng, màu rực.</p>
+      </article>
+
+      <!-- 3 -->
+      <article class="d-card">
+        <div class="head"><h2>3 · Skeuomorphism (Mô phỏng thực)</h2>
+          <p class="tech">Cốt lõi: gradient + nhiều lớp box-shadow tạo khối 3D thật.</p></div>
+        <div class="d-stage s-skeuo"><button>Nút bấm 3D</button></div>
+        <div class="hint">background: linear-gradient(#fefefe,#cfcfcf);
+box-shadow: 0 6px 0 #888, 0 8px 10px rgba(0,0,0,.4);</div>
+        <p class="d-when"><b>Nhận diện:</b> nút/đối tượng trông như vật thật, có chiều sâu, texture.</p>
+      </article>
+
+      <!-- 4 -->
+      <article class="d-card">
+        <div class="head"><h2>4 · Dark Mode (Chế độ tối)</h2>
+          <p class="tech">Cốt lõi: biến CSS + prefers-color-scheme (đây có nút bật/tắt thật).</p></div>
+        <div class="d-stage s-dark" id="darkStage">
+          <strong>Nội dung mẫu</strong>
+          <button onclick="document.getElementById('darkStage').classList.toggle('on')">Chuyển chế độ</button>
+        </div>
+        <div class="hint">:root { --bg:#fff; --fg:#111; }
+.dark { --bg:#111; --fg:#f0f0f0; }
+/* @media (prefers-color-scheme: dark) */</div>
+        <p class="d-when"><b>Nhận diện:</b> nền tối, chữ sáng; thường có công tắc sáng/tối.</p>
+      </article>
+
+      <!-- 5 -->
+      <article class="d-card">
+        <div class="head"><h2>5 · Brutalism (Thô, phá cách)</h2>
+          <p class="tech">Cốt lõi: viền đen dày, bóng cứng (không nhoè), chữ IN HOA.</p></div>
+        <div class="d-stage s-brutal"><button class="btn">Click me</button></div>
+        <div class="hint">border: 3px solid #000;
+box-shadow: 6px 6px 0 #000;  /* bóng đặc, sắc */
+text-transform: uppercase;</div>
+        <p class="d-when"><b>Nhận diện:</b> tương phản mạnh, "xấu có chủ đích", thô mộc.</p>
+      </article>
+
+      <!-- 6 -->
+      <article class="d-card">
+        <div class="head"><h2>6 · Glassmorphism (Kính mờ)</h2>
+          <p class="tech">Cốt lõi: rgba() + backdrop-filter: blur() + viền sáng mảnh.</p></div>
+        <div class="d-stage s-glass"><div class="panel">Mảnh kính mờ<br>backdrop-filter</div></div>
+        <div class="hint">background: rgba(255,255,255,.15);
+backdrop-filter: blur(10px);
+border: 1px solid rgba(255,255,255,.35);</div>
+        <p class="d-when"><b>Nhận diện:</b> panel trong suốt mờ, thấy nền nhoè phía sau.</p>
+      </article>
+
+      <!-- 7 -->
+      <article class="d-card">
+        <div class="head"><h2>7 · Neumorphism (Tân ảnh khối)</h2>
+          <p class="tech">Cốt lõi: nền cùng màu khối + box-shadow kép sáng/tối. Bấm để lõm.</p></div>
+        <div class="d-stage s-neu"><button>Soft button</button></div>
+        <div class="hint">box-shadow: 6px 6px 12px #bebebe,
+            -6px -6px 12px #ffffff;
+/* :active → inset = lõm xuống */</div>
+        <p class="d-when"><b>Nhận diện:</b> khối nổi mềm cùng tông nền, như nặn từ đất sét.</p>
+      </article>
+
+      <!-- 8 -->
+      <article class="d-card">
+        <div class="head"><h2>8 · Material Design (Google)</h2>
+          <p class="tech">Cốt lõi: "độ cao" (elevation) bằng bóng nhiều lớp, màu đậm, chuyển động.</p></div>
+        <div class="d-stage s-material"><button class="fab">Nút Material</button></div>
+        <div class="hint">box-shadow: 0 3px 6px rgba(0,0,0,.16),
+            0 3px 6px rgba(0,0,0,.23);
+/* hover → bóng cao hơn (elevation) */</div>
+        <p class="d-when"><b>Nhận diện:</b> thẻ nổi có bóng tinh tế, nút nâng lên khi tương tác.</p>
+      </article>
+
+      <!-- 9 -->
+      <article class="d-card">
+        <div class="head"><h2>9 · Scrollytelling (Kể chuyện theo cuộn)</h2>
+          <p class="tech">Cốt lõi: nội dung/hoạt ảnh hé lộ dần theo thao tác CUỘN. Kỹ thuật: position: sticky giữ tiêu đề + scroll-snap bắt điểm dừng.</p></div>
+        <div class="d-stage s-scrolly">
+          <div class="caption">Tiêu đề luôn dính · cuộn bên trong khung ↓</div>
+          <div class="panel">Đoạn 1 — Mở đầu câu chuyện</div>
+          <div class="panel">Đoạn 2 — Diễn biến</div>
+          <div class="panel">Đoạn 3 — Cao trào</div>
+          <div class="panel">Đoạn 4 — Kết thúc</div>
+        </div>
+        <pre class="code" style="margin:12px 16px 16px"><code><span class="c">/* Khung cuộn: bắt điểm dừng khi cuộn dọc */</span>
+.scrolly {
+  <span class="k">height</span>: <span class="s">170px</span>;
+  <span class="k">overflow-y</span>: <span class="s">auto</span>;
+  <span class="k">scroll-snap-type</span>: <span class="s">y proximity</span>;
+}
+<span class="c">/* Tiêu đề luôn DÍNH khi các đoạn cuộn qua */</span>
+.scrolly .caption { <span class="k">position</span>: <span class="s">sticky</span>; <span class="k">top</span>: <span class="s">0</span>; }
+.scrolly .panel   { <span class="k">scroll-snap-align</span>: <span class="s">start</span>; }
+<span class="c">/* Nâng cao: animation-timeline: scroll() — hoạt ảnh chạy theo cuộn */</span></code></pre>
+        <p class="d-when"><b>Nhận diện:</b> nội dung hé lộ dần khi cuộn, tiêu đề/hình "dính" tại chỗ. Ứng dụng: báo dài dạng long-form, trang giới thiệu sản phẩm.</p>
+      </article>
+    </div>
+
+    <div class="callout tip" style="margin-top:24px">
+      <p><strong>Tự kiểm tra.</strong> App ngân hàng số hiện đại, nền có ảnh, panel trong suốt → <em>Glassmorphism</em>.
+         Portfolio đề cao nội dung, ít màu, nhiều khoảng trắng → <em>Minimalism</em>. Nút nổi mềm cùng tông nền → <em>Neumorphism</em>.</p>
+    </div>
+  </main>
+
+  <nav class="lesson-nav">
+    <a class="prev" href="../2.4-ky-thuat-css/06-font-awesome.html"><small>← Bài trước</small>2.4.6 · Font Awesome</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="../2.6-emmet/index.html"><small>Bài tiếp →</small>2.6 · Emmet</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

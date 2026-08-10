@@ -1,0 +1,272 @@
+[
+  {
+    "id": "PC-1307-101",
+    "trader": "Chú Tư Bến Tre",
+    "category": "Sầu riêng",
+    "status": "dang-can",
+    "weight": 660,
+    "amount": 51480000,
+    "date": "2026-07-13"
+  },
+  {
+    "id": "PC-1807-102",
+    "trader": "Cô Tám Cái Bè",
+    "category": "Xoài",
+    "status": "da-chot",
+    "weight": 2380,
+    "amount": 76160000,
+    "date": "2026-07-18"
+  },
+  {
+    "id": "PC-1707-103",
+    "trader": "Chị Hường Long Hồ",
+    "category": "Bưởi",
+    "status": "dang-can",
+    "weight": 420,
+    "amount": 7980000,
+    "date": "2026-07-17"
+  },
+  {
+    "id": "PC-1407-104",
+    "trader": "Cô Tám Cái Bè",
+    "category": "Xoài",
+    "status": "da-chot",
+    "weight": 1390,
+    "amount": 44480000,
+    "date": "2026-07-14"
+  },
+  {
+    "id": "PC-1407-105",
+    "trader": "Chú Bảy Rạch Giá",
+    "category": "Xoài",
+    "status": "da-thanh-toan",
+    "weight": 1690,
+    "amount": 54080000,
+    "date": "2026-07-14"
+  },
+  {
+    "id": "PC-2107-106",
+    "trader": "Chú Tư Bến Tre",
+    "category": "Xoài",
+    "status": "da-thanh-toan",
+    "weight": 850,
+    "amount": 27200000,
+    "date": "2026-07-21"
+  },
+  {
+    "id": "PC-1907-107",
+    "trader": "Cô Lành Tam Bình",
+    "category": "Xoài",
+    "status": "dang-can",
+    "weight": 1750,
+    "amount": 56000000,
+    "date": "2026-07-19"
+  },
+  {
+    "id": "PC-1807-108",
+    "trader": "Anh Dũng Chợ Lách",
+    "category": "Nhãn",
+    "status": "da-chot",
+    "weight": 390,
+    "amount": 10920000,
+    "date": "2026-07-18"
+  },
+  {
+    "id": "PC-1807-109",
+    "trader": "Cô Tám Cái Bè",
+    "category": "Chôm chôm",
+    "status": "da-thanh-toan",
+    "weight": 640,
+    "amount": 14080000,
+    "date": "2026-07-18"
+  },
+  {
+    "id": "PC-2207-110",
+    "trader": "Anh Dũng Chợ Lách",
+    "category": "Sầu riêng",
+    "status": "dang-can",
+    "weight": 1710,
+    "amount": 133380000,
+    "date": "2026-07-22"
+  },
+  {
+    "id": "PC-2107-111",
+    "trader": "Chị Hường Long Hồ",
+    "category": "Bưởi",
+    "status": "da-chot",
+    "weight": 1740,
+    "amount": 33060000,
+    "date": "2026-07-21"
+  },
+  {
+    "id": "PC-2307-112",
+    "trader": "Cô Tám Cái Bè",
+    "category": "Xoài",
+    "status": "da-thanh-toan",
+    "weight": 1680,
+    "amount": 53760000,
+    "date": "2026-07-23"
+  },
+  {
+    "id": "PC-0707-113",
+    "trader": "Chú Chín Đợi",
+    "category": "Xoài",
+    "status": "da-thanh-toan",
+    "weight": 1860,
+    "amount": 59520000,
+    "date": "2026-07-07"
+  },
+  {
+    "id": "PC-1107-114",
+    "trader": "Chú Chín Đợi",
+    "category": "Chôm chôm",
+    "status": "da-thanh-toan",
+    "weight": 2260,
+    "amount": 49720000,
+    "date": "2026-07-11"
+  },
+  {
+    "id": "PC-1007-115",
+    "trader": "Chị Hường Long Hồ",
+    "category": "Chôm chôm",
+    "status": "da-chot",
+    "weight": 1200,
+    "amount": 26400000,
+    "date": "2026-07-10"
+  },
+  {
+    "id": "PC-0807-116",
+    "trader": "Cô Tám Cái Bè",
+    "category": "Khoai lang",
+    "status": "da-thanh-toan",
+    "weight": 2270,
+    "amount": 27240000,
+    "date": "2026-07-08"
+  },
+  {
+    "id": "PC-1607-117",
+    "trader": "Anh Sáu Nghĩa",
+    "category": "Sầu riêng",
+    "status": "da-thanh-toan",
+    "weight": 1620,
+    "amount": 126360000,
+    "date": "2026-07-16"
+  },
+  {
+    "id": "PC-0307-118",
+    "trader": "Cô Tám Cái Bè",
+    "category": "Sầu riêng",
+    "status": "da-thanh-toan",
+    "weight": 1830,
+    "amount": 142740000,
+    "date": "2026-07-03"
+  },
+  {
+    "id": "PC-2507-119",
+    "trader": "Anh Sáu Nghĩa",
+    "category": "Chôm chôm",
+    "status": "da-chot",
+    "weight": 700,
+    "amount": 15400000,
+    "date": "2026-07-25"
+  },
+  {
+    "id": "PC-0207-120",
+    "trader": "Chú Tư Bến Tre",
+    "category": "Chôm chôm",
+    "status": "dang-can",
+    "weight": 1350,
+    "amount": 29700000,
+    "date": "2026-07-02"
+  },
+  {
+    "id": "PC-2607-121",
+    "trader": "Anh Sáu Nghĩa",
+    "category": "Bưởi",
+    "status": "da-chot",
+    "weight": 1740,
+    "amount": 33060000,
+    "date": "2026-07-26"
+  },
+  {
+    "id": "PC-2007-122",
+    "trader": "Chú Chín Đợi",
+    "category": "Khoai lang",
+    "status": "da-thanh-toan",
+    "weight": 1170,
+    "amount": 14040000,
+    "date": "2026-07-20"
+  },
+  {
+    "id": "PC-0307-123",
+    "trader": "Chú Mười Trí",
+    "category": "Chôm chôm",
+    "status": "da-thanh-toan",
+    "weight": 450,
+    "amount": 9900000,
+    "date": "2026-07-03"
+  },
+  {
+    "id": "PC-0307-124",
+    "trader": "Chú Bảy Rạch Giá",
+    "category": "Khoai lang",
+    "status": "da-chot",
+    "weight": 1980,
+    "amount": 23760000,
+    "date": "2026-07-03"
+  },
+  {
+    "id": "PC-2207-125",
+    "trader": "Chú Chín Đợi",
+    "category": "Khoai lang",
+    "status": "da-chot",
+    "weight": 1750,
+    "amount": 21000000,
+    "date": "2026-07-22"
+  },
+  {
+    "id": "PC-2207-126",
+    "trader": "Anh Sáu Nghĩa",
+    "category": "Khoai lang",
+    "status": "dang-can",
+    "weight": 1260,
+    "amount": 15120000,
+    "date": "2026-07-22"
+  },
+  {
+    "id": "PC-0607-127",
+    "trader": "Chị Bé Ba Vĩnh Kim",
+    "category": "Chôm chôm",
+    "status": "dang-can",
+    "weight": 1180,
+    "amount": 25960000,
+    "date": "2026-07-06"
+  },
+  {
+    "id": "PC-0707-128",
+    "trader": "Chú Mười Trí",
+    "category": "Chôm chôm",
+    "status": "da-chot",
+    "weight": 430,
+    "amount": 9460000,
+    "date": "2026-07-07"
+  },
+  {
+    "id": "PC-1307-129",
+    "trader": "Cô Lành Tam Bình",
+    "category": "Khoai lang",
+    "status": "da-thanh-toan",
+    "weight": 910,
+    "amount": 10920000,
+    "date": "2026-07-13"
+  },
+  {
+    "id": "PC-1507-130",
+    "trader": "Cô Lành Tam Bình",
+    "category": "Xoài",
+    "status": "da-thanh-toan",
+    "weight": 700,
+    "amount": 22400000,
+    "date": "2026-07-15"
+  }
+]

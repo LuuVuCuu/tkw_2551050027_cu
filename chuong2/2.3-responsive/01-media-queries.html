@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  2.3.2 — RESPONSIVE WEB DESIGN · MEDIA QUERIES (bản toàn diện)
+  ------------------------------------------------------------
+  Media Queries (@media) là trái tim của Responsive Web Design:
+  cho phép áp dụng CSS khác nhau tuỳ kích thước/đặc tính màn hình.
+  Bài này đi từ cơ bản → nâng cao, tham khảo theo W3Schools
+  (RWD Intro / Viewport / Media Queries / Grid):
+    1) RWD là gì & vì sao cần   6) Các feature khác
+    2) Thẻ <meta viewport>       7) Ẩn/hiện theo breakpoint
+    3) Cú pháp @media            8) Kết hợp nhiều điều kiện
+    4) min-width vs max-width    9) Bảng breakpoint thông dụng
+    5) Mobile-first vs Desktop  10) Mẹo & lỗi thường gặp
+  LƯU Ý: media query đổi theo BỀ RỘNG CỬA SỔ. Hãy THU NHỎ cửa
+  sổ trình duyệt (hoặc kéo khung .d-resize) để thấy điểm gãy.
+  Khung trang dùng ../../assets/lesson.css; CSS minh hoạ để trong
+  <style> bên dưới (tiền tố .d- để khỏi đụng khung).
+  ============================================================
+-->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.3.2 · Responsive — Media Queries</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/lesson.css">
+  <style>
+    /* ===== CSS MINH HOẠ RIÊNG CỦA BÀI (tiền tố d-) ===== */
+
+    /* 1) Minh hoạ "thiết bị" tĩnh — mô phỏng 3 màn hình */
+    .d-devices { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; }
+    .d-screen {
+      border: 3px solid #16407a; border-radius: 10px; background: #eaf1fb;
+      padding: 10px; text-align: center; font-weight: 600; color: #16407a;
+    }
+    .d-screen .lbl { font-size: .72rem; color: #5b6472; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
+    .d-screen .bar { height: 8px; background: #1D559F; border-radius: 4px; margin: 6px 0; }
+    .d-mobile  { width: 90px; }
+    .d-tablet  { width: 150px; }
+    .d-desktop { width: 230px; }
+
+    /* 3) Demo: nền đổi màu theo bề rộng cửa sổ — minh hoạ @media trực tiếp */
+    .d-bgswitch {
+      padding: 22px; border-radius: 10px; text-align: center; font-weight: 700;
+      color: #fff; background: #04AA6D; transition: background .2s;
+    }
+    .d-bgswitch::after { content: " (cửa sổ ≥ 768px → XANH LÁ)"; font-weight: 400; }
+    @media (max-width: 767px) {
+      .d-bgswitch { background: #E63946; }
+      .d-bgswitch::after { content: " (cửa sổ < 768px → ĐỎ)"; }
+    }
+
+    /* Khung kéo được — "container query mô phỏng" để xem mà không cần đổi cửa sổ */
+    .d-resize {
+      resize: horizontal; overflow: auto; min-width: 240px; max-width: 100%;
+      width: 100%; border: 2px dashed #6c5ce7; border-radius: 10px; padding: 12px;
+      background: #faf9ff;
+    }
+    .d-resize::after {
+      content: "↘ Kéo góc dưới-phải để đổi bề rộng"; display: block;
+      font-size: .72rem; color: #6c5ce7; margin-top: 8px; text-align: right;
+    }
+
+    /* 4) Lưới đổi 1 → 2 → 4 cột theo breakpoint */
+    .d-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .d-grid > div {
+      background: #1D559F; color: #fff; padding: 18px; border-radius: 8px;
+      text-align: center; font-weight: 700;
+    }
+    @media (min-width: 600px) { .d-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 900px) { .d-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    /* nhãn báo trạng thái hiện tại của lưới (đổi theo cửa sổ) */
+    .d-state { font-weight: 700; }
+    .d-state::after { content: "4 cột (≥900px)"; color: #04AA6D; }
+    @media (max-width: 899px) { .d-state::after { content: "2 cột (600–899px)"; color: #1D559F; } }
+    @media (max-width: 599px) { .d-state::after { content: "1 cột (<600px)"; color: #E63946; } }
+
+    /* 5) Hộp so sánh mobile-first / desktop-first */
+    .d-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 720px) { .d-compare { grid-template-columns: 1fr; } }
+    .d-card-mf, .d-card-df {
+      border-radius: 10px; padding: 14px; border: 1px solid #e3e8f0;
+    }
+    .d-card-mf { background: #eafaf3; border-color: #b7ebd9; }
+    .d-card-df { background: #eef4fc; border-color: #cfe0f5; }
+    .d-card-mf h4, .d-card-df h4 { margin: 0 0 8px; }
+    .d-card-mf h4 { color: #04AA6D; }
+    .d-card-df h4 { color: #1D559F; }
+
+    /* 7) Ẩn/hiện theo breakpoint */
+    .d-only-mobile, .d-only-desktop {
+      padding: 14px; border-radius: 8px; font-weight: 700; text-align: center; color: #fff;
+    }
+    .d-only-mobile  { background: #E63946; display: block; }
+    .d-only-desktop { background: #04AA6D; display: none; }
+    @media (min-width: 768px) {
+      .d-only-mobile  { display: none; }
+      .d-only-desktop { display: block; }
+    }
+
+    /* 7b) Navbar gọn lại thành "menu dọc" trên màn hẹp */
+    .d-nav { display: flex; gap: 8px; background: #16407a; border-radius: 8px; padding: 8px; flex-wrap: wrap; }
+    .d-nav a { color: #fff; text-decoration: none; padding: 8px 14px; border-radius: 6px; background: #1D559F; flex: 1; text-align: center; min-width: 70px; }
+    @media (max-width: 520px) {
+      .d-nav { flex-direction: column; }
+    }
+
+    /* 6) prefers-reduced-motion / color-scheme minh hoạ nhẹ */
+    .d-motion {
+      width: 60px; height: 60px; border-radius: 50%; background: #6c5ce7; margin: 4px 0;
+      animation: d-spin 1.4s linear infinite;
+    }
+    @keyframes d-spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .d-motion { animation: none; }
+    }
+
+    .d-scheme { padding: 14px; border-radius: 8px; background: #ffffff; color: #1a1f29; border: 1px solid #e3e8f0; }
+    @media (prefers-color-scheme: dark) {
+      .d-scheme { background: #0f172a; color: #e6edf3; border-color: #334155; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua tới nội dung</a>
+
+  <!-- ====================  HEADER  ==================== -->
+  <header class="lesson-top">
+    <div class="inner">
+      <nav class="crumbs">
+        <a href="../index.html">Chương 2</a><span>›</span>
+        <a href="../index.html">2.3 Responsive</a><span>›</span>
+        Media Queries
+      </nav>
+      <h1>Media Queries &amp; Responsive Web Design</h1>
+      <p class="sub">Một trang web, chạy đẹp trên mọi màn hình — từ điện thoại đến desktop.
+         Media Queries (<code style="color:#fff;background:rgba(255,255,255,.18)">@media</code>) cho phép áp dụng CSS
+         khác nhau tuỳ bề rộng và đặc tính thiết bị. Đi từ thẻ viewport, cú pháp cơ bản đến mobile-first và các điều kiện nâng cao.</p>
+      <div class="chips">
+        <span class="chip solid">2.3.2</span>
+        <span class="chip">Responsive</span>
+        <span class="chip">Cơ bản → Nâng cao</span>
+        <span class="chip">Tham khảo W3Schools</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lesson" id="main">
+    <!-- ==========  TỔNG QUAN RESPONSIVE (mục 2.3.1)  ========== -->
+    <section class="block" id="overview">
+      <h2><span class="num"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></span> Tổng quan Responsive <span class="tag-base">Tổng quan · 2.3.1</span></h2>
+      <p class="lead"><strong>Responsive Web Design</strong> là cách làm <em>một</em> trang web tự thích ứng nhiều
+         kích thước màn hình — điện thoại → máy tính bảng → desktop — thay vì phải làm nhiều trang riêng cho từng
+         thiết bị. Trước khi đi sâu vào Media Queries, hãy nắm bốn khái niệm nền tảng dưới đây.</p>
+
+      <h3>Thẻ <code>&lt;meta viewport&gt;</code> — bắt buộc</h3>
+      <p>Không có dòng này, trình duyệt di động sẽ hiểu nhầm rằng màn rộng như desktop (~980px) rồi
+         <strong>thu nhỏ</strong> cả trang lại — chữ tí hon và media query gần như vô dụng. Đặt nó trong <code>&lt;head&gt;</code>:</p>
+      <pre class="code"><code><span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"viewport"</span> <span class="v">content</span>=<span class="s">"width=device-width, initial-scale=1.0"</span><span class="k">&gt;</span></code></pre>
+      <div class="note"><p>Chính trang này đã có sẵn thẻ đó trong <code>&lt;head&gt;</code> — bạn có thể mở mã nguồn để kiểm chứng.</p></div>
+
+      <h3>Mobile-first</h3>
+      <p>Viết CSS <strong>gốc cho màn hẹp</strong> (điện thoại) trước, rồi dùng <code>@media (min-width: …)</code>
+         để <em>mở rộng</em> dần cho màn lớn. Cách đối lập — <strong>desktop-first</strong> — viết cho màn rộng
+         trước rồi thu hẹp bằng <code>max-width</code>. Mobile-first được khuyên dùng vì mã gọn và nhẹ cho điện thoại.</p>
+
+      <h3>Bố cục lỏng (fluid)</h3>
+      <p>Ưu tiên đơn vị <strong>tương đối</strong> — <code>%</code>, <code>rem</code>, <code>em</code>, <code>vw</code> —
+         thay cho <code>px</code> cứng, để khối và chữ tự co giãn theo màn hình. Chi tiết về các đơn vị này học ở
+         bài kế <strong>2.3.3 · Đơn vị</strong>.</p>
+
+      <h3>Breakpoint</h3>
+      <p><strong>Breakpoint</strong> (điểm ngắt) là bề rộng mà tại đó bố cục chuyển sang dạng khác. Vài mốc phổ biến:
+         <strong>~600px</strong> (điện thoại ngang), <strong>768px</strong> (tablet), <strong>992px</strong> (laptop),
+         <strong>1200px</strong> (desktop). Bảng breakpoint chi tiết nằm ở mục 9 phía dưới.</p>
+
+      <div class="callout tip"><p>Bài này tập trung vào <strong>Media Queries (2.3.2)</strong>. Flexbox, Grid và hình ảnh
+         responsive được trình bày ở các bài <strong>2.3.4 – 2.3.6</strong>.</p></div>
+    </section>
+
+    <!-- ----------  MỤC LỤC  ---------- -->
+    <nav class="toc" aria-label="Mục lục">
+      <h2>Nội dung bài học</h2>
+      <ol>
+        <li><a href="#s1">Responsive Web Design là gì?</a></li>
+        <li><a href="#s2">Thẻ &lt;meta viewport&gt;</a></li>
+        <li><a href="#s3">Cú pháp @media</a></li>
+        <li><a href="#s4">min-width vs max-width</a></li>
+        <li><a href="#s5">Mobile-first vs Desktop-first</a></li>
+        <li><a href="#s6">Các media feature khác</a></li>
+        <li><a href="#s7">Ẩn/hiện theo breakpoint</a></li>
+        <li><a href="#s8">Kết hợp nhiều điều kiện</a></li>
+        <li><a href="#s9">Breakpoint thông dụng</a></li>
+        <li><a href="#s10">Mẹo &amp; lỗi thường gặp</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==========  HƯỚNG DẪN QUAN TRỌNG  ========== -->
+    <div class="callout warn">
+      <p><strong>Cách xem bài này:</strong> Media Query đổi theo <strong>bề rộng cửa sổ trình duyệt</strong> nên
+         khó thấy trong ảnh tĩnh. Hãy <strong>thu nhỏ / phóng to cửa sổ trình duyệt</strong> (hoặc kéo mép cửa sổ)
+         để các demo "gãy" sang bố cục khác. Ngoài ra mỗi demo có khung <span style="color:#6c5ce7">tím nét đứt</span>
+         <code>.d-resize</code> mà bạn <strong>kéo góc dưới-phải</strong> để đổi bề rộng tại chỗ — mô phỏng container query.</p>
+    </div>
+
+    <!-- ==========  1. RWD LÀ GÌ  ========== -->
+    <section class="block" id="s1">
+      <h2><span class="num">1</span> Responsive Web Design là gì? <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead"><strong>Responsive Web Design (RWD)</strong> là cách thiết kế để <em>một</em> trang web
+         tự co giãn và sắp xếp lại bố cục, hiển thị tốt trên <strong>mọi kích thước màn hình</strong>:
+         điện thoại, máy tính bảng, laptop, desktop — không cần làm trang riêng cho từng thiết bị.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Cùng một nội dung — bố cục đổi theo màn hình</div>
+        <div class="demo-body">
+          <div class="d-devices">
+            <div class="d-screen d-mobile">
+              <div class="lbl">Mobile</div>
+              <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+              1 cột
+            </div>
+            <div class="d-screen d-tablet">
+              <div class="lbl">Tablet</div>
+              <div class="bar"></div><div class="bar"></div>
+              2 cột
+            </div>
+            <div class="d-screen d-desktop">
+              <div class="lbl">Desktop</div>
+              <div class="bar"></div>
+              4 cột
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <p>RWD dựa trên 3 trụ cột (theo W3Schools): (1) <strong>lưới linh hoạt</strong> dùng đơn vị tương đối
+           như <code>%</code>, <code>fr</code>; (2) <strong>hình ảnh co giãn</strong> với <code>max-width:100%</code>;
+           và (3) <strong>media queries</strong> để đổi CSS theo điểm gãy. Bài này tập trung vào trụ cột thứ ba.</p>
+      </div>
+
+      <div class="callout info"><p>Vì sao cần RWD? Hơn một nửa lượng truy cập web đến từ điện thoại. Một trang không
+        responsive sẽ bị thu nhỏ tí hon hoặc phải cuộn ngang — trải nghiệm rất tệ và bị Google đánh giá thấp.</p></div>
+    </section>
+
+    <!-- ==========  2. META VIEWPORT  ========== -->
+    <section class="block" id="s2">
+      <h2><span class="num">2</span> Thẻ <code>&lt;meta viewport&gt;</code> — bắt buộc <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Đây là dòng <strong>không thể thiếu</strong> của mọi trang responsive. Nó báo cho trình duyệt
+         di động: hãy lấy bề rộng vùng hiển thị bằng đúng bề rộng thiết bị, đừng "giả vờ" rộng 980px rồi thu nhỏ.</p>
+
+      <pre class="code"><code><span class="c">&lt;!-- Đặt trong phần &lt;head&gt; --&gt;</span>
+<span class="k">&lt;meta</span> <span class="v">name</span>=<span class="s">"viewport"</span> <span class="v">content</span>=<span class="s">"width=device-width, initial-scale=1.0"</span><span class="k">&gt;</span></code></pre>
+
+      <table class="syntax">
+        <caption>Giải nghĩa từng phần của thuộc tính content</caption>
+        <thead><tr><th>Thành phần</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><code>width=device-width</code></td><td>Đặt bề rộng viewport bằng bề rộng <strong>thật</strong> của màn hình thiết bị (theo pixel CSS).</td></tr>
+          <tr><td><code>initial-scale=1.0</code></td><td>Mức phóng to ban đầu = 1:1, không phóng to/thu nhỏ khi vừa tải.</td></tr>
+          <tr><td><code>maximum-scale</code> / <code>minimum-scale</code></td><td>Giới hạn mức zoom tối đa/tối thiểu (hạn chế dùng vì cản trợ năng).</td></tr>
+          <tr><td><code>user-scalable=no</code></td><td>Cấm người dùng zoom — <strong>không nên</strong> dùng (kém khả năng tiếp cận).</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout danger"><p><strong>Thiếu thẻ này, media query coi như vô dụng trên điện thoại:</strong>
+        trình duyệt sẽ render trang ở bề rộng ảo ~980px rồi thu nhỏ, chữ tí hon, người dùng phải zoom thủ công.
+        Hãy kiểm tra ngay <code>&lt;head&gt;</code> của bạn — đây là lỗi RWD phổ biến nhất.</p></div>
+    </section>
+
+    <!-- ==========  3. CÚ PHÁP @MEDIA  ========== -->
+    <section class="block" id="s3">
+      <h2><span class="num">3</span> Cú pháp <code>@media</code> <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Một media query gồm <strong>loại thiết bị</strong> (media type) cộng <strong>điều kiện</strong>
+         (media feature). Khi điều kiện đúng, các quy tắc CSS bên trong mới được áp dụng.</p>
+
+      <pre class="code"><code><span class="c">/* media type "screen" + điều kiện bề rộng tối thiểu 768px */</span>
+<span class="k">@media</span> screen <span class="k">and</span> (<span class="v">min-width</span>: <span class="v">768px</span>) {
+  <span class="k">body</span> { <span class="k">background</span>: <span class="v">#04AA6D</span>; }   <span class="c">/* chỉ áp dụng khi đủ rộng */</span>
+}</code></pre>
+
+      <table class="syntax">
+        <caption>Các media type</caption>
+        <thead><tr><th>Media type</th><th>Áp dụng cho</th></tr></thead>
+        <tbody>
+          <tr><td><code>all</code></td><td>Mọi thiết bị (mặc định nếu bỏ qua).</td></tr>
+          <tr><td><code>screen</code></td><td>Màn hình (máy tính, điện thoại, máy tính bảng) — dùng nhiều nhất.</td></tr>
+          <tr><td><code>print</code></td><td>Khi in trang hoặc xem trước bản in.</td></tr>
+          <tr><td><code>speech</code></td><td>Trình đọc màn hình (đọc thành tiếng).</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Demo: nền đổi màu theo bề rộng cửa sổ</h3>
+      <div class="demo">
+        <div class="demo-bar">Thu nhỏ cửa sổ qua mốc 768px để thấy đổi màu</div>
+        <div class="demo-body">
+          <div class="d-bgswitch">@media kiểm tra bề rộng cửa sổ</div>
+        </div>
+      </div>
+      <div class="note">
+        <p>Khối trên dùng <code>@media (max-width:767px)</code>: khi cửa sổ <strong>nhỏ hơn 768px</strong> nền chuyển
+           <span style="color:#E63946;font-weight:700">ĐỎ</span>, ngược lại giữ <span style="color:#04AA6D;font-weight:700">XANH LÁ</span>.
+           <strong>Hãy thu nhỏ cửa sổ trình duyệt</strong> để chứng kiến điểm gãy.</p>
+      </div>
+
+      <h3>Khung kéo được — xem điểm gãy mà không đổi cửa sổ <span class="tag-adv">Mô phỏng</span></h3>
+      <div class="demo">
+        <div class="demo-bar">Kéo góc dưới-phải khung tím để đổi bề rộng</div>
+        <div class="demo-body">
+          <p class="muted">Lưu ý: khung kéo dưới đây minh hoạ <em>ý tưởng</em> "đổi bố cục theo bề rộng vùng chứa".
+             Lưới thật bên trong vẫn nghe theo bề rộng <strong>cửa sổ</strong> (xem mục 4); để mô phỏng container query
+             đúng nghĩa cần thuộc tính <code>container-type</code> hiện đại.</p>
+          <div class="d-resize">
+            <div class="d-nav">
+              <a href="#s3">Trang chủ</a><a href="#s3">Giới thiệu</a><a href="#s3">Dịch vụ</a><a href="#s3">Liên hệ</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip"><p>Bạn cũng có thể nhúng chính trang này vào một <code>&lt;iframe&gt;</code> hẹp rồi
+        kéo rộng iframe ra — nội dung bên trong sẽ "gãy" theo bề rộng iframe, vì iframe là một viewport độc lập.</p></div>
+    </section>
+
+    <!-- ==========  4. MIN-WIDTH vs MAX-WIDTH  ========== -->
+    <section class="block" id="s4">
+      <h2><span class="num">4</span> <code>min-width</code> vs <code>max-width</code> — điểm gãy <span class="tag-base">Cơ bản</span></h2>
+      <p class="lead">Hai điều kiện hay dùng nhất. <strong>Breakpoint</strong> (điểm gãy) là bề rộng mà tại đó bố cục
+         thay đổi. Hiểu đúng hướng của hai từ khoá này là chìa khoá của responsive.</p>
+
+      <table class="syntax">
+        <thead><tr><th>Điều kiện</th><th>Đúng khi</th><th>Nghĩa thường dùng</th></tr></thead>
+        <tbody>
+          <tr><td><code>(min-width: 600px)</code></td><td>cửa sổ <strong>≥ 600px</strong></td><td>"Từ 600px <strong>trở lên</strong>" — màn rộng. (mobile-first)</td></tr>
+          <tr><td><code>(max-width: 599px)</code></td><td>cửa sổ <strong>≤ 599px</strong></td><td>"Từ 599px <strong>trở xuống</strong>" — màn hẹp. (desktop-first)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Demo: lưới đổi 1 → 2 → 4 cột</h3>
+      <div class="demo">
+        <div class="demo-bar">Hiện tại: <span class="d-state"></span> — thu nhỏ cửa sổ để thấy đổi</div>
+        <div class="demo-body">
+          <div class="d-grid">
+            <div>1</div><div>2</div><div>3</div><div>4</div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Mặc định (màn hẹp nhất): 1 cột */</span>
+.luoi { <span class="k">display</span>: <span class="v">grid</span>; <span class="k">grid-template-columns</span>: <span class="v">1fr</span>; }
+
+<span class="c">/* Từ 600px trở lên: 2 cột */</span>
+<span class="k">@media</span> (<span class="v">min-width</span>: <span class="v">600px</span>) {
+  .luoi { <span class="k">grid-template-columns</span>: <span class="v">1fr 1fr</span>; }
+}
+<span class="c">/* Từ 900px trở lên: 4 cột */</span>
+<span class="k">@media</span> (<span class="v">min-width</span>: <span class="v">900px</span>) {
+  .luoi { <span class="k">grid-template-columns</span>: <span class="v">repeat(4, 1fr)</span>; }
+}</code></pre>
+
+      <div class="callout warn"><p>Đừng nhầm hướng! <code>min-width</code> = "màn hình <em>tối thiểu</em> rộng bằng này"
+        (áp dụng cho màn <strong>rộng</strong>). <code>max-width</code> = "màn hình <em>tối đa</em> rộng bằng này"
+        (áp dụng cho màn <strong>hẹp</strong>). Đây là chỗ người mới hay lẫn lộn nhất.</p></div>
+    </section>
+
+    <!-- ==========  5. MOBILE-FIRST vs DESKTOP-FIRST  ========== -->
+    <section class="block" id="s5">
+      <h2><span class="num">5</span> Mobile-first vs Desktop-first <span class="tag-adv">Quan trọng</span></h2>
+      <p class="lead">Hai triết lý viết CSS. <strong>Mobile-first</strong> viết CSS cho màn hẹp trước rồi
+         <em>cộng dồn</em> lên bằng <code>min-width</code>. <strong>Desktop-first</strong> viết cho màn rộng trước
+         rồi <em>thu nhỏ dần</em> bằng <code>max-width</code>.</p>
+
+      <div class="demo">
+        <div class="demo-bar">So sánh hai cách tiếp cận</div>
+        <div class="demo-body">
+          <div class="d-compare">
+            <div class="d-card-mf">
+              <h4><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> Mobile-first (khuyên dùng)</h4>
+              <p style="margin:0">CSS gốc dành cho điện thoại. Dùng <code>min-width</code> để <strong>thêm</strong>
+                quy tắc khi màn rộng dần. Nhẹ cho điện thoại, dễ bảo trì.</p>
+            </div>
+            <div class="d-card-df">
+              <h4><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg> Desktop-first</h4>
+              <p style="margin:0">CSS gốc dành cho desktop. Dùng <code>max-width</code> để <strong>ghi đè</strong>
+                khi màn hẹp dần. Quen thuộc với web cũ, nhưng dễ phình quy tắc.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="split">
+        <div>
+          <p class="muted center"><b>Mobile-first</b> — cộng dồn lên bằng <code>min-width</code></p>
+          <pre class="code"><code><span class="c">/* Gốc: điện thoại — 1 cột */</span>
+.box { <span class="k">grid-template-columns</span>: <span class="v">1fr</span>; }
+
+<span class="k">@media</span> (<span class="v">min-width</span>: <span class="v">768px</span>) {  <span class="c">/* tablet+ */</span>
+  .box { <span class="k">grid-template-columns</span>: <span class="v">1fr 1fr</span>; }
+}
+<span class="k">@media</span> (<span class="v">min-width</span>: <span class="v">1024px</span>) { <span class="c">/* desktop+ */</span>
+  .box { <span class="k">grid-template-columns</span>: <span class="v">1fr 1fr 1fr</span>; }
+}</code></pre>
+        </div>
+        <div>
+          <p class="muted center"><b>Desktop-first</b> — thu nhỏ dần bằng <code>max-width</code></p>
+          <pre class="code"><code><span class="c">/* Gốc: desktop — 3 cột */</span>
+.box { <span class="k">grid-template-columns</span>: <span class="v">1fr 1fr 1fr</span>; }
+
+<span class="k">@media</span> (<span class="v">max-width</span>: <span class="v">1023px</span>) { <span class="c">/* tablet- */</span>
+  .box { <span class="k">grid-template-columns</span>: <span class="v">1fr 1fr</span>; }
+}
+<span class="k">@media</span> (<span class="v">max-width</span>: <span class="v">767px</span>) {  <span class="c">/* phone- */</span>
+  .box { <span class="k">grid-template-columns</span>: <span class="v">1fr</span>; }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="callout tip"><p><strong>Nên chọn Mobile-first.</strong> Đây là khuyến nghị chuẩn (W3Schools, Google):
+        điện thoại tải đúng phần CSS tối thiểu, mã sạch hơn vì chỉ "thêm vào" cho màn lớn thay vì "gỡ bớt".</p></div>
+    </section>
+
+    <!-- ==========  6. CÁC FEATURE KHÁC  ========== -->
+    <section class="block" id="s6">
+      <h2><span class="num">6</span> Các media feature khác <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Ngoài bề rộng, <code>@media</code> còn kiểm tra được hướng màn hình, tỉ lệ khung hình,
+         độ phân giải, và cả <strong>tuỳ chọn của người dùng</strong> (giao diện tối, giảm chuyển động).</p>
+
+      <table class="syntax">
+        <caption>Một số media feature thông dụng</caption>
+        <thead><tr><th>Feature</th><th>Ý nghĩa</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>orientation</code></td><td>Hướng màn hình: dọc (portrait) hay ngang (landscape)</td><td><code>(orientation: landscape)</code></td></tr>
+          <tr><td><code>aspect-ratio</code></td><td>Tỉ lệ rộng/cao của viewport</td><td><code>(min-aspect-ratio: 16/9)</code></td></tr>
+          <tr><td><code>resolution</code></td><td>Mật độ điểm ảnh (màn Retina…)</td><td><code>(min-resolution: 2dppx)</code></td></tr>
+          <tr><td><code>prefers-color-scheme</code></td><td>Người dùng chọn giao diện sáng/tối</td><td><code>(prefers-color-scheme: dark)</code></td></tr>
+          <tr><td><code>prefers-reduced-motion</code></td><td>Người dùng yêu cầu giảm hiệu ứng động</td><td><code>(prefers-reduced-motion: reduce)</code></td></tr>
+          <tr><td><code>hover</code> / <code>pointer</code></td><td>Có di chuột không / loại con trỏ (chuột vs cảm ứng)</td><td><code>(hover: hover)</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Demo: prefers-color-scheme &amp; prefers-reduced-motion</h3>
+      <div class="split">
+        <div class="demo">
+          <div class="demo-bar">Đổi theo giao diện hệ điều hành (sáng/tối)</div>
+          <div class="demo-body">
+            <div class="d-scheme">Hộp này tự đổi nền theo <code>prefers-color-scheme</code>.
+              Bật chế độ Tối (Dark Mode) của hệ điều hành để thấy đổi.</div>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-bar">Vòng quay dừng nếu bật "Giảm chuyển động"</div>
+          <div class="demo-body">
+            <div class="d-motion"></div>
+            <p class="muted" style="margin:6px 0 0">Nếu hệ điều hành bật "Reduce Motion", vòng tròn sẽ <strong>ngừng quay</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Giao diện tối theo cài đặt hệ điều hành */</span>
+<span class="k">@media</span> (<span class="v">prefers-color-scheme</span>: <span class="v">dark</span>) {
+  body { <span class="k">background</span>: <span class="v">#0f172a</span>; <span class="k">color</span>: <span class="v">#e6edf3</span>; }
+}
+<span class="c">/* Tôn trọng người nhạy cảm với chuyển động */</span>
+<span class="k">@media</span> (<span class="v">prefers-reduced-motion</span>: <span class="v">reduce</span>) {
+  * { <span class="k">animation</span>: <span class="v">none</span>; <span class="k">transition</span>: <span class="v">none</span>; }
+}
+<span class="c">/* Chỉ khi xoay ngang */</span>
+<span class="k">@media</span> (<span class="v">orientation</span>: <span class="v">landscape</span>) { ... }</code></pre>
+
+      <div class="callout info"><p><code>prefers-reduced-motion</code> và <code>prefers-color-scheme</code> là media feature về
+        <strong>trợ năng/sở thích</strong> chứ không phải kích thước — nên tôn trọng để trang thân thiện và dễ tiếp cận hơn.</p></div>
+    </section>
+
+    <!-- ==========  7. ẨN/HIỆN THEO BREAKPOINT  ========== -->
+    <section class="block" id="s7">
+      <h2><span class="num">7</span> Ẩn/hiện phần tử theo breakpoint <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Một kỹ thuật rất hay dùng: đặt <code>display:none</code> bên trong <code>@media</code> để
+         <strong>ẩn</strong> phần tử ở một số kích thước. Ví dụ: ẩn menu desktop trên điện thoại và ngược lại.</p>
+
+      <div class="demo">
+        <div class="demo-bar">Một trong hai khối hiện tuỳ bề rộng (mốc 768px)</div>
+        <div class="demo-body">
+          <div class="d-only-mobile"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> Bạn đang xem ở màn HẸP (&lt; 768px) — khối "mobile"</div>
+          <div class="d-only-desktop"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg> Bạn đang xem ở màn RỘNG (≥ 768px) — khối "desktop"</div>
+          <p class="muted" style="margin:10px 0 0">Thu nhỏ cửa sổ qua mốc 768px: khối này biến mất, khối kia hiện ra.</p>
+        </div>
+      </div>
+
+      <pre class="code"><code><span class="c">/* Mặc định (mobile): hiện khối mobile, ẩn khối desktop */</span>
+.only-mobile  { <span class="k">display</span>: <span class="v">block</span>; }
+.only-desktop { <span class="k">display</span>: <span class="v">none</span>; }
+
+<span class="c">/* Từ 768px trở lên: đảo lại */</span>
+<span class="k">@media</span> (<span class="v">min-width</span>: <span class="v">768px</span>) {
+  .only-mobile  { <span class="k">display</span>: <span class="v">none</span>; }
+  .only-desktop { <span class="k">display</span>: <span class="v">block</span>; }
+}</code></pre>
+
+      <h3>Ứng dụng: navbar gọn lại trên màn hẹp</h3>
+      <div class="demo">
+        <div class="demo-bar">Thu nhỏ qua 520px → menu xếp dọc</div>
+        <div class="demo-body">
+          <div class="d-nav">
+            <a href="#s7">Trang chủ</a><a href="#s7">Sản phẩm</a><a href="#s7">Tin tức</a><a href="#s7">Liên hệ</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout warn"><p>Nhớ rằng <code>display:none</code> gỡ phần tử khỏi cả trình đọc màn hình. Nếu cần
+        ẩn về mặt nhìn nhưng vẫn cho người khiếm thị đọc, dùng kỹ thuật "visually-hidden" thay vì <code>none</code>.</p></div>
+    </section>
+
+    <!-- ==========  8. KẾT HỢP NHIỀU ĐIỀU KIỆN  ========== -->
+    <section class="block" id="s8">
+      <h2><span class="num">8</span> Kết hợp nhiều điều kiện <span class="tag-adv">Nâng cao</span></h2>
+      <p class="lead">Có thể nối nhiều điều kiện bằng <code>and</code> (và), dấu phẩy <code>,</code> (hoặc),
+         và <code>not</code> (phủ định) để nhắm vào đúng "dải" thiết bị mong muốn.</p>
+
+      <table class="syntax">
+        <caption>Toán tử logic trong media query</caption>
+        <thead><tr><th>Toán tử</th><th>Nghĩa</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><code>and</code></td><td>Tất cả điều kiện phải đúng (VÀ)</td><td><code>(min-width:600px) and (max-width:900px)</code></td></tr>
+          <tr><td><code>,</code> (dấu phẩy)</td><td>Một trong các điều kiện đúng (HOẶC)</td><td><code>(max-width:600px), (min-width:1200px)</code></td></tr>
+          <tr><td><code>not</code></td><td>Phủ định toàn bộ truy vấn</td><td><code>not all and (orientation:portrait)</code></td></tr>
+          <tr><td><code>only</code></td><td>Khoá trình duyệt rất cũ (ít cần ngày nay)</td><td><code>only screen and (min-width:768px)</code></td></tr>
+        </tbody>
+      </table>
+
+      <pre class="code"><code><span class="c">/* AND — chỉ trong dải tablet 600px → 900px */</span>
+<span class="k">@media</span> (<span class="v">min-width</span>: <span class="v">600px</span>) <span class="k">and</span> (<span class="v">max-width</span>: <span class="v">900px</span>) {
+  .box { <span class="k">background</span>: <span class="v">#FFC107</span>; }
+}
+
+<span class="c">/* OR (dấu phẩy) — áp dụng cho màn rất hẹp HOẶC rất rộng */</span>
+<span class="k">@media</span> (<span class="v">max-width</span>: <span class="v">600px</span>), (<span class="v">min-width</span>: <span class="v">1200px</span>) {
+  .box { <span class="k">color</span>: <span class="v">#E63946</span>; }
+}
+
+<span class="c">/* AND nhiều feature — màn rộng VÀ đang xoay ngang */</span>
+<span class="k">@media</span> screen <span class="k">and</span> (<span class="v">min-width</span>: <span class="v">900px</span>) <span class="k">and</span> (<span class="v">orientation</span>: <span class="v">landscape</span>) {
+  .hero { <span class="k">height</span>: <span class="v">100vh</span>; }
+}</code></pre>
+
+      <div class="callout info"><p>Mẹo đọc nhanh: <strong>dấu phẩy = HOẶC</strong> (mỗi vế là một truy vấn riêng),
+        <strong>and = VÀ</strong> (gộp điều kiện trong cùng một truy vấn). Đừng viết <code>or</code> — media query không có từ khoá <code>or</code>, hãy dùng dấu phẩy.</p></div>
+    </section>
+
+    <!-- ==========  9. BREAKPOINT THÔNG DỤNG  ========== -->
+    <section class="block" id="s9">
+      <h2><span class="num">9</span> Breakpoint thông dụng <span class="tag-base">Tham chiếu</span></h2>
+      <p class="lead">Không có con số "đúng tuyệt đối" — hãy đặt breakpoint ở nơi nội dung bắt đầu xấu đi.
+         Nhưng các mốc dưới đây (gần với W3Schools &amp; Bootstrap) là điểm khởi đầu tốt.</p>
+
+      <table class="syntax">
+        <caption>Bảng breakpoint tham khảo (mobile-first, dùng min-width)</caption>
+        <thead><tr><th>Nhóm thiết bị</th><th>Bề rộng tiêu biểu</th><th>Media query gợi ý</th></tr></thead>
+        <tbody>
+          <tr><td><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> Điện thoại (mobile)</td><td>&lt; 600px</td><td><code>/* CSS gốc, không cần @media */</code></td></tr>
+          <tr><td><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> Điện thoại ngang / phablet</td><td>≥ 600px</td><td><code>@media (min-width: 600px)</code></td></tr>
+          <tr><td><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> Máy tính bảng (tablet)</td><td>≥ 768px</td><td><code>@media (min-width: 768px)</code></td></tr>
+          <tr><td><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/></svg> Laptop</td><td>≥ 992px</td><td><code>@media (min-width: 992px)</code></td></tr>
+          <tr><td><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg> Desktop</td><td>≥ 1200px</td><td><code>@media (min-width: 1200px)</code></td></tr>
+          <tr><td><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-.125em"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg> Desktop lớn</td><td>≥ 1400px</td><td><code>@media (min-width: 1400px)</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip"><p><strong>Mẹo dùng <code>em</code> cho breakpoint:</strong> đặt breakpoint theo <code>em</code>
+        (vd <code>min-width: 48em</code> ≈ 768px) thay vì <code>px</code> giúp điểm gãy co theo cỡ chữ người dùng chọn,
+        thân thiện hơn với khả năng phóng to. <code>48em</code> = 48 × 16px = 768px.</p></div>
+    </section>
+
+    <!-- ==========  10. MẸO & LỖI THƯỜNG GẶP  ========== -->
+    <section class="block" id="s10">
+      <h2><span class="num">10</span> Mẹo &amp; lỗi thường gặp <span class="tag-base">Tổng kết</span></h2>
+      <div class="callout tip"><p><strong>Mẹo 1 — Luôn đặt viewport meta.</strong> Dòng
+        <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code> là điều kiện
+        bắt buộc để media query hoạt động trên điện thoại. Quên nó = trang "responsive" mà vẫn hiện như desktop thu nhỏ.</p></div>
+      <div class="callout tip"><p><strong>Mẹo 2 — Thiết kế mobile-first.</strong> Viết CSS cho màn hẹp trước, rồi
+        <em>cộng dồn</em> bằng <code>min-width</code>. Mã gọn, nhẹ cho điện thoại, dễ mở rộng lên màn lớn.</p></div>
+      <div class="callout tip"><p><strong>Mẹo 3 — Dùng <code>em</code> cho breakpoint.</strong> <code>min-width: 48em</code>
+        co giãn theo cỡ chữ người dùng, tốt cho trợ năng hơn là con số <code>px</code> cứng nhắc.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 1 — Nhầm min/max.</strong> <code>min-width</code> cho màn <em>rộng</em>,
+        <code>max-width</code> cho màn <em>hẹp</em>. Viết sai hướng khiến CSS không bao giờ kích hoạt như mong đợi.</p></div>
+      <div class="callout warn"><p><strong>Lỗi 2 — Breakpoint chồng lấn.</strong> Tránh để hai dải đè nhau
+        (vd <code>max-width:768px</code> và <code>min-width:768px</code> cùng đúng tại đúng 768px). Dùng <code>767px</code>/<code>768px</code> để tách rõ.</p></div>
+      <div class="callout danger"><p><strong>Lỗi 3 — Cấm zoom.</strong> Đặt <code>user-scalable=no</code> hay
+        <code>maximum-scale=1</code> chặn người dùng phóng to — vi phạm khả năng tiếp cận, nên tránh.</p></div>
+      <div class="callout info"><p><strong>Ghi nhớ.</strong> RWD = viewport meta + lưới linh hoạt + ảnh co giãn + media queries.
+        Mobile-first với <code>min-width</code>, đặt breakpoint nơi nội dung "gãy", và luôn kiểm thử bằng cách thu nhỏ cửa sổ.</p></div>
+    </section>
+  </main>
+
+  <!-- ====================  ĐIỀU HƯỚNG  ==================== -->
+  <nav class="lesson-nav">
+    <a class="prev" href="../2.2-css/09-animation.html"><small>← Bài trước</small>2.2.9 · Animation</a>
+    <a class="home" href="../index.html">Mục lục</a>
+    <a class="next" href="02-don-vi.html"><small>Bài tiếp →</small>2.3.3 · Đơn vị</a>
+  </nav>
+  <footer class="lesson-foot">
+    Code mẫu phục vụ giảng dạy · Môn Thiết kế Web (INTE03010) · Chương 2 — HTML &amp; CSS
+  </footer>
+</body>
+</html>

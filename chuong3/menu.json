@@ -1,0 +1,8 @@
+[
+  { "ten": "Cà phê sữa đá", "gia": 25000, "nhom": "Cà phê" },
+  { "ten": "Bạc xỉu",        "gia": 29000, "nhom": "Cà phê" },
+  { "ten": "Espresso",       "gia": 32000, "nhom": "Cà phê" },
+  { "ten": "Trà đào cam sả", "gia": 35000, "nhom": "Trà" },
+  { "ten": "Trà sữa ô long", "gia": 38000, "nhom": "Trà" },
+  { "ten": "Nước cam ép",    "gia": 40000, "nhom": "Nước ép" }
+]

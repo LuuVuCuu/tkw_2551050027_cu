@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Giảng viên Thiết kế Web">
+  <meta name="description" content="5.3 Bố cục với Tailwind v4 - display &amp; mô hình hộp, position/sticky, sizing, spacing, object-fit &amp; aspect-ratio, Flexbox và Grid, đối chiếu CSS thuần Chương 2.">
+  <title>5.3 · Layout · Flexbox · Grid — Chương 5</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <!-- Tailwind v4 — bản trình duyệt (biên dịch class ngay trong browser). Chỉ dùng để học/prototype. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- Tuỳ biến CSS-first của v4: token thương hiệu + bật dark bằng class .dark -->
+  <style type="text/tailwindcss">
+    @theme {
+      --color-brand: #04AA6D;
+    }
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- ===== Breadcrumb ===== -->
+  <nav class="mx-auto max-w-4xl px-4 pt-4 text-sm text-gray-500">
+    <a class="hover:text-[#1D559F]" href="../index.html">Môn học</a>
+    <span class="mx-1">›</span>
+    <a class="hover:text-[#1D559F]" href="index.html">Chương 5</a>
+    <span class="mx-1">›</span>
+    <span class="text-gray-700">5.3 Layout</span>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="mt-3 bg-linear-to-br from-[#1D559F] to-violet-600 text-white">
+    <div class="mx-auto max-w-4xl px-4 py-10">
+      <h1 class="text-3xl font-bold">5.3 · Bố cục: Position, Flexbox &amp; Grid</h1>
+      <p class="mt-2 text-white/80">Sắp xếp các phần tử trên trang bằng những class ngắn — mỗi class chỉ là <em>một</em> quy tắc CSS bố cục đã học ở Chương 2. Cùng một tư duy, cách viết nhanh hơn.</p>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-4xl px-4 py-8">
+
+    <!-- 1 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">1</span>Display &amp; mô hình hộp
+      </h2>
+      <p class="mb-3">Class <code>display</code> quyết định phần tử cư xử ra sao: <code>block</code> (chiếm cả dòng), <code>inline</code> (nằm trong dòng, bỏ qua w/h), <code>inline-block</code> (trong dòng nhưng nhận w/h), <code>flex</code> / <code>grid</code> (bật bố cục con), <code>hidden</code> (ẩn hẳn — <code>display:none</code>), <code>contents</code> (bỏ hộp cha, con "trồi" lên), <code>flow-root</code> (tạo ngữ cảnh chứa float). Còn có <code>table</code> / <code>table-cell</code> mô phỏng bảng.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — vài kiểu display</div>
+        <div class="space-y-3 p-4 text-sm">
+          <div><span class="block rounded bg-sky-200 px-3 py-1">block — chiếm trọn chiều ngang</span></div>
+          <div>
+            <span class="inline-block rounded bg-emerald-200 px-3 py-1">inline-block A</span>
+            <span class="inline-block rounded bg-emerald-200 px-3 py-1">inline-block B</span>
+          </div>
+          <div class="flex gap-2">
+            <span class="rounded bg-violet-200 px-3 py-1">flex 1</span>
+            <span class="rounded bg-violet-200 px-3 py-1">flex 2</span>
+            <span class="rounded bg-violet-200 px-3 py-1">flex 3</span>
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- các giá trị display thường gặp --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"block"</span><span class="text-sky-300">&gt;</span> block <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;span</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"inline-block"</span><span class="text-sky-300">&gt;</span> inline-block <span class="text-sky-300">&lt;/span&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"flex"</span><span class="text-sky-300">&gt;</span> bật flexbox <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"grid"</span><span class="text-sky-300">&gt;</span> bật grid <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"hidden"</span><span class="text-sky-300">&gt;</span> ẩn hẳn (display:none) <span class="text-sky-300">&lt;/div&gt;</span></code></pre>
+
+      <p class="mb-3"><strong>Mô hình hộp.</strong> Mặc định Tailwind đặt <code>box-border</code> (<code>box-sizing:border-box</code>) — <code>width</code> đã bao gồm padding &amp; border, nên hộp không "phình" khi thêm đệm. Đổi sang <code>box-content</code> nếu muốn w/h chỉ tính phần nội dung.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — box-border vs box-content (cùng w-40, cùng p-4)</div>
+        <div class="flex flex-wrap gap-4 p-4 text-sm">
+          <div class="box-border w-40 border-4 border-sky-500 bg-sky-100 p-4">box-border → tổng rộng đúng 160px</div>
+          <div class="box-content w-40 border-4 border-amber-500 bg-amber-100 p-4">box-content → rộng hơn 160px (cộng thêm padding + border)</div>
+        </div>
+      </div>
+
+      <p class="mb-3"><strong>Tràn nội dung (overflow).</strong> <code>overflow-auto</code> (cuộn khi cần), <code>overflow-hidden</code> (cắt), <code>overflow-scroll</code> (luôn có thanh cuộn), <code>overflow-clip</code>, <code>overflow-visible</code>; có bản theo trục: <code>overflow-x-*</code> / <code>overflow-y-*</code>. Muốn ẩn nhưng vẫn giữ chỗ dùng <code>invisible</code> (khác <code>hidden</code>); <code>collapse</code> dùng cho hàng/cột bảng.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — overflow-y-auto (khung cao cố định, nội dung dài → cuộn)</div>
+        <div class="p-4">
+          <div class="h-24 overflow-y-auto rounded border border-gray-300 bg-gray-50 p-3 text-sm">
+            <p>Dòng 1 — thử cuộn trong khung này.</p>
+            <p>Dòng 2 — <code>h-24</code> giới hạn chiều cao.</p>
+            <p>Dòng 3 — <code>overflow-y-auto</code> cho thanh cuộn dọc.</p>
+            <p>Dòng 4 — nội dung dài hơn khung.</p>
+            <p>Dòng 5 — nên phần dư bị cuộn.</p>
+            <p>Dòng 6 — hết nội dung mẫu.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-amber-500 bg-amber-50 p-3 text-sm">
+        <p class="font-semibold text-amber-800">Lưu ý v4 — <code>container</code> đã khác v3</p>
+        <p>Trong v4, class <code>container</code> chỉ đặt <code>max-width</code> bằng breakpoint hiện tại; nó <strong>KHÔNG</strong> tự căn giữa hay thêm padding như v3. Muốn "khung chung" căn giữa phải tự viết: <code>container mx-auto px-4</code>.</p>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">2</span>Position — static, relative, absolute, fixed, sticky
+      </h2>
+      <p class="mb-3">Class định vị: <code>static</code> (mặc định), <code>relative</code> (dời so với chính nó, làm mốc cho con <code>absolute</code>), <code>absolute</code> (bay khỏi luồng, neo theo cha định vị gần nhất), <code>fixed</code> (neo theo cửa sổ), <code>sticky</code> (dính khi cuộn tới ngưỡng). Kết hợp <code>top-* right-* bottom-* left-*</code> (hoặc <code>inset-0</code>) và <code>z-*</code> để xếp lớp.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — header sticky (cuộn khung bên dưới để thấy header dính)</div>
+        <div class="h-56 overflow-y-auto p-0">
+          <header class="sticky top-0 z-50 bg-white/90 px-4 py-2 shadow-sm backdrop-blur">
+            <p class="text-sm font-semibold text-[#1D559F]">Header dính · sticky top-0 z-50</p>
+          </header>
+          <div class="space-y-3 p-4 text-sm text-gray-600">
+            <p>Cuộn xuống… header phía trên luôn dính ở đỉnh khung.</p>
+            <p>Nhờ <code>bg-white/90</code> + <code>backdrop-blur</code> nền sau bị mờ.</p>
+            <p>Đoạn nội dung 1 để tạo chiều cao cuộn.</p>
+            <p>Đoạn nội dung 2 — tiếp tục cuộn.</p>
+            <p>Đoạn nội dung 3 — header vẫn ở đỉnh.</p>
+            <p>Đoạn nội dung 4 — nhờ <code>z-50</code> header nằm trên các lớp khác.</p>
+            <p>Đoạn nội dung 5 — sắp hết.</p>
+            <p>Đoạn nội dung 6 — hết nội dung mẫu.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — cha relative + lớp phủ absolute inset-0</div>
+        <div class="p-4">
+          <div class="relative h-40 overflow-hidden rounded-lg">
+            <img src="../assets/photo.svg" alt="ảnh minh hoạ" class="h-full w-full object-cover">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="rounded bg-white/20 px-4 py-2 font-semibold text-white backdrop-blur">Chữ nổi trên lớp phủ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- header dính đỉnh khi cuộn --&gt;</span>
+<span class="text-sky-300">&lt;header</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"sticky top-0 z-50 bg-white/90 backdrop-blur shadow-sm"</span><span class="text-sky-300">&gt;</span> … <span class="text-sky-300">&lt;/header&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- lớp phủ phủ kín ảnh: cha relative, con absolute inset-0 --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"relative"</span><span class="text-sky-300">&gt;</span>
+  <span class="text-sky-300">&lt;img</span> <span class="text-orange-300">src</span>=<span class="text-emerald-300">"..."</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"w-full object-cover"</span><span class="text-sky-300">&gt;</span>
+  <span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"absolute inset-0 bg-black/40"</span><span class="text-sky-300">&gt;&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;/div&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Tự kiểm tra</p>
+        <p>Cuộn khung demo phía trên: header có luôn nằm ở đỉnh không? Nền phía sau header có bị mờ (do <code>backdrop-blur</code>) không? Nếu có — bạn đã hiểu <code>sticky</code> và lớp phủ <code>absolute inset-0</code>.</p>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">3</span>Sizing — chiều rộng &amp; chiều cao
+      </h2>
+      <p class="mb-3">Thang số dùng chung với spacing: <code>1 = 0.25rem = 4px</code> (nên <code>w-10</code> = 40px). Ngoài số còn có: phân số <code>w-1/2</code>, <code>w-11/12</code>; <code>w-full</code> / <code>h-full</code> (100% cha); <code>w-screen</code> / <code>h-screen</code>; <code>h-dvh</code> (100% chiều cao viewport "động", mượt trên mobile). Giới hạn: <code>min-w-0</code>, <code>max-w-md</code>, <code>max-w-7xl</code>, <code>max-w-prose</code> (bề rộng đọc dễ chịu). Theo nội dung: <code>w-fit</code>, <code>w-min</code>, <code>w-max</code>. Đặt cả w &amp; h cùng lúc: <code>size-10</code>.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — phân số &amp; size</div>
+        <div class="space-y-2 p-4 text-sm text-white">
+          <div class="w-full rounded bg-sky-500 px-2 py-1">w-full</div>
+          <div class="w-1/2 rounded bg-sky-500 px-2 py-1">w-1/2</div>
+          <div class="w-11/12 rounded bg-sky-500 px-2 py-1">w-11/12</div>
+          <div class="flex items-center gap-2 pt-1">
+            <span class="size-10 rounded bg-violet-500"></span>
+            <span class="text-gray-600">← <code class="text-gray-800">size-10</code> (rộng &amp; cao đều 40px)</span>
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"w-1/2"</span><span class="text-sky-300">&gt;</span> nửa bề rộng cha <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"max-w-md mx-auto"</span><span class="text-sky-300">&gt;</span> khối đọc, căn giữa <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;img</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"size-10"</span> <span class="text-orange-300">src</span>=<span class="text-emerald-300">"avatar.svg"</span><span class="text-sky-300">&gt;</span> <span class="text-gray-400 italic">&lt;!-- w-10 + h-10 --&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-amber-500 bg-amber-50 p-3 text-sm">
+        <p class="font-semibold text-amber-800">Lưu ý v4</p>
+        <p>v4 <strong>bỏ</strong> nhóm <code>max-w-screen-*</code> (ví dụ <code>max-w-screen-lg</code>). Thay bằng thang <code>max-w-sm … max-w-7xl</code>, hoặc giá trị tuỳ chỉnh <code>max-w-[960px]</code>.</p>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">4</span>Spacing — padding, margin, gap
+      </h2>
+      <p class="mb-3"><strong>Padding</strong> (đệm trong): <code>p-4</code> (mọi phía), <code>px-6</code> / <code>py-2</code> (ngang / dọc), <code>pt-* pr-* pb-* pl-*</code> (từng phía). <strong>Margin</strong> (lề ngoài): <code>m-4</code>, <code>mx-auto</code> (căn giữa khối có bề rộng), lề <strong>âm</strong> <code>-mt-2</code> (kéo phần tử đè lên). <code>space-x-4</code> / <code>space-y-2</code> chèn khoảng cách <em>giữa các con</em> (đẩy lề con). Trong flex/grid nên dùng <code>gap-4</code> (hoặc <code>gap-x-8</code> / <code>gap-y-2</code>) — sạch hơn space-*.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — gap-4 giữa các con của flex</div>
+        <div class="p-4">
+          <div class="flex flex-wrap gap-4">
+            <span class="rounded bg-emerald-500 px-4 py-2 text-sm text-white">Con 1</span>
+            <span class="rounded bg-emerald-500 px-4 py-2 text-sm text-white">Con 2</span>
+            <span class="rounded bg-emerald-500 px-4 py-2 text-sm text-white">Con 3</span>
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"p-4 px-6 py-2"</span><span class="text-sky-300">&gt;</span> đệm trong <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"mx-auto max-w-md"</span><span class="text-sky-300">&gt;</span> căn giữa khối <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"-mt-2"</span><span class="text-sky-300">&gt;</span> lề âm, kéo lên đè phần trên <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"flex gap-4"</span><span class="text-sky-300">&gt;</span> khoảng cách giữa các con <span class="text-sky-300">&lt;/div&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Vì sao trang nào cũng có "khung chung"?</p>
+        <p>Mẫu <code>container mx-auto px-4</code> (hoặc <code>max-w-4xl mx-auto px-4</code>) lặp lại khắp bài học: <code>mx-auto</code> căn giữa, <code>px-4</code> chừa lề hai bên để nội dung không dán sát mép màn hình. Đây chính là khung bao mọi section trong trang này.</p>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">5</span>Ảnh, tỷ lệ khung &amp; chia cột
+      </h2>
+      <p class="mb-3"><strong>object-fit</strong> điều khiển ảnh lấp khung ra sao: <code>object-cover</code> (lấp đầy, cắt bớt — hay dùng nhất), <code>object-contain</code> (thấy trọn ảnh, có thể chừa lề), <code>object-fill</code> (kéo méo), <code>object-scale-down</code>. Kèm điểm neo <code>object-center</code>, <code>object-top</code>. <strong>aspect-ratio</strong> giữ tỷ lệ khung: <code>aspect-square</code> (1:1), <code>aspect-video</code> (16:9), hay tuỳ chỉnh <code>aspect-3/2</code>. Chia cột kiểu báo: <code>columns-2</code>, <code>columns-3</code> (+ <code>gap-*</code>). Kiểu cũ: <code>float-left</code> / <code>float-right</code> / <code>float-none</code> + <code>clear-both</code>; <code>isolate</code> tạo ngữ cảnh xếp lớp riêng.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — ảnh giữ tỷ lệ 16:9 &amp; object-cover</div>
+        <div class="p-4">
+          <img src="../assets/photo.svg" alt="ảnh tỷ lệ 16:9" class="w-full aspect-video object-cover rounded-lg">
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- ảnh full width, khoá tỷ lệ 16:9, lấp đầy khung --&gt;</span>
+<span class="text-sky-300">&lt;img</span> <span class="text-orange-300">src</span>=<span class="text-emerald-300">"../assets/photo.svg"</span>
+     <span class="text-orange-300">class</span>=<span class="text-emerald-300">"w-full aspect-video object-cover rounded-lg"</span><span class="text-sky-300">&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- chia văn bản thành 2 cột như báo --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"columns-2 gap-8"</span><span class="text-sky-300">&gt;</span> …văn bản dài… <span class="text-sky-300">&lt;/div&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Đối chiếu CSS thuần</p>
+        <p><code>aspect-video</code> = <code>aspect-ratio:16/9</code>; <code>object-cover</code> = <code>object-fit:cover</code>; <code>columns-2</code> = <code>columns:2</code>. Đúng các thuộc tính đã học ở Chương 2 — Tailwind chỉ gói lại thành class ngắn.</p>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">6</span>Flexbox — bố cục MỘT chiều
+      </h2>
+      <p class="mb-3">Bật bằng <code>flex</code> (hoặc <code>inline-flex</code>). <strong>Hướng:</strong> <code>flex-row</code> (mặc định) / <code>flex-col</code> (+ <code>-reverse</code>). <strong>Xuống dòng:</strong> <code>flex-wrap</code>. <strong>Trục chính</strong> (<code>justify-*</code>): <code>start / center / end / between / around / evenly</code>. <strong>Trục phụ</strong> (<code>items-*</code>): <code>start / center / end / baseline / stretch</code>. <strong>Trên từng item:</strong> <code>self-*</code>, <code>order-*</code>, <code>grow</code>, <code>shrink-0</code>, <code>basis-*</code>, hoặc gọn nhất <code>flex-1</code> (chia đều phần dư).</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — căn giữa hoàn hảo (justify-center + items-center)</div>
+        <div class="p-4">
+          <div class="flex h-40 items-center justify-center gap-4 rounded-lg bg-gray-100">
+            <div class="grid size-16 place-items-center rounded-lg bg-[#1D559F] text-sm text-white">Hộp A</div>
+            <div class="grid size-16 place-items-center rounded-lg bg-violet-600 text-sm text-white">Hộp B</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Kết quả — thanh nav: logo trái, menu phải (justify-between)</div>
+        <div class="p-4">
+          <div class="flex items-center justify-between rounded-lg bg-gray-900 px-4 py-2 text-sm text-white">
+            <span class="font-bold">Logo</span>
+            <div class="flex gap-4">
+              <a class="hover:text-sky-300" href="#">Trang chủ</a>
+              <a class="hover:text-sky-300" href="#">Sản phẩm</a>
+              <a class="hover:text-sky-300" href="#">Liên hệ</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- căn giữa cả 2 trục: mẹo kinh điển của flexbox --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"flex justify-center items-center h-40"</span><span class="text-sky-300">&gt;</span>
+  <span class="text-sky-300">&lt;div&gt;</span> Hộp A <span class="text-sky-300">&lt;/div&gt;</span>
+  <span class="text-sky-300">&lt;div&gt;</span> Hộp B <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;/div&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- nav: đẩy hai cụm về hai đầu --&gt;</span>
+<span class="text-sky-300">&lt;nav</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"flex items-center justify-between"</span><span class="text-sky-300">&gt;</span> … <span class="text-sky-300">&lt;/nav&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+        <p class="font-semibold text-violet-800">Nhớ một câu</p>
+        <p>Flexbox là bố cục <strong>MỘT chiều</strong> — sắp các phần tử theo <em>một hàng</em> hoặc <em>một cột</em>. Hợp cho thanh nav, hàng nút, hàng card, căn giữa nội dung.</p>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">7</span>Grid — bố cục HAI chiều
+      </h2>
+      <p class="mb-3">Bật <code>grid</code> + số cột <code>grid-cols-{n}</code> + khoảng cách <code>gap-*</code>. Cho ô kéo dài: <code>col-span-*</code> / <code>row-span-*</code>, phủ cả hàng <code>col-span-full</code>; neo chính xác <code>col-start-*</code> / <code>col-end-*</code>. Điều hướng dòng chảy tự động <code>grid-flow-row</code> / <code>grid-flow-col</code>. Căn nội dung trong ô <code>place-items-center</code>. Lưới <strong>tự co</strong> không cần media query: <code>grid-cols-[repeat(auto-fit,minmax(200px,1fr))]</code> — cột tự nhét vừa bề rộng.</p>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Demo 1 — grid-cols-3 với một ô col-span-2</div>
+        <div class="p-4">
+          <div class="grid grid-cols-3 gap-4 text-center text-sm text-white">
+            <div class="col-span-2 rounded-lg bg-[#1D559F] px-3 py-6">col-span-2</div>
+            <div class="rounded-lg bg-violet-600 px-3 py-6">1</div>
+            <div class="rounded-lg bg-violet-600 px-3 py-6">2</div>
+            <div class="rounded-lg bg-violet-600 px-3 py-6">3</div>
+            <div class="rounded-lg bg-violet-600 px-3 py-6">4</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="my-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="border-b border-gray-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-800">Demo 2 — lưới sản phẩm responsive (thu hẹp cửa sổ để thấy đổi cột)</div>
+        <div class="p-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm">
+              <div class="mb-2 aspect-square rounded bg-sky-200"></div>
+              <p class="font-semibold">Sản phẩm 1</p><p class="text-gray-500">120.000đ</p>
+            </div>
+            <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm">
+              <div class="mb-2 aspect-square rounded bg-emerald-200"></div>
+              <p class="font-semibold">Sản phẩm 2</p><p class="text-gray-500">150.000đ</p>
+            </div>
+            <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm">
+              <div class="mb-2 aspect-square rounded bg-violet-200"></div>
+              <p class="font-semibold">Sản phẩm 3</p><p class="text-gray-500">90.000đ</p>
+            </div>
+            <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm">
+              <div class="mb-2 aspect-square rounded bg-amber-200"></div>
+              <p class="font-semibold">Sản phẩm 4</p><p class="text-gray-500">200.000đ</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <pre class="my-3 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100"><code><span class="text-gray-400 italic">&lt;!-- lưới 3 cột, ô đầu rộng gấp đôi --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"grid grid-cols-3 gap-4"</span><span class="text-sky-300">&gt;</span>
+  <span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"col-span-2"</span><span class="text-sky-300">&gt;</span> … <span class="text-sky-300">&lt;/div&gt;</span>
+<span class="text-sky-300">&lt;/div&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- lưới sản phẩm: 1 → 2 → 4 cột theo bề rộng màn hình --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"</span><span class="text-sky-300">&gt;</span> … <span class="text-sky-300">&lt;/div&gt;</span>
+
+<span class="text-gray-400 italic">&lt;!-- lưới tự co, không cần breakpoint --&gt;</span>
+<span class="text-sky-300">&lt;div</span> <span class="text-orange-300">class</span>=<span class="text-emerald-300">"grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4"</span><span class="text-sky-300">&gt;</span> … <span class="text-sky-300">&lt;/div&gt;</span></code></pre>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-emerald-500 bg-emerald-50 p-3 text-sm">
+        <p class="font-semibold text-emerald-800">Mẹo — mẫu lưới card "Góc Cà Phê"</p>
+        <p>Cho khu sản phẩm/menu quán, mẫu quen thuộc là <code>grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6</code>: 1 cột trên điện thoại, 2 cột tablet, 3 cột desktop. Nhớ sẵn mẫu này để dựng nhanh trang landing.</p>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="mb-12">
+      <h2 class="mb-3 text-2xl font-bold text-gray-900">
+        <span class="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-[#1D559F] align-middle text-base text-white">8</span>Flexbox hay Grid?
+      </h2>
+      <p class="mb-3">Cả hai đều dựng bố cục, nhưng dùng khi nào? Quy tắc gọn: đếm số chiều bạn cần sắp xếp.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="rounded-xl border border-sky-200 bg-sky-50 p-4">
+          <h3 class="mb-2 font-semibold text-sky-800">Flexbox — MỘT chiều</h3>
+          <ul class="list-disc space-y-1 pl-5 text-sm">
+            <li>Sắp theo một hàng <em>hoặc</em> một cột</li>
+            <li>Thanh nav, hàng nút, hàng card ngang</li>
+            <li>Căn giữa nội dung (<code>justify-center items-center</code>)</li>
+            <li>Chia phần dư linh hoạt với <code>flex-1</code></li>
+          </ul>
+        </div>
+        <div class="rounded-xl border border-violet-200 bg-violet-50 p-4">
+          <h3 class="mb-2 font-semibold text-violet-800">Grid — HAI chiều</h3>
+          <ul class="list-disc space-y-1 pl-5 text-sm">
+            <li>Sắp đồng thời theo hàng <em>và</em> cột</li>
+            <li>Khung trang: header / sidebar / main / footer</li>
+            <li>Gallery ảnh, lưới sản phẩm nhiều dòng</li>
+            <li>Ô kéo dài chính xác với <code>col-span-*</code> / <code>row-span-*</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="my-4 rounded-r-lg border-l-4 border-violet-500 bg-violet-50 p-3 text-sm">
+        <p class="font-semibold text-violet-800">Điều cốt lõi</p>
+        <p>Tailwind chỉ là <strong>cách viết nhanh</strong> — <code>flex</code> = <code>display:flex</code>, <code>grid-cols-3</code> = <code>grid-template-columns:repeat(3,1fr)</code>. Tư duy bố cục vẫn <strong>giống hệt CSS thuần ở Chương 2</strong>: chọn Flexbox cho một chiều, Grid cho hai chiều. Nắm vững CSS thì Tailwind chỉ là gõ ít phím hơn.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer điều hướng ===== -->
+  <footer class="mx-auto mt-6 flex max-w-4xl flex-wrap justify-between gap-2 border-t border-gray-200 px-4 py-6">
+    <a class="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-100" href="03-co-ban-mau-spacing.html">← 5.2 Cơ bản</a>
+    <a class="rounded-lg bg-[#1D559F] px-4 py-2 text-sm text-white hover:bg-[#17457f]" href="05-typography-nen-vien.html">Typography · Nền · Viền →</a>
+  </footer>
+
+</body>
+</html>
