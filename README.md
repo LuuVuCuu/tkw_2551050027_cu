@@ -1,16 +1,8 @@
-# EngGo — Bài tập Buổi 4
+# EngGo 
 
 Môn **Thực hành Thiết kế Web** · Trường Đại Học Mở TPHCM, Khoa CNTT
 
 Dự án: **EngGo** — ứng dụng học tiếng Anh 20 phút mỗi ngày.
-Bài này làm trên starter buổi 4 của lớp: giữ nguyên **toàn bộ hợp đồng giao diện**
-(`id`, `data-*`, cấu trúc thẻ), chỉ đổi **nội dung** sang chủ đề tiếng Anh và
-**viết phần JavaScript** của buổi 4.
-
-**URL bản chạy công khai:** *dán link GitHub Pages của bạn vào đúng dòng này.*
-
----
-
 ## 1. Chạy dự án
 
 ```bash
@@ -25,10 +17,6 @@ Mở `index.html` bằng **Live Server** của VS Code. Đừng nháy đúp vào
 chưa cài gì.
 
 ---
-
-## 2. Bảy tính năng đã viết ở buổi 4
-
-Không dùng thư viện. Mỗi tính năng nằm trong một module riêng, `js/main.js` chỉ gọi.
 
 | # | Tính năng | File | Ghi chú kỹ thuật |
 |---|---|---|---|
