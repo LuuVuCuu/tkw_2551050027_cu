@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>EngGo — Học tiếng Anh 20 phút mỗi ngày</title>
+  <meta name="description" content="EngGo xây lộ trình tiếng Anh riêng cho bạn: 20 phút mỗi ngày, luyện nghe nói có chấm điểm phát âm ngay trên điện thoại." />
+
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- BUỔI 4 · tiết 3 — Tính năng 4: chống nháy trắng khi tải trang ở nền tối.
+       Script THƯỜNG (không type="module") nên chạy ngay tại chỗ, trước khi
+       trình duyệt vẽ <body>. Để trong main.js thì đã muộn: nền sáng vẽ xong rồi,
+       người dùng thấy một cú chớp trắng ở mỗi lần tải trang. -->
+  <script>
+    (function () {
+      var luu = localStorage.getItem("theme");                 // người dùng đã tự chọn chưa?
+      var toi = luu
+        ? luu === "dark"                                       // có: nghe theo người dùng
+        : window.matchMedia("(prefers-color-scheme: dark)").matches;  // chưa: nghe theo hệ điều hành
+      document.documentElement.classList.toggle("dark", toi);
+
+      // "js" là hợp đồng với CSS: khối ".js [data-reveal]" chỉ ẩn khi JavaScript
+      // đang chạy, nhờ vậy máy chặn JavaScript không bao giờ thấy trang trắng trơn.
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+
+
+  <link rel="stylesheet" href="./dist/output.css" />
+</head>
+
+<body>
+
+  <!-- BUỔI 4 · Tính năng 2 — mốc theo dõi cuộn trang.
+       Một thẻ rỗng cao 1px đặt ngay đầu <body>. Khi nó trôi khỏi màn hình
+       nghĩa là trang đã cuộn. IntersectionObserver chỉ báo đúng hai lần
+       (lúc ra, lúc vào); sự kiện scroll bắn hàng trăm lần mỗi giây. -->
+  <div id="nav-sentinel" aria-hidden="true" class="h-px w-full"></div>
+
+  <!-- Link bỏ qua điều hướng: chỉ hiện khi người dùng nhấn Tab.
+       Thử ngay: tải trang rồi nhấn Tab một lần. -->
+  <a href="#main"
+     class="btn btn-primary sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50">
+    Bỏ qua đến nội dung chính
+  </a>
+
+
+  <!-- ============================================================
+       NAVBAR  —  hoàn thành ở BUỔI 1, tiết 4
+       ============================================================ -->
+  <header class="sticky top-0 z-40 border-b border-line bg-surface/85 backdrop-blur">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4"
+         aria-label="Điều hướng chính">
+
+      <!-- Logo dùng <a> vì nó ĐƯA NGƯỜI DÙNG ĐI ĐÂU ĐÓ -->
+      <a href="./index.html" class="flex items-center gap-2.5">
+        <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-600
+                     font-display text-lg font-extrabold text-white">E</span>
+        <span class="font-display text-xl font-extrabold">EngGo</span>
+      </a>
+
+      <!-- Menu desktop. Ẩn dưới lg — nút hamburger bên phải thay chỗ.
+           Buổi 3 thêm hai trang mới vào menu này. -->
+      <ul class="hidden items-center gap-8 text-sm font-medium lg:flex">
+        <li><a href="./index.html#tinh-nang" class="link-nav">Tính năng</a></li>
+        <li><a href="./index.html#cach-hoat-dong" class="link-nav">Cách học</a></li>
+        <li><a href="./pricing.html" class="link-nav">Bảng giá</a></li>
+        <li><a href="./contact.html" class="link-nav">Liên hệ</a></li>
+      </ul>
+
+      <div class="flex items-center gap-2">
+        <!-- Nút bật/tắt nền tối. Markup dựng ở buổi 3, JavaScript gắn ở buổi 4.
+             Trong lúc chờ, kiểm tra dark mode bằng cách thêm tay class="dark"
+             vào thẻ <html> trong DevTools. -->
+        <button type="button" id="nut-nen-toi"
+                class="grid h-10 w-10 place-items-center rounded-pill border border-line"
+                aria-pressed="false" aria-label="Chuyển nền sáng / nền tối">
+          <svg class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
+          </svg>
+          <svg class="hidden h-5 w-5 dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4" />
+          </svg>
+        </button>
+
+        <a href="./contact.html" class="btn btn-primary hidden lg:inline-flex">Học thử 30 ngày</a>
+
+        <!-- Nút hamburger dùng <button> vì nó THỰC HIỆN MỘT HÀNH ĐỘNG.
+             Markup có sẵn từ buổi 1; buổi 4 mới gắn JavaScript cho chạy. -->
+        <button type="button"
+                class="grid h-10 w-10 place-items-center rounded-pill border border-line lg:hidden"
+                aria-expanded="false" aria-controls="nav-mobile" aria-label="Mở menu">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Menu mobile: khung có sẵn, chưa mở được. Buổi 4 xử lý. -->
+    <div id="nav-mobile" class="hidden border-t border-line px-5 pb-6 pt-4 lg:hidden">
+      <ul class="flex flex-col gap-1 text-base font-medium">
+        <li><a href="./index.html#tinh-nang" class="block rounded-lg px-3 py-2.5 hover:bg-surface-alt">Tính năng</a></li>
+        <li><a href="./index.html#cach-hoat-dong" class="block rounded-lg px-3 py-2.5 hover:bg-surface-alt">Cách học</a></li>
+        <li><a href="./pricing.html" class="block rounded-lg px-3 py-2.5 hover:bg-surface-alt">Bảng giá</a></li>
+        <li><a href="./contact.html" class="block rounded-lg px-3 py-2.5 hover:bg-surface-alt">Liên hệ</a></li>
+      </ul>
+      <a href="./contact.html" class="btn btn-primary btn-lg mt-4 w-full">Học thử 30 ngày</a>
+    </div>
+  </header>
+
+
+  <main id="main">
+
+    <!-- ============================================================
+         HERO  —  hoàn thành ở BUỔI 1, tiết 4
+         Lưới 2 cột, viết MOBILE TRƯỚC:
+         mặc định 1 cột → từ lg trở lên mới thành 2 cột.
+         ============================================================ -->
+    <section class="section grid items-center gap-14 lg:grid-cols-2 lg:gap-16"
+             aria-labelledby="hero-title">
+
+      <div>
+        <p class="eyebrow">Dành cho người bận rộn</p>
+
+        <!-- Đúng MỘT thẻ h1 trên toàn trang. Đây là tên của trang. -->
+        <h1 id="hero-title" class="mt-4 text-4xl font-extrabold leading-[1.1] sm:text-5xl lg:text-6xl">
+          Hai mươi phút mỗi ngày.<br />
+          Ba tháng dám mở lời.
+        </h1>
+
+        <p class="mt-6 max-w-lg text-lg text-muted">
+          EngGo thay giáo trình dày cộp bằng một buổi học 20 phút trên điện thoại. Nghe,
+          nói, chấm phát âm ngay trong bài, không phải chờ tới lớp mới biết mình sai chỗ nào.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#cta" class="btn btn-primary btn-lg">Học thử 30 ngày</a>
+          <a href="#cach-hoat-dong" class="btn btn-ghost btn-lg">Xem cách học</a>
+        </div>
+
+        <p class="mt-5 text-sm text-muted">
+          Không cần thẻ ngân hàng · Kiểm tra đầu vào 15 phút · Hỗ trợ qua Zalo
+        </p>
+      </div>
+
+      <!-- Khối đặc trưng: thẻ buổi học hôm nay, mép dưới có răng cưa -->
+      <div class="ticket mx-auto max-w-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-muted">Buổi học hôm nay</p>
+            <p class="font-display text-lg font-bold">Unit 12 · Ordering food</p>
+          </div>
+          <span class="badge bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-100">Đã xong</span>
+        </div>
+
+        <dl class="mt-6 space-y-3 border-t border-dashed border-line pt-5 text-sm">
+          <div class="flex justify-between">
+            <dt class="text-muted">Trình độ</dt>
+            <dd class="font-medium">A2 — sắp lên B1</dd>
+          </div>
+          <div class="flex justify-between">
+            <dt class="text-muted">Kỹ năng</dt>
+            <dd class="font-medium">Nghe — Nói</dd>
+          </div>
+          <div class="flex justify-between">
+            <dt class="text-muted">Từ mới / ôn lại</dt>
+            <dd class="font-medium">12 từ / 34 từ</dd>
+          </div>
+          <div class="flex justify-between">
+            <dt class="text-muted">Thời lượng</dt>
+            <dd class="font-medium">20 phút</dd>
+          </div>
+        </dl>
+
+        <div class="mt-5 flex items-end justify-between border-t border-dashed border-line pt-5">
+          <span class="text-sm text-muted">Điểm phát âm</span>
+          <span class="font-display text-2xl font-extrabold text-brand-600">86 / 100</span>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ############################################################
+         TỪ ĐÂY TRỞ XUỐNG LÀ PHẦN VIỆC CỦA BUỔI 2.
+
+         Khung semantic đã dựng sẵn ở buổi 1 tiết 3: mỗi section có
+         heading riêng nối bằng aria-labelledby, danh sách dùng <ul><li>,
+         cảm nhận dùng <figure>/<blockquote>/<cite>, số liệu dùng <dl>.
+
+         Việc của bạn ở buổi 2 là THÊM CLASS BỐ CỤC vào khung này.
+         Không xóa thẻ, không đổi thứ bậc heading.
+         ############################################################ -->
+
+
+    <!-- === BUỔI 2 · Tiết 2 — DẢI KHÁCH HÀNG =====================
+         Nền và viền đặt ở <section> để chạy hết chiều ngang màn hình;
+         container .section đặt ở <div> bên trong để chữ vẫn thẳng cột
+         với mọi section khác.
+
+         <ul> dùng flex flex-wrap: danh sách tên dài ngắn khác nhau,
+         cần tự xuống dòng. gap-x lớn hơn gap-y vì mắt đọc theo hàng
+         ngang, khoảng cách ngang phải rộng hơn mới tách được tên.
+         ========================================================= -->
+    <section class="border-y border-line bg-surface-alt" aria-labelledby="doitac-title">
+      <div class="section">
+        <h2 id="doitac-title" class="text-center text-sm font-medium text-muted">
+          Đang được dùng tại 120 trung tâm và trường học trên cả nước
+        </h2>
+
+        <ul class="mt-8 flex flex-wrap items-center justify-center gap-x-12 gap-y-6
+                   font-display text-lg font-bold text-muted">
+          <li>Anh ngữ Sao Mai</li>
+          <li>THCS Tân Phú</li>
+          <li>Anh ngữ Mekong</li>
+          <li>Trung tâm NewDay</li>
+          <li>IELTS Đại Việt</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- === BUỔI 2 · Tiết 2 — TÍNH NĂNG =========================
+         Ba thẻ đều nhau, cần thẳng hàng cả dọc lẫn ngang → grid.
+         Ba mốc viết luôn từ đầu: 1 cột → sm 2 cột → lg 3 cột.
+
+         Ô icon dùng grid place-items-center: cách ngắn nhất để căn
+         giữa cả hai chiều. Dùng lại được cho nút tròn, badge, avatar.
+         ========================================================= -->
+    <section id="tinh-nang" data-reveal class="section" aria-labelledby="tinh-nang-title">
+      <div class="max-w-2xl">
+        <p class="eyebrow">Tính năng</p>
+        <h2 id="tinh-nang-title" class="mt-4 text-3xl font-extrabold sm:text-4xl">
+          Đúng ba việc người học tiếng Anh nào cũng cần
+        </h2>
+        <p class="mt-4 text-lg text-muted">
+          Không có tính năng thừa. Mỗi màn hình gỡ đúng một lý do khiến người ta bỏ học giữa chừng.
+        </p>
+      </div>
+
+      <ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <li class="card">
+          <!-- aria-hidden="true" là BẮT BUỘC: icon không mang thông tin,
+               để trình đọc màn hình đọc nó chỉ gây nhiễu. -->
+          <span class="grid h-11 w-11 place-items-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-900 dark:text-brand-300">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M7 3h7l4 4v14H7z" />
+              <path d="M14 3v4h4" />
+              <path d="M10 12h5M10 16h5" />
+            </svg>
+          </span>
+          <h3 class="mt-5 font-display text-lg font-bold">Lộ trình riêng theo trình độ</h3>
+          <p class="mt-2 text-muted">Làm bài kiểm tra 15 phút, nhận ngay lộ trình từ A1 đến B2. Học sai trình độ là lý do bỏ cuộc số một.</p>
+        </li>
+        <li class="card">
+          <span class="grid h-11 w-11 place-items-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-900 dark:text-brand-300">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3.5" y="5" width="17" height="15" rx="2" />
+              <path d="M8 3v4M16 3v4M3.5 10h17" />
+              <path d="M8 14h3M8 17h8" />
+            </svg>
+          </span>
+          <h3 class="mt-5 font-display text-lg font-bold">Luyện nói, chấm điểm ngay</h3>
+          <p class="mt-2 text-muted">Nói vào micro, máy chỉ ra âm nào chưa tới và đọc mẫu lại. Không phải chờ tới buổi học sau mới biết mình sai.</p>
+        </li>
+        <li class="card">
+          <span class="grid h-11 w-11 place-items-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-900 dark:text-brand-300">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="6" width="18" height="13" rx="2" />
+              <path d="M3 10.5h18" />
+              <circle cx="16.5" cy="14.5" r="1.4" />
+            </svg>
+          </span>
+          <h3 class="mt-5 font-display text-lg font-bold">Từ vựng tự quay lại đúng lúc</h3>
+          <p class="mt-2 text-muted">Từ nào sắp quên thì hôm sau gặp lại. Lịch ôn do máy tính, người học chỉ việc mở bài ra làm.</p>
+        </li>
+      </ul>
+    </section>
+
+
+    <!-- === BÀI TẬP VỀ NHÀ BUỔI 2 — CÁCH HOẠT ĐỘNG ==============
+         Section này KHÔNG có trong file Figma — đây là phần "tự thêm
+         một section" của bài tập về nhà.
+
+         Dùng <ol> vì ba bước NÀY thật sự có thứ tự: chưa kiểm tra đầu vào
+         thì chưa xếp được lộ trình, chưa có lộ trình thì chưa biết học bài nào.
+         Vì vậy đánh số 01/02/03 là mô tả đúng nội dung, không phải
+         trang trí.
+
+         Section mới không được "nhìn là biết mới thêm": nó dùng lại
+         đúng .card, .badge, .eyebrow, nhịp mt-14 và gap-6 như các
+         section có sẵn.
+         ========================================================= -->
+    <section id="cach-hoat-dong" data-reveal class="section" aria-labelledby="cach-title">
+      <div class="max-w-2xl">
+        <p class="eyebrow">Cách học</p>
+        <h2 id="cach-title" class="mt-4 text-3xl font-extrabold sm:text-4xl">Một buổi học, ba bước</h2>
+      </div>
+
+      <ol class="mt-14 grid gap-6 sm:grid-cols-3">
+        <li class="card">
+          <span class="badge bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-100">Bước 01</span>
+          <h3 class="mt-4 font-display text-lg font-bold">Kiểm tra đầu vào</h3>
+          <p class="mt-2 text-muted">15 phút nghe và chọn đáp án. Kết quả ra trình độ theo khung châu Âu, không đoán mò.</p>
+        </li>
+        <li class="card">
+          <span class="badge bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-100">Bước 02</span>
+          <h3 class="mt-4 font-display text-lg font-bold">Nhận lộ trình</h3>
+          <p class="mt-2 text-muted">Chọn mục tiêu: giao tiếp đi làm, thi IELTS hay lấy lại gốc. Lộ trình xếp bài theo đúng mục tiêu đó.</p>
+        </li>
+        <li class="card">
+          <span class="badge bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-100">Bước 03</span>
+          <h3 class="mt-4 font-display text-lg font-bold">Học 20 phút mỗi ngày</h3>
+          <p class="mt-2 text-muted">Một buổi gồm nghe, nói và ôn từ. Xong buổi nào tiến độ cập nhật buổi đó, không cần tự ghi lại.</p>
+        </li>
+      </ol>
+    </section>
+
+
+    <!-- === BUỔI 2 · Tiết 3 — SỐ LIỆU ===========================
+         Ba ô đều nhau, ngăn nhau bằng vạch dọc → grid + divide-x.
+         divide-x kẻ vạch GIỮA các cột, không kẻ ở hai mép ngoài —
+         đó là lý do dùng nó thay vì tự thêm border cho từng ô.
+
+         Mẹo thứ tự: <dt> (nhãn) phải đứng TRƯỚC <dd> (giá trị) mới
+         đúng ngữ nghĩa, nhưng nhìn thì con số phải nằm trên. Đảo
+         bằng order-2 trên <dt>.
+         LƯU Ý: order chỉ có tác dụng bên trong flex/grid container,
+         nên mỗi ô phải là "flex flex-col" thì order-2 mới ăn.
+         ========================================================= -->
+    <section class="section" aria-labelledby="solieu-title">
+      <h2 id="solieu-title" class="sr-only">Số liệu học tập</h2>
+
+      <dl class="grid gap-10 rounded-card border border-line bg-surface-alt px-6 py-12
+                 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-line">
+        <div class="flex flex-col px-6 text-center">
+          <dt class="order-2 mt-2 text-sm text-muted">Học viên học mỗi ngày</dt>
+          <dd class="font-display text-4xl font-extrabold text-brand-600 dark:text-brand-300">12.400</dd>
+        </div>
+        <div class="flex flex-col px-6 text-center">
+          <dt class="order-2 mt-2 text-sm text-muted">Buổi học hoàn thành năm 2025</dt>
+          <dd class="font-display text-4xl font-extrabold text-brand-600 dark:text-brand-300">3,1 triệu</dd>
+        </div>
+        <div class="flex flex-col px-6 text-center">
+          <dt class="order-2 mt-2 text-sm text-muted">Thời lượng một buổi học</dt>
+          <dd class="font-display text-4xl font-extrabold text-brand-600 dark:text-brand-300">20 phút</dd>
+        </div>
+      </dl>
+    </section>
+
+
+    <!-- === BUỔI 2 · Tiết 3 — CẢM NHẬN ==========================
+         Ba thẻ cao bằng nhau, phần tên người nói thẳng hàng ở đáy dù
+         câu trích dài ngắn khác nhau. Đây chính là công thức của bảng
+         giá ở tiết 4, tập trước ở đây với độ khó thấp hơn:
+           <li>      → ô lưới, tự cao bằng nhau (items-stretch)
+           <figure>  → card flex h-full flex-col   (kéo hết ô)
+           <figcaption> → mt-auto                  (rơi xuống đáy)
+
+         Buổi 4 sẽ biến khối này thành slider, nên giữ nguyên cấu trúc
+         <ul> → <li> → <figure>.
+         ========================================================= -->
+    <section class="section" aria-labelledby="camnhan-title">
+      <h2 id="camnhan-title" class="text-3xl font-extrabold sm:text-4xl">Học viên nói gì</h2>
+
+      <!-- BUỔI 4 · Tính năng 6 — slider tự viết, không thư viện.
+           Dải ngang: mỗi slide rộng đúng 100% khung nhìn, dịch cả dải bằng translateX. -->
+      <div id="slider-camnhan" class="slider mt-14" role="group" aria-roledescription="băng chuyền"
+           aria-label="Cảm nhận người dùng" tabindex="0">
+        <div class="slider-viewport">
+          <ul class="slider-track" data-slider-track>
+            <li class="slider-slide" data-slide>
+              <figure class="card flex h-full flex-col">
+            <blockquote class="text-lg leading-relaxed">
+              Tôi mất gốc từ cấp ba, học lại được ba tháng thì họp online với khách
+              nước ngoài đã dám mở lời, không cần đồng nghiệp dịch hộ nữa.
+            </blockquote>
+            <figcaption class="mt-auto flex flex-col gap-0.5 border-t border-line pt-5 text-sm">
+              <span class="font-semibold">Chị Nguyễn Thu Hà</span>
+              <cite class="not-italic text-muted">Nhân viên xuất nhập khẩu, TP.HCM</cite>
+            </figcaption>
+          </figure>
+            </li>
+            <li class="slider-slide" data-slide>
+              <figure class="card flex h-full flex-col">
+            <blockquote class="text-lg leading-relaxed">
+              Cái tôi cần là biết hôm nay học gì. Mở app ra là có sẵn buổi học 20 phút,
+              không phải nghĩ, nên tôi giữ được thói quen suốt 140 ngày.
+            </blockquote>
+            <figcaption class="mt-auto flex flex-col gap-0.5 border-t border-line pt-5 text-sm">
+              <span class="font-semibold">Anh Lê Hoàng</span>
+              <cite class="not-italic text-muted">Lập trình viên, Đà Nẵng</cite>
+            </figcaption>
+          </figure>
+            </li>
+            <li class="slider-slide" data-slide>
+              <figure class="card flex h-full flex-col">
+            <blockquote class="text-lg leading-relaxed">
+              Con tôi lớp 8, trước phải ngồi kèm mới chịu học. Giờ mỗi tối tự mở máy,
+              cuối tuần tôi xem báo cáo là biết cháu tiến tới đâu.
+            </blockquote>
+            <figcaption class="mt-auto flex flex-col gap-0.5 border-t border-line pt-5 text-sm">
+              <span class="font-semibold">Chị Trần Mỹ Dung</span>
+              <cite class="not-italic text-muted">Phụ huynh, Cần Thơ</cite>
+            </figcaption>
+          </figure>
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-6 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-2" data-slider-dots></div>
+          <div class="flex items-center gap-2">
+            <button type="button" data-slider-prev class="slider-nav" aria-label="Cảm nhận trước">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+            </button>
+            <button type="button" data-slider-next class="slider-nav" aria-label="Cảm nhận tiếp theo">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- === BUỔI 2 · Tiết 4 — BẢNG GIÁ ==========================
+         PHẦN KHÓ NHẤT CỦA BUỔI. Công thức bốn phần:
+
+           1. <ul>  → grid items-stretch gap-6 lg:grid-cols-3
+                      ô lưới cao bằng nhau
+           2. <li>  → card flex h-full flex-col
+                      thẻ kéo hết chiều cao ô, xếp dọc
+           3. nút   → mt-auto
+                      nuốt hết khoảng trống còn thừa, đẩy nút xuống đáy
+           4. thẻ nổi bật → relative ring-2 ring-brand-600
+                      badge dùng absolute -top-3 left-6
+
+         ring thay vì border: ring vẽ ĐÈ lên ngoài viền, không chiếm
+         chỗ trong bố cục, nên thẻ nổi bật không cao hơn hai thẻ kia
+         2px như khi dùng border-2.
+
+         Buổi 4 sẽ thêm công tắc Tháng/Năm, khi đó giá chuyển vào
+         data-monthly / data-yearly. Bây giờ để giá dạng chữ.
+         ========================================================= -->
+    <section id="bang-gia" data-reveal class="section" aria-labelledby="gia-title">
+      <div class="max-w-2xl">
+        <p class="eyebrow">Bảng giá</p>
+        <h2 id="gia-title" class="mt-4 text-3xl font-extrabold sm:text-4xl">Trả theo nhu cầu học</h2>
+        <p class="mt-4 text-lg text-muted">Đổi gói bất cứ lúc nào. Bận thì hạ gói, tới mùa thi thì nâng gói.</p>
+      <!-- BUỔI 4 · Tính năng 5 — công tắc Tháng / Năm.
+           role="switch" + aria-checked là ĐÚNG vai trò của một công tắc hai
+           trạng thái; CSS bắt trạng thái đó qua aria-checked:, không cần class riêng. -->
+      <div class="mt-8 flex items-center gap-3">
+        <span id="nhan-thang" class="text-sm font-medium">Trả theo tháng</span>
+        <button type="button" id="cong-tac-gia" role="switch" aria-checked="false"
+                aria-labelledby="nhan-thang nhan-nam"
+                class="cong-tac aria-checked:bg-brand-600">
+          <span class="cong-tac-num" aria-hidden="true"></span>
+        </button>
+        <span id="nhan-nam" class="text-sm font-medium">
+          Trả theo năm <span class="badge ml-1">tiết kiệm 20%</span>
+        </span>
+      </div>
+
+      </div>
+
+      <ul class="mt-14 grid items-stretch gap-6 lg:grid-cols-3">
+        <li class="card flex h-full flex-col">
+          <h3 class="font-display text-lg font-bold">Tự học</h3>
+          <p class="mt-1 text-sm text-muted">Một người học, 20 phút mỗi ngày.</p>
+          <p class="mt-6 font-display text-4xl font-extrabold"><span data-price data-monthly="149000" data-yearly="1430400">149.000 ₫</span><span data-price-unit class="font-body text-base font-medium text-muted">/tháng</span></p>
+
+          <ul class="mb-8 mt-6 flex flex-col gap-3 border-t border-line pt-6 text-sm">
+            <li class="flex items-start gap-2.5">
+              <svg class="tick" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m5 12 4.5 4.5L19 7" />
+              </svg>
+              2 tài khoản
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="tick" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m5 12 4.5 4.5L19 7" />
+              </svg>
+              Bài học không giới hạn
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="tick" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m5 12 4.5 4.5L19 7" />
+              </svg>
+              Lộ trình học theo ngày
+            </li>
+          </ul>
+
+          <a href="#cta" class="btn btn-ghost mt-auto w-full">Chọn gói này</a>
+        </li>
+
+        <li class="card relative flex h-full flex-col ring-2 ring-brand-600">
+          <!-- absolute chỉ dùng cho phù hiệu — thứ NẰM ĐÈ LÊN bố cục.
+               Cả đồ án không được quá 3 lần. -->
+          <span class="badge absolute -top-3 left-6 bg-brand-600 text-white">Được chọn nhiều nhất</span>
+
+          <h3 class="font-display text-lg font-bold">Gia đình</h3>
+          <p class="mt-1 text-sm text-muted">Cả nhà cùng học, có báo cáo cho phụ huynh.</p>
+          <p class="mt-6 font-display text-4xl font-extrabold"><span data-price data-monthly="299000" data-yearly="2870400">299.000 ₫</span><span data-price-unit class="font-body text-base font-medium text-muted">/tháng</span></p>
+
+          <ul class="mb-8 mt-6 flex flex-col gap-3 border-t border-line pt-6 text-sm">
+            <li class="flex items-start gap-2.5">
+              <svg class="tick" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m5 12 4.5 4.5L19 7" />
+              </svg>
+              8 tài khoản
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="tick" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m5 12 4.5 4.5L19 7" />
+              </svg>
+              Mọi thứ của gói Tự học
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="tick" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m5 12 4.5 4.5L19 7" />
+              </svg>
+              Báo cáo tiến độ cho phụ huynh
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="tick" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m5 12 4.5 4.5L19 7" />
+              </svg>
+              Nhắc học qua Zalo
+            </li>
+          </ul>
+
+          <a href="#cta" class="btn btn-primary mt-auto w-full">Chọn gói này</a>
+        </li>
+
+        <li class="card flex h-full flex-col">
+          <h3 class="font-display text-lg font-bold">Trung tâm</h3>
+          <p class="mt-1 text-sm text-muted">Nhiều lớp, cần báo cáo gộp.</p>
+          <p class="mt-6 font-display text-4xl font-extrabold"><span data-price data-monthly="899000" data-yearly="8630400">899.000 ₫</span><span data-price-unit class="font-body text-base font-medium text-muted">/tháng</span></p>
+
+          <ul class="mb-8 mt-6 flex flex-col gap-3 border-t border-line pt-6 text-sm">
+            <li class="flex items-start gap-2.5">
+              <svg class="tick" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m5 12 4.5 4.5L19 7" />
+              </svg>
+              Không giới hạn tài khoản
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="tick" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m5 12 4.5 4.5L19 7" />
+              </svg>
+              Mọi thứ của gói Gia đình
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="tick" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m5 12 4.5 4.5L19 7" />
+              </svg>
+              Báo cáo gộp nhiều lớp
+            </li>
+          </ul>
+
+          <a href="#cta" class="btn btn-ghost mt-auto w-full">Liên hệ tư vấn</a>
+        </li>
+      </ul>
+    </section>
+
+
+    <!-- === BUỔI 2 · Tiết 5 — CÂU HỎI THƯỜNG GẶP ================
+         Lưới hai cột KHÔNG đều: cột trái là tiêu đề, cột phải là danh
+         sách câu hỏi và cần rộng hơn. Đây đúng là lúc dùng cú pháp
+         cột tùy chỉnh lg:grid-cols-[1fr_1.4fr] — tỉ lệ này không có
+         sẵn trong scale, và nó là tỉ lệ BỐ CỤC chứ không phải một giá
+         trị spacing tùy tiện.
+
+         divide-y kẻ vạch giữa các câu hỏi, không kẻ trên câu đầu và
+         dưới câu cuối. first:pt-0 / last:pb-0 cắt phần đệm thừa ở hai
+         đầu để danh sách thẳng mép với tiêu đề bên trái.
+
+         Buổi 4 biến khối này thành accordion, mỗi <h3> sẽ bọc một
+         <button>. Giờ giữ nguyên cấu trúc.
+         ========================================================= -->
+    <section id="cau-hoi" data-reveal class="section grid gap-12 lg:grid-cols-[1fr_1.4fr]" aria-labelledby="faq-title">
+      <div>
+        <p class="eyebrow">Câu hỏi thường gặp</p>
+        <h2 id="faq-title" class="mt-4 text-3xl font-extrabold sm:text-4xl">Điều người học hay hỏi trước khi bắt đầu</h2>
+        <p class="mt-4 text-muted">Chưa thấy câu của mình? Gửi câu hỏi, chúng tôi trả lời trong ngày làm việc.</p>
+      </div>
+
+      <div class="divide-y divide-line">
+        <div class="py-6 first:pt-0 last:pb-0">
+          <h3 class="font-display text-lg font-bold">
+            <button type="button" data-faq-trigger
+                    id="faq-t1" aria-controls="faq-p1" aria-expanded="false"
+                    class="faq-trigger flex w-full items-center justify-between gap-4 text-left">
+              <span>Không có mạng thì học được không?</span>
+              <svg class="faq-icon h-5 w-5 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+            </button>
+          </h3>
+          <div id="faq-p1" role="region" aria-labelledby="faq-t1" hidden>
+            <p class="mt-2 text-muted">Được. Tải bài về trước rồi học offline, kết quả tự đồng bộ khi có mạng lại. Phần luyện nói cần micro nhưng không cần mạng.</p>
+          </div>
+        </div>
+        <div class="py-6 first:pt-0 last:pb-0">
+          <h3 class="font-display text-lg font-bold">
+            <button type="button" data-faq-trigger
+                    id="faq-t2" aria-controls="faq-p2" aria-expanded="false"
+                    class="faq-trigger flex w-full items-center justify-between gap-4 text-left">
+              <span>Mất gốc hoàn toàn thì bắt đầu từ đâu?</span>
+              <svg class="faq-icon h-5 w-5 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+            </button>
+          </h3>
+          <div id="faq-p2" role="region" aria-labelledby="faq-t2" hidden>
+            <p class="mt-2 text-muted">Bài kiểm tra đầu vào xếp bạn vào đúng mức, thấp nhất là A1 — học từ bảng chữ cái và 500 từ thông dụng nhất. Không ai bị ném thẳng vào bài quá sức.</p>
+          </div>
+        </div>
+        <div class="py-6 first:pt-0 last:pb-0">
+          <h3 class="font-display text-lg font-bold">
+            <button type="button" data-faq-trigger
+                    id="faq-t3" aria-controls="faq-p3" aria-expanded="false"
+                    class="faq-trigger flex w-full items-center justify-between gap-4 text-left">
+              <span>Mỗi ngày phải học bao lâu mới có kết quả?</span>
+              <svg class="faq-icon h-5 w-5 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+            </button>
+          </h3>
+          <div id="faq-p3" role="region" aria-labelledby="faq-t3" hidden>
+            <p class="mt-2 text-muted">20 phút mỗi ngày, đều hơn là nhiều. Học viên giữ được 5 buổi mỗi tuần thường lên một bậc trình độ sau khoảng 4 tháng.</p>
+          </div>
+        </div>
+        <div class="py-6 first:pt-0 last:pb-0">
+          <h3 class="font-display text-lg font-bold">
+            <button type="button" data-faq-trigger
+                    id="faq-t4" aria-controls="faq-p4" aria-expanded="false"
+                    class="faq-trigger flex w-full items-center justify-between gap-4 text-left">
+              <span>Nếu ngừng gói thì tiến độ học đi đâu?</span>
+              <svg class="faq-icon h-5 w-5 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+            </button>
+          </h3>
+          <div id="faq-p4" role="region" aria-labelledby="faq-t4" hidden>
+            <p class="mt-2 text-muted">Tiến độ và sổ từ vựng giữ nguyên, tải về file Excel bất cứ lúc nào. Quay lại là học tiếp từ chỗ đang dở, không phải làm lại từ đầu.</p>
+          </div>
+        </div>
+        <div class="py-6 first:pt-0 last:pb-0">
+          <h3 class="font-display text-lg font-bold">
+            <button type="button" data-faq-trigger
+                    id="faq-t5" aria-controls="faq-p5" aria-expanded="false"
+                    class="faq-trigger flex w-full items-center justify-between gap-4 text-left">
+              <span>Có luyện thi IELTS và TOEIC không?</span>
+              <svg class="faq-icon h-5 w-5 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+            </button>
+          </h3>
+          <div id="faq-p5" role="region" aria-labelledby="faq-t5" hidden>
+            <p class="mt-2 text-muted">Có, từ trình độ B1 trở lên. Lộ trình thi gồm đề mẫu bấm giờ và phần chấm Writing trong 24 giờ, nằm trong gói Gia đình và Trung tâm.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- === BUỔI 2 · Tiết 5 — CTA ===============================
+         Khối nền đậm bo góc, nằm TRONG container .section chứ không
+         tràn hết màn hình: nó là một lời mời, không phải một chương
+         mới của trang.
+
+         Nút phụ trên nền đậm không dùng .btn-ghost được, vì viền và
+         chữ của .btn-ghost là màu dành cho nền sáng. Viết thẳng bằng
+         utility ở đây, chưa tách component: cả trang mới dùng một lần,
+         mà quy tắc trích component là "lặp từ 3 lần trở lên".
+         ========================================================= -->
+    <section id="cta" class="section" aria-labelledby="cta-title">
+      <div class="rounded-card bg-brand-900 px-6 py-16 text-center sm:px-12">
+        <h2 id="cta-title" class="mx-auto max-w-2xl text-3xl font-extrabold text-white sm:text-4xl">
+          Năm nay đừng để tiếng Anh dở dang nữa
+        </h2>
+        <p class="mx-auto mt-4 max-w-xl text-brand-100">
+          Kiểm tra đầu vào mất 15 phút. Học thử 30 ngày, không cần thẻ ngân hàng.
+        </p>
+
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+          <a href="./contact.html" class="btn btn-lg bg-white text-brand-700 hover:bg-brand-50">Bắt đầu học thử</a>
+          <a href="tel:+842873001234" class="btn btn-lg border border-white/40 text-white hover:bg-white/10">Gọi 028 7300 1234</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- === BUỔI 2 · Tiết 5 — FOOTER ==============================
+       Bốn cột: logo và mô tả ngắn, hai nhóm liên kết, địa chỉ.
+       Mỗi nhóm liên kết là một <nav> riêng có aria-labelledby trỏ tới
+       heading của nhóm — người dùng trình đọc màn hình nhảy giữa các
+       vùng điều hướng phải biết mình đang ở nhóm nào.
+
+       Hàng bản quyền là anh em của lưới, ngăn bằng border-t và dùng
+       lại đúng container mx-auto max-w-6xl px-5 để vạch kẻ thẳng cột
+       với nội dung phía trên.
+       ========================================================== -->
+  <footer class="border-t border-line bg-surface-alt">
+    <div class="mx-auto grid w-full max-w-6xl gap-10 px-5 py-20 sm:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <a href="./index.html" class="flex items-center gap-2.5">
+          <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-600
+                       font-display text-lg font-extrabold text-white">E</span>
+          <span class="font-display text-xl font-extrabold">EngGo</span>
+        </a>
+        <p class="mt-4 max-w-xs text-sm text-muted">Ứng dụng học tiếng Anh mỗi ngày cho người đi làm, học sinh và cả gia đình.</p>
+      </div>
+
+      <nav aria-labelledby="footer-sp">
+        <h2 id="footer-sp" class="text-xs font-semibold uppercase tracking-widest text-muted">Sản phẩm</h2>
+        <ul class="mt-4 flex flex-col gap-2.5 text-sm">
+          <li><a href="./index.html#tinh-nang" class="link-nav">Tính năng</a></li>
+          <li><a href="./pricing.html" class="link-nav">Bảng giá</a></li>
+          <li><a href="./index.html#cach-hoat-dong" class="link-nav">Cách học</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-labelledby="footer-ht">
+        <h2 id="footer-ht" class="text-xs font-semibold uppercase tracking-widest text-muted">Hỗ trợ</h2>
+        <ul class="mt-4 flex flex-col gap-2.5 text-sm">
+          <li><a href="./index.html#cau-hoi" class="link-nav">Câu hỏi thường gặp</a></li>
+          <li><a href="./contact.html" class="link-nav">Gửi yêu cầu tư vấn</a></li>
+          <li><a href="tel:+842873001234" class="link-nav">028 7300 1234</a></li>
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-muted">Địa chỉ</h2>
+        <address class="mt-4 text-sm not-italic text-muted">
+          97 Võ Văn Tần, Phường Võ Thị Sáu<br />
+          TP. Hồ Chí Minh
+        </address>
+      </div>
+    </div>
+
+    <p class="mx-auto w-full max-w-6xl border-t border-line px-5 py-6 text-sm text-muted">
+      © 2026 EngGo. Bài thực hành môn Thiết kế Web.
+    </p>
+  </footer>
+
+  <!-- BUỔI 4 · Bài khởi động — nút lên đầu trang, hiện sau khi cuộn quá 400px -->
+  <button type="button" id="nut-len-dau" class="to-top" aria-label="Lên đầu trang">
+    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+  </button>
+
+  <!-- Nạp kiểu module, đặt cuối <body>. Module tự hoãn tới khi HTML phân tích
+       xong nên KHÔNG cần DOMContentLoaded. -->
+  <script type="module" src="./js/main.js"></script>
+
+</body>
+</html>

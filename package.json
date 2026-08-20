@@ -1,0 +1,17 @@
+{
+  "name": "enggo-buoi4",
+  "version": "1.0.0",
+  "description": "Bài tập buổi 4 — EngGo — học tiếng Anh mỗi ngày — môn Thực hành Thiết kế Web",
+  "scripts": {
+    "dev": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
+    "build": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  },
+  "private": true,
+  "devDependencies": {
+    "jsdom": "^29.1.1"
+  }
+}

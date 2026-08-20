@@ -1,0 +1,272 @@
+[
+  {
+    "id": "BH-1307-101",
+    "student": "Nguyễn Minh Anh",
+    "skill": "Nghe",
+    "status": "dang-hoc",
+    "minutes": 15,
+    "score": 62,
+    "date": "2026-07-13"
+  },
+  {
+    "id": "BH-1807-102",
+    "student": "Trần Quốc Bảo",
+    "skill": "Nói",
+    "status": "da-xong",
+    "minutes": 20,
+    "score": 69,
+    "date": "2026-07-18"
+  },
+  {
+    "id": "BH-1707-103",
+    "student": "Lê Thu Hà",
+    "skill": "Đọc",
+    "status": "da-cham",
+    "minutes": 25,
+    "score": 76,
+    "date": "2026-07-17"
+  },
+  {
+    "id": "BH-1407-104",
+    "student": "Phạm Gia Huy",
+    "skill": "Viết",
+    "status": "dang-hoc",
+    "minutes": 30,
+    "score": 83,
+    "date": "2026-07-14"
+  },
+  {
+    "id": "BH-1407-105",
+    "student": "Võ Ngọc Linh",
+    "skill": "Từ vựng",
+    "status": "da-xong",
+    "minutes": 15,
+    "score": 90,
+    "date": "2026-07-14"
+  },
+  {
+    "id": "BH-2107-106",
+    "student": "Đặng Hoài Nam",
+    "skill": "Phát âm",
+    "status": "da-cham",
+    "minutes": 20,
+    "score": 97,
+    "date": "2026-07-21"
+  },
+  {
+    "id": "BH-1907-107",
+    "student": "Bùi Khánh Vy",
+    "skill": "Nghe",
+    "status": "dang-hoc",
+    "minutes": 25,
+    "score": 66,
+    "date": "2026-07-19"
+  },
+  {
+    "id": "BH-1807-108",
+    "student": "Hoàng Đức Duy",
+    "skill": "Nói",
+    "status": "da-xong",
+    "minutes": 30,
+    "score": 73,
+    "date": "2026-07-18"
+  },
+  {
+    "id": "BH-1807-109",
+    "student": "Đỗ Phương Thảo",
+    "skill": "Đọc",
+    "status": "da-cham",
+    "minutes": 15,
+    "score": 80,
+    "date": "2026-07-18"
+  },
+  {
+    "id": "BH-2207-110",
+    "student": "Ngô Tuấn Kiệt",
+    "skill": "Viết",
+    "status": "dang-hoc",
+    "minutes": 20,
+    "score": 87,
+    "date": "2026-07-22"
+  },
+  {
+    "id": "BH-2107-111",
+    "student": "Nguyễn Minh Anh",
+    "skill": "Từ vựng",
+    "status": "da-xong",
+    "minutes": 25,
+    "score": 94,
+    "date": "2026-07-21"
+  },
+  {
+    "id": "BH-2307-112",
+    "student": "Trần Quốc Bảo",
+    "skill": "Phát âm",
+    "status": "da-cham",
+    "minutes": 30,
+    "score": 63,
+    "date": "2026-07-23"
+  },
+  {
+    "id": "BH-0707-113",
+    "student": "Lê Thu Hà",
+    "skill": "Nghe",
+    "status": "dang-hoc",
+    "minutes": 15,
+    "score": 70,
+    "date": "2026-07-07"
+  },
+  {
+    "id": "BH-1107-114",
+    "student": "Phạm Gia Huy",
+    "skill": "Nói",
+    "status": "da-xong",
+    "minutes": 20,
+    "score": 77,
+    "date": "2026-07-11"
+  },
+  {
+    "id": "BH-1007-115",
+    "student": "Võ Ngọc Linh",
+    "skill": "Đọc",
+    "status": "da-cham",
+    "minutes": 25,
+    "score": 84,
+    "date": "2026-07-10"
+  },
+  {
+    "id": "BH-0807-116",
+    "student": "Đặng Hoài Nam",
+    "skill": "Viết",
+    "status": "dang-hoc",
+    "minutes": 30,
+    "score": 91,
+    "date": "2026-07-08"
+  },
+  {
+    "id": "BH-1607-117",
+    "student": "Bùi Khánh Vy",
+    "skill": "Từ vựng",
+    "status": "da-xong",
+    "minutes": 15,
+    "score": 98,
+    "date": "2026-07-16"
+  },
+  {
+    "id": "BH-0307-118",
+    "student": "Hoàng Đức Duy",
+    "skill": "Phát âm",
+    "status": "da-cham",
+    "minutes": 20,
+    "score": 67,
+    "date": "2026-07-03"
+  },
+  {
+    "id": "BH-2507-119",
+    "student": "Đỗ Phương Thảo",
+    "skill": "Nghe",
+    "status": "dang-hoc",
+    "minutes": 25,
+    "score": 74,
+    "date": "2026-07-25"
+  },
+  {
+    "id": "BH-0207-120",
+    "student": "Ngô Tuấn Kiệt",
+    "skill": "Nói",
+    "status": "da-xong",
+    "minutes": 30,
+    "score": 81,
+    "date": "2026-07-02"
+  },
+  {
+    "id": "BH-2607-121",
+    "student": "Nguyễn Minh Anh",
+    "skill": "Đọc",
+    "status": "da-cham",
+    "minutes": 15,
+    "score": 88,
+    "date": "2026-07-26"
+  },
+  {
+    "id": "BH-2007-122",
+    "student": "Trần Quốc Bảo",
+    "skill": "Viết",
+    "status": "dang-hoc",
+    "minutes": 20,
+    "score": 95,
+    "date": "2026-07-20"
+  },
+  {
+    "id": "BH-0307-123",
+    "student": "Lê Thu Hà",
+    "skill": "Từ vựng",
+    "status": "da-xong",
+    "minutes": 25,
+    "score": 64,
+    "date": "2026-07-03"
+  },
+  {
+    "id": "BH-0307-124",
+    "student": "Phạm Gia Huy",
+    "skill": "Phát âm",
+    "status": "da-cham",
+    "minutes": 30,
+    "score": 71,
+    "date": "2026-07-03"
+  },
+  {
+    "id": "BH-2207-125",
+    "student": "Võ Ngọc Linh",
+    "skill": "Nghe",
+    "status": "dang-hoc",
+    "minutes": 15,
+    "score": 78,
+    "date": "2026-07-22"
+  },
+  {
+    "id": "BH-2207-126",
+    "student": "Đặng Hoài Nam",
+    "skill": "Nói",
+    "status": "da-xong",
+    "minutes": 20,
+    "score": 85,
+    "date": "2026-07-22"
+  },
+  {
+    "id": "BH-0607-127",
+    "student": "Bùi Khánh Vy",
+    "skill": "Đọc",
+    "status": "da-cham",
+    "minutes": 25,
+    "score": 92,
+    "date": "2026-07-06"
+  },
+  {
+    "id": "BH-0707-128",
+    "student": "Hoàng Đức Duy",
+    "skill": "Viết",
+    "status": "dang-hoc",
+    "minutes": 30,
+    "score": 99,
+    "date": "2026-07-07"
+  },
+  {
+    "id": "BH-1307-129",
+    "student": "Đỗ Phương Thảo",
+    "skill": "Từ vựng",
+    "status": "da-xong",
+    "minutes": 15,
+    "score": 68,
+    "date": "2026-07-13"
+  },
+  {
+    "id": "BH-1507-130",
+    "student": "Ngô Tuấn Kiệt",
+    "skill": "Phát âm",
+    "status": "da-cham",
+    "minutes": 20,
+    "score": 75,
+    "date": "2026-07-15"
+  }
+]

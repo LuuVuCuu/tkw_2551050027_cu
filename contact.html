@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Liên hệ tư vấn — EngGo</title>
+  <meta name="description" content="Gửi yêu cầu tư vấn lộ trình học tiếng Anh EngGo: gọi lại trong hai giờ làm việc, kiểm tra đầu vào 20 phút, học buổi đầu cùng trợ giảng." />
+
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- BUỔI 4 · tiết 3 — Tính năng 4: chống nháy trắng khi tải trang ở nền tối.
+       Script THƯỜNG (không type="module") nên chạy ngay tại chỗ, trước khi
+       trình duyệt vẽ <body>. Để trong main.js thì đã muộn: nền sáng vẽ xong rồi,
+       người dùng thấy một cú chớp trắng ở mỗi lần tải trang. -->
+  <script>
+    (function () {
+      var luu = localStorage.getItem("theme");                 // người dùng đã tự chọn chưa?
+      var toi = luu
+        ? luu === "dark"                                       // có: nghe theo người dùng
+        : window.matchMedia("(prefers-color-scheme: dark)").matches;  // chưa: nghe theo hệ điều hành
+      document.documentElement.classList.toggle("dark", toi);
+
+      // "js" là hợp đồng với CSS: khối ".js [data-reveal]" chỉ ẩn khi JavaScript
+      // đang chạy, nhờ vậy máy chặn JavaScript không bao giờ thấy trang trắng trơn.
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+
+
+  <link rel="stylesheet" href="./dist/output.css" />
+</head>
+
+<body>
+
+  <!-- BUỔI 4 · Tính năng 2 — mốc theo dõi cuộn trang.
+       Một thẻ rỗng cao 1px đặt ngay đầu <body>. Khi nó trôi khỏi màn hình
+       nghĩa là trang đã cuộn. IntersectionObserver chỉ báo đúng hai lần
+       (lúc ra, lúc vào); sự kiện scroll bắn hàng trăm lần mỗi giây. -->
+  <div id="nav-sentinel" aria-hidden="true" class="h-px w-full"></div>
+
+  <!-- Link bỏ qua điều hướng: chỉ hiện khi người dùng nhấn Tab.
+       Thử ngay: tải trang rồi nhấn Tab một lần. -->
+  <a href="#main"
+     class="btn btn-primary sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50">
+    Bỏ qua đến nội dung chính
+  </a>
+
+
+  <!-- ============================================================
+       NAVBAR  —  hoàn thành ở BUỔI 1, tiết 4
+       ============================================================ -->
+  <header class="sticky top-0 z-40 border-b border-line bg-surface/85 backdrop-blur">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4"
+         aria-label="Điều hướng chính">
+
+      <!-- Logo dùng <a> vì nó ĐƯA NGƯỜI DÙNG ĐI ĐÂU ĐÓ -->
+      <a href="./index.html" class="flex items-center gap-2.5">
+        <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-600
+                     font-display text-lg font-extrabold text-white">E</span>
+        <span class="font-display text-xl font-extrabold">EngGo</span>
+      </a>
+
+      <!-- Menu desktop. Ẩn dưới lg — nút hamburger bên phải thay chỗ.
+           Buổi 3 thêm hai trang mới vào menu này. -->
+      <ul class="hidden items-center gap-8 text-sm font-medium lg:flex">
+        <li><a href="./index.html#tinh-nang" class="link-nav">Tính năng</a></li>
+        <li><a href="./index.html#cach-hoat-dong" class="link-nav">Cách học</a></li>
+        <li><a href="./pricing.html" class="link-nav">Bảng giá</a></li>
+        <li><a href="./contact.html" class="link-nav" aria-current="page">Liên hệ</a></li>
+      </ul>
+
+      <div class="flex items-center gap-2">
+        <!-- Nút bật/tắt nền tối. Markup dựng ở buổi 3, JavaScript gắn ở buổi 4.
+             Trong lúc chờ, kiểm tra dark mode bằng cách thêm tay class="dark"
+             vào thẻ <html> trong DevTools. -->
+        <button type="button" id="nut-nen-toi"
+                class="grid h-10 w-10 place-items-center rounded-pill border border-line"
+                aria-pressed="false" aria-label="Chuyển nền sáng / nền tối">
+          <svg class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
+          </svg>
+          <svg class="hidden h-5 w-5 dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4" />
+          </svg>
+        </button>
+
+        <a href="./contact.html" class="btn btn-primary hidden lg:inline-flex">Học thử 30 ngày</a>
+
+        <!-- Nút hamburger dùng <button> vì nó THỰC HIỆN MỘT HÀNH ĐỘNG.
+             Markup có sẵn từ buổi 1; buổi 4 mới gắn JavaScript cho chạy. -->
+        <button type="button"
+                class="grid h-10 w-10 place-items-center rounded-pill border border-line lg:hidden"
+                aria-expanded="false" aria-controls="nav-mobile" aria-label="Mở menu">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Menu mobile: khung có sẵn, chưa mở được. Buổi 4 xử lý. -->
+    <div id="nav-mobile" class="hidden border-t border-line px-5 pb-6 pt-4 lg:hidden">
+      <ul class="flex flex-col gap-1 text-base font-medium">
+        <li><a href="./index.html#tinh-nang" class="block rounded-lg px-3 py-2.5 hover:bg-surface-alt">Tính năng</a></li>
+        <li><a href="./index.html#cach-hoat-dong" class="block rounded-lg px-3 py-2.5 hover:bg-surface-alt">Cách học</a></li>
+        <li><a href="./pricing.html" class="block rounded-lg px-3 py-2.5 hover:bg-surface-alt">Bảng giá</a></li>
+        <li><a href="./contact.html" class="block rounded-lg px-3 py-2.5 hover:bg-surface-alt">Liên hệ</a></li>
+      </ul>
+      <a href="./contact.html" class="btn btn-primary btn-lg mt-4 w-full">Học thử 30 ngày</a>
+    </div>
+  </header>
+
+
+  <main id="main">
+
+    <!-- === BUỔI 3 · Tiết 5 — TRANG LIÊN HỆ =====================
+         Trang thứ ba. Toàn bộ phần nhìn dùng lại component có sẵn;
+         phần mới duy nhất là FORM, và form là nơi khả năng tiếp cận
+         dễ hỏng nhất trong cả đồ án.
+
+         Bảy thuộc tính dưới đây, mỗi cái có một lý do đo được — đọc
+         bảng giải thích trong BAI-GIAI-BUOI-3.md trước khi sửa.
+         ========================================================= -->
+    <section class="section grid gap-12 lg:grid-cols-[1.3fr_1fr]" aria-labelledby="lienhe-title">
+
+      <div>
+        <p class="eyebrow">Liên hệ</p>
+        <h1 id="lienhe-title" class="mt-4 text-4xl font-extrabold sm:text-5xl">Nói chuyện với người đã xếp lộ trình cho 12.400 học viên</h1>
+        <p class="mt-4 text-lg text-muted">
+          Điền vài dòng, chúng tôi gọi lại trong hai giờ làm việc. Không cần chuẩn bị gì trước.
+        </p>
+
+        <!-- Buổi 5 sẽ chặn submit bằng JavaScript và tự kiểm tra dữ liệu.
+             Ở buổi 3, việc kiểm tra do TRÌNH DUYỆT làm qua required và pattern. -->
+        <form class="mt-10 grid gap-5 sm:grid-cols-2">
+
+          <div>
+            <label class="field-label" for="ho-ten">
+              Họ và tên <span class="text-danger" aria-hidden="true">*</span>
+            </label>
+            <input class="field-input" id="ho-ten" name="hoTen" type="text" required=""
+                   autocomplete="name" />
+            <p class="field-error" id="ho-ten-error" role="alert"></p>
+          </div>
+
+          <div>
+            <label class="field-label" for="dien-thoai">
+              Số điện thoại <span class="text-danger" aria-hidden="true">*</span>
+            </label>
+            <input class="field-input" id="dien-thoai" name="dienThoai" type="tel" required=""
+                   pattern="0[0-9]{9}" inputmode="numeric" autocomplete="tel"
+                   aria-describedby="dien-thoai-hint dien-thoai-error" />
+            <p class="mt-1.5 text-xs text-muted" id="dien-thoai-hint">
+              Mười chữ số, bắt đầu bằng 0. Chúng tôi gọi qua số này, không nhắn tin quảng cáo.
+            </p>
+            <p class="field-error" id="dien-thoai-error" role="alert"></p>
+          </div>
+
+          <div>
+            <label class="field-label" for="email">Email</label>
+            <input class="field-input" id="email" name="email" type="email"
+                   autocomplete="email" placeholder="ten@vidu.com"
+                   aria-describedby="email-hint email-error" />
+            <p class="mt-1.5 text-xs text-muted" id="email-hint">Để nhận lộ trình học và hóa đơn. Không bắt buộc.</p>
+            <p class="field-error" id="email-error" role="alert"></p>
+          </div>
+
+          <div>
+            <label class="field-label" for="ten-vua">Tên trung tâm hoặc trường (nếu có)</label>
+            <input class="field-input" id="ten-vua" name="tenVua" type="text"
+                   autocomplete="organization" />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="field-label" for="quy-mo">
+              Bạn học cho ai? <span class="text-danger" aria-hidden="true">*</span>
+            </label>
+            <select class="field-input" id="quy-mo" name="quyMo" required=""
+                    aria-describedby="quy-mo-hint quy-mo-error">
+              <option value="">— Chọn trường hợp gần đúng —</option>
+              <option value="nho">Tự học một mình</option>
+              <option value="vua">Cho con hoặc cả gia đình</option>
+              <option value="chuoi">Cho trung tâm, nhà trường</option>
+              <option value="chua-ro">Chưa rõ, cần tư vấn</option>
+            </select>
+            <p class="mt-1.5 text-xs text-muted" id="quy-mo-hint">Chọn gần đúng là được, buổi tư vấn sẽ chốt lại.</p>
+            <p class="field-error" id="quy-mo-error" role="alert"></p>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="field-label" for="noi-dung">Trình độ hiện tại và mục tiêu của bạn?</label>
+            <textarea class="field-input" id="noi-dung" name="noiDung" rows="4"
+                      aria-describedby="noi-dung-hint"></textarea>
+            <p class="mt-1.5 text-xs text-muted" id="noi-dung-hint">
+              Ví dụ: mất gốc từ cấp ba, cần giao tiếp với khách nước ngoài trong sáu tháng.
+            </p>
+          </div>
+
+          <div class="flex items-start gap-3 sm:col-span-2">
+            <input class="mt-1 h-4 w-4 shrink-0 accent-brand-600"
+                   id="dong-y" name="dongY" type="checkbox" required=""
+                   aria-describedby="dong-y-hint dong-y-error" />
+            <div>
+              <label class="field-label" for="dong-y">
+                Đồng ý để EngGo liên hệ tư vấn <span class="text-danger" aria-hidden="true">*</span>
+              </label>
+              <p class="mt-1 text-xs text-muted" id="dong-y-hint">
+                Chỉ gọi về đúng yêu cầu này. Không chia sẻ số cho bên thứ ba.
+              </p>
+              <p class="field-error" id="dong-y-error" role="alert"></p>
+            </div>
+          </div>
+
+          <div class="sm:col-span-2">
+            <button class="btn btn-primary btn-lg w-full sm:w-auto" type="submit">Gửi yêu cầu tư vấn</button>
+            <p class="mt-3 text-xs text-muted">Dấu <span class="text-danger" aria-hidden="true">*</span> là trường bắt buộc.</p>
+          </div>
+        </form>
+      </div>
+
+      <!-- Cột phải: thông tin liên hệ cho người không muốn điền form -->
+      <div class="card h-full">
+        <h2 class="font-display text-lg font-bold">Gọi thẳng cũng được</h2>
+        <p class="mt-2 text-sm text-muted">Nhiều người thích gọi hơn điền form. Không sao cả.</p>
+
+        <dl class="mt-6 flex flex-col gap-5 border-t border-line pt-6 text-sm">
+          <div>
+            <dt class="font-semibold">Điện thoại</dt>
+            <dd class="mt-1"><a class="link-nav" href="tel:+842873001234">028 7300 1234</a></dd>
+          </div>
+          <div>
+            <dt class="font-semibold">Email</dt>
+            <dd class="mt-1"><a class="link-nav" href="mailto:hotro@enggo.vn">hotro@enggo.vn</a></dd>
+          </div>
+          <div>
+            <dt class="font-semibold">Giờ làm việc</dt>
+            <dd class="mt-1 text-muted">Thứ Hai đến thứ Bảy, 8:00 – 21:00. Mùa thi trực cả Chủ nhật.</dd>
+          </div>
+          <div>
+            <dt class="font-semibold">Văn phòng</dt>
+            <dd class="mt-1 text-muted">
+              <address class="not-italic">97 Võ Văn Tần, Phường Võ Thị Sáu<br />TP. Hồ Chí Minh</address>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+
+    <!-- === BUỔI 3 · Tiết 5 — SAU KHI GỬI THÌ SAO ===============
+         Ba bước có thứ tự thật nên dùng <ol>, giống section "Cách
+         hoạt động" ở trang chủ.
+         ========================================================= -->
+    <section class="section" aria-labelledby="quy-trinh-title">
+      <div class="max-w-2xl">
+        <p class="eyebrow">Sau khi gửi</p>
+        <h2 id="quy-trinh-title" class="mt-4 text-3xl font-extrabold sm:text-4xl">Ba bước, xong trong một buổi</h2>
+      </div>
+
+      <ol class="mt-14 grid gap-6 sm:grid-cols-3">
+        <li class="card">
+          <span class="badge bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-100">Bước 01</span>
+          <h3 class="mt-4 font-display text-lg font-bold">Gọi lại trong 2 giờ</h3>
+          <p class="mt-2 text-muted">Hỏi đúng ba câu: trình độ tới đâu, mục tiêu là gì, mỗi ngày học được bao lâu.</p>
+        </li>
+        <li class="card">
+          <span class="badge bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-100">Bước 02</span>
+          <h3 class="mt-4 font-display text-lg font-bold">Kiểm tra đầu vào 20 phút</h3>
+          <p class="mt-2 text-muted">Làm bài nghe và nói ngay trên máy, có giáo viên nghe lại phần phát âm. Chốt trình độ và gói học.</p>
+        </li>
+        <li class="card">
+          <span class="badge bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-100">Bước 03</span>
+          <h3 class="mt-4 font-display text-lg font-bold">Học buổi đầu cùng trợ giảng</h3>
+          <p class="mt-2 text-muted">Trợ giảng học cùng buổi đầu tiên, chỉnh lại lộ trình nếu thấy quá nhẹ hoặc quá nặng.</p>
+        </li>
+      </ol>
+    </section>
+
+  </main>
+
+  <!-- === BUỔI 2 · Tiết 5 — FOOTER ==============================
+       Bốn cột: logo và mô tả ngắn, hai nhóm liên kết, địa chỉ.
+       Mỗi nhóm liên kết là một <nav> riêng có aria-labelledby trỏ tới
+       heading của nhóm — người dùng trình đọc màn hình nhảy giữa các
+       vùng điều hướng phải biết mình đang ở nhóm nào.
+
+       Hàng bản quyền là anh em của lưới, ngăn bằng border-t và dùng
+       lại đúng container mx-auto max-w-6xl px-5 để vạch kẻ thẳng cột
+       với nội dung phía trên.
+       ========================================================== -->
+  <footer class="border-t border-line bg-surface-alt">
+    <div class="mx-auto grid w-full max-w-6xl gap-10 px-5 py-20 sm:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <a href="./index.html" class="flex items-center gap-2.5">
+          <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-600
+                       font-display text-lg font-extrabold text-white">E</span>
+          <span class="font-display text-xl font-extrabold">EngGo</span>
+        </a>
+        <p class="mt-4 max-w-xs text-sm text-muted">Ứng dụng học tiếng Anh mỗi ngày cho người đi làm, học sinh và cả gia đình.</p>
+      </div>
+
+      <nav aria-labelledby="footer-sp">
+        <h2 id="footer-sp" class="text-xs font-semibold uppercase tracking-widest text-muted">Sản phẩm</h2>
+        <ul class="mt-4 flex flex-col gap-2.5 text-sm">
+          <li><a href="./index.html#tinh-nang" class="link-nav">Tính năng</a></li>
+          <li><a href="./pricing.html" class="link-nav">Bảng giá</a></li>
+          <li><a href="./index.html#cach-hoat-dong" class="link-nav">Cách học</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-labelledby="footer-ht">
+        <h2 id="footer-ht" class="text-xs font-semibold uppercase tracking-widest text-muted">Hỗ trợ</h2>
+        <ul class="mt-4 flex flex-col gap-2.5 text-sm">
+          <li><a href="./index.html#cau-hoi" class="link-nav">Câu hỏi thường gặp</a></li>
+          <li><a href="./contact.html" class="link-nav">Gửi yêu cầu tư vấn</a></li>
+          <li><a href="tel:+842873001234" class="link-nav">028 7300 1234</a></li>
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-muted">Địa chỉ</h2>
+        <address class="mt-4 text-sm not-italic text-muted">
+          97 Võ Văn Tần, Phường Võ Thị Sáu<br />
+          TP. Hồ Chí Minh
+        </address>
+      </div>
+    </div>
+
+    <p class="mx-auto w-full max-w-6xl border-t border-line px-5 py-6 text-sm text-muted">
+      © 2026 EngGo. Bài thực hành môn Thiết kế Web.
+    </p>
+  </footer>
+
+  <!-- BUỔI 4 · Bài khởi động — nút lên đầu trang, hiện sau khi cuộn quá 400px -->
+  <button type="button" id="nut-len-dau" class="to-top" aria-label="Lên đầu trang">
+    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+  </button>
+
+  <!-- Nạp kiểu module, đặt cuối <body>. Module tự hoãn tới khi HTML phân tích
+       xong nên KHÔNG cần DOMContentLoaded. -->
+  <script type="module" src="./js/main.js"></script>
+
+</body>
+</html>
