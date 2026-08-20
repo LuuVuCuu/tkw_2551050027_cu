@@ -1,0 +1,299 @@
+/* ============================================================
+   src/input.css  —  KẾT QUẢ BUỔI 3
+   ------------------------------------------------------------
+   Buổi 1: token + 8 component.
+   Buổi 3 thêm hai thứ:
+     1. Cặp màu cho nền tối, và một khối .dark ĐẢO GIÁ TRỊ token
+     2. Năm component mới, sinh ra khi dựng pricing.html và
+        contact.html — mẫu nào lặp từ 3 lần trở lên mới trích
+
+   Trong HTML tuyệt đối không viết bg-[#14705a], cũng không viết
+   dark:bg-gray-800.
+   ============================================================ */
+
+@import "tailwindcss";
+
+/* Dark mode theo class trên thẻ <html>. Khai báo từ buổi 1, buổi 3 dùng tới. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+
+/* ============================================================
+   DESIGN TOKEN  —  trích từ Figma ở tiết 1 buổi 1
+   ------------------------------------------------------------
+   TODO: nếu bạn làm sản phẩm khác, thay toàn bộ giá trị dưới đây
+   bằng bảng token bạn đã đọc từ Figma. Đổi ở đây là cả trang đổi
+   theo, không phải sửa từng file HTML.
+   ============================================================ */
+@theme {
+  /* Màu thương hiệu: xanh dương đậm */
+  --color-brand-50:  #eff4ff;
+  --color-brand-100: #dbe7fe;
+  --color-brand-300: #93b4fd;   /* buổi 3: sắc thương hiệu ĐỦ SÁNG để làm chữ trên nền tối */
+  --color-brand-500: #3b6fe0;
+  --color-brand-600: #1d4ed8;   /* chữ xanh dương trên nền trắng — tương phản 6,7:1 */
+  --color-brand-700: #1740a8;
+  --color-brand-900: #10275f;
+
+  /* Màu nhấn: vàng sáp. Dùng RẤT tiết chế — mỗi trang tối đa 3 chỗ */
+  --color-accent-300: #f7d27a;
+  --color-accent-400: #f0b429;
+  --color-accent-500: #d99a15;
+
+  /* Chữ và nền. Mỗi vai trò có một CẶP sáng/tối — buổi 3 dùng tới cặp này */
+  --color-ink:          #16306e;   /* chữ chính: xanh dương đậm, 12,5:1 trên nền trắng */
+  --color-ink-invert:   #e6ecff;
+  --color-muted:        #4a5c8f;   /* chữ phụ: xanh dương nhạt hơn, vẫn 6,5:1 */
+  --color-muted-invert: #9dafdd;
+  --color-line:         #dbe3f5;
+  --color-line-invert:  #24345e;
+  --color-surface:      #ffffff;   /* nền trắng */
+  --color-surface-alt:  #f5f8ff;   /* nền phụ: trắng ngả xanh, chỉ để tách dải */
+  --color-surface-dark: #0b1430;
+  --color-surface-dark-alt: #131f45;
+
+  /* Màu báo lỗi cũng phải có cặp: đỏ đậm chìm nghỉm trên nền tối */
+  --color-danger:        #c0332e;
+  --color-danger-invert: #ff9d96;
+
+  /* Phông chữ. Be Vietnam Pro thiết kế riêng cho dấu tiếng Việt:
+     dấu không đè lên chữ hoa. Inter đọc tốt ở cỡ nhỏ. */
+  --font-display: "Be Vietnam Pro", system-ui, sans-serif;
+  --font-body:    "Inter", system-ui, sans-serif;
+
+  /* Bo góc — một giá trị duy nhất cho mọi thẻ trong dự án */
+  --radius-card: 0.875rem;
+  --radius-pill: 999px;
+}
+
+
+/* ============================================================
+   LỚP NỀN
+   ============================================================ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;   /* chừa chỗ cho navbar dính */
+  }
+
+  /* ----------------------------------------------------------
+     BUỔI 3 — DARK MODE Ở TẦNG TOKEN
+
+     Không đảo màu ở từng thẻ HTML. Ở đây chỉ đổi GIÁ TRỊ của năm
+     token trung tính; mọi class đã viết sẵn (bg-surface, text-ink,
+     text-muted, border-line…) tự trỏ sang giá trị mới.
+
+     Nhờ vậy dark mode không phải là "viết lại giao diện lần hai",
+     và không có chuyện chỗ được chỗ không.
+     ---------------------------------------------------------- */
+  .dark {
+    --color-ink:         var(--color-ink-invert);
+    --color-muted:       var(--color-muted-invert);
+    --color-line:        var(--color-line-invert);
+    --color-surface:     var(--color-surface-dark);
+    --color-surface-alt: var(--color-surface-dark-alt);
+  }
+
+  body {
+    @apply bg-surface text-ink font-body antialiased;
+  }
+
+  h1, h2, h3 {
+    @apply font-display tracking-tight;
+  }
+
+  /* Người dùng bàn phím phải luôn nhìn thấy mình đang ở đâu.
+     Khai báo một lần ở đây, cả dự án được lợi. */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-600 dark:outline-brand-300;
+  }
+}
+
+
+/* ============================================================
+   COMPONENT
+   ------------------------------------------------------------
+   Quy tắc: một mẫu chỉ đưa vào đây khi lặp lại TỪ 3 LẦN TRỞ LÊN.
+   Buổi 3 dựng thêm hai trang nên năm mẫu mới đủ điều kiện:
+   .tick, .field-label, .field-input, .field-error, và .btn-lg đã
+   có từ trước nay dùng ở cả ba trang.
+
+   Cách dùng: GHÉP class ở HTML  →  class="btn btn-primary"
+   KHÔNG viết .btn-primary { @apply btn ... } vì trong Tailwind v4
+   cách đó dễ gãy.
+
+   Component nào có màu riêng thì TỰ LO trạng thái tối của mình —
+   nơi dùng không phải nhớ thêm gì.
+   ============================================================ */
+@layer components {
+
+  /* Container chuẩn của mọi section, dùng cho toàn bộ ba trang */
+  .section {
+    @apply mx-auto w-full max-w-6xl px-5 py-20 lg:py-28;
+  }
+
+  /* Dòng chữ nhỏ in hoa nằm trên mỗi tiêu đề section */
+  .eyebrow {
+    @apply font-display text-xs font-semibold uppercase tracking-[0.18em]
+           text-brand-600 dark:text-brand-300;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-pill px-5 py-2.5
+           text-sm font-semibold transition-colors duration-150
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  /* Nút chính KHÔNG có biến thể tối: brand-600 với chữ trắng đạt 5.6:1,
+     đảo sang sắc sáng hơn chỉ làm tương phản tệ đi. Đảo màu phải có
+     lý do đo được, không đảo cho đủ bộ. */
+  .btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700; }
+  .btn-ghost   { @apply border border-line text-ink hover:bg-surface-alt; }
+  .btn-lg      { @apply px-7 py-3.5 text-base; }
+
+  /* Thẻ dùng chung — tính năng, bảng giá, cảm nhận, khối liên hệ */
+  .card {
+    @apply rounded-card border border-line bg-surface p-6
+           dark:bg-surface-dark-alt;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-pill px-3 py-1 text-xs font-semibold;
+  }
+
+  /* Liên kết điều hướng — 8 chỗ mỗi trang, ba trang là 24 chỗ.
+     Gom vào đây để sắc nhấn khi rê chuột chỉ khai báo một lần cho
+     cả hai chế độ sáng và tối. */
+  .link-nav {
+    @apply text-ink transition-colors duration-150 hover:text-brand-600 dark:hover:text-brand-300;
+  }
+
+  /* Dấu tick đầu mỗi dòng tính năng — 20+ lần ở index và pricing */
+  .tick {
+    @apply mt-0.5 h-4 w-4 shrink-0 text-brand-600 dark:text-brand-300;
+  }
+
+  /* ----------------------------------------------------------
+     FORM — sinh ra ở tiết 5 khi dựng contact.html.
+     Ba mẫu này lặp ở mọi trường nhập, nên trích là đúng lúc.
+     ---------------------------------------------------------- */
+  .field-label {
+    @apply block text-sm font-semibold text-ink;
+  }
+  .field-input {
+    @apply mt-1.5 w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 text-base
+           text-ink placeholder:text-muted
+           focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30
+           dark:bg-surface-dark-alt dark:focus:border-brand-300 dark:focus:ring-brand-300/30
+           aria-[invalid=true]:border-danger aria-[invalid=true]:ring-danger/30;
+  }
+  .field-error {
+    @apply mt-1.5 text-sm font-medium text-danger empty:hidden dark:text-danger-invert;
+  }
+
+  /* ----------------------------------------------------------
+     KHỐI ĐẶC TRƯNG của sản phẩm này: tờ phiếu cân giấy, mép dưới
+     có đường răng cưa như phiếu xé từ cuốn biên lai.
+
+     Buổi 3: bóng đổ vô hình trên nền tối nên tắt shadow và để viền
+     gánh vai trò tách khối. Răng cưa vẽ bằng var(--color-surface)
+     nên tự đổi màu theo nền, không phải viết lại lần hai.
+     ---------------------------------------------------------- */
+  .ticket {
+    @apply relative rounded-card border border-line bg-surface p-6 shadow-xl
+           dark:bg-surface-dark-alt dark:shadow-none;
+  }
+  .ticket::after {
+    content: "";
+    @apply absolute inset-x-0 -bottom-2 h-4;
+    background-image: radial-gradient(
+      circle at 6px 0, transparent 6px, var(--color-surface) 6px
+    );
+    background-size: 12px 12px;
+    background-repeat: repeat-x;
+  }
+  .dark .ticket::after {
+    background-image: radial-gradient(
+      circle at 6px 0, transparent 6px, var(--color-surface-dark-alt) 6px
+    );
+  }
+}
+
+/* ==============================================================
+   BUỔI 4 — Thành phần cho bảy tính năng tương tác
+   Nguyên tắc giữ từ buổi 3: trạng thái do ARIA mang, CSS chỉ ĐỌC
+   trạng thái đó (aria-checked:, aria-expanded:) chứ không cần
+   class riêng. Nhờ vậy JS chỉ phải cập nhật một chỗ.
+   ============================================================== */
+@layer components {
+
+  /* --- Nút lên đầu trang ------------------------------------- */
+  .to-top {
+    @apply fixed bottom-6 right-6 z-40 grid h-11 w-11 place-items-center
+           rounded-pill border border-line bg-surface text-ink shadow-lg
+           opacity-0 transition-opacity duration-200
+           pointer-events-none
+           dark:bg-surface-dark-alt dark:text-ink-invert;
+  }
+  .to-top.is-visible { @apply pointer-events-auto opacity-100; }
+
+  /* --- Accordion FAQ ------------------------------------------ */
+  .faq-trigger { @apply cursor-pointer; }
+  .faq-icon { @apply transition-transform duration-200; }
+  .faq-trigger[aria-expanded="true"] .faq-icon { @apply rotate-180; }
+
+  /* --- Công tắc giá Tháng / Năm -------------------------------- */
+  .cong-tac {
+    @apply relative h-7 w-12 shrink-0 rounded-pill border border-line bg-line
+           transition-colors duration-200;
+  }
+  .cong-tac-num {
+    @apply absolute left-0.5 top-0.5 h-5 w-5 rounded-pill bg-surface shadow
+           transition-transform duration-200;
+  }
+  .cong-tac[aria-checked="true"] .cong-tac-num { @apply translate-x-5; }
+
+  /* --- Slider cảm nhận ----------------------------------------- */
+  .slider-viewport { @apply overflow-hidden; }
+  .slider-track {
+    @apply flex list-none p-0 m-0;
+    transition: transform 400ms ease;
+  }
+  .slider-slide { @apply w-full shrink-0; }
+  .slider-nav {
+    @apply grid h-10 w-10 place-items-center rounded-pill border border-line
+           bg-surface transition-colors hover:bg-surface-alt
+           dark:bg-surface-dark-alt;
+  }
+  /* Vùng chạm phải đủ 24×24 theo WCAG 2.2 (tiêu chí 2.5.8 Target Size).
+     Chấm NHÌN THẤY vẫn nhỏ 10px, vẽ bằng ::before — tách "vùng bấm được"
+     khỏi "vùng nhìn thấy" là cách chuẩn để nút nhỏ vẫn đạt chuẩn. */
+  .slider-dot {
+    @apply grid h-6 w-6 place-items-center rounded-pill bg-transparent;
+  }
+  .slider-dot::before {
+    content: "";
+    @apply block h-2.5 w-2.5 rounded-pill border border-line transition-colors;
+  }
+  .slider-dot[aria-current="true"]::before { @apply border-brand-600 bg-brand-600; }
+
+  /* --- Hiệu ứng lộ dần khi cuộn -------------------------------- */
+  /* CẢI TIẾN TIỆM TIẾN: chỉ ẩn khi JavaScript đang chạy (lớp .js do đoạn
+     script inline trong <head> gắn). Nếu JS lỗi hoặc bị chặn, nội dung vẫn
+     hiện bình thường — không bao giờ có chuyện cả trang trắng vì một hiệu ứng. */
+  .js [data-reveal] {
+    @apply opacity-0;
+    transform: translateY(16px);
+    transition: opacity 500ms ease, transform 500ms ease;
+  }
+  .js [data-reveal].is-visible {
+    @apply opacity-100;
+    transform: none;
+  }
+}
+
+/* Người dùng bật "giảm chuyển động" ở hệ điều hành: tắt sạch mọi
+   transition, và cho khối lộ dần hiện luôn kể cả khi JS chưa chạy. */
+@media (prefers-reduced-motion: reduce) {
+  .slider-track, .faq-icon, .cong-tac, .cong-tac-num, .to-top,
+  .js [data-reveal] { transition: none !important; }
+  .js [data-reveal] { opacity: 1 !important; transform: none !important; }
+}
