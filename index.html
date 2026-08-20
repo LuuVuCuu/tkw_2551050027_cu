@@ -11,11 +11,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-
-  <!-- BUỔI 4 · tiết 3 — Tính năng 4: chống nháy trắng khi tải trang ở nền tối.
-       Script THƯỜNG (không type="module") nên chạy ngay tại chỗ, trước khi
-       trình duyệt vẽ <body>. Để trong main.js thì đã muộn: nền sáng vẽ xong rồi,
-       người dùng thấy một cú chớp trắng ở mỗi lần tải trang. -->
   <script>
     (function () {
       var luu = localStorage.getItem("theme");                 // người dùng đã tự chọn chưa?
@@ -35,11 +30,7 @@
 </head>
 
 <body>
-
-  <!-- BUỔI 4 · Tính năng 2 — mốc theo dõi cuộn trang.
-       Một thẻ rỗng cao 1px đặt ngay đầu <body>. Khi nó trôi khỏi màn hình
-       nghĩa là trang đã cuộn. IntersectionObserver chỉ báo đúng hai lần
-       (lúc ra, lúc vào); sự kiện scroll bắn hàng trăm lần mỗi giây. -->
+>
   <div id="nav-sentinel" aria-hidden="true" class="h-px w-full"></div>
 
   <!-- Link bỏ qua điều hướng: chỉ hiện khi người dùng nhấn Tab.
