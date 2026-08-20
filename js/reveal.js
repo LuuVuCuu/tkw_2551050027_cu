@@ -1,11 +1,3 @@
-// js/reveal.js — Tính năng 7: hiệu ứng lộ dần khi cuộn tới.   (tiết 4)
-//
-// Phần tử có sẵn: các khối mang thuộc tính [data-reveal].
-// CSS có sẵn trong src/input.css:
-//   .js [data-reveal]              → mờ và đẩy xuống 16px
-//   .js [data-reveal].is-visible   → hiện lên đúng chỗ
-// Việc của file này chỉ là gắn class "is-visible" đúng lúc.
-
 export function initReveal() {
   const items = [...document.querySelectorAll("[data-reveal]")];
   if (items.length === 0) return;
