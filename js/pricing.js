@@ -1,15 +1,3 @@
-// js/pricing.js — Tính năng 5: công tắc giá Tháng / Năm.   (tiết 4)
-//
-// Phần tử có sẵn trong HTML:
-//   công tắc   : #cong-tac-gia  — <button role="switch" aria-checked="false">
-//   số tiền    : <span data-price data-monthly="390000" data-yearly="3744000">
-//   nhãn kỳ hạn: <span data-price-unit>/tháng</span>
-//
-// Số tiền nằm trong HTML, KHÔNG nằm trong JavaScript. Người sửa giá là người
-// làm nội dung, không phải lập trình viên: sửa giá không được đụng tới file này.
-
-// Cho sẵn — đây là cú pháp tra tài liệu chứ không phải bài học của buổi.
-// Đừng tự viết hàm chèn dấu chấm: hàm tự viết luôn sai ở số âm và số lẻ.
 const dong = new Intl.NumberFormat("vi-VN", {
   style: "currency",
   currency: "VND",
